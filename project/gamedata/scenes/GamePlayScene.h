@@ -12,6 +12,14 @@
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
+#include"FollowCamera.h"
+
+#include "baseCharacter/BaseCharacter.h"
+#include "baseCharacter/player/Player.h"
+#include "baseCharacter/enemy/Enemy.h"
+#include "skydome/Skydome.h"
+#include "ground/GroundManager.h"
+#include "goal/Goal.h"
 
 class GamePlayScene :public Iscene {
 public:
@@ -30,26 +38,6 @@ private:
 
 	int blendCount_;
 
-	std::unique_ptr <CreateTriangle> triangle_[2];
-	WorldTransform worldTransformTriangle_[2];
-	Vector4 triangleMaterial_[2];
-
-	std::unique_ptr <CreateSprite> sprite_;
-	Transform spriteTransform_;
-	Transform SpriteuvTransform_;
-	Vector4 spriteMaterial_;
-
-	std::unique_ptr <CreateSphere> sphere_;
-	WorldTransform worldTransformSphere_;
-	Vector4 sphereMaterial_;
-
-	std::unique_ptr<Model> model_;
-	WorldTransform worldTransformModel_;
-	Vector4 modelMaterial_;
-
-	uint32_t uvResourceNum_;
-	uint32_t monsterBallResourceNum_;
-
 	Audio* audio_;
 	SoundData soundData1_;
 
@@ -57,13 +45,30 @@ private:
 
 	DebugCamera* debugCamera_;
 
-	CollisionManager* collisionManager_;
+	std::unique_ptr<CollisionManager> collisionManager_;
 
-	int texture_;
+	std::unique_ptr<Skydome> skyDome_ = nullptr;
+	std::unique_ptr<Model> skyDomeModel_ = nullptr;
+	std::unique_ptr<Model> playerModel_ = nullptr;
 
-	bool isTriangleDraw1_;
-	bool isTriangleDraw2_;
-	int isSphereDraw_;
-	int isSpriteDraw_;
-	int isModelDraw_;
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<Model> playerModelBody_ = nullptr;
+	std::unique_ptr<Model> playerModelHead_ = nullptr;
+	std::unique_ptr<Model> playerModelL_Arm_ = nullptr;
+	std::unique_ptr<Model> playerModelR_Arm_ = nullptr;
+	std::unique_ptr<Model> playerModelWeapon_ = nullptr;
+
+	std::unique_ptr<FollowCamera> followCamera_;
+
+	std::unique_ptr<GroundManager> groundmanager_;
+	std::unique_ptr<Goal> goal_;
+
+	std::unique_ptr<Enemy>enemy_;
+	std::unique_ptr<Model> enemyModelHead = nullptr;
+	std::unique_ptr<Model> enemyModelBody = nullptr;
+	std::unique_ptr<Model> enemyModelL_arm = nullptr;
+	std::unique_ptr<Model> enemyModelR_arm = nullptr;
+	std::unique_ptr<Model> enemyModelWeapon_ = nullptr;
+
+	int count_;
 };

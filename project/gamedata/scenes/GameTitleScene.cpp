@@ -13,9 +13,19 @@ void GameTitleScene::Update(){
 		sceneNo = GAME_SCENE;
 	}
 
+	XINPUT_STATE joyState;
+
+	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
+		return;
+	}
+
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
+		sceneNo = 1;
+	}
+
 	ImGui::Begin("debug");
 	ImGui::Text("GameTitleScene");
-	ImGui::Text("nextScene:pressKey N");
+	ImGui::Text("nextScene:pressKey N or YButton");
 	ImGui::End();
 }
 

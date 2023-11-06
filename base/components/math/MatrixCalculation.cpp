@@ -597,6 +597,17 @@ bool IsCollision(const OBB& obb, const StructSphere& sphere) {
 	return IsCollision(aabbOBBLocal, sphereObbLocal);
 }
 
+bool IsCollision(const AABB& aabb1, const AABB& aabb2) {
+	if ((aabb1.min.num[0] <= aabb2.max.num[0] && aabb1.max.num[0] >= aabb2.min.num[0]) &&
+		(aabb1.min.num[1] <= aabb2.max.num[1] && aabb1.max.num[1] >= aabb2.min.num[1]) &&
+		(aabb1.min.num[2] <= aabb2.max.num[2] && aabb1.max.num[2] >= aabb2.min.num[2])) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2) { return Add(m1, m2); }
 
 Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2) { return Subtruct(m1, m2); }

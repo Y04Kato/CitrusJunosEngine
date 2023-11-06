@@ -6,53 +6,6 @@ void GamePlayScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
 
-	//テクスチャ
-	texture_ = 0;
-	uvResourceNum_ = textureManager_->Load("project/gamedata/resources/uvChecker.png");
-
-	monsterBallResourceNum_ = textureManager_->Load("project/gamedata/resources/monsterBall.png");
-
-	//三角形
-	for (int i = 0; i < 2; i++) {
-		triangle_[i] = std::make_unique <CreateTriangle>();
-		triangle_[i]->Initialize();
-		worldTransformTriangle_[i].Initialize();
-		triangleMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
-	}
-
-	worldTransformTriangle_[1].rotation_.num[1] = 0.7f;
-
-	isTriangleDraw1_ = false;
-	isTriangleDraw2_ = false;
-
-	//スプライト
-	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	SpriteuvTransform_ = {
-		{1.0f,1.0f,1.0f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,0.0f},
-	};
-	sprite_ = std::make_unique <CreateSprite>();
-	sprite_->Initialize(Vector2{ 100.0f,100.0f }, uvResourceNum_, false, false);
-	//sprite_->SetTextureLTSize(Vector2{ 0.0f,0.0f }, Vector2{ 100.0f,100.0f });
-	sprite_->SetTextureInitialSize();
-
-	isSpriteDraw_ = false;
-
-	//球体
-	sphere_ = std::make_unique <CreateSphere>();
-	sphere_->Initialize();
-	worldTransformSphere_.Initialize();
-	sphereMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-
-	isSphereDraw_ = false;
-
-	//objモデル
-	model_.reset(Model::CreateModelFromObj("project/gamedata/resources/fence", "fence.obj"));
-	worldTransformModel_.Initialize();
-	modelMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-
 	//Input
 	input_ = Input::GetInstance();
 
@@ -69,7 +22,44 @@ void GamePlayScene::Initialize() {
 	viewProjection_.Initialize();
 
 	//CollisionManager
-	collisionManager_ = CollisionManager::GetInstance();
+	collisionManager_ = std::make_unique<CollisionManager>();
+
+	playerModelBody_.reset(Model::CreateModelFromObj("project/gamedata/resources/float_Body", "float_Body.obj"));
+	playerModelHead_.reset(Model::CreateModelFromObj("project/gamedata/resources/float_Head", "float_Head.obj"));
+	playerModelL_Arm_.reset(Model::CreateModelFromObj("project/gamedata/resources/float_L_arm", "float_L_arm.obj"));
+	playerModelR_Arm_.reset(Model::CreateModelFromObj("project/gamedata/resources/float_R_arm", "float_R_arm.obj"));
+	playerModelWeapon_.reset(Model::CreateModelFromObj("project/gamedata/resources/weapon", "weapon.obj"));
+	player_ = std::make_unique<Player>();
+	std::vector<Model*> playerModels = {
+		playerModelBody_.get(), playerModelHead_.get(), playerModelL_Arm_.get(),
+		playerModelR_Arm_.get(), playerModelWeapon_.get() };
+	player_->Initialize(playerModels);
+
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();
+	followCamera_->SetTarget(&player_->GetWorldTransformBody());
+	player_->SetViewProjection(&followCamera_->GetViewProjection());
+
+	skyDomeModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/skydome", "Skydome.obj"));
+	skyDome_ = std::make_unique<Skydome>();
+	skyDome_->Initialize(skyDomeModel_.get());
+
+	groundmanager_ = std::make_unique<GroundManager>();
+	groundmanager_->Initialize();
+
+	goal_ = std::make_unique<Goal>();
+	goal_->Initialize({ 0.0f,2.0f,62.0f }, { 1.0f,1.0f,1.0f });
+
+	enemyModelBody.reset(Model::CreateModelFromObj("project/gamedata/resources/float_Body", "float_Body.obj"));
+	enemyModelHead.reset(Model::CreateModelFromObj("project/gamedata/resources/float_Head", "float_Head.obj"));
+	enemyModelL_arm.reset(Model::CreateModelFromObj("project/gamedata/resources/float_L_arm", "float_L_arm.obj"));
+	enemyModelR_arm.reset(Model::CreateModelFromObj("project/gamedata/resources/float_R_arm", "float_R_arm.obj"));
+	enemyModelWeapon_.reset(Model::CreateModelFromObj("project/gamedata/resources/weapon", "weapon.obj"));
+	enemy_ = std::make_unique<Enemy>();
+	std::vector<Model*>enemyModels = {
+	enemyModelBody.get(),enemyModelHead.get(),
+	enemyModelL_arm.get(),enemyModelR_arm.get(),enemyModelWeapon_.get() };
+	enemy_->Initialize(enemyModels);
 
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
@@ -81,6 +71,8 @@ void GamePlayScene::Initialize() {
 
 void GamePlayScene::Update() {
 
+	count_++;
+
 	ApplyGlobalVariables();
 
 	collisionManager_->ClearColliders();
@@ -88,116 +80,53 @@ void GamePlayScene::Update() {
 
 	debugCamera_->Update();
 
-	viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
-	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 	viewProjection_.UpdateMatrix();
+	followCamera_->Update();
+	viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	viewProjection_.TransferMatrix();
 
-	if (input_->PressKey(DIK_A)) {
-		OutputDebugStringA("Press A\n");
+	groundmanager_->Update();
+	player_->Update();
+	enemy_->Update();
+	if (player_->isGameover() == true) {
+		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
 	}
-	if (input_->ReleaseKey(DIK_S)) {
-		OutputDebugStringA("Release S\n");
-	}
-	if (input_->TriggerKey(DIK_D)) {
-		OutputDebugStringA("Trigger D\n");
-	}
+	player_->isHit_ = false;
+
+	goal_->Update();
 
 	for (int i = 0; i < 2; i++) {
-		worldTransformTriangle_[i].UpdateMatrix();
+		if (IsCollision(groundmanager_->GetOBB(i), player_->GetStructSphere())) {
+			player_->isHit_ = true;
+			player_->SetObjectPos(groundmanager_->GetGround(i)->GetWorldTransform());
+		}
 	}
-	worldTransformSphere_.UpdateMatrix();
-	worldTransformModel_.UpdateMatrix();
+	if (count_ >= 5) {
+		if (IsCollision(groundmanager_->GetOBB(2), player_->GetStructSphere())) {
+			player_->isHit_ = true;
+			player_->IsCollision(groundmanager_->GetMoveGround()->GetWorldTransform());
+		}
+		else {
+			player_->DeleteParent();
+		}
+	}
+
+	if (IsCollision(player_->GetOBB(),enemy_->GetStructSphere())) {
+		enemy_->isDead = true;
+	}
+
+	collisionManager_->ClearColliders();
+	collisionManager_->AddCollider(player_.get());
+	collisionManager_->AddCollider(goal_.get());
+	collisionManager_->AddCollider(enemy_.get());
+	if (count_ >= 5) {
+		collisionManager_->CheckAllCollision();
+	}
 
 	ImGui::Begin("debug");
 	ImGui::Text("GamePlayScene");
-	if (ImGui::TreeNode("Triangle")) {//三角形
-		if (ImGui::Button("DrawTriangle1")) {
-			if (isTriangleDraw1_ == false) {
-				isTriangleDraw1_ = true;
-			}
-			else {
-				isTriangleDraw1_ = false;
-			}
-		}
-		if (ImGui::Button("DrawTriangle2")) {
-			if (isTriangleDraw2_ == false) {
-				isTriangleDraw2_ = true;
-			}
-			else {
-				isTriangleDraw2_ = false;
-			}
-		}
-		if (isTriangleDraw1_ == true) {
-			if (ImGui::TreeNode("Triangle1")) {
-				ImGui::DragFloat3("Translate", worldTransformTriangle_[0].translation_.num, 0.05f);
-				ImGui::DragFloat3("Rotate", worldTransformTriangle_[0].rotation_.num, 0.05f);
-				ImGui::DragFloat2("Scale", worldTransformTriangle_[0].scale_.num, 0.05f);
-				ImGui::ColorEdit4("", triangleMaterial_[0].num, 0);
-				ImGui::TreePop();
-			}
-		}
-		if (isTriangleDraw2_ == true) {
-			if (ImGui::TreeNode("Triangle2")) {
-				ImGui::DragFloat3("Translate", worldTransformTriangle_[1].translation_.num, 0.05f);
-				ImGui::DragFloat3("Rotate", worldTransformTriangle_[1].rotation_.num, 0.05f);
-				ImGui::DragFloat2("Scale", worldTransformTriangle_[1].scale_.num, 0.05f);
-				ImGui::ColorEdit4("", triangleMaterial_[1].num, 0);
-				ImGui::TreePop();
-			}
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("Sphere")) {//球体
-		if (ImGui::Button("DrawSphere")) {
-			if (isSphereDraw_ == false) {
-				isSphereDraw_ = true;
-			}
-			else {
-				isSphereDraw_ = false;
-			}
-		}
-		ImGui::DragFloat3("Translate", worldTransformSphere_.translation_.num, 0.05f);
-		ImGui::DragFloat3("Rotate", worldTransformSphere_.rotation_.num, 0.05f);
-		ImGui::DragFloat3("Scale", worldTransformSphere_.scale_.num, 0.05f);
-		ImGui::ColorEdit4("", sphereMaterial_.num, 0);
-		ImGui::SliderInt("ChangeTexture", &texture_, 0, 1);
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("Sprite")) {//スプライト
-		if (ImGui::Button("DrawSprite")) {
-			if (isSpriteDraw_ == false) {
-				isSpriteDraw_ = true;
-			}
-			else {
-				isSpriteDraw_ = false;
-			}
-		}
-		ImGui::DragFloat2("Translate", spriteTransform_.translate.num, 0.05f);
-		ImGui::DragFloat3("Rotate", spriteTransform_.rotate.num, 0.05f);
-		ImGui::DragFloat2("Scale", spriteTransform_.scale.num, 0.05f);
-		ImGui::ColorEdit4("", spriteMaterial_.num, 0);
-		ImGui::DragFloat2("uvScale", SpriteuvTransform_.scale.num, 0.1f);
-		ImGui::DragFloat3("uvTranslate", SpriteuvTransform_.translate.num, 0.1f);
-		ImGui::DragFloat("uvRotate", &SpriteuvTransform_.rotate.num[2], 0.1f);
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("Model")) {//objモデル
-		if (ImGui::Button("DrawModel")) {
-			if (isModelDraw_ == false) {
-				isModelDraw_ = true;
-			}
-			else {
-				isModelDraw_ = false;
-			}
-		}
-		ImGui::DragFloat3("Translate", worldTransformModel_.translation_.num, 0.05f);
-		ImGui::DragFloat3("Rotate", worldTransformModel_.rotation_.num, 0.05f);
-		ImGui::DragFloat3("Scale", worldTransformModel_.scale_.num, 0.05f);
-		ImGui::TreePop();
-	}
-
 	ImGui::Text("%f", ImGui::GetIO().Framerate);
-
 	ImGui::End();
 }
 
@@ -205,20 +134,11 @@ void GamePlayScene::Draw() {
 #pragma region 3Dオブジェクト描画
 	CJEngine_->PreDraw3D();
 
-	if (isTriangleDraw1_) {//Triangle描画
-		triangle_[0]->Draw(worldTransformTriangle_[0], viewProjection_, triangleMaterial_[0], uvResourceNum_);
-	}
-	if (isTriangleDraw2_) {//Triangle描画
-		triangle_[1]->Draw(worldTransformTriangle_[1], viewProjection_, triangleMaterial_[1], uvResourceNum_);
-	}
-
-	if (isSphereDraw_) {
-		sphere_->Draw(worldTransformSphere_, viewProjection_, sphereMaterial_, texture_);
-	}
-
-	if (isModelDraw_) {
-		model_->Draw(worldTransformModel_, viewProjection_, modelMaterial_);
-	}
+	skyDome_->Draw(viewProjection_);
+	player_->Draw(viewProjection_);
+	groundmanager_->Draw(viewProjection_);
+	goal_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
 #pragma endregion
 
 #pragma region パーティクル描画
@@ -230,9 +150,7 @@ void GamePlayScene::Draw() {
 #pragma region 前景スプライト描画
 	CJEngine_->PreDraw2D();
 
-	if (isSpriteDraw_) {//Sprite描画
-		sprite_->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
-	}
+
 #pragma endregion
 }
 

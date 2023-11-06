@@ -105,6 +105,8 @@ bool IsCollision(const AABB& aabb, const StructSphere& sphere);
 
 bool IsCollision(const OBB& obb, const StructSphere& sphere);
 
+bool IsCollision(const AABB& aabb1, const AABB& aabb2);
+
 //Vector2の計算
 Vector2 Add(const Vector2& v1, const Vector2& v2);
 Vector2 Subtruct(const Vector2& v1, const Vector2& v2);
