@@ -34,10 +34,10 @@ private:
 	WorldTransform worldTransformTriangle_[2];
 	Vector4 triangleMaterial_[2];
 
-	std::unique_ptr <CreateSprite> sprite_;
-	Transform spriteTransform_;
-	Transform SpriteuvTransform_;
-	Vector4 spriteMaterial_;
+	std::unique_ptr <CreateSprite> sprite_[2];
+	Transform spriteTransform_[2];
+	Transform SpriteuvTransform_[2];
+	Vector4 spriteMaterial_[2];
 
 	std::unique_ptr <CreateSphere> sphere_;
 	WorldTransform worldTransformSphere_;
@@ -61,9 +61,8 @@ private:
 
 	int texture_;
 
-	bool isTriangleDraw1_;
-	bool isTriangleDraw2_;
-	int isSphereDraw_;
-	int isSpriteDraw_;
-	int isModelDraw_;
+	bool isTriangleDraw_[2];
+	bool isSphereDraw_;
+	bool isSpriteDraw_[2];
+	bool isModelDraw_;
 };

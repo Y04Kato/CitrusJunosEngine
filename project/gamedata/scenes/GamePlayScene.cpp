@@ -18,27 +18,28 @@ void GamePlayScene::Initialize() {
 		triangle_[i]->Initialize();
 		worldTransformTriangle_[i].Initialize();
 		triangleMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
+		isTriangleDraw_[i] = false;
 	}
 
 	worldTransformTriangle_[1].rotation_.num[1] = 0.7f;
 
-	isTriangleDraw1_ = false;
-	isTriangleDraw2_ = false;
-
 	//スプライト
-	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	SpriteuvTransform_ = {
-		{1.0f,1.0f,1.0f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,0.0f},
-	};
-	sprite_ = std::make_unique <CreateSprite>();
-	sprite_->Initialize(Vector2{ 100.0f,100.0f }, uvResourceNum_, false, false);
-	//sprite_->SetTextureLTSize(Vector2{ 0.0f,0.0f }, Vector2{ 100.0f,100.0f });
-	sprite_->SetTextureInitialSize();
+	for (int i = 0; i < 2; i++) {
+		spriteMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
+		spriteTransform_[i] = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+		SpriteuvTransform_[i] = {
+			{1.0f,1.0f,1.0f},
+			{0.0f,0.0f,0.0f},
+			{0.0f,0.0f,0.0f},
+		};
+		sprite_[i] = std::make_unique <CreateSprite>();
+		sprite_[i]->Initialize(Vector2{ 100.0f,100.0f }, uvResourceNum_, false, false);
 
-	isSpriteDraw_ = false;
+		isSpriteDraw_[i] = false;
+	}
+	sprite_[0]->SetTextureLTSize(Vector2{ 0.0f,0.0f }, Vector2{ 50.0f,50.0f });
+	sprite_[0]->SetAnchor(Vector2{ 0.5f,0.5f });
+	sprite_[1]->SetTextureInitialSize();
 
 	//球体
 	sphere_ = std::make_unique <CreateSphere>();
@@ -112,22 +113,22 @@ void GamePlayScene::Update() {
 	ImGui::Text("GamePlayScene");
 	if (ImGui::TreeNode("Triangle")) {//三角形
 		if (ImGui::Button("DrawTriangle1")) {
-			if (isTriangleDraw1_ == false) {
-				isTriangleDraw1_ = true;
+			if (isTriangleDraw_[0] == false) {
+				isTriangleDraw_[0] = true;
 			}
 			else {
-				isTriangleDraw1_ = false;
+				isTriangleDraw_[0] = false;
 			}
 		}
 		if (ImGui::Button("DrawTriangle2")) {
-			if (isTriangleDraw2_ == false) {
-				isTriangleDraw2_ = true;
+			if (isTriangleDraw_[1] == false) {
+				isTriangleDraw_[1] = true;
 			}
 			else {
-				isTriangleDraw2_ = false;
+				isTriangleDraw_[1] = false;
 			}
 		}
-		if (isTriangleDraw1_ == true) {
+		if (isTriangleDraw_[0] == true) {
 			if (ImGui::TreeNode("Triangle1")) {
 				ImGui::DragFloat3("Translate", worldTransformTriangle_[0].translation_.num, 0.05f);
 				ImGui::DragFloat3("Rotate", worldTransformTriangle_[0].rotation_.num, 0.05f);
@@ -136,7 +137,7 @@ void GamePlayScene::Update() {
 				ImGui::TreePop();
 			}
 		}
-		if (isTriangleDraw2_ == true) {
+		if (isTriangleDraw_[1] == true) {
 			if (ImGui::TreeNode("Triangle2")) {
 				ImGui::DragFloat3("Translate", worldTransformTriangle_[1].translation_.num, 0.05f);
 				ImGui::DragFloat3("Rotate", worldTransformTriangle_[1].rotation_.num, 0.05f);
@@ -164,21 +165,46 @@ void GamePlayScene::Update() {
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Sprite")) {//スプライト
-		if (ImGui::Button("DrawSprite")) {
-			if (isSpriteDraw_ == false) {
-				isSpriteDraw_ = true;
+		if (ImGui::Button("DrawSprite1")) {
+			if (isSpriteDraw_[0] == false) {
+				isSpriteDraw_[0] = true;
 			}
 			else {
-				isSpriteDraw_ = false;
+				isSpriteDraw_[0] = false;
 			}
 		}
-		ImGui::DragFloat2("Translate", spriteTransform_.translate.num, 0.05f);
-		ImGui::DragFloat3("Rotate", spriteTransform_.rotate.num, 0.05f);
-		ImGui::DragFloat2("Scale", spriteTransform_.scale.num, 0.05f);
-		ImGui::ColorEdit4("", spriteMaterial_.num, 0);
-		ImGui::DragFloat2("uvScale", SpriteuvTransform_.scale.num, 0.1f);
-		ImGui::DragFloat3("uvTranslate", SpriteuvTransform_.translate.num, 0.1f);
-		ImGui::DragFloat("uvRotate", &SpriteuvTransform_.rotate.num[2], 0.1f);
+		if (ImGui::Button("DrawSprite2")) {
+			if (isSpriteDraw_[1] == false) {
+				isSpriteDraw_[1] = true;
+			}
+			else {
+				isSpriteDraw_[1] = false;
+			}
+		}
+		if (isSpriteDraw_[0] == true) {
+			if (ImGui::TreeNode("Sprite1")) {
+				ImGui::DragFloat2("Translate", spriteTransform_[0].translate.num, 0.05f);
+				ImGui::DragFloat3("Rotate", spriteTransform_[0].rotate.num, 0.05f);
+				ImGui::DragFloat2("Scale", spriteTransform_[0].scale.num, 0.05f);
+				ImGui::ColorEdit4("", spriteMaterial_[0].num, 0);
+				ImGui::DragFloat2("uvScale", SpriteuvTransform_[0].scale.num, 0.1f);
+				ImGui::DragFloat3("uvTranslate", SpriteuvTransform_[0].translate.num, 0.1f);
+				ImGui::DragFloat("uvRotate", &SpriteuvTransform_[0].rotate.num[2], 0.1f);
+				ImGui::TreePop();
+			}
+		}
+		if (isSpriteDraw_[1] == true) {
+			if (ImGui::TreeNode("Sprite2")) {
+				ImGui::DragFloat2("Translate", spriteTransform_[1].translate.num, 0.05f);
+				ImGui::DragFloat3("Rotate", spriteTransform_[1].rotate.num, 0.05f);
+				ImGui::DragFloat2("Scale", spriteTransform_[1].scale.num, 0.05f);
+				ImGui::ColorEdit4("", spriteMaterial_[1].num, 0);
+				ImGui::DragFloat2("uvScale", SpriteuvTransform_[1].scale.num, 0.1f);
+				ImGui::DragFloat3("uvTranslate", SpriteuvTransform_[1].translate.num, 0.1f);
+				ImGui::DragFloat("uvRotate", &SpriteuvTransform_[1].rotate.num[2], 0.1f);
+				ImGui::TreePop();
+			}
+		}
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Model")) {//objモデル
@@ -205,10 +231,10 @@ void GamePlayScene::Draw() {
 #pragma region 3Dオブジェクト描画
 	CJEngine_->PreDraw3D();
 
-	if (isTriangleDraw1_) {//Triangle描画
+	if (isTriangleDraw_[0]) {//Triangle描画
 		triangle_[0]->Draw(worldTransformTriangle_[0], viewProjection_, triangleMaterial_[0], uvResourceNum_);
 	}
-	if (isTriangleDraw2_) {//Triangle描画
+	if (isTriangleDraw_[1]) {//Triangle描画
 		triangle_[1]->Draw(worldTransformTriangle_[1], viewProjection_, triangleMaterial_[1], uvResourceNum_);
 	}
 
@@ -230,9 +256,12 @@ void GamePlayScene::Draw() {
 #pragma region 前景スプライト描画
 	CJEngine_->PreDraw2D();
 
-	if (isSpriteDraw_) {//Sprite描画
-		sprite_->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+	for (int i = 0; i < 2; i++) {
+		if (isSpriteDraw_[i]) {//Sprite描画
+			sprite_[i]->Draw(spriteTransform_[i], SpriteuvTransform_[i], spriteMaterial_[i]);
+		}
 	}
+
 #pragma endregion
 }
 
