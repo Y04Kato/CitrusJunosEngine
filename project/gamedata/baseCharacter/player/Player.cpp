@@ -79,6 +79,10 @@ void Player::Update() {
 		behaviorRequest_ = Behavior::kAttack;
 	}
 
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+		behaviorRequest_ = Behavior::kDash;
+	}
+
 	if (behaviorRequest_) {
 		behavior_ = behaviorRequest_.value();
 
@@ -90,6 +94,9 @@ void Player::Update() {
 
 		case Player::Behavior::kAttack:
 			BehaviorAttackInitialize();
+			break;
+		case Player::Behavior::kDash:
+			BehaviorDashInitialize();
 			break;
 		}
 
@@ -104,9 +111,12 @@ void Player::Update() {
 	case Player::Behavior::kAttack:
 		BehaviorAttackUpdate();
 		break;
+	case Player::Behavior::kDash:
+		BehaviorDashUpdate();
+		break;
 	}
 
-	
+
 
 	ImGui::Begin("Player");
 	ImGui::SliderFloat("Head Translation", &worldTransformHead_.translation_.num[0], -5.0f, 5.0f);
@@ -115,6 +125,7 @@ void Player::Update() {
 	ImGui::SliderInt("FloatingCycle", (int*)&floatingCycle_, 0, 240);
 	ImGui::SliderFloat("FloatingAmplitude", &floatingAmplitude_, -1.0f, 1.0f);
 	ImGui::Text("Attack : X");
+	ImGui::Text("Dash : A");
 	ImGui::End();
 
 	ImGui::Begin("player2");
@@ -136,7 +147,9 @@ void Player::Update() {
 
 	obb_.center = worldTransformWeapon_.GetWorldPos();
 	GetOrientations(MakeRotateXYZMatrix(worldTransformWeapon_.rotation_), obb_.orientation);
-	obb_.size = worldTransformWeapon_.scale_;
+	obb_.size.num[0] = worldTransformWeapon_.scale_.num[0] * 2;
+	obb_.size.num[1] = worldTransformWeapon_.scale_.num[1] * 3;
+	obb_.size.num[2] = worldTransformWeapon_.scale_.num[2];
 
 	worldTransformBase_.UpdateMatrix();
 	worldTransformBody_.UpdateMatrix();
@@ -199,6 +212,8 @@ void Player::BehaviorRootInitialize() {
 }
 
 void Player::BehaviorRootUpdate() {
+	isAttack = false;
+
 	XINPUT_STATE joystate;
 
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
@@ -213,8 +228,10 @@ void Player::BehaviorRootUpdate() {
 
 		worldTransformBody_.translation_ = Add(move, worldTransformBody_.translation_);
 
-		worldTransformBody_.rotation_.num[1] = std::atan2(move.num[0], move.num[2]);
+		angle = std::atan2(move.num[0], move.num[2]);
 	}
+
+	worldTransformBody_.rotation_.num[1] = LerpShortAngle(worldTransformBody_.rotation_.num[1], angle, 0.2f);
 
 	UpdateFloatingGimmick();
 }
@@ -240,10 +257,42 @@ void Player::BehaviorAttackUpdate() {
 		worldTransformWeapon_.rotation_.num[0] += 0.1f;
 	}
 	else {
+		isAttack = true;
 		behaviorRequest_ = Behavior::kRoot;
 	}
 
 	animationFrame_++;
+}
+
+void Player::BehaviorDashInitialize() {
+	workDash_.dashParameter_ = 0;
+}
+
+void Player::BehaviorDashUpdate() {
+	XINPUT_STATE joystate;
+
+	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
+		const float kCharacterSpeed = 1.8f;
+		Vector3 move = {
+			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
+			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
+		move = Multiply(kCharacterSpeed, Normalize(move));
+
+		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+		move = TransformNormal(move, rotateMatrix);
+
+		worldTransformBody_.translation_ = Add(move, worldTransformBody_.translation_);
+
+		angle = std::atan2(move.num[0], move.num[2]);
+	}
+
+	worldTransformBody_.rotation_.num[1] = LerpShortAngle(worldTransformBody_.rotation_.num[1], angle, 0.2f);
+
+	const uint32_t behaviorDashTime = 10;
+
+	if (++workDash_.dashParameter_ >= behaviorDashTime) {
+		behaviorRequest_ = Behavior::kRoot;
+	}
 }
 
 void Player::ApplyGlobalVariables() {

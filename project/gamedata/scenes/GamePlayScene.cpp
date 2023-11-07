@@ -112,8 +112,10 @@ void GamePlayScene::Update() {
 		}
 	}
 
-	if (IsCollision(player_->GetOBB(),enemy_->GetStructSphere())) {
-		enemy_->isDead = true;
+	if (player_->GetIsAttack() == true) {
+		if (IsCollision(player_->GetOBB(), enemy_->GetStructSphere())) {
+			enemy_->isDead = true;
+		}
 	}
 
 	collisionManager_->ClearColliders();

@@ -540,6 +540,32 @@ Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t){
 	return s * ((std::sinf((1.0f - t) * theta) / std::sinf(theta)) * a + (std::sinf(t * theta) / std::sinf(theta)) * b);
 }
 
+float Lerp(float a, float b, float t) {
+	return a + b * t;
+}
+
+float LerpShortAngle(float a, float b, float t){
+	//角度差分を求める
+	float diff = b - a;
+	diff = std::fmod(diff, 2 * (float)std::numbers::pi);
+	if (diff < 2 * -(float)std::numbers::pi) {
+		diff += 2 * (float)std::numbers::pi;
+	}
+	else if (diff >= 2 * (float)std::numbers::pi) {
+		diff -= 2 * (float)std::numbers::pi;
+	}
+
+	diff = std::fmod(diff, 2 * (float)std::numbers::pi);
+	if (diff < -(float)std::numbers::pi) {
+		diff += 2 * (float)std::numbers::pi;
+	}
+	else if (diff >= (float)std::numbers::pi) {
+		diff -= 2 * (float)std::numbers::pi;
+	}
+
+	return Lerp(a, diff, t);
+}
+
 Vector3 GetXAxis(const Matrix4x4& m) {
 	return { m.m[0][0],m.m[0][1],m.m[0][2] };
 }

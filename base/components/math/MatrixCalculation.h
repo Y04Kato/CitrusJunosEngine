@@ -3,6 +3,7 @@
 #include "Vector.h"
 #include <assert.h>
 #include <cmath>
+#include <numbers>
 #include <algorithm>
 
 float Length(const Vector3& v);
@@ -120,3 +121,6 @@ Vector3 Multiply(float scalar, const Vector3& v);
 Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
+
+float Lerp(float a, float b, float t);
+float LerpShortAngle(float a, float b, float t);

@@ -33,6 +33,9 @@ public:
 	void BehaviorAttackInitialize();
 	void BehaviorAttackUpdate();
 
+	void BehaviorDashInitialize();
+	void BehaviorDashUpdate();
+
 	void ApplyGlobalVariables();
 
 	void SetParent(const WorldTransform* parent);
@@ -47,6 +50,8 @@ public:
 	void IsCollision(const WorldTransform& worldtransform);
 	void DeleteParent();
 	void SetObjectPos(const WorldTransform& worldtransform) { objectPos_ = worldtransform; }
+
+	bool GetIsAttack() { return isAttack; }
 	
 	OBB GetOBB() { return obb_; }
 
@@ -75,7 +80,7 @@ private:
 
 	float floatingAmplitude_ = 0.3f;
 
-	enum class Behavior { kRoot, kAttack };
+	enum class Behavior { kRoot, kAttack, kDash};
 
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
@@ -87,5 +92,16 @@ private:
 	WorldTransform objectPos_;
 
 	OBB obb_;
+
+	bool isAttack = false;
+
+	float angle;
+
+	struct WorkDash {
+		uint32_t dashParameter_ = 0;
+	};
+
+	WorkDash workDash_;
+
 };
 
