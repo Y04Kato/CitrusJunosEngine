@@ -9,7 +9,7 @@
 
 class CreateParticle {
 public:
-	void Initialize(const Vector2& size_);
+	void Initialize(const Vector2& size);
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material, uint32_t textureIndex);
 	void Finalize();
 
@@ -25,7 +25,7 @@ private:
 	TextureManager* textureManager_;
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
-	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResourceSprite_;
+	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource_;
 	VertexData* vertexData_;
 
 	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource_;
@@ -38,6 +38,10 @@ private:
 	uint32_t* indexData_;
 
 	Vector2 size_;
+
+	DirectionalLights* directionalLights_;
+	DirectionalLight* directionalLight_;
+	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
 };
 
 

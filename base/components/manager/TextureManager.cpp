@@ -1,4 +1,5 @@
 #include "TextureManager.h"
+#include "WorldTransform.h"
 
 void TextureManager::Initialize(){
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -107,6 +108,10 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUDescriptorHandle(Microsoft::WR
 	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorheap->GetGPUDescriptorHandleForHeapStart();
 	handleGPU.ptr += (descriptorSize * index);
 	return handleGPU;
+}
+
+void TextureManager::SetTextureIndex(uint32_t textureIndex) {
+	textureIndex_ = textureIndex;
 }
 
 [[nodiscard]]

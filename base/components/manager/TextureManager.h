@@ -12,7 +12,7 @@ public:
 	static const int maxtex = 256;
 	const D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(uint32_t textureHandle);
 
-	uint32_t Load(const std::string& filePath);
+	uint32_t Load(const std::string& filePath); 
 
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_[maxtex];
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_[maxtex];
@@ -21,6 +21,10 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> descriptorheap, uint32_t descriptorSize, uint32_t index);
 
 	Microsoft::WRL::ComPtr <ID3D12Resource> GetTextureBuffer(uint32_t index)const { return textureResource_[index].Get(); }
+
+	uint32_t GetTextureIndex() { return textureIndex_; }
+	void SetTextureIndex(uint32_t textureIndex);
+
 private:
 	DirectXCommon* dxCommon_;
 	Microsoft::WRL::ComPtr<ID3D12Resource>intermediateResource_[maxtex];
