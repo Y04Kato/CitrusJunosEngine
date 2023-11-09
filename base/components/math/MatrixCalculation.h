@@ -9,6 +9,8 @@
 float Length(const Vector3& v);
 float Dot(const Vector3& v1, const Vector3& v2);
 
+float LengthQuaternion(const Quaternion& q);
+
 //演算子オーバーロード
 Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2);
 Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2);
@@ -108,6 +110,37 @@ bool IsCollision(const OBB& obb, const StructSphere& sphere);
 
 bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 
+Vector4 MakeQuaternion(Vector3 axis, float radian);
+
+Quaternion createQuaternion(float Radian, Vector3 axis);
+
+//クォータニオンからオイラー角への変換
+Vector3 quaternionToEulerAngles(const Quaternion& quat);
+
+Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate);
+
+Matrix4x4 quaternionToMatrix(const Quaternion& quat);
+
+Vector3 matrixToEulerAngles(const Matrix4x4 mat);
+
+Quaternion Normalize(const Quaternion& q);
+
+Vector3 extractEulerAnglesFromRotationMatrix(const Matrix4x4& rotationMatrix);
+
+Vector3 GetRightVectorFromModelMatrix(const Matrix4x4& modelMatrix);
+
+Vector3 GetUpVectorFromModelMatrix(const Matrix4x4& modelMatrix);
+
+Vector3 GetFrontVectorFromModelMatrix(const Matrix4x4& modelMatrix);
+
+Vector3 rotateVectorAndQuaternion(const Quaternion& q, const Vector3& v);
+
+Quaternion Multiply(const Quaternion& q1, const Quaternion& q2);
+
+bool CompereQuaternion(const Quaternion& q1, const Quaternion& q2);
+
+bool CompereVector3(const Vector3& q1, const Vector3& q2);
+
 //Vector2の計算
 Vector2 Add(const Vector2& v1, const Vector2& v2);
 Vector2 Subtruct(const Vector2& v1, const Vector2& v2);
@@ -122,5 +155,12 @@ Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
+Quaternion Lerp(float t, const Quaternion& s, const Quaternion& e);
+Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e);
+
 float Lerp(float a, float b, float t);
 float LerpShortAngle(float a, float b, float t);
+
+Quaternion operator+(const Quaternion& q1, const Quaternion& q2);
+Quaternion operator-(const Quaternion& q1, const Quaternion& q2);
+Quaternion operator*(const float t, const Quaternion& q);

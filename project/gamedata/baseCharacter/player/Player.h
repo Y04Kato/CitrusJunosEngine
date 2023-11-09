@@ -102,6 +102,11 @@ private:
 	};
 
 	WorkDash workDash_;
+	
+	Quaternion quaternion_;
+	Vector3 preMove_;
+	Quaternion preQuaternion_;
 
+	bool isMove_ = false;
 };
 

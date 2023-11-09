@@ -71,3 +71,7 @@ struct StructSphere {
 	Vector3 center;
 	float radius;
 };
+
+struct Quaternion {
+	float w, x, y, z;
+};

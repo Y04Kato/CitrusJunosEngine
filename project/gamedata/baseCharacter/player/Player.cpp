@@ -42,6 +42,9 @@ void Player::Initialize(const std::vector<Model*>& models) {
 
 	input_ = Input::GetInstance();
 
+	quaternion_ = createQuaternion(0.0f, { 0.0f,1.0f,0.0f });
+	quaternion_ = Normalize(quaternion_);
+
 	worldTransformBody_.translation_ = { 0.0f,0.1f,0.0f };
 
 	isHit_ = false;
@@ -151,8 +154,8 @@ void Player::Update() {
 	obb_.size.num[1] = worldTransformWeapon_.scale_.num[1] * 3;
 	obb_.size.num[2] = worldTransformWeapon_.scale_.num[2];
 
-	worldTransformBase_.UpdateMatrix();
-	worldTransformBody_.UpdateMatrix();
+	worldTransformBase_.UpdateQuaternionMatrix();
+	worldTransformBody_.UpdateQuaternionMatrix();
 	worldTransformHead_.UpdateMatrix();
 	worldTransformL_arm_.UpdateMatrix();
 	worldTransformR_arm_.UpdateMatrix();
@@ -221,17 +224,45 @@ void Player::BehaviorRootUpdate() {
 		Vector3 move = {
 			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
 			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
-		move = Multiply(kCharacterSpeed, Normalize(move));
+		if (CompereVector3(move, { 0.0f,0.0f,0.0f })) {
+			isMove_ = false;
+		}
+		else {
+			isMove_ = true;
+		}
+		if (isMove_ == true) {
+			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+			move = TransformNormal(move, rotateMatrix);
+			move = Multiply(kCharacterSpeed, Normalize(move));
+			worldTransformBody_.translation_ = Add(move, worldTransformBody_.translation_);
+			preQuaternion_ = quaternion_;
 
-		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-		move = TransformNormal(move, rotateMatrix);
+			Vector3 newPos = Subtruct(Add(worldTransformBody_.translation_, move), worldTransformBody_.translation_);
+			Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));;
 
-		worldTransformBody_.translation_ = Add(move, worldTransformBody_.translation_);
 
-		angle = std::atan2(move.num[0], move.num[2]);
+			Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+			Direction = Normalize(Direction);
+			Vector3 newDirection = Normalize(newPos);
+			float cosin = Dot(Direction, newDirection);
+
+			Quaternion newquaternion_;
+			newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+			quaternion_ = Normalize(quaternion_);
+			newquaternion_ = Normalize(newquaternion_);
+
+			quaternion_ = Multiply(quaternion_, newquaternion_);
+			if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(move, preMove_)) {
+				cosin = -1.0f;
+				quaternion_ = Multiply(quaternion_, createQuaternion(cosin, { 0.0f,1.0f,0.0f }));
+			}
+		
+			preMove_ = move;
+		}
+		worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
 	}
-
-	worldTransformBody_.rotation_.num[1] = LerpShortAngle(worldTransformBody_.rotation_.num[1], angle, 0.2f);
 
 	UpdateFloatingGimmick();
 }
@@ -245,16 +276,16 @@ void Player::BehaviorAttackInitialize() {
 
 void Player::BehaviorAttackUpdate() {
 	if (animationFrame_ < 12) {
-		worldTransformL_arm_.rotation_.num[0] -= 0.05f;
-		worldTransformR_arm_.rotation_.num[0] -= 0.0f;
+		worldTransformL_arm_.rotation_.num[0] += 0.05f;
+		worldTransformR_arm_.rotation_.num[0] += 0.0f;
 
-		worldTransformWeapon_.rotation_.num[0] -= 0.05f;
+		worldTransformWeapon_.rotation_.num[0] += 0.05f;
 	}
-	else if (worldTransformWeapon_.rotation_.num[0] <= 2.0f * (float)M_PI / 4) {
-		worldTransformL_arm_.rotation_.num[0] += 0.1f;
-		worldTransformR_arm_.rotation_.num[0] += 0.1f;
+	else if (worldTransformWeapon_.rotation_.num[0] >= -2.0f * (float)M_PI / 4) {
+		worldTransformL_arm_.rotation_.num[0] -= 0.1f;
+		worldTransformR_arm_.rotation_.num[0] -= 0.1f;
 
-		worldTransformWeapon_.rotation_.num[0] += 0.1f;
+		worldTransformWeapon_.rotation_.num[0] -= 0.1f;
 	}
 	else {
 		isAttack = true;
@@ -276,17 +307,46 @@ void Player::BehaviorDashUpdate() {
 		Vector3 move = {
 			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
 			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
-		move = Multiply(kCharacterSpeed, Normalize(move));
+		if (CompereVector3(move, { 0.0f,0.0f,0.0f })) {
+			isMove_ = false;
+		}
+		else {
+			isMove_ = true;
+		}
+		if (isMove_ == true) {
+			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+			move = TransformNormal(move, rotateMatrix);
+			move = Multiply(kCharacterSpeed, Normalize(move));
+			worldTransformBody_.translation_ = Add(move, worldTransformBody_.translation_);
+			preQuaternion_ = quaternion_;
 
-		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-		move = TransformNormal(move, rotateMatrix);
+			Vector3 newPos = Subtruct(Add(worldTransformBody_.translation_, move), worldTransformBody_.translation_);
+			Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));;
 
-		worldTransformBody_.translation_ = Add(move, worldTransformBody_.translation_);
 
-		angle = std::atan2(move.num[0], move.num[2]);
+			Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+			Direction = Normalize(Direction);
+			Vector3 newDirection = Normalize(newPos);
+			float cosin = Dot(Direction, newDirection);
+
+			Quaternion newquaternion_;
+			newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+			quaternion_ = Normalize(quaternion_);
+			newquaternion_ = Normalize(newquaternion_);
+
+			quaternion_ = Multiply(quaternion_, newquaternion_);
+			if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(move, preMove_)) {
+				cosin = -1.0f;
+				quaternion_ = Multiply(quaternion_, createQuaternion(cosin, { 0.0f,1.0f,0.0f }));
+			}
+
+			preMove_ = move;
+		}
+
+		worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
 	}
-
-	worldTransformBody_.rotation_.num[1] = LerpShortAngle(worldTransformBody_.rotation_.num[1], angle, 0.2f);
 
 	const uint32_t behaviorDashTime = 10;
 

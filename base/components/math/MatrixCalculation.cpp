@@ -16,6 +16,10 @@ float Dot(const Vector3& v1, const Vector3& v2) {
 	return v1.num[0] * v2.num[0] + v1.num[1] * v2.num[1] + v1.num[2] * v2.num[2];
 }
 
+float LengthQuaternion(const Quaternion& q) {
+	return sqrtf(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
+}
+
 //X軸回転行列
 Matrix4x4 MakeRotateXMatrix(float radian) {
 	Matrix4x4 result;
@@ -566,6 +570,33 @@ float LerpShortAngle(float a, float b, float t){
 	return Lerp(a, diff, t);
 }
 
+Quaternion Lerp(float t, const Quaternion& s, const Quaternion& e) {
+	Quaternion result;
+	Quaternion es = e - s;
+	result = s + t * es;
+	return result;
+}
+
+Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e) {
+	Quaternion ns = Normalize(s);
+	Quaternion ne = Normalize(e);
+	float dot = ns.x * ne.x + ns.y * ne.y + ns.z * ne.z + ns.w * ne.w;
+	if (std::abs(dot) > 0.999f) {
+		return Lerp(t, ns, ne);
+	}
+	if (dot < 0.0f) {
+		ns = -1 * ns;
+		dot *= -1.0f;
+	}
+
+	float theta = std::acos(dot);
+	float sinTheta = std::sin(theta);
+	float t1 = std::sin((1.0f - t) * theta) / sinTheta;
+	float t2 = std::sin(t * theta) / sinTheta;
+
+	return (t1 * ns + t2 * ne);
+}
+
 Vector3 GetXAxis(const Matrix4x4& m) {
 	return { m.m[0][0],m.m[0][1],m.m[0][2] };
 }
@@ -634,6 +665,269 @@ bool IsCollision(const AABB& aabb1, const AABB& aabb2) {
 	}
 }
 
+Quaternion createQuaternion(float Radian, Vector3 axis){
+	Quaternion quat;
+	float halfAngle = Radian * 0.5f;
+	float sinHalfAngle = sin(halfAngle);
+
+	quat.w = cos(halfAngle);
+	quat.x = axis.num[0] * sinHalfAngle;
+	quat.y = axis.num[1] * sinHalfAngle;
+	quat.z = axis.num[2] * sinHalfAngle;
+
+	return quat;
+}
+
+Vector3 quaternionToEulerAngles(const Quaternion& quat){
+	Vector3 euler;
+	//X軸回転
+	euler.num[0] = atan2(2 * (quat.y * quat.z + quat.w * quat.x), quat.w * quat.w - quat.x * quat.x - quat.y * quat.y + quat.z * quat.z);
+
+	//Y軸回転
+	euler.num[1] = asin(2 * (quat.x * quat.z - quat.w * quat.y));
+
+	//Z軸の回転
+	euler.num[2] = atan2(2 * (quat.x * quat.y + quat.w * quat.z), quat.w * quat.w + quat.x * quat.x - quat.y * quat.y - quat.z * quat.z);
+
+	return euler;
+}
+Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate) {
+	Matrix4x4 result;
+
+	result.m[0][0] = scale.num[0] * rotate.m[0][0];
+	result.m[0][1] = scale.num[0] * rotate.m[0][1];
+	result.m[0][2] = scale.num[0] * rotate.m[0][2];
+	result.m[0][3] = 0;
+	result.m[1][0] = scale.num[0] * rotate.m[1][0];
+	result.m[1][1] = scale.num[0] * rotate.m[1][1];
+	result.m[1][2] = scale.num[0] * rotate.m[1][2];
+	result.m[1][3] = 0;
+	result.m[2][0] = scale.num[1] * rotate.m[2][0];
+	result.m[2][1] = scale.num[1] * rotate.m[2][1];
+	result.m[2][2] = scale.num[1] * rotate.m[2][2];
+	result.m[2][3] = 0;
+	result.m[3][0] = translate.num[0];
+	result.m[3][1] = translate.num[1];
+	result.m[3][2] = translate.num[2];
+	result.m[3][3] = 1;
+	return result;
+}
+
+Vector4 MakeQuaternion(Vector3 axis, float radian) {
+	Vector4 quaternion;
+	//動かす角度の半分のsin,cos
+	float halfSin, halfCos;
+	float normal;
+
+	quaternion = { 0,0,0,0 };
+	//回転軸の長さを求める
+	//λ2x+λ2y+λ2z=1方向が重要、ノルムを１に統一
+	normal = axis.num[0] * axis.num[0] + axis.num[1] * axis.num[1] + axis.num[2] * axis.num[2];
+	if (normal <= 0.0f) return quaternion;
+
+	//方向ベクトルへ（単位ベクトル：長さ1）
+	//ノルムは１で固定
+	//sqrtfは平方根
+	normal = 1.0f / sqrtf(normal);
+	axis.num[0] = axis.num[0] * normal;
+	axis.num[1] = axis.num[1] * normal;
+	axis.num[2] = axis.num[2] * normal;
+
+	//四次元ベクトル (λ.x*sinθ/2,λ.y*sinθ/2,λ.z*sinθ/2,cosθ/2)
+	halfSin = sinf(radian * 0.5f);
+	halfCos = cosf(radian * 0.5f);
+
+	quaternion.num[3] = halfCos;
+	quaternion.num[0] = axis.num[0] * halfSin;
+	quaternion.num[1] = axis.num[1] * halfSin;
+	quaternion.num[2] = axis.num[2] * halfSin;
+
+	return quaternion;
+}
+Quaternion createQuaternion(float Radian, Vector3 axis);
+
+//クォータニオンからオイラー角への変換
+Vector3 quaternionToEulerAngles(const Quaternion& quat);
+
+Matrix4x4 quaternionToMatrix(const Quaternion& quat) {
+	Matrix4x4 result;
+	float xx = quat.x * quat.x;
+	float xy = quat.x * quat.y;
+	float xz = quat.x * quat.z;
+	float xw = quat.x * quat.w;
+
+	float yy = quat.y * quat.y;
+	float yz = quat.y * quat.z;
+	float yw = quat.y * quat.w;
+
+	float zz = quat.z * quat.z;
+	float zw = quat.z * quat.w;
+
+	result.m[0][0] = 1.0f - 2.0f * (yy + zz);
+	result.m[0][1] = 2.0f * (xy - zw);
+	result.m[0][2] = 2.0f * (xz + yw);
+	result.m[0][3] = 0.0f;
+
+	result.m[1][0] = 2.0f * (xy + zw);
+	result.m[1][1] = 1.0f - 2.0f * (xx + zz);
+	result.m[1][2] = 2.0f * (yz - xw);
+	result.m[1][3] = 0.0f;
+
+	result.m[2][0] = 2.0f * (xz - yw);
+	result.m[2][1] = 2.0f * (yz + xw);
+	result.m[2][2] = 1.0f - 2.0f * (xx + yy);
+	result.m[2][3] = 0.0f;
+
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
+	return result;
+}
+
+Vector3 matrixToEulerAngles(const Matrix4x4 mat) {
+	float pitch;
+	float yaw;
+	float roll;
+	pitch = asin(-mat.m[2][0]);
+
+	if (cos(pitch) != 0.0f) {
+		roll = atan2(mat.m[2][1] / cos(pitch), mat.m[2][2] / cos(pitch));
+		yaw = atan2(mat.m[1][0] / cos(pitch), mat.m[0][0] / cos(pitch));
+	}
+	else {
+		//ジンバルロックの場合
+		yaw = 0.0f;
+		roll = atan2(-mat.m[0][1], mat.m[1][1]);
+	}
+
+	//ラジアンから度に変換
+	//yaw = yaw * 180.0f / PI;
+	//pitch = pitch * 180.0f / PI;
+	//roll = roll * 180.0f / PI;
+	return{ yaw,pitch,roll };
+}
+
+Quaternion Normalize(const Quaternion& q) {
+	float len = LengthQuaternion(q);
+	Quaternion result;
+	if (len != 0.0f) {
+		result.w = q.w / len;
+		result.x = q.x / len;
+		result.y = q.y / len;
+		result.z = q.z / len;
+		return result;
+	}
+	else {
+		return q;
+	}
+}
+
+Vector3 extractEulerAnglesFromRotationMatrix(const Matrix4x4& rotationMatrix) {
+	Vector3 eulerAngle;
+
+	//回転行列の各要素を抽出
+	float m00 = rotationMatrix.m[0][0];
+	float m01 = rotationMatrix.m[0][1];
+	float m02 = rotationMatrix.m[0][2];
+	float m10 = rotationMatrix.m[1][0];
+	float m11 = rotationMatrix.m[1][1];
+	float m12 = rotationMatrix.m[1][2];
+	float m20 = rotationMatrix.m[2][0];
+	float m21 = rotationMatrix.m[2][1];
+	float m22 = rotationMatrix.m[2][2];
+
+	//Yaw角度の計算
+	eulerAngle.num[0] = atan2(m01, m00);
+
+	//Pitch角度の計算
+	eulerAngle.num[1] = atan2(-m02, sqrt(m12 * m12 + m22 * m22));
+
+	//Roll角度の計算
+	eulerAngle.num[2] = atan2(m12, m22);
+
+	return eulerAngle;
+}
+
+Vector3 GetRightVectorFromModelMatrix(const Matrix4x4& modelMatrix) {
+	//モデル横方をXとする
+	Vector3 rightVector;
+	rightVector.num[0] = modelMatrix.m[0][0];
+	rightVector.num[1] = modelMatrix.m[1][0];
+	rightVector.num[2] = modelMatrix.m[2][0];
+
+	return rightVector;
+}
+
+Vector3 GetUpVectorFromModelMatrix(const Matrix4x4& modelMatrix) {
+	//モデル上方をYとする
+	Vector3 upVector;
+	upVector.num[0] = modelMatrix.m[0][1];
+	upVector.num[1] = modelMatrix.m[1][1];
+	upVector.num[2] = modelMatrix.m[2][1];
+
+	return upVector;
+}
+
+Vector3 GetFrontVectorFromModelMatrix(const Matrix4x4& modelMatrix) {
+	//モデル前方をZとする
+	Vector3 frontVector;
+	frontVector.num[0] = modelMatrix.m[0][2];
+	frontVector.num[1] = modelMatrix.m[1][2];
+	frontVector.num[2] = modelMatrix.m[2][2];
+
+	return frontVector;
+}
+
+Vector3 rotateVectorAndQuaternion(const Quaternion& q, const Vector3& v) {
+	// クォータニオンの回転行列を取得
+	Matrix4x4 rotationMatrix = quaternionToMatrix(q);
+
+	// ベクトルを4次元ベクトルに変換
+	float vector4[4] = { v.num[0], v.num[1], v.num[2], 1.0f };
+
+	// ベクトルを回転行列で変換
+	float rotatedVector4[4] = { 0.0f };
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			rotatedVector4[i] += rotationMatrix.m[i][j] * vector4[j];
+		}
+	}
+
+	// 3次元ベクトルに戻す
+	Vector3 rotatedVector = { rotatedVector4[0], rotatedVector4[1], rotatedVector4[2] };
+
+	return rotatedVector;
+}
+
+Quaternion Multiply(const Quaternion& q1, const Quaternion& q2) {
+	Quaternion result;
+	result.w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
+	result.x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
+	result.y = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
+	result.z = q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w;
+	return result;
+}
+
+bool CompereQuaternion(const Quaternion& q1, const Quaternion& q2) {
+	if (q1.x == q2.x && q1.y == q2.y && q1.z == q2.z && q1.w == q2.w) {
+		return true;
+	}
+	else {
+		return false;
+	}
+
+}
+bool CompereVector3(const Vector3& q1, const Vector3& q2) {
+	if (q1.num[0] == q2.num[0] && q1.num[1] == q2.num[1] && q1.num[2] == q2.num[2]) {
+		return true;
+	}
+	else {
+		return false;
+	}
+
+}
+
 Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2) { return Add(m1, m2); }
 
 Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2) { return Subtruct(m1, m2); }
@@ -657,3 +951,7 @@ Vector3 operator*(const Vector3& v, float k) { return Multiply(k, v); }
 Vector3 operator+=(Vector3& v1, Vector3& v2) { return v1 = Add(v1, v2); }
 Vector3 operator+=(Vector3& v1, const Vector3& v2) { return v1 = Add(v1, v2); }
 Vector3 operator-=(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }
+
+Quaternion operator+(const Quaternion& q1, const Quaternion& q2) {return { q1.w + q2.w,q1.x + q2.x, q1.y + q2.y, q1.z + q2.z };}
+Quaternion operator-(const Quaternion& q1, const Quaternion& q2) {return { q1.w - q2.w,q1.x - q2.x, q1.y - q2.y, q1.z - q2.z };}
+Quaternion operator*(const float t, const Quaternion& q) {return { q.w * t,q.x * t,q.y * t,q.z * t };}
