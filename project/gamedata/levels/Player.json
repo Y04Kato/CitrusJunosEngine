@@ -1,5 +1,6 @@
 {
     "Player": {
+        "DashSpeed": 1.5,
         "Head Translation": [
             0.0,
             2.200000047683716,

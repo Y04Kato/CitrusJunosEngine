@@ -63,6 +63,7 @@ void Player::Initialize(const std::vector<Model*>& models) {
 	globalVariables->AddItem(groupName, "Weapon Translation", worldTransformWeapon_.translation_);
 	globalVariables->AddItem(groupName, "floatingCycle", floatingCycle_);
 	globalVariables->AddItem(groupName, "floatingAmplitude", floatingAmplitude_);
+	globalVariables->AddItem(groupName, "DashSpeed", dashSpeed);
 }
 
 void Player::Update() {
@@ -303,7 +304,7 @@ void Player::BehaviorDashUpdate() {
 	XINPUT_STATE joystate;
 
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-		const float kCharacterSpeed = 1.8f;
+		const float kCharacterSpeed = dashSpeed;
 		Vector3 move = {
 			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
 			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
@@ -370,6 +371,8 @@ void Player::ApplyGlobalVariables() {
 
 	floatingCycle_ = globalVariables->GetIntValue(groupName, "floatingCycle");
 	floatingAmplitude_ = globalVariables->GetFloatValue(groupName, "floatingAmplitude");
+	
+	dashSpeed = globalVariables->GetFloatValue(groupName, "DashSpeed");
 }
 
 void Player::IsFallStart() {

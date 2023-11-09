@@ -108,5 +108,7 @@ private:
 	Quaternion preQuaternion_;
 
 	bool isMove_ = false;
+
+	float dashSpeed = 1.8f;
 };
 

@@ -14,6 +14,8 @@ public:
 
 	void Reset();
 
+	void ApplyGlobalVariables();
+
 private:
 	ViewProjection viewprojection_;
 	const WorldTransform* target_ = nullptr;
@@ -22,4 +24,6 @@ private:
 	Vector3 interTarget_ = {};
 
 	float destinationAngleY_ = 0.0f;
+
+	float latency = 0.1f;;
 };
