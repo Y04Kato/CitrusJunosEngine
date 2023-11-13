@@ -17,6 +17,7 @@ struct WorldTransform {
 	Vector3 rotation_ = { 0.0f, 0.0f, 0.0f };
 	// ローカル座標
 	Vector3 translation_ = { 0.0f, 0.0f, 0.0f };
+	Quaternion quaternion_;
 	// ローカル → ワールド変換行列
 	Matrix4x4 matWorld_;
 	// 親となるワールド変換へのポインタ
@@ -40,6 +41,8 @@ struct WorldTransform {
 	void TransferMatrix();
 
 	void UpdateMatrix();
+
+	void  UpdateQuaternionMatrix();
 
 	Vector3 GetWorldPos();
 };

@@ -9,12 +9,21 @@ public:
 
 	void Update();
 
-	void SetTarget(const WorldTransform* target) { target_ = target; }
+	void SetTarget(const WorldTransform* target);
 	const ViewProjection& GetViewProjection() { return viewprojection_; }
+
+	void Reset();
+
+	void ApplyGlobalVariables();
 
 private:
 	ViewProjection viewprojection_;
 	const WorldTransform* target_ = nullptr;
 	Input* input_ = nullptr;
 
+	Vector3 interTarget_ = {};
+
+	float destinationAngleY_ = 0.0f;
+
+	float latency = 0.0f;
 };
