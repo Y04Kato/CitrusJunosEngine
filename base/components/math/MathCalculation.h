@@ -1,6 +1,5 @@
 #pragma once
-#include "Matrix.h"
-#include "Vector.h"
+#include "Structure.h"
 #include <assert.h>
 #include <cmath>
 #include <numbers>

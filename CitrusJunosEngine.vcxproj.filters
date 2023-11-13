@@ -138,7 +138,7 @@
     <ClCompile Include="base\DirectXCommon.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\math\MatrixCalculation.cpp">
+    <ClCompile Include="base\components\math\MathCalculation.cpp">
       <Filter>ソース ファイル\base\components\math</Filter>
     </ClCompile>
     <ClCompile Include="base\CJEngine.cpp">
@@ -256,7 +256,7 @@
     <ClInclude Include="base\components\math\Matrix.h">
       <Filter>ヘッダー ファイル\base\components\math</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\math\MatrixCalculation.h">
+    <ClInclude Include="base\components\math\MathCalculation.h">
       <Filter>ヘッダー ファイル\base\components\math</Filter>
     </ClInclude>
     <ClInclude Include="base\CJEngine.h">
@@ -360,6 +360,9 @@
     </ClInclude>
     <ClInclude Include="base\components\2d\CreateParticle.h">
       <Filter>ヘッダー ファイル\base\components\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\math\Structure.h">
+      <Filter>ヘッダー ファイル\base\components\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

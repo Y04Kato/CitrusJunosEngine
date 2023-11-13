@@ -1,4 +1,4 @@
-#include "MatrixCalculation.h"
+#include "MathCalculation.h"
 
 Vector3 Normalize(const Vector3& v) {
 	float len = Length(v);

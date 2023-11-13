@@ -2,7 +2,7 @@
 #include "DirectXCommon.h"
 #include "Vector.h"
 #include "CreateTriangle.h"
-#include "MatrixCalculation.h"
+#include "MathCalculation.h"
 
 #include "DirectXTex/d3dx12.h"
 #include <dxcapi.h>

@@ -115,7 +115,7 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="base\components\input\Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="base\components\math\MatrixCalculation.cpp" />
+    <ClCompile Include="base\components\math\MathCalculation.cpp" />
     <ClCompile Include="base\CJEngine.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="project\gamedata\scenes\GameClearScene.cpp" />
@@ -169,6 +169,7 @@
     <ClInclude Include="base\components\3d\WorldTransform.h" />
     <ClInclude Include="base\components\audio\Audio.h" />
     <ClInclude Include="base\components\manager\TextureManager.h" />
+    <ClInclude Include="base\components\math\Structure.h" />
     <ClInclude Include="base\components\utilities\convertString\ConvertString.h" />
     <ClInclude Include="base\components\utilities\directionalLight\DirectionalLight.h" />
     <ClInclude Include="base\components\utilities\followCamera\FollowCamera.h" />
@@ -188,7 +189,7 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="base\components\input\Input.h" />
     <ClInclude Include="base\components\math\Matrix.h" />
-    <ClInclude Include="base\components\math\MatrixCalculation.h">
+    <ClInclude Include="base\components\math\MathCalculation.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
     <ClInclude Include="base\CJEngine.h" />
