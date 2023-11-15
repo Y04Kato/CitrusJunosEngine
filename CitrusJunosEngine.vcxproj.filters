@@ -364,6 +364,9 @@
     <ClInclude Include="base\components\math\Structure.h">
       <Filter>ヘッダー ファイル\base\components\math</Filter>
     </ClInclude>
+    <ClInclude Include="project\gamedata\resources\resource.h">
+      <Filter>ヘッダー ファイル\project\gamedata\resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -380,5 +383,15 @@
     <None Include="project\gamedata\resources\shaders\Particle.hlsli">
       <Filter>ヘッダー ファイル\project\gamedata\resources\shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CitrusJunosEngine.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="project\gamedata\resources\Kaede.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>

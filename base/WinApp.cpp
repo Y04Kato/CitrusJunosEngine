@@ -1,6 +1,8 @@
 #include "WinApp.h"
 #pragma comment(lib, "winmm.lib")
 
+#include "resources/resource.h"
+
 //ウィンドウプロシージャ
 LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
@@ -28,6 +30,8 @@ void WinApp::CreateWindowView(const wchar_t* title, int32_t clientWidth, int32_t
 	wc_.hInstance = GetModuleHandle(nullptr);
 	//カーソル
 	wc_.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	//アイコン
+	wc_.hIcon = LoadIcon(wc_.hInstance, MAKEINTRESOURCE(IDI_ICON1));
 
 	//ウィンドウクラス登録
 	RegisterClass(&wc_);

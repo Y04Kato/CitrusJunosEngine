@@ -206,6 +206,7 @@
     <ClInclude Include="base\components\utilities\collisionManager\CollisionConfig.h" />
     <ClInclude Include="base\components\utilities\collisionManager\CollisionManager.h" />
     <ClInclude Include="base\components\utilities\globalVariables\GlobalVariables.h" />
+    <ClInclude Include="project\gamedata\resources\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -219,6 +220,12 @@
     <None Include="project\gamedata\resources\shaders\Object2d.hlsli" />
     <None Include="project\gamedata\resources\shaders\Object3d.hlsli" />
     <None Include="project\gamedata\resources\shaders\Particle.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CitrusJunosEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="project\gamedata\resources\Kaede.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
