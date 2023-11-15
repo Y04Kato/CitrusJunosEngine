@@ -59,7 +59,7 @@ IDxcBlob* CitrusJunosEngine::CompileShader(const std::wstring& filePath, const w
 
 void CitrusJunosEngine::Initialize(const wchar_t* title, int32_t width, int32_t height) {
 	dxCommon_ = DirectXCommon::GetInstance();
-	dxCommon_->Initialization(title, WinApp::GetInstance()->kClientWidth, WinApp::GetInstance()->kClientHeight);
+	dxCommon_->Initialization(title, width, height);
 
 	InitializeDxcCompiler();
 

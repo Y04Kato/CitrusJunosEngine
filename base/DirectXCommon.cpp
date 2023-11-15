@@ -12,29 +12,36 @@ void DirectXCommon::Initialization(const wchar_t* title, int32_t backBufferWidth
 	backBufferWidth_ = backBufferWidth;
 	backBufferHeight_ = backBufferHeight;
 
-	// FPS固定初期化
+	//FPS固定初期化
 	InitializeFixFPS();
 	
-	WinApp::GetInstance()->CreateWindowView(title, 1280, 720);
+	WinApp::GetInstance()->CreateWindowView(title, backBufferWidth_, backBufferHeight_);
 
-	// DXGIデバイス初期化
+	//DXGIデバイス初期化
 	InitializeDXGIDevice();
 
-	// コマンド関連初期化
+	//コマンド関連初期化
 	InitializeCommand();
 
-	// スワップチェーンの生成
+	//スワップチェーンの生成
 	CreateSwapChain();
 
-	// レンダーターゲット生成
+	//レンダーターゲット生成
 	CreateFinalRenderTargets();
 
-	// フェンス生成
+	//フェンス生成
 	CreateFence();
 
+	//深度設定
 	CreateDepthStensil();
 
+	//ImGui
 	ImGuiInitialize();
+
+	//テキスト関係
+	InitializeTextFactory();
+	CreateTextRenderTargets();
+	CreateTextVertex();
 }
 
 void DirectXCommon::ImGuiInitialize() {
@@ -427,4 +434,86 @@ void::DirectXCommon::UpdateFixFPS() {
 	//現在の時間を取得する
 	reference_ = std::chrono::steady_clock::now();
 
+}
+
+void DirectXCommon::InitializeTextFactory() {
+	//ID2D1Factoryインターフェイスの作成
+	hr_ = D2D1CreateFactory(
+		D2D1_FACTORY_TYPE_SINGLE_THREADED,
+		pD2DFactory_.GetAddressOf()
+	);
+
+	//IDWriteFactoryインターフェイスの作成
+	if (SUCCEEDED(hr_)){
+		hr_ = DWriteCreateFactory(
+			DWRITE_FACTORY_TYPE_SHARED,
+			__uuidof(IDWriteFactory),
+			reinterpret_cast<IUnknown**>(pDWriteFactory_.GetAddressOf())
+		);
+	}
+
+	//テキスト文字列の初期化及び、長さの格納
+	wszText_ = L"Hello World using  DirectWrite!";
+	cTextLength_ = (UINT32)wcslen(wszText_);
+
+	//IDWriteTextFormatインターフェイスオブジェクトの作成
+	//使用されるフォント、太さ、ストレッチ、スタイル、ロケールを指定する
+	if (SUCCEEDED(hr_)){
+		hr_ = pDWriteFactory_->CreateTextFormat(
+			L"Gabriola",//Font Name
+			NULL,//Font collection (NULL sets it to use the system font collection).
+			DWRITE_FONT_WEIGHT_REGULAR,
+			DWRITE_FONT_STYLE_NORMAL,
+			DWRITE_FONT_STRETCH_NORMAL,
+			72.0f,
+			L"en-us",
+			&pTextFormat_
+		);
+	}
+
+	//テキストを水平、垂直方向に中央揃え
+	if (SUCCEEDED(hr_)){
+		hr_ = pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	}
+
+	if (SUCCEEDED(hr_)){
+		hr_ = pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	}
+
+}
+
+void DirectXCommon::CreateTextRenderTargets() {
+	RECT rc;
+	GetClientRect(WinApp::GetInstance()->GetHwnd(), &rc);
+
+	D2D1_SIZE_U size = D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top);
+
+	if (!pRT_){
+		//Direct2D RenderTargetの生成
+		hr_ = pD2DFactory_->CreateHwndRenderTarget(
+			D2D1::RenderTargetProperties(),
+			D2D1::HwndRenderTargetProperties(
+				WinApp::GetInstance()->GetHwnd(),
+				size
+			),
+			&pRT_
+		);
+
+		//ブラシ設定、今回は純色で塗りつぶし
+		if (SUCCEEDED(hr_)){
+			hr_ = pRT_->CreateSolidColorBrush(
+				D2D1::ColorF(D2D1::ColorF::Black),
+				&pBlackBrush_
+			);
+		}
+	}
+}
+
+void DirectXCommon::CreateTextVertex() {
+	/*D2D1_RECT_F layoutRect = D2D1::RectF(
+		static_cast<FLOAT>(rc.left) / dpiScaleX_,
+		static_cast<FLOAT>(rc.top) / dpiScaleY_,
+		static_cast<FLOAT>(rc.right - rc.left) / dpiScaleX_,
+		static_cast<FLOAT>(rc.bottom - rc.top) / dpiScaleY_
+	);*/
 }

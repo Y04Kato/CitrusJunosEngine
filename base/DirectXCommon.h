@@ -6,8 +6,11 @@
 #include <cstdlib>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
-#include<wrl.h>
-#include<chrono>
+#include <wrl.h>
+#include <chrono>
+
+#include <dwrite.h>
+#pragma comment(lib, "Dwrite.lib")
 
 class DirectXCommon {
 public:
@@ -94,6 +97,17 @@ private:
 
 	std::chrono::steady_clock::time_point reference_;
 
+	//テキスト関連
+	Microsoft::WRL::ComPtr <IDWriteFactory> pDWriteFactory_;
+	Microsoft::WRL::ComPtr <IDWriteTextFormat> pTextFormat_;
+
+	const wchar_t* wszText_;
+	UINT32 cTextLength_;
+
+	Microsoft::WRL::ComPtr <ID2D1Factory> pD2DFactory_;
+	Microsoft::WRL::ComPtr <ID2D1HwndRenderTarget> pRT_;
+	Microsoft::WRL::ComPtr <ID2D1SolidColorBrush> pBlackBrush_;
+
 private:
 	void InitializeDXGIDevice();
 
@@ -112,6 +126,10 @@ private:
 	void InitializeFixFPS();
 
 	void UpdateFixFPS();
+
+	void InitializeTextFactory();
+	void CreateTextRenderTargets();
+	void CreateTextVertex();
 };
 
 struct D3DResourceLeakChecker {
