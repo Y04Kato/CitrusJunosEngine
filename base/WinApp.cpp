@@ -25,7 +25,7 @@ void WinApp::CreateWindowView(const wchar_t* title, int32_t clientWidth, int32_t
 	//ウィンドウプロシージャ
 	wc_.lpfnWndProc = WindowProc;
 	//クラス名
-	wc_.lpszClassName = L"CG2WindowClass";
+	wc_.lpszClassName = L"CJEngineWindowClass";
 	//インスタンスハンドル
 	wc_.hInstance = GetModuleHandle(nullptr);
 	//カーソル
