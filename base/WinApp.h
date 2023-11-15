@@ -1,8 +1,15 @@
 #pragma once
 #include <Windows.h>
 #include <cstdint>
+
 #include <d3d12.h>
 #pragma comment(lib,"d3d12.lib")
+#include <d3d11on12.h>
+#include <d3d11.h>
+#pragma comment(lib, "d3d11.lib")
+
+#include <d2d1.h>
+#pragma comment(lib, "d2d1.lib")
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_dx12.h>
