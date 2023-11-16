@@ -367,9 +367,6 @@
     <ClInclude Include="project\gamedata\resources\resource.h">
       <Filter>ヘッダー ファイル\project\gamedata\resources</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
