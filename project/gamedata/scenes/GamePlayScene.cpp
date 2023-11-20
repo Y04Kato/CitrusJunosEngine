@@ -41,6 +41,10 @@ void GamePlayScene::Initialize() {
 	sprite_[0]->SetAnchor(Vector2{ 0.5f,0.5f });
 	sprite_[1]->SetTextureInitialSize();
 
+	//パーティクル
+	particle_ = std::make_unique <CreateParticle>();
+	particle_->Initialize(10);
+
 	//球体
 	sphere_ = std::make_unique <CreateSphere>();
 	sphere_->Initialize();
@@ -221,10 +225,23 @@ void GamePlayScene::Update() {
 		ImGui::DragFloat3("Scale", worldTransformModel_.scale_.num, 0.05f);
 		ImGui::TreePop();
 	}
+	if (ImGui::TreeNode("Particle")) {//パーティクル
+		if (ImGui::Button("DrawParticle")) {
+			if (isModelDraw_ == false) {
+				isParticleDraw_ = true;
+			}
+			else {
+				isParticleDraw_ = false;
+			}
+		}
+		ImGui::TreePop();
+	}
 
 	ImGui::Text("%f", ImGui::GetIO().Framerate);
 
 	ImGui::End();
+
+	particle_->Update();
 }
 
 void GamePlayScene::Draw() {
@@ -250,6 +267,9 @@ void GamePlayScene::Draw() {
 #pragma region パーティクル描画
 	CJEngine_->PreDrawParticle();
 
+	if (isParticleDraw_) {
+		particle_->Draw(viewProjection_);
+	}
 
 #pragma endregion
 

@@ -7,6 +7,7 @@
 #include "components/manager/TextureManager.h"
 #include "components/2d/CreateTriangle.h"
 #include "components/2d/CreateSprite.h"
+#include "components/2d/CreateParticle.h"
 #include "components/3d/CreateSphere.h"
 #include "components/3d/Model.h"
 #include "components/debugcamera/DebugCamera.h"
@@ -39,6 +40,8 @@ private:
 	Transform SpriteuvTransform_[2];
 	Vector4 spriteMaterial_[2];
 
+	std::unique_ptr<CreateParticle> particle_;
+
 	std::unique_ptr <CreateSphere> sphere_;
 	WorldTransform worldTransformSphere_;
 	Vector4 sphereMaterial_;
@@ -65,4 +68,5 @@ private:
 	bool isSphereDraw_;
 	bool isSpriteDraw_[2];
 	bool isModelDraw_;
+	bool isParticleDraw_;
 };

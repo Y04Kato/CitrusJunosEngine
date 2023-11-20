@@ -25,6 +25,10 @@ public:
 	uint32_t GetTextureIndex() { return textureIndex_; }
 	void SetTextureIndex(uint32_t textureIndex);
 
+	uint32_t GetDescriptorSizeSRV() { return descriptorSizeSRV; }
+	uint32_t GetDescriptorSizeRTV() { return descriptorSizeRTV; }
+	uint32_t GetDescriptorSizeDSV() { return descriptorSizeDSV; }
+
 private:
 	DirectXCommon* dxCommon_;
 	Microsoft::WRL::ComPtr<ID3D12Resource>intermediateResource_[maxtex];

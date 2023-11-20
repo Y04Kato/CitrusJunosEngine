@@ -14,7 +14,7 @@ void DirectXCommon::Initialization(const wchar_t* title, int32_t backBufferWidth
 
 	//FPS固定初期化
 	InitializeFixFPS();
-	
+
 	WinApp::GetInstance()->CreateWindowView(title, backBufferWidth_, backBufferHeight_);
 
 	//DXGIデバイス初期化
@@ -385,7 +385,7 @@ void DirectXCommon::CreateDepthStensil() {
 	dsvdesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
 
 	device_->CreateDepthStencilView(depthStencilResource_.Get(),
-		&dsvdesc, 
+		&dsvdesc,
 		dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
 }
 
@@ -413,7 +413,7 @@ void::DirectXCommon::InitializeFixFPS() {
 void::DirectXCommon::UpdateFixFPS() {
 	// 1/60秒ぴったりの時間
 	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
-	
+
 	// 1/60秒よりわずかに短い時間
 	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
 
@@ -444,7 +444,7 @@ void DirectXCommon::InitializeTextFactory() {
 	);
 
 	//IDWriteFactoryインターフェイスの作成
-	if (SUCCEEDED(hr_)){
+	if (SUCCEEDED(hr_)) {
 		hr_ = DWriteCreateFactory(
 			DWRITE_FACTORY_TYPE_SHARED,
 			__uuidof(IDWriteFactory),
@@ -458,7 +458,7 @@ void DirectXCommon::InitializeTextFactory() {
 
 	//IDWriteTextFormatインターフェイスオブジェクトの作成
 	//使用されるフォント、太さ、ストレッチ、スタイル、ロケールを指定する
-	if (SUCCEEDED(hr_)){
+	if (SUCCEEDED(hr_)) {
 		hr_ = pDWriteFactory_->CreateTextFormat(
 			L"Gabriola",//Font Name
 			NULL,//Font collection (NULL sets it to use the system font collection).
@@ -472,11 +472,11 @@ void DirectXCommon::InitializeTextFactory() {
 	}
 
 	//テキストを水平、垂直方向に中央揃え
-	if (SUCCEEDED(hr_)){
+	if (SUCCEEDED(hr_)) {
 		hr_ = pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	}
 
-	if (SUCCEEDED(hr_)){
+	if (SUCCEEDED(hr_)) {
 		hr_ = pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	}
 
@@ -488,7 +488,7 @@ void DirectXCommon::CreateTextRenderTargets() {
 
 	D2D1_SIZE_U size = D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top);
 
-	if (!pRT_){
+	if (!pRT_) {
 		//Direct2D RenderTargetの生成
 		hr_ = pD2DFactory_->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
@@ -500,7 +500,7 @@ void DirectXCommon::CreateTextRenderTargets() {
 		);
 
 		//ブラシ設定、今回は純色で塗りつぶし
-		if (SUCCEEDED(hr_)){
+		if (SUCCEEDED(hr_)) {
 			hr_ = pRT_->CreateSolidColorBrush(
 				D2D1::ColorF(D2D1::ColorF::Black),
 				&pBlackBrush_
@@ -516,4 +516,36 @@ void DirectXCommon::CreateTextVertex() {
 		static_cast<FLOAT>(rc.right - rc.left) / dpiScaleX_,
 		static_cast<FLOAT>(rc.bottom - rc.top) / dpiScaleY_
 	);*/
+}
+
+void DirectXCommon::InitializeDXGIDevice11() {
+	//D3D11On12Deviceの生成
+	UINT d3d11DeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+	D2D1_FACTORY_OPTIONS d2dFactoryOptions = {};
+
+	d2dFactoryOptions.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+	d3d11DeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+
+	Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+		debugController->EnableDebugLayer();
+	}
+
+	Microsoft::WRL::ComPtr<IDXGIFactory4> factory;
+	CreateDXGIFactory1(IID_PPV_ARGS(&factory));
+
+	/*if (m_useWarpDevice){
+		Microsoft::WRL::ComPtr<IDXGIAdapter> warpAdapter;
+		factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter));
+
+		D3D12CreateDevice(warpAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device_));
+	}
+	else{
+		Microsoft::WRL::ComPtr<IDXGIAdapter1> hardwareAdapter;
+		GetHardwareAdapter(factory.Get(), &hardwareAdapter);
+
+		D3D12CreateDevice(hardwareAdapter.Get(),D3D_FEATURE_LEVEL_11_0,IID_PPV_ARGS(&device_));
+	}*/
+
+
 }

@@ -9,9 +9,10 @@
 
 class CreateParticle {
 public:
-	void Initialize(const Vector2& size);
-	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material, uint32_t textureIndex);
+	void Initialize(int kNumInstance);
+	void Update();
 	void Finalize();
+	void Draw(const ViewProjection& viewProjection);
 
 private:
 	void SettingVertex();
@@ -20,28 +21,36 @@ private:
 
 	void SettingDictionalLight();
 
+	uint32_t LoadBuffer(int kNumInstance);
+	void LoadBuffer(uint32_t index, int kNumInstance);
+
 private:
-	DirectXCommon* dxCommon_;
-	TextureManager* textureManager_;
+	DirectXCommon* dxCommon_ = nullptr;
+	TextureManager* textureManager_ = nullptr;
+
+	ModelData modelData_;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource>vertexResource_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource>instancingResource_ = nullptr;
+	VertexData* vertexData_ = nullptr;
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
-	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource_;
-	VertexData* vertexData_;
 
-	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource_;
-	Material* materialData_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
+	Material* materialData_ = nullptr;
 
-	CitrusJunosEngine* CJEngine_;
-
-	Microsoft::WRL::ComPtr <ID3D12Resource> indexResource_;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
-	uint32_t* indexData_;
-
-	Vector2 size_;
+	//パーティクルの数
+	int kNumInstance_;
+	//パーティクルの数と同じ数のTransform
+	std::vector<WorldTransform> transform_;
 
 	DirectionalLights* directionalLights_;
 	DirectionalLight* directionalLight_;
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
+
+	uint32_t bufferIndex_;
+	ConstBufferDataWorldTransform* instancingData_ = nullptr;
+
 };
 
 

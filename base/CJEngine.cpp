@@ -503,7 +503,7 @@ void CitrusJunosEngine::CreateInputlayOutParticle() {
 
 void CitrusJunosEngine::RasterizerStateParticle() {
 	//裏面（時計回り）を表示しない
-	rasterizerDescParticle_.CullMode = D3D12_CULL_MODE_BACK;
+	rasterizerDescParticle_.CullMode = D3D12_CULL_MODE_NONE;
 	//三角形の中を塗りつぶす
 	rasterizerDescParticle_.FillMode = D3D12_FILL_MODE_SOLID;
 

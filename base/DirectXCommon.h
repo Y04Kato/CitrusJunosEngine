@@ -130,6 +130,8 @@ private:
 	void InitializeTextFactory();
 	void CreateTextRenderTargets();
 	void CreateTextVertex();
+
+	void InitializeDXGIDevice11();
 };
 
 struct D3DResourceLeakChecker {

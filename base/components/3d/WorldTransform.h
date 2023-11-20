@@ -27,10 +27,11 @@ struct WorldTransform {
 	/// 初期化
 	/// </summary>
 	void Initialize();
+	void Initialize(uint32_t numInstance);
 	/// <summary>
 	/// 定数バッファ生成
 	/// </summary>
-	void CreateConstBuffer();
+	void CreateConstBuffer(uint32_t numInstance);
 	/// <summary>
 	/// マッピングする
 	/// </summary>

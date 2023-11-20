@@ -2,13 +2,20 @@
 
 void WorldTransform::Initialize(){
 	matWorld_ = MakeIdentity4x4();
-	CreateConstBuffer();
+	CreateConstBuffer(1);
 	Map();
 	TransferMatrix();
 }
 
-void WorldTransform::CreateConstBuffer(){
-	constBuff_ = DirectXCommon::GetInstance()->CreateBufferResource(DirectXCommon::GetInstance()->GetDevice().Get(), sizeof(ConstBufferDataWorldTransform));
+void WorldTransform::Initialize(uint32_t numInstance) {
+	matWorld_ = MakeIdentity4x4();
+	CreateConstBuffer(numInstance);
+	Map();
+	TransferMatrix();
+}
+
+void WorldTransform::CreateConstBuffer(uint32_t numInstance){
+	constBuff_ = DirectXCommon::GetInstance()->CreateBufferResource(DirectXCommon::GetInstance()->GetDevice().Get(), sizeof(ConstBufferDataWorldTransform) * numInstance);
 
 }
 
