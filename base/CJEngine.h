@@ -31,7 +31,7 @@ class CitrusJunosEngine {
 public:
 	static CitrusJunosEngine* GetInstance();
 
-	void Initialize(const wchar_t* title, int32_t width, int32_t height);
+	void Initialize(const char* title, int32_t width, int32_t height);
 
 	void BeginFrame();
 

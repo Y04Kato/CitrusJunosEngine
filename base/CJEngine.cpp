@@ -57,9 +57,12 @@ IDxcBlob* CitrusJunosEngine::CompileShader(const std::wstring& filePath, const w
 	return shaderBlob;
 }
 
-void CitrusJunosEngine::Initialize(const wchar_t* title, int32_t width, int32_t height) {
+void CitrusJunosEngine::Initialize(const char* title, int32_t width, int32_t height) {
+	std::string titleWithEnginename = std::string(title) + " with CitrusJunosEngine ";
+	auto&& titleString = ConvertString(titleWithEnginename);
+
 	dxCommon_ = DirectXCommon::GetInstance();
-	dxCommon_->Initialization(title, width, height);
+	dxCommon_->Initialization(titleString.c_str(), width, height);
 
 	InitializeDxcCompiler();
 

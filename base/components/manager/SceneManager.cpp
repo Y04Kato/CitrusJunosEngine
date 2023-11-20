@@ -8,7 +8,7 @@ void SceneManager::Run() {
 
 void SceneManager::Initialize() {
 	//WindowTitle
-	const wchar_t kWindowTitle[] = { L"LE2A_05_カトウ_CJEngine" };
+	const char kWindowTitle[] = "LE2A_05_カトウ";
 	//COMの初期化
 	CoInitializeEx(0, COINIT_MULTITHREADED);
 	//Engine
