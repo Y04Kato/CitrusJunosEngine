@@ -240,8 +240,9 @@ void GamePlayScene::Update() {
 	ImGui::Text("%f", ImGui::GetIO().Framerate);
 
 	ImGui::End();
-
-	particle_->Update();
+	if (isParticleDraw_) {
+		particle_->Update();
+	}
 }
 
 void GamePlayScene::Draw() {

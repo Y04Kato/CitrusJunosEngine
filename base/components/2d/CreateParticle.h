@@ -5,7 +5,8 @@
 #include "ViewProjection.h"
 #include "TextureManager.h"
 #include "DirectionalLight.h"
-#include<wrl.h>
+#include <wrl.h>
+#include <random>
 
 class CreateParticle {
 public:
@@ -13,6 +14,9 @@ public:
 	void Update();
 	void Finalize();
 	void Draw(const ViewProjection& viewProjection);
+
+	Particle MakeNewParticle(std::mt19937& randomEngine);
+	std::list<Particle> Emission(const Emitter& emitter, std::mt19937& randomEngine);
 
 private:
 	void SettingVertex();
@@ -40,17 +44,24 @@ private:
 	Material* materialData_ = nullptr;
 
 	//パーティクルの数
-	int kNumInstance_;
+	int kNumMaxInstance_;
+	int numInstance_;
 	//パーティクルの数と同じ数のTransform
-	std::vector<WorldTransform> transform_;
+	std::list<Particle> particles_;
+	//Δtime 現在は60FPS固定
+	const float kDeltaTime = 1.0f / 60.0f;
 
 	DirectionalLights* directionalLights_;
 	DirectionalLight* directionalLight_;
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
 
 	uint32_t bufferIndex_;
-	ConstBufferDataWorldTransform* instancingData_ = nullptr;
+	ParticleForGPU* instancingData_ = nullptr;
 
+	bool isBillBoard_ = true;
+
+	std::random_device seedGenerator;
+
+	Emitter testEmitter_{};
 };
-
 

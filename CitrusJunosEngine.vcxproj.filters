@@ -85,18 +85,6 @@
     <Filter Include="ソース ファイル\base\components">
       <UniqueIdentifier>{0120f907-b8d0-4aae-9084-fb79116f8eec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\base\components\utilities">
-      <UniqueIdentifier>{83c76349-a7a9-4454-86ce-4cf1ccddb0c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\base\components\utilities\collisionManager">
-      <UniqueIdentifier>{31740d80-bf27-4132-a868-5242ec0fd5ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\base\components\utilities\globalVariables">
-      <UniqueIdentifier>{828ff179-8a2b-47c9-b4da-3335baaba556}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\base\components\utilities\convertString">
-      <UniqueIdentifier>{ff2b8ea4-d371-4126-a44b-dd4be9a416dc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\base\components\math">
       <UniqueIdentifier>{46634567-37d8-454e-bc45-3c1562c4e3bd}</UniqueIdentifier>
     </Filter>
@@ -121,11 +109,23 @@
     <Filter Include="ヘッダー ファイル\base\components\utilities\followCamera">
       <UniqueIdentifier>{61ec65fc-b430-48b0-b4ae-5b651180c194}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\base\components\utilities\followCamera">
-      <UniqueIdentifier>{9d5e802a-597b-41d6-acec-fe4bc4a2dfc9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\base\components\utilities\directionalLight">
       <UniqueIdentifier>{d99d984d-b179-4154-8cd1-2f898ea4a4b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\utilities">
+      <UniqueIdentifier>{83c76349-a7a9-4454-86ce-4cf1ccddb0c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\utilities\collisionManager">
+      <UniqueIdentifier>{31740d80-bf27-4132-a868-5242ec0fd5ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\utilities\globalVariables">
+      <UniqueIdentifier>{828ff179-8a2b-47c9-b4da-3335baaba556}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\utilities\convertString">
+      <UniqueIdentifier>{ff2b8ea4-d371-4126-a44b-dd4be9a416dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\utilities\followCamera">
+      <UniqueIdentifier>{9d5e802a-597b-41d6-acec-fe4bc4a2dfc9}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\base\components\utilities\directionalLight">
       <UniqueIdentifier>{dfd6f818-eb7c-42f7-a209-09796a12d3d6}</UniqueIdentifier>

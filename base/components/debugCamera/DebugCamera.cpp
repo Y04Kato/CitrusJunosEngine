@@ -29,8 +29,8 @@ void DebugCamera::Update() {
 	}
 
 	ImGui::Begin("DebugCamera");
-	ImGui::SliderFloat3("rotation", viewProjection_.rotation_.num, -20, 20);
-	ImGui::SliderFloat3("translation", viewProjection_.translation_.num, -20, 20);
+	ImGui::DragFloat3("rotation", viewProjection_.rotation_.num,0.1f);
+	ImGui::DragFloat3("translation", viewProjection_.translation_.num, 0.1f);
 	ImGui::End();
 #endif
 	viewProjection_.UpdateMatrix();

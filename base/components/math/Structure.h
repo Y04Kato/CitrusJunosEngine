@@ -62,7 +62,26 @@ struct StructSphere {
 	float radius;
 };
 
-
 struct Quaternion {
 	float w, x, y, z;
+};
+
+struct Particle {
+	Transform transform;
+	Vector3 velocity;
+	Vector4 color;
+	float lifeTime;
+	float currentTime;
+};
+
+struct ParticleForGPU {
+	Matrix4x4 matWorld; // ローカル→ワールド変換行列
+	Vector4 color;
+};
+
+struct Emitter {
+	Transform transform;
+	uint32_t count;//発生数
+	float frequency;//発生頻度
+	float frequencyTime;//頻度用時刻
 };

@@ -130,6 +130,7 @@ private:
 	void CreateInputlayOutParticle();
 	void RasterizerStateParticle();
 	void InitializePSOParticle();
+	void SettingDepthParticle();
 	Microsoft::WRL::ComPtr <ID3DBlob> signatureBlobParticle_;
 	Microsoft::WRL::ComPtr <ID3DBlob> errorBlobParticle_;
 	Microsoft::WRL::ComPtr <ID3D12RootSignature> rootSignatureParticle_;
@@ -141,4 +142,5 @@ private:
 	D3D12_RASTERIZER_DESC rasterizerDescParticle_{};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescsParticle_[3];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDescParticle_{};
+	D3D12_DEPTH_STENCIL_DESC depthStencilDescParticle_{};
 };

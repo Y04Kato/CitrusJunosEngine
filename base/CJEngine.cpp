@@ -81,6 +81,7 @@ void CitrusJunosEngine::Initialize(const char* title, int32_t width, int32_t hei
 	RasterizerStateParticle();
 
 	SettingDepth();
+	SettingDepthParticle();
 
 	InitializePSO3D();
 	InitializePSO2D();
@@ -526,7 +527,7 @@ void CitrusJunosEngine::InitializePSOParticle() {
 		vertexShaderBlobParticle_->GetBufferSize() };//vertexShader
 	graphicsPipelineStateDesc.PS = { pixelShaderBlobParticle_->GetBufferPointer(),
 		pixelShaderBlobParticle_->GetBufferSize() };//pixcelShader
-	graphicsPipelineStateDesc.BlendState = blendDesc_[kBlendModeNormal];//BlendState
+	graphicsPipelineStateDesc.BlendState = blendDesc_[kBlendModeAdd];//BlendState
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDescParticle_;//rasterizerState
 	//書き込むRTVの情報
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
@@ -537,7 +538,7 @@ void CitrusJunosEngine::InitializePSOParticle() {
 	//どのように画面に色を打ち込むのかの設定（気にしなく良い）
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc_;
+	graphicsPipelineStateDesc.DepthStencilState = depthStencilDescParticle_;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	//実際に生成
 	graphicsPipelineStateParticle_ = nullptr;
@@ -570,6 +571,13 @@ void CitrusJunosEngine::SettingDepth() {
 	depthStencilDesc_.DepthEnable = true;//有効化
 	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;//書き込み
 	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;//比較関数、近ければ描画される
+}
+
+void CitrusJunosEngine::SettingDepthParticle() {
+	//DepthStencilStateの設定
+	depthStencilDescParticle_.DepthEnable = true;//有効化
+	depthStencilDescParticle_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;//書き込み
+	depthStencilDescParticle_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;//比較関数、近ければ描画される
 }
 
 void CitrusJunosEngine::BeginFrame() {
