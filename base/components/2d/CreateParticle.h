@@ -15,7 +15,7 @@ public:
 	void Finalize();
 	void Draw(const ViewProjection& viewProjection);
 
-	Particle MakeNewParticle(std::mt19937& randomEngine);
+	Particle MakeNewParticle(std::mt19937& randomEngine,const Transform transform);
 	std::list<Particle> Emission(const Emitter& emitter, std::mt19937& randomEngine);
 
 private:

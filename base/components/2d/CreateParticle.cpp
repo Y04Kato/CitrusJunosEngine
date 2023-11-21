@@ -38,11 +38,16 @@ void CreateParticle::Initialize(int kNumInstance) {
 
 	std::mt19937 randomEngine(seedGenerator());
 
-	for (int i = 0; i < kNumMaxInstance_; i++) {
+	/*for (int i = 0; i < kNumMaxInstance_; i++) {
 		particles_.push_back(MakeNewParticle(randomEngine));
-	}
+	}*/
 
-	testEmitter_.count = 3;
+	testEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
+	testEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
+	testEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	testEmitter_.count = 5;
+	testEmitter_.frequency = 0.5f;//0.5秒ごとに発生
+	testEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
 }
 
 void CreateParticle::Update() {
@@ -52,7 +57,14 @@ void CreateParticle::Update() {
 	if (ImGui::Button("Add Particle")) {
 		particles_.splice(particles_.end(), Emission(testEmitter_, randomEngine));
 	}
+	ImGui::DragFloat3("EmitterTranslate", testEmitter_.transform.translate.num, 0.1f);
 	ImGui::End();
+
+	testEmitter_.frequencyTime += kDeltaTime;
+	if (testEmitter_.frequency <= testEmitter_.frequencyTime) {
+		particles_.splice(particles_.end(), Emission(testEmitter_, randomEngine));
+		testEmitter_.frequencyTime -= testEmitter_.frequency;
+	}
 }
 
 void CreateParticle::Finalize() {
@@ -169,7 +181,7 @@ void CreateParticle::LoadBuffer(uint32_t index, int kNumInstance) {
 	dxCommon_->GetDevice()->CreateShaderResourceView(instancingResource_.Get(), &srvDesc, textureManager_->textureSrvHandleCPU_[index]);
 }
 
-Particle CreateParticle::MakeNewParticle(std::mt19937& randomEngine) {
+Particle CreateParticle::MakeNewParticle(std::mt19937& randomEngine, const Transform transform) {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
@@ -177,7 +189,8 @@ Particle CreateParticle::MakeNewParticle(std::mt19937& randomEngine) {
 	Particle particles;
 	particles.transform.scale = { 1.0f,1.0f,1.0f };
 	particles.transform.rotate = { 0.0f,0.0f,0.0f };
-	particles.transform.translate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+	Vector3 randomTranslate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+	particles.transform.translate = transform.translate + randomTranslate;
 	particles.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
 	particles.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
 	particles.lifeTime = distTime(randomEngine);
@@ -189,7 +202,7 @@ Particle CreateParticle::MakeNewParticle(std::mt19937& randomEngine) {
 std::list<Particle> CreateParticle::Emission(const Emitter& emitter, std::mt19937& randomEngine) {
 	std::list<Particle> particles;
 	for (uint32_t count = 0; count < emitter.count; count++) {
-		particles_.push_back(MakeNewParticle(randomEngine));
+		particles_.push_back(MakeNewParticle(randomEngine,emitter.transform));
 	}
 	return particles;
 }

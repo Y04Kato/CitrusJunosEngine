@@ -43,7 +43,7 @@ void GamePlayScene::Initialize() {
 
 	//パーティクル
 	particle_ = std::make_unique <CreateParticle>();
-	particle_->Initialize(10);
+	particle_->Initialize(100);
 
 	//球体
 	sphere_ = std::make_unique <CreateSphere>();
