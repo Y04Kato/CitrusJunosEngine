@@ -1,6 +1,6 @@
 #include "CreateParticle.h"
 
-void CreateParticle::Initialize(int kNumInstance) {
+void CreateParticle::Initialize(int kNumInstance, Emitter emitter, AccelerationField accelerationField, uint32_t textureIndex) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
 
@@ -10,10 +10,7 @@ void CreateParticle::Initialize(int kNumInstance) {
 	modelData_.vertices.push_back({ .position = {1.0f,-1.0f,0.0f,1.0f},  .texcoord = {0.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });//左上
 	modelData_.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f}, .texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//右上
 	modelData_.vertices.push_back({ .position = {-1.0f,-1.0f,0.0f,1.0f},.texcoord = {1.0f,1.0f},.normal = {0.0f,0.0f,1.0f} });//右下
-	modelData_.material.textureFilePath = "project/gamedata/resources/circle.png";
-
-	uint32_t texture = textureManager_->Load("project/gamedata/resources/circle.png");
-	modelData_.textureIndex = texture;
+	modelData_.textureIndex = textureIndex;
 
 	kNumMaxInstance_ = kNumInstance;
 	numInstance_ = 0;
@@ -35,23 +32,10 @@ void CreateParticle::Initialize(int kNumInstance) {
 	materialData_->enableLighting = false;
 	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
 	materialData_->uvTransform = MakeIdentity4x4();
-
-	std::mt19937 randomEngine(seedGenerator());
-
-	/*for (int i = 0; i < kNumMaxInstance_; i++) {
-		particles_.push_back(MakeNewParticle(randomEngine));
-	}*/
-
-	testEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
-	testEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
-	testEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
-	testEmitter_.count = 5;
-	testEmitter_.frequency = 0.5f;//0.5秒ごとに発生
-	testEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
-
-	accelerationField.acceleration = { 15.0f,0.0f,0.0f };
-	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
-	accelerationField.area.max = { 1.0f,1.0f,1.0f };
+	
+	emitter_ = emitter;
+	accelerationField_ = accelerationField;
+	
 }
 
 void CreateParticle::Update() {
@@ -59,16 +43,10 @@ void CreateParticle::Update() {
 	ImGui::Begin("Particle");
 	ImGui::Checkbox("UseBillBoard", &isBillBoard_);
 	if (ImGui::Button("Add Particle")) {
-		particles_.splice(particles_.end(), Emission(testEmitter_, randomEngine));
+		particles_.splice(particles_.end(), Emission(emitter_, randomEngine));
 	}
-	ImGui::DragFloat3("EmitterTranslate", testEmitter_.transform.translate.num, 0.1f);
+	ImGui::DragFloat3("EmitterTranslate", emitter_.transform.translate.num, 0.1f);
 	ImGui::End();
-
-	testEmitter_.frequencyTime += kDeltaTime;
-	if (testEmitter_.frequency <= testEmitter_.frequencyTime) {
-		particles_.splice(particles_.end(), Emission(testEmitter_, randomEngine));
-		testEmitter_.frequencyTime -= testEmitter_.frequency;
-	}
 }
 
 void CreateParticle::Finalize() {
@@ -76,12 +54,19 @@ void CreateParticle::Finalize() {
 }
 
 void CreateParticle::Draw(const ViewProjection& viewProjection) {
+	std::mt19937 randomEngine(seedGenerator());
 	Matrix4x4 billboardMatrix = MakeIdentity4x4();
 	if (isBillBoard_) {
 		billboardMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>) * Inverse(viewProjection.matView);
 		billboardMatrix.m[3][0] = 0.0f;
 		billboardMatrix.m[3][1] = 0.0f;
 		billboardMatrix.m[3][2] = 0.0f;
+	}
+
+	emitter_.frequencyTime += kDeltaTime;
+	if (emitter_.frequency <= emitter_.frequencyTime) {
+		particles_.splice(particles_.end(), Emission(emitter_, randomEngine));
+		emitter_.frequencyTime -= emitter_.frequency;
 	}
 
 	for (std::list<Particle>::iterator iterator = particles_.begin(); iterator != particles_.end();) {
@@ -91,8 +76,8 @@ void CreateParticle::Draw(const ViewProjection& viewProjection) {
 		}
 
 		//Fieldの適用
-		if (IsCollision(accelerationField.area, (*iterator).transform.translate)) {
-			(*iterator).velocity += accelerationField.acceleration * kDeltaTime;
+		if (IsCollision(accelerationField_.area, (*iterator).transform.translate)) {
+			(*iterator).velocity += accelerationField_.acceleration * kDeltaTime;
 		}
 
 		(*iterator).transform.translate += (*iterator).velocity * kDeltaTime;
@@ -109,10 +94,6 @@ void CreateParticle::Draw(const ViewProjection& viewProjection) {
 		}
 
 		iterator++;
-	}
-
-	for (int i = 0; i < kNumMaxInstance_; i++) {
-
 	}
 
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

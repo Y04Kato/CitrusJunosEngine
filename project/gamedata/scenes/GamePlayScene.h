@@ -41,6 +41,8 @@ private:
 	Vector4 spriteMaterial_[2];
 
 	std::unique_ptr<CreateParticle> particle_;
+	Emitter testEmitter_{};
+	AccelerationField accelerationField;
 
 	std::unique_ptr <CreateSphere> sphere_;
 	WorldTransform worldTransformSphere_;
@@ -52,6 +54,7 @@ private:
 
 	uint32_t uvResourceNum_;
 	uint32_t monsterBallResourceNum_;
+	uint32_t particleResourceNum_;
 
 	Audio* audio_;
 	SoundData soundData1_;

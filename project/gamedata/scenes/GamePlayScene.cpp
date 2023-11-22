@@ -12,6 +12,8 @@ void GamePlayScene::Initialize() {
 
 	monsterBallResourceNum_ = textureManager_->Load("project/gamedata/resources/monsterBall.png");
 
+	particleResourceNum_ = textureManager_->Load("project/gamedata/resources/circle.png");
+
 	//三角形
 	for (int i = 0; i < 2; i++) {
 		triangle_[i] = std::make_unique <CreateTriangle>();
@@ -42,8 +44,19 @@ void GamePlayScene::Initialize() {
 	sprite_[1]->SetTextureInitialSize();
 
 	//パーティクル
+	testEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
+	testEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
+	testEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	testEmitter_.count = 5;
+	testEmitter_.frequency = 0.5f;//0.5秒ごとに発生
+	testEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
+
+	accelerationField.acceleration = { 15.0f,0.0f,0.0f };
+	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
+	accelerationField.area.max = { 1.0f,1.0f,1.0f };
+
 	particle_ = std::make_unique <CreateParticle>();
-	particle_->Initialize(100);
+	particle_->Initialize(100,testEmitter_,accelerationField, particleResourceNum_);
 
 	//球体
 	sphere_ = std::make_unique <CreateSphere>();

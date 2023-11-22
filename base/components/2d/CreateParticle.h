@@ -10,7 +10,7 @@
 
 class CreateParticle {
 public:
-	void Initialize(int kNumInstance);
+	void Initialize(int kNumInstance,Emitter emitter,AccelerationField accelerationField, uint32_t textureIndex);
 	void Update();
 	void Finalize();
 	void Draw(const ViewProjection& viewProjection);
@@ -62,7 +62,7 @@ private:
 
 	std::random_device seedGenerator;
 
-	Emitter testEmitter_{};
-	AccelerationField accelerationField;
+	Emitter emitter_{};
+	AccelerationField accelerationField_;
 };
 
