@@ -160,3 +160,6 @@ float LerpShortAngle(float a, float b, float t);
 Quaternion operator+(const Quaternion& q1, const Quaternion& q2);
 Quaternion operator-(const Quaternion& q1, const Quaternion& q2);
 Quaternion operator*(const float t, const Quaternion& q);
+
+Quaternion Lerp(float t, const Quaternion& s, const Quaternion& e);
+Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e);

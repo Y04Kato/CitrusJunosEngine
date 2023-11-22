@@ -130,6 +130,42 @@
     <Filter Include="ソース ファイル\base\components\utilities\directionalLight">
       <UniqueIdentifier>{dfd6f818-eb7c-42f7-a209-09796a12d3d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\BaseCharacter">
+      <UniqueIdentifier>{0e5ac87d-cf03-4e34-8f33-0b0381d1a6a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\BaseCharacter">
+      <UniqueIdentifier>{8e95d278-a240-40e8-b128-0200c777566c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\BaseCharacter\Player">
+      <UniqueIdentifier>{20901f92-3251-446b-9d87-dbc5f8deaea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\BaseCharacter\Enemy">
+      <UniqueIdentifier>{d45c4105-54a5-436a-bde4-01b4e0876ea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\BaseCharacter\Player">
+      <UniqueIdentifier>{63598a31-e6e6-45cd-bee7-d1e23dcd8233}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\BaseCharacter\Enemy">
+      <UniqueIdentifier>{92f89390-cc6d-4342-b0cf-89e6bdfcacc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\goal">
+      <UniqueIdentifier>{983d71b1-767d-41f1-8a6e-4302b2d5282b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\ground">
+      <UniqueIdentifier>{5144b28e-3f78-45b2-9114-3146333329d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\skydome">
+      <UniqueIdentifier>{eed6643e-89c5-4ae6-a0b7-224e2d7724ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\goal">
+      <UniqueIdentifier>{399c7f7e-c152-4e18-b90f-01e030ad267b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\ground">
+      <UniqueIdentifier>{cc4814db-e430-4ce8-bbdb-c3b4164c1c89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\skydome">
+      <UniqueIdentifier>{58494d50-e50a-4845-a2aa-a14db0676c4e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -227,6 +263,30 @@
     </ClCompile>
     <ClCompile Include="base\components\2d\CreateParticle.cpp">
       <Filter>ソース ファイル\base\components\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp">
+      <Filter>ソース ファイル\project\gamedata\BaseCharacter</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp">
+      <Filter>ソース ファイル\project\gamedata\BaseCharacter\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp">
+      <Filter>ソース ファイル\project\gamedata\BaseCharacter\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\goal\Goal.cpp">
+      <Filter>ソース ファイル\project\gamedata\goal</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\ground\Ground.cpp">
+      <Filter>ソース ファイル\project\gamedata\ground</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\ground\GroundManager.cpp">
+      <Filter>ソース ファイル\project\gamedata\ground</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\ground\MovingGround.cpp">
+      <Filter>ソース ファイル\project\gamedata\ground</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\skydome\Skydome.cpp">
+      <Filter>ソース ファイル\project\gamedata\skydome</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -366,6 +426,30 @@
     </ClInclude>
     <ClInclude Include="project\gamedata\resources\resource.h">
       <Filter>ヘッダー ファイル\project\gamedata\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h">
+      <Filter>ヘッダー ファイル\project\gamedata\BaseCharacter</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h">
+      <Filter>ヘッダー ファイル\project\gamedata\BaseCharacter\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\player\Player.h">
+      <Filter>ヘッダー ファイル\project\gamedata\BaseCharacter\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\goal\Goal.h">
+      <Filter>ヘッダー ファイル\project\gamedata\goal</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\ground\Ground.h">
+      <Filter>ヘッダー ファイル\project\gamedata\ground</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\ground\GroundManager.h">
+      <Filter>ヘッダー ファイル\project\gamedata\ground</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\ground\MovingGround.h">
+      <Filter>ヘッダー ファイル\project\gamedata\ground</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\skydome\Skydome.h">
+      <Filter>ヘッダー ファイル\project\gamedata\skydome</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
