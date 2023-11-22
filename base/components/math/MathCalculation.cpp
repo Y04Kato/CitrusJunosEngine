@@ -459,13 +459,13 @@ Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	return result;
 }
 
-Vector3 TransformN(const Vector3& v, const Matrix4x4& m){
+Vector3 TransformN(const Vector3& v, const Matrix4x4& m) {
 	Vector3 result;
 	float transformMatrix[4];
-	float matrix4[4] = { v.num[0],v.num[1],v.num[2] ,1.0f};
-	for (int column = 0; column < 4; column++){
+	float matrix4[4] = { v.num[0],v.num[1],v.num[2] ,1.0f };
+	for (int column = 0; column < 4; column++) {
 		transformMatrix[column] = 0.0f;
-		for (int i = 0; i < 4; i++){
+		for (int i = 0; i < 4; i++) {
 			transformMatrix[column] += matrix4[i] * m.m[i][column];
 		}
 	}
@@ -524,12 +524,12 @@ Vector3 Multiply(float scalar, const Vector3& v) {
 
 Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t) { return v1 + Multiply(t, v2 - v1); }
 
-Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t){
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
 	return v1 + Multiply(t, v2 - v1);
 }
 
 
-Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t){
+Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) {
 	Vector3 a = Normalize(v1), b = Normalize(v2);
 	float s = (1.0f - t) * Length(a) + t * Length(b);
 	Vector3 e1, e2;
@@ -538,7 +538,7 @@ Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t){
 
 	float dot = std::clamp(Dot(a, b), 0.0f, 1.0f);
 	float theta = std::acos(dot/*/( Length(a)*Length(b))*/);
-	if (theta == 0.0f){
+	if (theta == 0.0f) {
 		return Lerp(a, b, t);
 	}
 	return s * ((std::sinf((1.0f - t) * theta) / std::sinf(theta)) * a + (std::sinf(t * theta) / std::sinf(theta)) * b);
@@ -633,6 +633,24 @@ Matrix4x4 MakeRotateMatrixFromOrientations(const Vector3 orientations[3]) {
 		0.0f,0.0f,0.0f,1.0f };
 }
 
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
+	const float cosTheta = std::cos(angle);
+	const float sinTheta = std::sin(angle);
+
+	const float minusCosTheta = 1.f - cosTheta;
+
+	return Matrix4x4{
+		std::powf(axis.num[0], 2)* minusCosTheta + cosTheta,axis.num[0] * axis.num[1] * minusCosTheta + axis.num[2] * sinTheta,axis.num[0] * axis.num[1] * minusCosTheta - axis.num[1] * sinTheta,0.0f,
+		axis.num[0] * axis.num[1] * minusCosTheta - axis.num[2] * sinTheta,std::powf(axis.num[1], 2)* minusCosTheta + cosTheta,axis.num[1] * axis.num[2] * minusCosTheta + axis.num[0] * sinTheta,0.0f,
+		axis.num[0] * axis.num[2] * minusCosTheta + axis.num[1] * sinTheta, axis.num[1] * axis.num[2] * minusCosTheta - axis.num[0] * sinTheta,std::powf(axis.num[2],2)* minusCosTheta + cosTheta,0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+	/*Vector4(std::powf(axis.num[0], 2) * minusCosTheta + cosTheta, axis.num[0] * axis.num[1] * minusCosTheta + axis.num[2] * sinTheta, axis.num[0] * axis.num[1] * minusCosTheta - axis.num[1] * sinTheta, 0.0f),
+		Vector4(axis.num[0] * axis.num[1] * minusCosTheta - axis.num[2] * sinTheta, std::powf(axis.num[1], 2) * minusCosTheta + cosTheta, axis.num[1] * axis.num[2] * minusCosTheta + axis.num[0] * sinTheta, 0.0f),
+		Vector4(axis.num[0] * axis.num[2] * minusCosTheta + axis.num[1] * sinTheta, axis.num[1] * axis.num[2] * minusCosTheta - axis.num[0] * sinTheta, std::powf(axis.num[2], 2) * minusCosTheta + cosTheta, 0.0f),
+		Vector4(0.f, 0.f, 0.f, 1.f),*/
+}
+
 bool IsCollision(const AABB& aabb, const StructSphere& sphere) {
 	Vector3 clossestPoint{
 		std::clamp(sphere.center.num[0], aabb.min.num[0], aabb.max.num[0]),
@@ -648,7 +666,7 @@ bool IsCollision(const AABB& aabb, const StructSphere& sphere) {
 bool IsCollision(const AABB& aabb, const Vector3& point) {
 	if ((aabb.min.num[0] <= point.num[0] && point.num[0] <= aabb.max.num[0]) &&
 		(aabb.min.num[1] <= point.num[1] && point.num[1] <= aabb.max.num[1]) &&
-		(aabb.min.num[2] <= point.num[2] && point.num[1] <= aabb.max.num[2])){
+		(aabb.min.num[2] <= point.num[2] && point.num[1] <= aabb.max.num[2])) {
 		return true;
 	}
 

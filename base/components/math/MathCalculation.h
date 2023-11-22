@@ -101,6 +101,8 @@ Matrix4x4& SetTranslate(Matrix4x4& m, const Vector3& v);
 
 Matrix4x4 MakeInverseMatrix(const Matrix4x4& rotate, const Vector3& translate);
 
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
+
 Matrix4x4 MakeRotateMatrixFromOrientations(const Vector3 orientations[3]);
 
 bool IsCollision(const AABB& aabb, const StructSphere& sphere);
