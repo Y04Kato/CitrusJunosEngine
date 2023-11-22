@@ -25,5 +25,5 @@ private:
 
 	float destinationAngleY_ = 0.0f;
 
-	float latency = 0.0f;
+	float latency = 0.1f;
 };
