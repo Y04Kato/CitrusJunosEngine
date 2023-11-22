@@ -645,10 +645,6 @@ Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
 		axis.num[0] * axis.num[2] * minusCosTheta + axis.num[1] * sinTheta, axis.num[1] * axis.num[2] * minusCosTheta - axis.num[0] * sinTheta,std::powf(axis.num[2],2)* minusCosTheta + cosTheta,0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
-	/*Vector4(std::powf(axis.num[0], 2) * minusCosTheta + cosTheta, axis.num[0] * axis.num[1] * minusCosTheta + axis.num[2] * sinTheta, axis.num[0] * axis.num[1] * minusCosTheta - axis.num[1] * sinTheta, 0.0f),
-		Vector4(axis.num[0] * axis.num[1] * minusCosTheta - axis.num[2] * sinTheta, std::powf(axis.num[1], 2) * minusCosTheta + cosTheta, axis.num[1] * axis.num[2] * minusCosTheta + axis.num[0] * sinTheta, 0.0f),
-		Vector4(axis.num[0] * axis.num[2] * minusCosTheta + axis.num[1] * sinTheta, axis.num[1] * axis.num[2] * minusCosTheta - axis.num[0] * sinTheta, std::powf(axis.num[2], 2) * minusCosTheta + cosTheta, 0.0f),
-		Vector4(0.f, 0.f, 0.f, 1.f),*/
 }
 
 bool IsCollision(const AABB& aabb, const StructSphere& sphere) {
