@@ -83,8 +83,18 @@ void Player::Update() {
 		behaviorRequest_ = Behavior::kAttack;
 	}
 
-	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
 		behaviorRequest_ = Behavior::kDash;
+	}
+
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+		if (!aButtonPressed) {
+			behaviorRequest_ = Behavior::kJump;
+			aButtonPressed = true;
+		}
+	}
+	else {
+		aButtonPressed = false;
 	}
 
 	if (behaviorRequest_) {
@@ -102,6 +112,9 @@ void Player::Update() {
 		case Player::Behavior::kDash:
 			BehaviorDashInitialize();
 			break;
+		case Player::Behavior::kJump:
+			BehaviorJumpInitialize();
+			break;
 		}
 
 		behaviorRequest_ = std::nullopt;
@@ -118,22 +131,21 @@ void Player::Update() {
 	case Player::Behavior::kDash:
 		BehaviorDashUpdate();
 		break;
+	case Player::Behavior::kJump:
+		BehaviorJumpUpdate();
+		break;
 	}
-
-
 
 	ImGui::Begin("Player");
 	ImGui::SliderFloat("Head Translation", &worldTransformHead_.translation_.num[0], -5.0f, 5.0f);
 	ImGui::SliderFloat("ArmL Translation", &worldTransformL_arm_.translation_.num[0], -5.0f, 5.0f);
 	ImGui::SliderFloat("ArmR Translation", &worldTransformR_arm_.translation_.num[0], -5.0f, 5.0f);
+	ImGui::SliderFloat3("Body Translate", worldTransformBody_.translation_.num, -5.0f, 5.0f);
 	ImGui::SliderInt("FloatingCycle", (int*)&floatingCycle_, 0, 240);
 	ImGui::SliderFloat("FloatingAmplitude", &floatingAmplitude_, -1.0f, 1.0f);
 	ImGui::Text("Attack : X");
-	ImGui::Text("Dash : A");
-	ImGui::End();
-
-	ImGui::Begin("player2");
-	ImGui::DragFloat3("translation", worldTransformBody_.translation_.num, 0.01f);
+	ImGui::Text("Dash : B");
+	ImGui::Text("Jump : A");
 	ImGui::End();
 
 	if (worldTransformBody_.translation_.num[1] < -10.0f) {
@@ -141,6 +153,8 @@ void Player::Update() {
 	}
 	if (!isHit_ || worldTransformBody_.GetWorldPos().num[1] < 0.0f) {
 		IsFallStart();
+	}
+	else if(behavior_ == Behavior::kJump){
 	}
 	else {
 		worldTransformBody_.translation_.num[1] = objectPos_.translation_.num[1] + objectPos_.scale_.num[1] + worldTransformBody_.scale_.num[1] - 1.5f;
@@ -222,10 +236,10 @@ void Player::BehaviorRootUpdate() {
 
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kCharacterSpeed = 0.3f;
-		Vector3 move = {
+		velocity_ = {
 			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
 			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
-		if (CompereVector3(move, { 0.0f,0.0f,0.0f })) {
+		if (CompereVector3(velocity_, { 0.0f,0.0f,0.0f })) {
 			isMove_ = false;
 		}
 		else {
@@ -233,12 +247,12 @@ void Player::BehaviorRootUpdate() {
 		}
 		if (isMove_ == true) {
 			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-			move = TransformNormal(move, rotateMatrix);
-			move = Multiply(kCharacterSpeed, Normalize(move));
-			worldTransformBody_.translation_ = Add(move, worldTransformBody_.translation_);
+			velocity_ = TransformNormal(velocity_, rotateMatrix);
+			velocity_ = Multiply(kCharacterSpeed, Normalize(velocity_));
+			worldTransformBody_.translation_ = Add(velocity_, worldTransformBody_.translation_);
 			preQuaternion_ = quaternion_;
 
-			Vector3 newPos = Subtruct(Add(worldTransformBody_.translation_, move), worldTransformBody_.translation_);
+			Vector3 newPos = Subtruct(Add(worldTransformBody_.translation_, velocity_), worldTransformBody_.translation_);
 			Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));;
 
 
@@ -255,12 +269,12 @@ void Player::BehaviorRootUpdate() {
 			newquaternion_ = Normalize(newquaternion_);
 
 			quaternion_ = Multiply(quaternion_, newquaternion_);
-			if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(move, preMove_)) {
+			if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
 				cosin = -1.0f;
 				quaternion_ = Multiply(quaternion_, createQuaternion(cosin, { 0.0f,1.0f,0.0f }));
 			}
-		
-			preMove_ = move;
+
+			preMove_ = velocity_;
 		}
 		worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
 	}
@@ -305,10 +319,10 @@ void Player::BehaviorDashUpdate() {
 
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kCharacterSpeed = dashSpeed;
-		Vector3 move = {
+		velocity_ = {
 			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
 			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
-		if (CompereVector3(move, { 0.0f,0.0f,0.0f })) {
+		if (CompereVector3(velocity_, { 0.0f,0.0f,0.0f })) {
 			isMove_ = false;
 		}
 		else {
@@ -316,12 +330,12 @@ void Player::BehaviorDashUpdate() {
 		}
 		if (isMove_ == true) {
 			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-			move = TransformNormal(move, rotateMatrix);
-			move = Multiply(kCharacterSpeed, Normalize(move));
-			worldTransformBody_.translation_ = Add(move, worldTransformBody_.translation_);
+			velocity_ = TransformNormal(velocity_, rotateMatrix);
+			velocity_ = Multiply(kCharacterSpeed, Normalize(velocity_));
+			worldTransformBody_.translation_ = Add(velocity_, worldTransformBody_.translation_);
 			preQuaternion_ = quaternion_;
 
-			Vector3 newPos = Subtruct(Add(worldTransformBody_.translation_, move), worldTransformBody_.translation_);
+			Vector3 newPos = Subtruct(Add(worldTransformBody_.translation_, velocity_), worldTransformBody_.translation_);
 			Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));;
 
 
@@ -338,12 +352,12 @@ void Player::BehaviorDashUpdate() {
 			newquaternion_ = Normalize(newquaternion_);
 
 			quaternion_ = Multiply(quaternion_, newquaternion_);
-			if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(move, preMove_)) {
+			if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
 				cosin = -1.0f;
 				quaternion_ = Multiply(quaternion_, createQuaternion(cosin, { 0.0f,1.0f,0.0f }));
 			}
 
-			preMove_ = move;
+			preMove_ = velocity_;
 		}
 
 		worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
@@ -352,6 +366,28 @@ void Player::BehaviorDashUpdate() {
 	const uint32_t behaviorDashTime = 10;
 
 	if (++workDash_.dashParameter_ >= behaviorDashTime) {
+		behaviorRequest_ = Behavior::kRoot;
+	}
+}
+
+void Player::BehaviorJumpInitialize() {
+	worldTransformBody_.translation_.num[1] = 0.5f;
+	worldTransformL_arm_.rotation_.num[0] = 0;
+	worldTransformR_arm_.rotation_.num[0] = 0;
+
+	//ジャンプ初速
+	const float kJumpFirstSpeed = 0.7f;
+	velocity_.num[1] = kJumpFirstSpeed;
+}
+
+void Player::BehaviorJumpUpdate() {
+	worldTransformBody_.translation_ += velocity_;
+	const float kGravityAcceleration = 0.05f;
+	Vector3 accelerationVector = { 0.0f,-kGravityAcceleration,0.0f };
+	velocity_ += accelerationVector;
+
+	if (worldTransformBody_.translation_.num[1] <= objectPos_.translation_.num[1]) {
+		worldTransformBody_.translation_.num[1] = objectPos_.translation_.num[1];
 		behaviorRequest_ = Behavior::kRoot;
 	}
 }
@@ -371,12 +407,15 @@ void Player::ApplyGlobalVariables() {
 
 	floatingCycle_ = globalVariables->GetIntValue(groupName, "floatingCycle");
 	floatingAmplitude_ = globalVariables->GetFloatValue(groupName, "floatingAmplitude");
-	
+
 	dashSpeed = globalVariables->GetFloatValue(groupName, "DashSpeed");
 }
 
 void Player::IsFallStart() {
-	worldTransformBody_.translation_.num[1] -= 0.1f;
+	worldTransformBody_.translation_ += velocity_;
+	const float kGravityAcceleration = 0.05f;
+	Vector3 accelerationVector = { 0.0f,-kGravityAcceleration,0.0f };
+	velocity_ += accelerationVector;
 }
 
 void Player::OnCollision() {
@@ -413,5 +452,10 @@ void Player::DeleteParent() {
 
 void Player::SetWorldTransform(const Vector3 translation) {
 	worldTransformBody_.translation_ = translation;
+	velocity_ = { 0.0f,0.0f,0.0f };
 	gameOver = false;
+}
+
+void Player::SetObjectPos(const WorldTransform& worldtransform) {
+	objectPos_ = worldtransform;
 }

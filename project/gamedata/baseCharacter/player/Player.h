@@ -36,6 +36,9 @@ public:
 	void BehaviorDashInitialize();
 	void BehaviorDashUpdate();
 
+	void BehaviorJumpInitialize();
+	void BehaviorJumpUpdate();
+
 	void ApplyGlobalVariables();
 
 	void SetParent(const WorldTransform* parent);
@@ -49,11 +52,25 @@ public:
 	void Setparent(const WorldTransform* parent);
 	void IsCollision(const WorldTransform& worldtransform);
 	void DeleteParent();
-	void SetObjectPos(const WorldTransform& worldtransform) { objectPos_ = worldtransform; }
+	void SetObjectPos(const WorldTransform& worldtransform);
 
 	bool GetIsAttack() { return isAttack; }
 	
 	OBB GetOBB() { return obb_; }
+
+	struct ConstAttack {
+		uint32_t anticipationTime;//振りかぶりの時間
+		uint32_t chargeTime;//溜めの時間
+		uint32_t swingTime;//振る時間
+		uint32_t recoveryTime;//硬直時間
+		float anticipationSpeed;//振りかぶりの移動速さ
+		float chargeSpeed;//溜めの早さ
+		float swingSpeed;//振りの早さ
+	};
+
+	//コンボ数
+	static const int conboNum_ = 3;
+	static const std::array<ConstAttack, conboNum_>kConstAttacks_;
 
 private:
 	WorldTransform worldTransformBase_;
@@ -80,7 +97,7 @@ private:
 
 	float floatingAmplitude_ = 0.3f;
 
-	enum class Behavior { kRoot, kAttack, kDash};
+	enum class Behavior { kRoot, kAttack, kDash , kJump};
 
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
@@ -110,5 +127,8 @@ private:
 	bool isMove_ = false;
 
 	float dashSpeed = 1.8f;
-};
 
+	Vector3 velocity_ = {};
+
+	bool aButtonPressed = false;
+};
