@@ -63,5 +63,6 @@ private:
 	std::random_device seedGenerator;
 
 	Emitter testEmitter_{};
+	AccelerationField accelerationField;
 };
 

@@ -104,6 +104,7 @@ Matrix4x4 MakeInverseMatrix(const Matrix4x4& rotate, const Vector3& translate);
 Matrix4x4 MakeRotateMatrixFromOrientations(const Vector3 orientations[3]);
 
 bool IsCollision(const AABB& aabb, const StructSphere& sphere);
+bool IsCollision(const AABB& aabb, const Vector3& point);
 
 bool IsCollision(const OBB& obb, const StructSphere& sphere);
 

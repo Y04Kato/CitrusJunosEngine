@@ -645,6 +645,16 @@ bool IsCollision(const AABB& aabb, const StructSphere& sphere) {
 	return distance <= sphere.radius;
 }
 
+bool IsCollision(const AABB& aabb, const Vector3& point) {
+	if ((aabb.min.num[0] <= point.num[0] && point.num[0] <= aabb.max.num[0]) &&
+		(aabb.min.num[1] <= point.num[1] && point.num[1] <= aabb.max.num[1]) &&
+		(aabb.min.num[2] <= point.num[2] && point.num[1] <= aabb.max.num[2])){
+		return true;
+	}
+
+	return false;
+}
+
 bool IsCollision(const OBB& obb, const StructSphere& sphere) {
 	Matrix4x4 obbWorldInverse = MakeInverseMatrix(MakeRotateMatrixFromOrientations(obb.orientation), obb.center);
 	Vector3 centerInOBBLocalSpace = sphere.center * obbWorldInverse;

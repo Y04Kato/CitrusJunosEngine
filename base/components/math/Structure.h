@@ -85,3 +85,8 @@ struct Emitter {
 	float frequency;//発生頻度
 	float frequencyTime;//頻度用時刻
 };
+
+struct AccelerationField {
+	Vector3 acceleration;//加速度
+	AABB area;//範囲
+};

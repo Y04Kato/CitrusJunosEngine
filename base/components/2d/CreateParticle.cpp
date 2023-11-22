@@ -48,6 +48,10 @@ void CreateParticle::Initialize(int kNumInstance) {
 	testEmitter_.count = 5;
 	testEmitter_.frequency = 0.5f;//0.5秒ごとに発生
 	testEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
+
+	accelerationField.acceleration = { 15.0f,0.0f,0.0f };
+	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
+	accelerationField.area.max = { 1.0f,1.0f,1.0f };
 }
 
 void CreateParticle::Update() {
@@ -84,6 +88,11 @@ void CreateParticle::Draw(const ViewProjection& viewProjection) {
 		if ((*iterator).lifeTime <= (*iterator).currentTime) {
 			iterator = particles_.erase(iterator);
 			continue;
+		}
+
+		//Fieldの適用
+		if (IsCollision(accelerationField.area, (*iterator).transform.translate)) {
+			(*iterator).velocity += accelerationField.acceleration * kDeltaTime;
 		}
 
 		(*iterator).transform.translate += (*iterator).velocity * kDeltaTime;
@@ -202,7 +211,7 @@ Particle CreateParticle::MakeNewParticle(std::mt19937& randomEngine, const Trans
 std::list<Particle> CreateParticle::Emission(const Emitter& emitter, std::mt19937& randomEngine) {
 	std::list<Particle> particles;
 	for (uint32_t count = 0; count < emitter.count; count++) {
-		particles_.push_back(MakeNewParticle(randomEngine,emitter.transform));
+		particles_.push_back(MakeNewParticle(randomEngine, emitter.transform));
 	}
 	return particles;
 }
