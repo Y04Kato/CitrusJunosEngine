@@ -5,6 +5,14 @@
 #include "GlobalVariables.h"
 #include <math.h>
 
+const std::array<ConstAttack, Player::comboNum_>
+Player::kConstAttacks_ = { {
+	{5,1,20,10,0.0f,0.0f,0.15f},
+	{15,10,15,10,0.2f,0.0f,0.0f},
+	{15,10,15,30,0.2f,0.0f,0.0f},
+	}
+};
+
 void Player::Initialize(const std::vector<Model*>& models) {
 	// NULLポインタチェック
 	BaseCharacter::Initialize(models);
@@ -80,7 +88,13 @@ void Player::Update() {
 	}
 
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
-		behaviorRequest_ = Behavior::kAttack;
+		if (isAttack == false) {
+			isAttack = true;
+			behaviorRequest_ = Behavior::kAttack;
+		}
+	}
+	else {
+		isAttack2 = false;
 	}
 
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
@@ -141,11 +155,14 @@ void Player::Update() {
 	ImGui::SliderFloat("ArmL Translation", &worldTransformL_arm_.translation_.num[0], -5.0f, 5.0f);
 	ImGui::SliderFloat("ArmR Translation", &worldTransformR_arm_.translation_.num[0], -5.0f, 5.0f);
 	ImGui::SliderFloat3("Body Translate", worldTransformBody_.translation_.num, -5.0f, 5.0f);
+	ImGui::SliderFloat3("Wepon Rotate", worldTransformWeapon_.rotation_.num, -5.0f, 5.0f);
 	ImGui::SliderInt("FloatingCycle", (int*)&floatingCycle_, 0, 240);
 	ImGui::SliderFloat("FloatingAmplitude", &floatingAmplitude_, -1.0f, 1.0f);
 	ImGui::Text("Attack : X");
 	ImGui::Text("Dash : B");
 	ImGui::Text("Jump : A");
+	ImGui::Text("comb : %d", workAtack_.comboIndex);
+	ImGui::Text("velocity : %f %f %f", velocity_.num[0], velocity_.num[1], velocity_.num[2]);
 	ImGui::End();
 
 	if (worldTransformBody_.translation_.num[1] < -10.0f) {
@@ -158,6 +175,7 @@ void Player::Update() {
 	}
 	else {
 		worldTransformBody_.translation_.num[1] = objectPos_.translation_.num[1] + objectPos_.scale_.num[1] + worldTransformBody_.scale_.num[1] - 1.5f;
+		velocity_.num[1] = 0.1f;
 	}
 
 	structSphere_.center = worldTransformBody_.GetWorldPos();
@@ -237,7 +255,7 @@ void Player::BehaviorRootUpdate() {
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kCharacterSpeed = 0.3f;
 		velocity_ = {
-			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
+			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, velocity_.num[1],
 			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
 		if (CompereVector3(velocity_, { 0.0f,0.0f,0.0f })) {
 			isMove_ = false;
@@ -283,31 +301,110 @@ void Player::BehaviorRootUpdate() {
 }
 
 void Player::BehaviorAttackInitialize() {
-	worldTransformL_arm_.rotation_.num[0] = (float)M_PI;
-	worldTransformR_arm_.rotation_.num[0] = (float)M_PI;
-	worldTransformWeapon_.rotation_.num[0] = 0.0f;
+	worldTransformL_arm_.rotation_ = { 0.0f,0.0f,0.0f };
+	worldTransformR_arm_.rotation_ = { 0.0f,0.0f,0.0f };
+	worldTransformWeapon_.rotation_ = { 0.0f ,0.0f,0.0f};
 	animationFrame_ = 0;
+	workAtack_.rotate = (float)M_PI;
+	workAtack_.hammerRotate = 0.0f;
+	workAtack_.Time = 0;
+	workAtack_.comboNext = false;
+	workAtack_.comboIndex = 0;
+	isAttack2 = true;
 }
 
 void Player::BehaviorAttackUpdate() {
-	if (animationFrame_ < 12) {
-		worldTransformL_arm_.rotation_.num[0] += 0.05f;
-		worldTransformR_arm_.rotation_.num[0] += 0.0f;
+	XINPUT_STATE joystate;
+	uint32_t anticipationTime = kConstAttacks_[workAtack_.comboIndex].anticipationTime;
+	uint32_t chargeTime = kConstAttacks_[workAtack_.comboIndex].anticipationTime + kConstAttacks_[workAtack_.comboIndex].chargeTime;
+	uint32_t swingTime = chargeTime + kConstAttacks_[workAtack_.comboIndex].swingTime;
+	uint32_t recoveryTime = swingTime + kConstAttacks_[workAtack_.comboIndex].recoveryTime;
 
-		worldTransformWeapon_.rotation_.num[0] += 0.05f;
-	}
-	else if (worldTransformWeapon_.rotation_.num[0] >= -2.0f * (float)M_PI / 4) {
-		worldTransformL_arm_.rotation_.num[0] -= 0.1f;
-		worldTransformR_arm_.rotation_.num[0] -= 0.1f;
-
-		worldTransformWeapon_.rotation_.num[0] -= 0.1f;
-	}
-	else {
-		isAttack = true;
-		behaviorRequest_ = Behavior::kRoot;
+	if (workAtack_.comboIndex < comboNum_ - 1){
+		if (Input::GetInstance()->GetJoystickState(0, joystate)) {
+			if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_X && isAttack2 == false){
+				workAtack_.comboNext = true;
+				isAttack2 = true;
+			}
+		}
 	}
 
-	animationFrame_++;
+	if (workAtack_.Time >= recoveryTime){
+		if (workAtack_.comboNext){
+			workAtack_.comboNext = false;
+			workAtack_.Time = 0;
+			workAtack_.comboIndex++;
+			switch (workAtack_.comboIndex){
+			case 0:
+				workAtack_.rotate = (float)M_PI;
+				workAtack_.hammerRotate = 0.0f;
+				workAtack_.Time = 0;
+				break;
+
+			case 1:
+				workAtack_.rotate = (float)M_PI;
+				workAtack_.hammerRotate = 0.0f;
+				workAtack_.Time = 0;
+				worldTransformL_arm_.rotation_ = { 0.0f,0.0f,0.0f };
+				worldTransformR_arm_.rotation_ = { 0.0f,0.0f,0.0f };
+				worldTransformWeapon_.rotation_ = { 0.0f ,0.0f,1.5f };
+				break;
+
+			case 2:
+				workAtack_.rotate = (float)M_PI;
+				workAtack_.hammerRotate = 0.0f;
+				workAtack_.Time = 0;
+				worldTransformL_arm_.rotation_ = { 0.0f,0.0f,0.0f };
+				worldTransformR_arm_.rotation_ = { 0.0f,0.0f,0.0f };
+				worldTransformWeapon_.rotation_ = { 0.0f ,0.0f,1.5f };
+				break;
+			}
+		}
+		else {
+			behaviorRequest_ = Behavior::kRoot;
+			workAtack_.comboIndex = 0;
+		}
+	}
+
+	switch (workAtack_.comboIndex) {
+	case 0:
+		if (workAtack_.Time < 12) {
+			worldTransformL_arm_.rotation_.num[0] += 0.05f;
+			worldTransformR_arm_.rotation_.num[0] += 0.05f;
+
+			worldTransformWeapon_.rotation_.num[0] += 0.05f;
+		}
+		else if (worldTransformWeapon_.rotation_.num[0] >= -2.0f * (float)M_PI / 4) {
+			worldTransformL_arm_.rotation_.num[0] -= 0.1f;
+			worldTransformR_arm_.rotation_.num[0] -= 0.1f;
+
+			worldTransformWeapon_.rotation_.num[0] -= 0.1f;
+			worldTransformBody_.translation_ += velocity_;
+		}
+		break;
+
+	case 1:
+		worldTransformWeapon_.translation_.num[1] = 1.6f;
+		if (workAtack_.Time < 12) {
+			worldTransformWeapon_.rotation_.num[0] += 0.15f;
+		}
+		else if (worldTransformWeapon_.rotation_.num[0] >= -3.0f * (float)M_PI / 4) {
+			worldTransformWeapon_.rotation_.num[0] -= 0.3f;
+			worldTransformBody_.translation_ += velocity_;
+		}
+		break;
+
+	case 2:
+		worldTransformWeapon_.translation_.num[1] = 1.6f;
+		if (workAtack_.Time < 12) {
+		}
+		else if (worldTransformWeapon_.rotation_.num[0] >= -3.0f * (float)M_PI / 4) {
+			worldTransformWeapon_.rotation_.num[0] += 0.3f;
+		}
+		break;
+	}
+
+	workAtack_.Time++;
 }
 
 void Player::BehaviorDashInitialize() {
@@ -320,7 +417,7 @@ void Player::BehaviorDashUpdate() {
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kCharacterSpeed = dashSpeed;
 		velocity_ = {
-			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
+			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, velocity_.num[1],
 			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
 		if (CompereVector3(velocity_, { 0.0f,0.0f,0.0f })) {
 			isMove_ = false;
@@ -452,7 +549,7 @@ void Player::DeleteParent() {
 
 void Player::SetWorldTransform(const Vector3 translation) {
 	worldTransformBody_.translation_ = translation;
-	velocity_ = { 0.0f,0.0f,0.0f };
+	velocity_ = { 0.0f,1.0f,0.0f };
 	gameOver = false;
 }
 

@@ -8,6 +8,22 @@
 #include "Collider.h"
 #include "CollisionConfig.h"
 
+struct ConstAttack {
+	uint32_t anticipationTime;//振りかぶりの時間
+	uint32_t chargeTime;//溜めの時間
+	uint32_t swingTime;//振る時間
+	uint32_t recoveryTime;//硬直時間
+	float anticipationSpeed;//振りかぶりの移動速さ
+	float chargeSpeed;//溜めの早さ
+	float swingSpeed;//振りの早さ
+};
+
+static const float anticipationRotate = 3.642f;
+static const float anticipationRotateHammer = 0.5f;
+
+static const float swingRotate = 1.542f;
+static const float swingRotateHammer = -1.6f;
+
 class Player : public BaseCharacter, public Collider {
 public:
 	void Initialize(const std::vector<Model*>& models) override;
@@ -56,21 +72,11 @@ public:
 
 	bool GetIsAttack() { return isAttack; }
 	
-	OBB GetOBB() { return obb_; }
-
-	struct ConstAttack {
-		uint32_t anticipationTime;//振りかぶりの時間
-		uint32_t chargeTime;//溜めの時間
-		uint32_t swingTime;//振る時間
-		uint32_t recoveryTime;//硬直時間
-		float anticipationSpeed;//振りかぶりの移動速さ
-		float chargeSpeed;//溜めの早さ
-		float swingSpeed;//振りの早さ
-	};
+	OBB GetOBB() { return obb_; };
 
 	//コンボ数
-	static const int conboNum_ = 3;
-	static const std::array<ConstAttack, conboNum_>kConstAttacks_;
+	static const int comboNum_ = 3;
+	static const std::array<ConstAttack, comboNum_>kConstAttacks_;
 
 private:
 	WorldTransform worldTransformBase_;
@@ -102,7 +108,7 @@ private:
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
-	int animationFrame_;
+	float animationFrame_;
 
 	StructSphere structSphere_;
 	bool gameOver = false;
@@ -111,6 +117,7 @@ private:
 	OBB obb_;
 
 	bool isAttack = false;
+	bool isAttack2 = true;
 
 	float angle;
 
@@ -119,6 +126,17 @@ private:
 	};
 
 	WorkDash workDash_;
+
+	struct WorkAtack {
+		uint32_t Time;
+		float rotate;
+		float hammerRotate;
+		int32_t comboIndex = 0;
+		int32_t inComboPhase = 0;
+		bool comboNext = false;
+	};
+
+	WorkAtack workAtack_;
 	
 	Quaternion quaternion_;
 	Vector3 preMove_;
