@@ -11,7 +11,7 @@
 class CreateParticle {
 public:
 	void Initialize(int kNumInstance,Emitter emitter,AccelerationField accelerationField, uint32_t textureIndex);
-	void Update();
+	void Update(Vector3 transform);
 	void Finalize();
 	void Draw(const ViewProjection& viewProjection);
 

@@ -15,8 +15,10 @@ void Enemy::Initialize(const std::vector<Model*>& models) {
 	InitializeFloatGimmick();
 
 	worldTransform_.translation_.num[1] = 5.0f;
-	worldTransformBody_.translation_ = { 0.0f,2.0f,50.0f };
+	worldTransformBody_.translation_ = { pos_.num[0],pos_.num[1],pos_.num[2] };
 	worldTransformHead_.translation_ = { 0.0f, 1.0f, 0.0f };
+
+	RGBA = { 1.0f,1.0f,1.0f,1.0f };
 
 	worldTransform_.Initialize();
 	worldTransformBase_.Initialize();
@@ -44,6 +46,20 @@ void Enemy::Initialize(const std::vector<Model*>& models) {
 void Enemy::Update() {
 	ApplyGlobalVariables();
 
+	if (isFly == true) {
+		flyTimer++;
+		RGBA.num[3] -= 0.05f;
+		worldTransformBody_.translation_.num[0] += velocity_.num[0] * 1.5f;
+		worldTransformBody_.translation_.num[1] += velocity_.num[1] + 2.0f * 1.5f;
+		worldTransformBody_.translation_.num[2] += velocity_.num[2] * 1.5f;
+	}
+
+	if (flyTimer >= 90) {
+		flyTimer = 0;
+		isFly = false;
+		isDead = true;
+	}
+
 	if (isDead == true) {
 		deadTimer++;
 	}
@@ -51,6 +67,8 @@ void Enemy::Update() {
 	if (deadTimer >= 120) {
 		isDead = false;
 		deadTimer = 0;
+		worldTransformBody_.translation_ = { pos_.num[0],pos_.num[1],pos_.num[2] };
+		RGBA.num[3] = 1.0f;
 	}
 
 	structSphere_.center = worldTransformBody_.GetWorldPos();
@@ -67,10 +85,10 @@ void Enemy::Update() {
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	if (isDead == false) {
-		models_[kModelIndexBody]->Draw(worldTransformBody_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
-		models_[kModelIndexHead]->Draw(worldTransformHead_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
-		models_[kModelIndexL_arm]->Draw(worldTransformL_arm_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
-		models_[kModelIndexR_arm]->Draw(worldTransformR_arm_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
+		models_[kModelIndexBody]->Draw(worldTransformBody_, viewProjection, RGBA);
+		models_[kModelIndexHead]->Draw(worldTransformHead_, viewProjection, RGBA);
+		models_[kModelIndexL_arm]->Draw(worldTransformL_arm_, viewProjection, RGBA);
+		models_[kModelIndexR_arm]->Draw(worldTransformR_arm_, viewProjection, RGBA);
 	}
 }
 

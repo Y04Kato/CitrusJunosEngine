@@ -32,7 +32,7 @@ void GamePlayScene::Initialize() {
 	testEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
 	testEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
 	testEmitter_.count = 5;
-	testEmitter_.frequency = 0.5f;//0.5秒ごとに発生
+	testEmitter_.frequency = 0.2f;//0.2秒ごとに発生
 	testEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
 
 	accelerationField.acceleration = { 15.0f,0.0f,0.0f };
@@ -73,11 +73,12 @@ void GamePlayScene::Initialize() {
 	enemyModelL_arm.reset(Model::CreateModelFromObj("project/gamedata/resources/float_L_arm", "float_L_arm.obj"));
 	enemyModelR_arm.reset(Model::CreateModelFromObj("project/gamedata/resources/float_R_arm", "float_R_arm.obj"));
 	enemyModelWeapon_.reset(Model::CreateModelFromObj("project/gamedata/resources/weapon", "weapon.obj"));
-	enemy_ = std::make_unique<Enemy>();
-	std::vector<Model*>enemyModels = {
-	enemyModelBody.get(),enemyModelHead.get(),
-	enemyModelL_arm.get(),enemyModelR_arm.get(),enemyModelWeapon_.get() };
-	enemy_->Initialize(enemyModels);
+
+	SetEnemy(Vector3{ 0.0f,2.0f,50.0f });
+	SetEnemy(Vector3{ 15.0f,2.0f,0.0f });
+	SetEnemy(Vector3{ 10.0f,2.0f,-10.0f });
+	SetEnemy(Vector3{ -15.0f,2.0f,-10.0f });
+	SetEnemy(Vector3{ -10.0f,2.0f,0.0f });
 
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
@@ -85,6 +86,11 @@ void GamePlayScene::Initialize() {
 	const char* groupName = "GamePlayScene";
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Test", 90);
+
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Initialize();
+	player_->SetLockOn(lockOn_.get());
+	followCamera_->SetlockOn(lockOn_.get());
 }
 
 void GamePlayScene::Update() {
@@ -95,6 +101,7 @@ void GamePlayScene::Update() {
 	collisionManager_->CheckAllCollision();
 
 	debugCamera_->Update();
+	lockOn_->Update(enemys_, viewProjection_);
 
 	viewProjection_.UpdateMatrix();
 	followCamera_->Update();
@@ -104,7 +111,9 @@ void GamePlayScene::Update() {
 
 	groundmanager_->Update();
 	player_->Update();
-	enemy_->Update();
+	for (Enemy* enemy : enemys_) {
+		enemy->Update();
+	}
 	if (player_->isGameover() == true) {
 		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
 	}
@@ -129,18 +138,27 @@ void GamePlayScene::Update() {
 	}
 
 	if (player_->GetIsAttack() == true) {
-		if (IsCollision(player_->GetOBB(), enemy_->GetStructSphere())) {
-			enemy_->isDead = true;
+		for (Enemy* enemy : enemys_) {
+			if (IsCollision(player_->GetOBB(), enemy->GetStructSphere())) {
+				enemy->SetPlayerComboData(player_->GetVelocity());
+				if (player_->GetComboIndex() == 2) {
+					enemy->SetIsFly(true);
+				}
+			}
 		}
 	}
 
 	collisionManager_->ClearColliders();
 	collisionManager_->AddCollider(player_.get());
 	collisionManager_->AddCollider(goal_.get());
-	collisionManager_->AddCollider(enemy_.get());
+	for (Enemy* enemy : enemys_) {
+		collisionManager_->AddCollider(enemy);
+	}
 	if (count_ >= 5) {
 		collisionManager_->CheckAllCollision();
 	}
+
+	particle_->Update(player_->GetWorldTransformBody().translation_);
 
 	ImGui::Begin("debug");
 	ImGui::Text("GamePlayScene");
@@ -156,7 +174,9 @@ void GamePlayScene::Draw() {
 	player_->Draw(viewProjection_);
 	groundmanager_->Draw(viewProjection_);
 	goal_->Draw(viewProjection_);
-	enemy_->Draw(viewProjection_);
+	for (Enemy* enemy : enemys_) {
+		enemy->Draw(viewProjection_);
+	}
 #pragma endregion
 
 #pragma region パーティクル描画
@@ -168,15 +188,28 @@ void GamePlayScene::Draw() {
 
 #pragma region 前景スプライト描画
 	CJEngine_->PreDraw2D();
-
+	lockOn_->Draw();
 #pragma endregion
 }
 
 void GamePlayScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
+	for (Enemy* enemy : enemys_) {
+		delete enemy;
+	}
 }
 
 void GamePlayScene::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "GamePlayScene";
+}
+
+void GamePlayScene::SetEnemy(Vector3 pos) {
+	Enemy* enemy = new Enemy();
+	std::vector<Model*>enemyModels = {
+enemyModelBody.get(),enemyModelHead.get(),
+enemyModelL_arm.get(),enemyModelR_arm.get(),enemyModelWeapon_.get() };
+	enemy->SetPos(pos);
+	enemy->Initialize(enemyModels);
+	enemys_.push_back(enemy);
 }

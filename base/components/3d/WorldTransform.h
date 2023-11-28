@@ -46,4 +46,8 @@ struct WorldTransform {
 	void  UpdateQuaternionMatrix();
 
 	Vector3 GetWorldPos();
+
+	Transform GetTransform() {return{ scale_,rotation_,translation_ };}
+
+	Vector3 GetCenter();
 };

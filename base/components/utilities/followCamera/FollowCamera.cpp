@@ -1,5 +1,6 @@
 #include "FollowCamera.h"
 #include "GlobalVariables.h"
+#include "lockOnCamera/LockOn.h"
 
 void FollowCamera::Initialize() {
 	viewprojection_.Initialize();
@@ -30,19 +31,27 @@ void FollowCamera::Update() {
 		viewprojection_.translation_ = interTarget_ + offset;
 	}
 
-	XINPUT_STATE joystate;
+	if (lockOn_ && lockOn_->Existtarget()) {
+		Vector3 LockOntrans = lockOn_->GetTargetPos();
+		Vector3 sub = LockOntrans - GetTargetWordPos();
 
-	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-		const float kRotateSpeed = 0.04f;
-
-		destinationAngleY_ += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
-
-		if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB) {
-			destinationAngleY_ = 0.0f;
-		}
+		viewprojection_.rotation_.num[1] = Angle({0.0f,0.0f,1.0f}, sub);
 	}
+	else {
+		XINPUT_STATE joystate;
 
-	viewprojection_.rotation_.num[1] = LerpShortAngle(viewprojection_.rotation_.num[1], destinationAngleY_, 0.2f);
+		if (Input::GetInstance()->GetJoystickState(0, joystate)) {
+			const float kRotateSpeed = 0.04f;
+
+			destinationAngleY_ += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
+
+			if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB) {
+				destinationAngleY_ = 0.0f;
+			}
+		}
+
+		viewprojection_.rotation_.num[1] = LerpShortAngle(viewprojection_.rotation_.num[1], destinationAngleY_, 0.2f);
+	}
 
 	viewprojection_.UpdateViewMatrix();
 	viewprojection_.TransferMatrix();
@@ -68,6 +77,14 @@ void FollowCamera::Reset() {
 void FollowCamera::SetTarget(const WorldTransform* target) {
 	target_ = target;
 	Reset();
+}
+
+Vector3 FollowCamera::GetTargetWordPos(){
+	Vector3 result;
+	result.num[0] = target_->matWorld_.m[3][0];
+	result.num[1] = target_->matWorld_.m[3][1];
+	result.num[2] = target_->matWorld_.m[3][2];
+	return result;
 }
 
 void FollowCamera::ApplyGlobalVariables() {

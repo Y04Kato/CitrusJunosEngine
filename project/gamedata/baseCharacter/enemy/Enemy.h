@@ -32,8 +32,15 @@ public:
 
 	StructSphere GetStructSphere() { return structSphere_; }
 
-	bool isDead = false;
+	void SetPos(Vector3 pos) { pos_ = pos; };
+
+	bool GetisAlive() { return isDead; }
+
 	OBB GetOBB() { return Obb_; }
+
+	void SetIsFly(bool isfly) { isFly = isfly; }
+
+	void SetPlayerComboData(Vector3 velocity) { velocity_ = velocity; }
 private:
 	WorldTransform worldTransformBase_;
 	WorldTransform worldTransformBody_;
@@ -51,6 +58,16 @@ private:
 	StructSphere structSphere_;
 
 	int deadTimer = 0;
+	int flyTimer = 0;
 
 	OBB Obb_;
+
+	bool isFly = false;
+	bool isDead = false;
+
+	Vector3 pos_;
+
+	Vector3 velocity_;
+
+	Vector4 RGBA;
 };

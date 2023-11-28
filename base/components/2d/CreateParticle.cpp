@@ -38,7 +38,7 @@ void CreateParticle::Initialize(int kNumInstance, Emitter emitter, AccelerationF
 	
 }
 
-void CreateParticle::Update() {
+void CreateParticle::Update(Vector3 transform) {
 	std::mt19937 randomEngine(seedGenerator());
 	ImGui::Begin("Particle");
 	ImGui::Checkbox("UseBillBoard", &isBillBoard_);
@@ -47,6 +47,7 @@ void CreateParticle::Update() {
 	}
 	ImGui::DragFloat3("EmitterTranslate", emitter_.transform.translate.num, 0.1f);
 	ImGui::End();
+	emitter_.transform.translate = transform;
 }
 
 void CreateParticle::Finalize() {

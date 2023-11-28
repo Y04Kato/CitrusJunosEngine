@@ -8,6 +8,7 @@
 #include "Collider.h"
 #include "CollisionConfig.h"
 
+class LockOn;
 struct ConstAttack {
 	uint32_t anticipationTime;//振りかぶりの時間
 	uint32_t chargeTime;//溜めの時間
@@ -77,6 +78,11 @@ public:
 	//コンボ数
 	static const int comboNum_ = 3;
 	static const std::array<ConstAttack, comboNum_>kConstAttacks_;
+
+	Vector3 GetVelocity() { return preMove_; }
+	int32_t GetComboIndex() { return workAtack_.comboIndex; }
+
+	void SetLockOn(LockOn* lock) { LockOn_ = lock; }
 
 private:
 	WorldTransform worldTransformBase_;
@@ -149,4 +155,7 @@ private:
 	Vector3 velocity_ = {};
 
 	bool aButtonPressed = false;
+
+	LockOn* LockOn_;
+	XINPUT_STATE prejoy;
 };

@@ -163,3 +163,8 @@ Quaternion operator*(const float t, const Quaternion& q);
 
 Quaternion Lerp(float t, const Quaternion& s, const Quaternion& e);
 Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e);
+
+float Cross(Vector2 a, Vector2 b);
+Vector3 Cross(const Vector3& v1, const Vector3& v2);
+
+float Angle(Vector3 from, Vector3 to);

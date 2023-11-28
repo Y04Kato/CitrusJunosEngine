@@ -9,6 +9,8 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
     modelData_ = LoadObjFile(directoryPath, filename);
     texture_ = textureManager_->Load(modelData_.material.textureFilePath);
   
+    isDirectionalLight_ = true;
+
     CreateVartexData();
     SetColor();
     CreateDictionalLight();

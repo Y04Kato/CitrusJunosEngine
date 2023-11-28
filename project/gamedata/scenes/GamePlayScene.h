@@ -21,6 +21,7 @@
 #include "skydome/Skydome.h"
 #include "ground/GroundManager.h"
 #include "goal/Goal.h"
+#include "lockOnCamera/LockOn.h"
 
 class GamePlayScene :public Iscene {
 public:
@@ -30,6 +31,8 @@ public:
 	void Finalize() override;
 
 	void ApplyGlobalVariables();
+
+	void SetEnemy(Vector3 pos);
 
 private:
 	CitrusJunosEngine* CJEngine_;
@@ -62,7 +65,7 @@ private:
 	std::unique_ptr<GroundManager> groundmanager_;
 	std::unique_ptr<Goal> goal_;
 
-	std::unique_ptr<Enemy>enemy_;
+	std::list<Enemy*> enemys_;
 	std::unique_ptr<Model> enemyModelHead = nullptr;
 	std::unique_ptr<Model> enemyModelBody = nullptr;
 	std::unique_ptr<Model> enemyModelL_arm = nullptr;
@@ -76,4 +79,6 @@ private:
 	AccelerationField accelerationField;
 
 	uint32_t particleResourceNum_;
+
+	std::unique_ptr<LockOn> lockOn_;
 };

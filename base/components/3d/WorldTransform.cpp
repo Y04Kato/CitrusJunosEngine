@@ -52,3 +52,8 @@ void WorldTransform::UpdateQuaternionMatrix() {
 Vector3 WorldTransform::GetWorldPos(){
 	return { matWorld_.m[3][0],matWorld_.m[3][1],matWorld_.m[3][2] };
 }
+
+Vector3 WorldTransform::GetCenter(){
+	const Vector3 offset = { 0.0f,2.0f,0.0f };
+	return TransformN(offset, matWorld_);
+}

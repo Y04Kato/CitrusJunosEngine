@@ -965,3 +965,35 @@ Vector3 operator-=(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v
 Quaternion operator+(const Quaternion& q1, const Quaternion& q2) { return { q1.w + q2.w,q1.x + q2.x, q1.y + q2.y, q1.z + q2.z }; }
 Quaternion operator-(const Quaternion& q1, const Quaternion& q2) { return { q1.w - q2.w,q1.x - q2.x, q1.y - q2.y, q1.z - q2.z }; }
 Quaternion operator*(const float t, const Quaternion& q) { return { q.w * t,q.x * t,q.y * t,q.z * t }; }
+
+float Cross(Vector2 a, Vector2 b){
+	return a.num[0] * b.num[1] - a.num[1] * b.num[0];
+}
+
+Vector3 Cross(const Vector3& v1, const Vector3& v2) {
+	Vector3 result;
+	result.num[0] = (v1.num[1] * v2.num[2] - v1.num[2] * v2.num[1]);
+	result.num[1] = (v1.num[2] * v2.num[0] - v1.num[0] * v2.num[2]);
+	result.num[2] = (v1.num[0] * v2.num[1] - v1.num[1] * v2.num[0]);
+	return result;
+}
+
+float Angle(Vector3 from, Vector3 to){
+	from = Normalize(from);
+	to = Normalize(to);
+	Vector2 from2 = { from.num[0],from.num[2]};
+	Vector2 to2 = { to.num[0],to.num[2]};
+	float dot = Dot(from, to);
+	if (dot >= 1.0f) {
+		return 0.0f;
+	}
+	if (dot <= -1.0f) {
+		return 180.0f * (2.0f / 180.0f);
+	}
+	if (Cross(from2, to2) > 0) {
+		return -std::acosf(dot);
+	}
+	else {
+		return std::acosf(dot);
+	}
+}

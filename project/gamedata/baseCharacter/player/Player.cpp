@@ -5,6 +5,8 @@
 #include "GlobalVariables.h"
 #include <math.h>
 
+#include "lockOnCamera/LockOn.h"
+
 const std::array<ConstAttack, Player::comboNum_>
 Player::kConstAttacks_ = { {
 	{5,1,20,10,0.0f,0.0f,0.15f},
@@ -171,11 +173,11 @@ void Player::Update() {
 	if (!isHit_ || worldTransformBody_.GetWorldPos().num[1] < 0.0f) {
 		IsFallStart();
 	}
-	else if(behavior_ == Behavior::kJump){
+	else if (behavior_ == Behavior::kJump) {
 	}
 	else {
 		worldTransformBody_.translation_.num[1] = objectPos_.translation_.num[1] + objectPos_.scale_.num[1] + worldTransformBody_.scale_.num[1] - 1.5f;
-		velocity_.num[1] = 0.1f;
+		velocity_.num[1] = 0.001f;
 	}
 
 	structSphere_.center = worldTransformBody_.GetWorldPos();
@@ -253,48 +255,72 @@ void Player::BehaviorRootUpdate() {
 	XINPUT_STATE joystate;
 
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-		const float kCharacterSpeed = 0.3f;
-		velocity_ = {
-			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, velocity_.num[1],
-			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
-		if (CompereVector3(velocity_, { 0.0f,0.0f,0.0f })) {
-			isMove_ = false;
-		}
+		if (!isHit_ || worldTransformBody_.GetWorldPos().num[1] < 0.0f) {}
 		else {
-			isMove_ = true;
-		}
-		if (isMove_ == true) {
-			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-			velocity_ = TransformNormal(velocity_, rotateMatrix);
-			velocity_ = Multiply(kCharacterSpeed, Normalize(velocity_));
-			worldTransformBody_.translation_ = Add(velocity_, worldTransformBody_.translation_);
-			preQuaternion_ = quaternion_;
-
-			Vector3 newPos = Subtruct(Add(worldTransformBody_.translation_, velocity_), worldTransformBody_.translation_);
-			Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));;
-
-
-			Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
-
-			Direction = Normalize(Direction);
-			Vector3 newDirection = Normalize(newPos);
-			float cosin = Dot(Direction, newDirection);
-
-			Quaternion newquaternion_;
-			newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
-
-			quaternion_ = Normalize(quaternion_);
-			newquaternion_ = Normalize(newquaternion_);
-
-			quaternion_ = Multiply(quaternion_, newquaternion_);
-			if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
-				cosin = -1.0f;
-				quaternion_ = Multiply(quaternion_, createQuaternion(cosin, { 0.0f,1.0f,0.0f }));
+			const float kCharacterSpeed = 0.3f;
+			velocity_ = {
+				(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
+				(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
+			if (CompereVector3(velocity_, { 0.0f,0.0f,0.0f })) {
+				isMove_ = false;
 			}
+			else {
+				isMove_ = true;
+			}
+			if (isMove_ == true) {
+				Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+				velocity_ = TransformNormal(velocity_, rotateMatrix);
+				velocity_ = Multiply(kCharacterSpeed, Normalize(velocity_));
+				worldTransformBody_.translation_ = Add(velocity_, worldTransformBody_.translation_);
+				preQuaternion_ = quaternion_;
 
-			preMove_ = velocity_;
+				Vector3 newPos = Subtruct(Add(worldTransformBody_.translation_, velocity_), worldTransformBody_.translation_);
+				Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));;
+
+
+				Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+				Direction = Normalize(Direction);
+				Vector3 newDirection = Normalize(newPos);
+				float cosin = Dot(Direction, newDirection);
+
+				Quaternion newquaternion_;
+				newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+				quaternion_ = Normalize(quaternion_);
+				newquaternion_ = Normalize(newquaternion_);
+
+				quaternion_ = Multiply(quaternion_, newquaternion_);
+				if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
+					cosin = -1.0f;
+					quaternion_ = Multiply(quaternion_, createQuaternion(cosin, { 0.0f,1.0f,0.0f }));
+				}
+
+				preMove_ = velocity_;
+			}
+			else if (LockOn_ && LockOn_->Existtarget()) {
+				Vector3 Direction;
+				//プレイヤーの現在の向き
+				Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+				Direction = Normalize(Direction);
+				Vector3 newPos = Subtruct(LockOn_->GetTargetPos(), worldTransformBody_.translation_);
+				Vector3 newDirection = Normalize(newPos);
+				float cosin = Dot(Direction, newDirection);
+
+				//行きたい方向のQuaternionの作成
+				Quaternion newquaternion_;
+
+				newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+				//quaternionの合成
+				quaternion_ = Normalize(quaternion_);
+				newquaternion_ = Normalize(newquaternion_);
+
+				quaternion_ = Multiply(quaternion_, newquaternion_);
+			}
+			worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
 		}
-		worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
 	}
 
 	UpdateFloatingGimmick();
@@ -303,7 +329,7 @@ void Player::BehaviorRootUpdate() {
 void Player::BehaviorAttackInitialize() {
 	worldTransformL_arm_.rotation_ = { 0.0f,0.0f,0.0f };
 	worldTransformR_arm_.rotation_ = { 0.0f,0.0f,0.0f };
-	worldTransformWeapon_.rotation_ = { 0.0f ,0.0f,0.0f};
+	worldTransformWeapon_.rotation_ = { 0.0f ,0.0f,0.0f };
 	animationFrame_ = 0;
 	workAtack_.rotate = (float)M_PI;
 	workAtack_.hammerRotate = 0.0f;
@@ -320,21 +346,47 @@ void Player::BehaviorAttackUpdate() {
 	uint32_t swingTime = chargeTime + kConstAttacks_[workAtack_.comboIndex].swingTime;
 	uint32_t recoveryTime = swingTime + kConstAttacks_[workAtack_.comboIndex].recoveryTime;
 
-	if (workAtack_.comboIndex < comboNum_ - 1){
+	if (workAtack_.comboIndex < comboNum_ - 1) {
 		if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-			if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_X && isAttack2 == false){
+			if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_X && isAttack2 == false) {
 				workAtack_.comboNext = true;
 				isAttack2 = true;
 			}
 		}
 	}
 
-	if (workAtack_.Time >= recoveryTime){
-		if (workAtack_.comboNext){
+	if (LockOn_ && LockOn_->Existtarget()) {
+		Vector3 Direction;
+		//プレイヤーの現在の向き
+		Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+		Direction = Normalize(Direction);
+		Vector3 newPos = Subtruct(LockOn_->GetTargetPos(), worldTransformBody_.translation_);
+		Vector3 newDirection = Normalize(newPos);
+		float cosin = Dot(Direction, newDirection);
+
+		//行きたい方向のQuaternionの作成
+		Quaternion newquaternion_;
+
+		newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+		//quaternionの合成
+		quaternion_ = Normalize(quaternion_);
+		newquaternion_ = Normalize(newquaternion_);
+
+		quaternion_ = Multiply(quaternion_, newquaternion_);
+
+		worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
+
+		worldTransform_.quaternion_ = worldTransformBody_.quaternion_;
+	}
+
+	if (workAtack_.Time >= recoveryTime) {
+		if (workAtack_.comboNext) {
 			workAtack_.comboNext = false;
 			workAtack_.Time = 0;
 			workAtack_.comboIndex++;
-			switch (workAtack_.comboIndex){
+			switch (workAtack_.comboIndex) {
 			case 0:
 				workAtack_.rotate = (float)M_PI;
 				workAtack_.hammerRotate = 0.0f;
@@ -415,49 +467,73 @@ void Player::BehaviorDashUpdate() {
 	XINPUT_STATE joystate;
 
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-		const float kCharacterSpeed = dashSpeed;
-		velocity_ = {
-			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, velocity_.num[1],
-			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
-		if (CompereVector3(velocity_, { 0.0f,0.0f,0.0f })) {
-			isMove_ = false;
-		}
+		if (!isHit_ || worldTransformBody_.GetWorldPos().num[1] < 0.0f) {}
 		else {
-			isMove_ = true;
-		}
-		if (isMove_ == true) {
-			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-			velocity_ = TransformNormal(velocity_, rotateMatrix);
-			velocity_ = Multiply(kCharacterSpeed, Normalize(velocity_));
-			worldTransformBody_.translation_ = Add(velocity_, worldTransformBody_.translation_);
-			preQuaternion_ = quaternion_;
+			const float kCharacterSpeed = dashSpeed;
+			velocity_ = {
+				(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
+				(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
+			if (CompereVector3(velocity_, { 0.0f,0.0f,0.0f })) {
+				isMove_ = false;
+			}
+			else {
+				isMove_ = true;
+			}
+			if (isMove_ == true) {
+				Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+				velocity_ = TransformNormal(velocity_, rotateMatrix);
+				velocity_ = Multiply(kCharacterSpeed, Normalize(velocity_));
+				worldTransformBody_.translation_ = Add(velocity_, worldTransformBody_.translation_);
+				preQuaternion_ = quaternion_;
 
-			Vector3 newPos = Subtruct(Add(worldTransformBody_.translation_, velocity_), worldTransformBody_.translation_);
-			Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));;
+				Vector3 newPos = Subtruct(Add(worldTransformBody_.translation_, velocity_), worldTransformBody_.translation_);
+				Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));;
 
 
-			Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+				Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
 
-			Direction = Normalize(Direction);
-			Vector3 newDirection = Normalize(newPos);
-			float cosin = Dot(Direction, newDirection);
+				Direction = Normalize(Direction);
+				Vector3 newDirection = Normalize(newPos);
+				float cosin = Dot(Direction, newDirection);
 
-			Quaternion newquaternion_;
-			newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+				Quaternion newquaternion_;
+				newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
 
-			quaternion_ = Normalize(quaternion_);
-			newquaternion_ = Normalize(newquaternion_);
+				quaternion_ = Normalize(quaternion_);
+				newquaternion_ = Normalize(newquaternion_);
 
-			quaternion_ = Multiply(quaternion_, newquaternion_);
-			if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
-				cosin = -1.0f;
-				quaternion_ = Multiply(quaternion_, createQuaternion(cosin, { 0.0f,1.0f,0.0f }));
+				quaternion_ = Multiply(quaternion_, newquaternion_);
+				if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
+					cosin = -1.0f;
+					quaternion_ = Multiply(quaternion_, createQuaternion(cosin, { 0.0f,1.0f,0.0f }));
+				}
+
+				preMove_ = velocity_;
+			}
+			else if (LockOn_ && LockOn_->Existtarget()) {
+				Vector3 Direction;
+				//プレイヤーの現在の向き
+				Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+				Direction = Normalize(Direction);
+				Vector3 newPos = Subtruct(LockOn_->GetTargetPos(), worldTransformBody_.translation_);
+				Vector3 newDirection = Normalize(newPos);
+				float cosin = Dot(Direction, newDirection);
+
+				//行きたい方向のQuaternionの作成
+				Quaternion newquaternion_;
+
+				newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+				//quaternionの合成
+				quaternion_ = Normalize(quaternion_);
+				newquaternion_ = Normalize(newquaternion_);
+
+				quaternion_ = Multiply(quaternion_, newquaternion_);
 			}
 
-			preMove_ = velocity_;
+			worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
 		}
-
-		worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
 	}
 
 	const uint32_t behaviorDashTime = 10;
@@ -481,7 +557,7 @@ void Player::BehaviorJumpUpdate() {
 	worldTransformBody_.translation_ += velocity_;
 	const float kGravityAcceleration = 0.05f;
 	Vector3 accelerationVector = { 0.0f,-kGravityAcceleration,0.0f };
-	velocity_ += accelerationVector;
+	velocity_.num[1] += accelerationVector.num[1];
 
 	if (worldTransformBody_.translation_.num[1] <= objectPos_.translation_.num[1]) {
 		worldTransformBody_.translation_.num[1] = objectPos_.translation_.num[1];
@@ -509,10 +585,10 @@ void Player::ApplyGlobalVariables() {
 }
 
 void Player::IsFallStart() {
-	worldTransformBody_.translation_ += velocity_;
+	worldTransformBody_.translation_.num[1] += velocity_.num[1] / 2;
 	const float kGravityAcceleration = 0.05f;
 	Vector3 accelerationVector = { 0.0f,-kGravityAcceleration,0.0f };
-	velocity_ += accelerationVector;
+	velocity_.num[1] += accelerationVector.num[1];
 }
 
 void Player::OnCollision() {
@@ -549,7 +625,7 @@ void Player::DeleteParent() {
 
 void Player::SetWorldTransform(const Vector3 translation) {
 	worldTransformBody_.translation_ = translation;
-	velocity_ = { 0.0f,1.0f,0.0f };
+	velocity_.num[1] = 0.001f;
 	gameOver = false;
 }
 
