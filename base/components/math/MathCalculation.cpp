@@ -674,7 +674,6 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 	const float dot = Dot(u, v);
 	const Vector3 cross = Cross(u, v);
 	Vector3 axis = Normalize(cross);
-	Normalize(axis);
 
 	if (dot == -1.0f) {
 		if (u.num[0] != 0.0f || u.num[1] != 0.0f) {
@@ -685,7 +684,7 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 		}
 	}
 
-	return MakeRotateAxisAngle(axis, dot, Length(cross));
+	return MakeRotateAxisAngle(Normalize(axis) , dot, Length(cross));
 }
 
 
