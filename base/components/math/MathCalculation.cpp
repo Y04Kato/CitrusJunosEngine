@@ -522,6 +522,14 @@ Vector3 Multiply(float scalar, const Vector3& v) {
 	return returnV;
 }
 
+Vector3 Multiply(const Vector3& v1, const Vector3& v2) {
+	Vector3 returnV;
+	returnV.num[0] = v1.num[0] * v2.num[0];
+	returnV.num[1] = v1.num[1] * v2.num[1];
+	returnV.num[2] = v1.num[2] * v2.num[2];
+	return returnV;
+}
+
 Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t) { return v1 + Multiply(t, v2 - v1); }
 
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
@@ -637,14 +645,80 @@ Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
 	const float cosTheta = std::cos(angle);
 	const float sinTheta = std::sin(angle);
 
-	const float minusCosTheta = 1.f - cosTheta;
+	const float minusCosTheta = 1.0f - cosTheta;
 
 	return Matrix4x4{
-		std::powf(axis.num[0], 2)* minusCosTheta + cosTheta,axis.num[0] * axis.num[1] * minusCosTheta + axis.num[2] * sinTheta,axis.num[0] * axis.num[1] * minusCosTheta - axis.num[1] * sinTheta,0.0f,
-		axis.num[0] * axis.num[1] * minusCosTheta - axis.num[2] * sinTheta,std::powf(axis.num[1], 2)* minusCosTheta + cosTheta,axis.num[1] * axis.num[2] * minusCosTheta + axis.num[0] * sinTheta,0.0f,
-		axis.num[0] * axis.num[2] * minusCosTheta + axis.num[1] * sinTheta, axis.num[1] * axis.num[2] * minusCosTheta - axis.num[0] * sinTheta,std::powf(axis.num[2],2)* minusCosTheta + cosTheta,0.0f,
+		std::powf(axis.num[0], 2) * minusCosTheta + cosTheta,axis.num[0] * axis.num[1] * minusCosTheta + axis.num[2] * sinTheta,axis.num[0] * axis.num[2] * minusCosTheta - axis.num[1] * sinTheta,0.0f,
+		axis.num[0] * axis.num[1] * minusCosTheta - axis.num[2] * sinTheta,std::powf(axis.num[1], 2) * minusCosTheta + cosTheta,axis.num[1] * axis.num[2] * minusCosTheta + axis.num[0] * sinTheta,0.0f,
+		axis.num[0] * axis.num[2] * minusCosTheta + axis.num[1] * sinTheta, axis.num[1] * axis.num[2] * minusCosTheta - axis.num[0] * sinTheta,std::powf(axis.num[2],2) * minusCosTheta + cosTheta,0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
+}
+
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, const float cos, const float sin) {
+
+	const float minusCosTheta = 1.0f - cos;
+
+	return Matrix4x4{
+		std::powf(axis.num[0], 2) * minusCosTheta + cos,axis.num[0] * axis.num[1] * minusCosTheta + axis.num[2] * sin,axis.num[0] * axis.num[2] * minusCosTheta - axis.num[1] * sin,0.0f,
+		axis.num[0] * axis.num[1] * minusCosTheta - axis.num[2] * sin,std::powf(axis.num[1], 2) * minusCosTheta + cos,axis.num[1] * axis.num[2] * minusCosTheta + axis.num[0] * sin,0.0f,
+		axis.num[0] * axis.num[2] * minusCosTheta + axis.num[1] * sin, axis.num[1] * axis.num[2] * minusCosTheta - axis.num[0] * sin,std::powf(axis.num[2],2) * minusCosTheta + cos,0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+}
+
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
+	Vector3 u = Normalize(from);
+	Vector3 v = Normalize(to);
+
+	const float dot = Dot(u, v);
+	const Vector3 cross = Cross(u, v);
+	Vector3 axis = Normalize(cross);
+	Normalize(axis);
+
+	if (dot == -1.0f) {
+		if (u.num[0] != 0.0f || u.num[1] != 0.0f) {
+			axis = Vector3{ u.num[1], -u.num[0], 0.0f };
+		}
+		else if (u.num[0] != 0.0f || u.num[2] != 0.0f) {
+			axis = Vector3{ u.num[2], 0.f, -u.num[0] };
+		}
+	}
+
+	return MakeRotateAxisAngle(axis, dot, Length(cross));
+}
+
+
+float Cross(Vector2 a, Vector2 b) {
+	return a.num[0] * b.num[1] - a.num[1] * b.num[0];
+}
+
+Vector3 Cross(const Vector3& v1, const Vector3& v2) {
+	Vector3 result;
+	result.num[0] = (v1.num[1] * v2.num[2] - v1.num[2] * v2.num[1]);
+	result.num[1] = (v1.num[2] * v2.num[0] - v1.num[0] * v2.num[2]);
+	result.num[2] = (v1.num[0] * v2.num[1] - v1.num[1] * v2.num[0]);
+	return result;
+}
+
+float Angle(Vector3 from, Vector3 to) {
+	from = Normalize(from);
+	to = Normalize(to);
+	Vector2 from2 = { from.num[0],from.num[2] };
+	Vector2 to2 = { to.num[0],to.num[2] };
+	float dot = Dot(from, to);
+	if (dot >= 1.0f) {
+		return 0.0f;
+	}
+	if (dot <= -1.0f) {
+		return 180.0f * (2.0f / 180.0f);
+	}
+	if (Cross(from2, to2) > 0) {
+		return -std::acosf(dot);
+	}
+	else {
+		return std::acosf(dot);
+	}
 }
 
 bool IsCollision(const AABB& aabb, const StructSphere& sphere) {
@@ -972,6 +1046,7 @@ Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1, v2); }
 Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }
 Vector3 operator*(float k, const Vector3& v) { return Multiply(k, v); }
 Vector3 operator*(const Vector3& v, float k) { return Multiply(k, v); }
+Vector3 operator*(const Vector3& v1, const Vector3& v2) { return Multiply(v1, v2); }
 Vector3 operator+=(Vector3& v1, Vector3& v2) { return v1 = Add(v1, v2); }
 Vector3 operator+=(Vector3& v1, const Vector3& v2) { return v1 = Add(v1, v2); }
 Vector3 operator-=(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }

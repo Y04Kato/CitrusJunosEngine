@@ -18,6 +18,8 @@ public:
 	Particle MakeNewParticle(std::mt19937& randomEngine,const Transform transform);
 	std::list<Particle> Emission(const Emitter& emitter, std::mt19937& randomEngine);
 
+	void SetTranslate(Vector3 transform) { emitter_.transform.translate = transform; }
+
 private:
 	void SettingVertex();
 

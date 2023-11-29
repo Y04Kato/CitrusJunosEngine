@@ -28,6 +28,7 @@ Vector3 operator+(const Vector3&, const Vector3&);
 Vector3 operator-(const Vector3&, const Vector3&);
 Vector3 operator*(float k, const Vector3& v);
 Vector3 operator*(const Vector3& v, float k);
+Vector3 operator*(const Vector3& v1, const Vector3& v2);
 
 Vector3 operator-(const Vector3& v);
 
@@ -101,9 +102,18 @@ Matrix4x4& SetTranslate(Matrix4x4& m, const Vector3& v);
 
 Matrix4x4 MakeInverseMatrix(const Matrix4x4& rotate, const Vector3& translate);
 
+Matrix4x4 MakeRotateMatrixFromOrientations(const Vector3 orientations[3]);
+
 Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
 
-Matrix4x4 MakeRotateMatrixFromOrientations(const Vector3 orientations[3]);
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, const float cos, const float sin);
+
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
+
+float Cross(Vector2 a, Vector2 b);
+Vector3 Cross(const Vector3& v1, const Vector3& v2);
+
+float Angle(Vector3 from, Vector3 to);
 
 bool IsCollision(const AABB& aabb, const StructSphere& sphere);
 bool IsCollision(const AABB& aabb, const Vector3& point);
@@ -151,6 +161,7 @@ Vector2 Multiply(float scalar, const Vector2& v);
 Vector3 Add(const Vector3& v1, const Vector3& v2);
 Vector3 Subtruct(const Vector3& v1, const Vector3& v2);
 Vector3 Multiply(float scalar, const Vector3& v);
+Vector3 Multiply(const Vector3& v1, const Vector3& v2);
 
 Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
