@@ -240,7 +240,7 @@ void GamePlayScene::Update() {
 	}
 	if (ImGui::TreeNode("Particle")) {//パーティクル
 		if (ImGui::Button("DrawParticle")) {
-			if (isModelDraw_ == false) {
+			if (isParticleDraw_ == false) {
 				isParticleDraw_ = true;
 			}
 			else {
