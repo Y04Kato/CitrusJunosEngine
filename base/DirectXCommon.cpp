@@ -35,26 +35,10 @@ void DirectXCommon::Initialization(const wchar_t* title, int32_t backBufferWidth
 	//深度設定
 	CreateDepthStensil();
 
-	//ImGui
-	ImGuiInitialize();
-
 	//テキスト関係
 	InitializeTextFactory();
 	CreateTextRenderTargets();
 	CreateTextVertex();
-}
-
-void DirectXCommon::ImGuiInitialize() {
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(WinApp::GetInstance()->GetHwnd());
-	ImGui_ImplDX12_Init(device_.Get(),
-		swapChainDesc_.BufferCount,
-		rtvDesc_.Format,
-		srvDescriptorHeap_.Get(),
-		srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart(),
-		srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart());
 }
 
 void DirectXCommon::InitializeDXGIDevice() {
@@ -232,10 +216,6 @@ void DirectXCommon::CreateFence() {
 }
 
 void DirectXCommon::PreDraw() {
-	ImGui_ImplDX12_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
 	//書き込むバックバッファのインデックスを取得
 	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
 	//今回のbarrierはTransition
@@ -267,8 +247,6 @@ void DirectXCommon::PreDraw() {
 
 void DirectXCommon::PostDraw() {
 	hr_;
-	//実際のCommandListのコマンドを積む
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_.Get());
 	//画面描画処理の終わり、状態を遷移
 	barrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
@@ -391,9 +369,6 @@ void DirectXCommon::CreateDepthStensil() {
 
 void DirectXCommon::Finalize() {
 	CloseHandle(fenceEvent_);
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
 #ifdef DEBUG
 	winApp_->GetdebugController()->Release();
 #endif // DEBUG

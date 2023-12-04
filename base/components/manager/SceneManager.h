@@ -6,6 +6,7 @@
 #include "GlobalVariables.h"
 #include "TextureManager.h"
 #include "DirectionalLight.h"
+#include "ImGuiManager.h"
 
 //sceneInclude
 #include "GameTitleScene.h"
@@ -30,6 +31,8 @@ private:
 	TextureManager* textureManager_ = nullptr;
 
 	DirectionalLights* directionalLight_ = nullptr;
+
+	ImGuiManager* imGuiManager_ = nullptr;
 
 	std::unique_ptr<Iscene>scene_[SCENE_MAX];
 };

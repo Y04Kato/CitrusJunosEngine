@@ -32,6 +32,10 @@ void SceneManager::Initialize() {
 	textureManager_ = TextureManager::GetInstance();
 	textureManager_->Initialize();
 
+	//ImGui
+	imGuiManager_ = ImGuiManager::GetInstance();
+	imGuiManager_->Initialize(WinApp::GetInstance(), dxCommon_);
+
 	//CSV
 	GlobalVariables::GetInstance()->LoadFiles();
 
@@ -55,11 +59,14 @@ void SceneManager::Update() {
 		}
 
 		CJEngine_->BeginFrame();
+		imGuiManager_->Begin();
 		input_->Update();
 		GlobalVariables::GetInstance()->Update();
 		directionalLight_->Update();
 		scene_[Iscene::sceneNo]->Update();
 		scene_[Iscene::sceneNo]->Draw();
+		imGuiManager_->End();
+		imGuiManager_->Draw();
 		CJEngine_->EndFrame();
 
 		//// ESCキーが押されたらループを抜ける
@@ -76,6 +83,7 @@ void SceneManager::Update() {
 void SceneManager::Finalize() {
 	CJEngine_->Finalize();
 	audio_->Finalize();
+	imGuiManager_->Finalize();
 	for (int i = 0; i < SCENE_MAX; i++) {
 		scene_[i]->Finalize();
 	}

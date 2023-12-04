@@ -228,6 +228,9 @@
     <ClCompile Include="base\components\2d\CreateParticle.cpp">
       <Filter>ソース ファイル\base\components\2d</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\manager\ImGuiManager\ImGuiManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -366,6 +369,9 @@
     </ClInclude>
     <ClInclude Include="project\gamedata\resources\resource.h">
       <Filter>ヘッダー ファイル\project\gamedata\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\manager\ImGuiManager\ImGuiManager.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -18,8 +18,6 @@ public:
 
 	void Initialization(const wchar_t* title, int32_t backBufferWidth = WinApp::kClientWidth, int32_t backBufferHeight = WinApp::kClientHeight);
 
-	void ImGuiInitialize();
-
 	void PreDraw();
 	void PostDraw();
 
@@ -41,6 +39,8 @@ public:
 
 	DirectXCommon(const DirectXCommon& obj) = delete;
 	DirectXCommon& operator=(const DirectXCommon& obj) = delete;
+
+	UINT GetbackBufferCount() { return swapChainDesc_.BufferCount; }
 
 private:
 	DirectXCommon() = default;

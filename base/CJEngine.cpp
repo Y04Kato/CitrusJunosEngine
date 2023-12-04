@@ -586,11 +586,6 @@ void CitrusJunosEngine::BeginFrame() {
 	dxCommon_->GetCommandList()->RSSetViewports(1, &viewport_);
 	//scirssorを設定
 	dxCommon_->GetCommandList()->RSSetScissorRects(1, &scissorRect_);
-
-	//開発用UIの処理
-#ifdef _DEBUG
-	ImGui::ShowDemoWindow();
-#endif
 }
 
 void CitrusJunosEngine::PreDraw3D() {
@@ -616,8 +611,6 @@ void CitrusJunosEngine::PreDrawParticle() {
 
 void CitrusJunosEngine::EndFrame() {
 	//内部コマンドを生成する
-	ImGui::Render();
-
 	dxCommon_->PostDraw();
 }
 
