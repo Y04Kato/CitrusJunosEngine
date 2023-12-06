@@ -5,36 +5,107 @@
 #include <numbers>
 #include <algorithm>
 
+#pragma region float
 float Length(const Vector3& v);
 float Dot(const Vector3& v1, const Vector3& v2);
 
 float LengthQuaternion(const Quaternion& q);
 
-//演算子オーバーロード
-Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2);
-Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2);
-Vector3 operator*(const Vector3& v, const Matrix4x4& matrix);
-Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
-Matrix4x4 operator+=(Matrix4x4 m1, Matrix4x4 m2);
-Matrix4x4 operator-=(Matrix4x4& m1, const Matrix4x4& m2);
-Matrix4x4 operator*=(Matrix4x4& m1, const Matrix4x4& m2);
+float contangent(float b, float a);
 
+float Lerp(float a, float b, float t);
+float LerpShortAngle(float a, float b, float t);
+
+#pragma endregion
+
+#pragma region Vector2
+//演算子オーバーロード
 Vector2 operator+(const Vector2&, const Vector2&);
 Vector2 operator-(const Vector2&, const Vector2&);
 Vector2 operator*(float k, const Vector2& v);
 Vector2 operator*(const Vector2& v, float k);
 
+//Vector2の計算
+Vector2 Add(const Vector2& v1, const Vector2& v2);
+Vector2 Subtruct(const Vector2& v1, const Vector2& v2);
+Vector2 Multiply(float scalar, const Vector2& v);
+
+float Cross(Vector2 a, Vector2 b);
+
+Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
+
+#pragma endregion
+
+#pragma region Vector3
+//演算子オーバーロード
 Vector3 operator+(const Vector3&, const Vector3&);
 Vector3 operator-(const Vector3&, const Vector3&);
+Vector3 operator-(const Vector3& v);
 Vector3 operator*(float k, const Vector3& v);
 Vector3 operator*(const Vector3& v, float k);
 Vector3 operator*(const Vector3& v1, const Vector3& v2);
-
-Vector3 operator-(const Vector3& v);
-
+Vector3 operator*(const Vector3& v, const Matrix4x4& matrix);
 Vector3 operator+=(Vector3&, Vector3&);
 Vector3 operator+=(Vector3&, const Vector3&);
 Vector3 operator-=(const Vector3&, const Vector3&);
+
+//Vector3の計算
+Vector3 Add(const Vector3& v1, const Vector3& v2);
+Vector3 Subtruct(const Vector3& v1, const Vector3& v2);
+Vector3 Multiply(float scalar, const Vector3& v);
+Vector3 Multiply(const Vector3& v1, const Vector3& v2);
+
+//TransformNormal
+Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
+
+Vector3 TransformN(const Vector3& v, const Matrix4x4& m);
+
+Vector3 Normalize(const Vector3& v);
+
+Vector3 GetXAxis(const Matrix4x4& m);
+
+Vector3 GetYAxis(const Matrix4x4& m);
+
+Vector3 GetZAxis(const Matrix4x4& m);
+
+void GetOrientations(const Matrix4x4& m, Vector3 orientations[3]);
+
+Vector3 Cross(const Vector3& v1, const Vector3& v2);
+
+float Angle(Vector3 from, Vector3 to);
+
+Vector3 matrixToEulerAngles(const Matrix4x4 mat);
+
+Vector3 extractEulerAnglesFromRotationMatrix(const Matrix4x4& rotationMatrix);
+
+Vector3 GetRightVectorFromModelMatrix(const Matrix4x4& modelMatrix);
+
+Vector3 GetUpVectorFromModelMatrix(const Matrix4x4& modelMatrix);
+
+Vector3 GetFrontVectorFromModelMatrix(const Matrix4x4& modelMatrix);
+
+bool CompereVector3(const Vector3& q1, const Vector3& q2);
+
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
+
+#pragma endregion
+
+#pragma region Matrix4x4
+//演算子オーバーロード
+Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2);
+Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2);
+Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
+Matrix4x4 operator+=(Matrix4x4 m1, Matrix4x4 m2);
+Matrix4x4 operator-=(Matrix4x4& m1, const Matrix4x4& m2);
+Matrix4x4 operator*=(Matrix4x4& m1, const Matrix4x4& m2);
+
+//行列の加法
+Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
+//行列の減法
+Matrix4x4 Subtruct(const Matrix4x4& m1, const Matrix4x4& m2);
+//行列の積
+Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 
 //X軸回転行列
 Matrix4x4 MakeRotateXMatrix(float radian);
@@ -59,15 +130,6 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 // アフィン変換
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
-//行列の加法
-Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
-
-//行列の減法
-Matrix4x4 Subtruct(const Matrix4x4& m1, const Matrix4x4& m2);
-
-//行列の積
-Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
-
 //逆行列
 Matrix4x4 Inverse(const Matrix4x4& m1);
 
@@ -80,23 +142,8 @@ Matrix4x4 MakeIdentity4x4();
 //透視投影行列
 Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRadio, float nearClip, float farClip);
 
-// 正射影行列
+//正射影行列
 Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
-
-// TransformNormal
-Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
-
-Vector3 TransformN(const Vector3& v, const Matrix4x4& m);
-
-Vector3 Normalize(const Vector3& v);
-
-Vector3 GetXAxis(const Matrix4x4& m);
-
-Vector3 GetYAxis(const Matrix4x4& m);
-
-Vector3 GetZAxis(const Matrix4x4& m);
-
-void GetOrientations(const Matrix4x4& m, Vector3 orientations[3]);
 
 Matrix4x4& SetTranslate(Matrix4x4& m, const Vector3& v);
 
@@ -110,16 +157,13 @@ Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, const float cos, const float 
 
 Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 
-float Cross(Vector2 a, Vector2 b);
-Vector3 Cross(const Vector3& v1, const Vector3& v2);
+#pragma endregion
 
-float Angle(Vector3 from, Vector3 to);
-
-bool IsCollision(const AABB& aabb, const StructSphere& sphere);
-bool IsCollision(const AABB& aabb, const Vector3& point);
-bool IsCollision(const AABB& aabb1, const AABB& aabb2);
-
-bool IsCollision(const OBB& obb, const StructSphere& sphere);
+#pragma region Quaternion
+//演算子オーバーロード
+Quaternion operator+(const Quaternion& q1, const Quaternion& q2);
+Quaternion operator-(const Quaternion& q1, const Quaternion& q2);
+Quaternion operator*(const float t, const Quaternion& q);
 
 Vector4 MakeQuaternion(Vector3 axis, float radian);
 
@@ -132,47 +176,35 @@ Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, co
 
 Matrix4x4 quaternionToMatrix(const Quaternion& quat);
 
-Vector3 matrixToEulerAngles(const Matrix4x4 mat);
-
-Quaternion Normalize(const Quaternion& q);
-
-Vector3 extractEulerAnglesFromRotationMatrix(const Matrix4x4& rotationMatrix);
-
-Vector3 GetRightVectorFromModelMatrix(const Matrix4x4& modelMatrix);
-
-Vector3 GetUpVectorFromModelMatrix(const Matrix4x4& modelMatrix);
-
-Vector3 GetFrontVectorFromModelMatrix(const Matrix4x4& modelMatrix);
-
 Vector3 rotateVectorAndQuaternion(const Quaternion& q, const Vector3& v);
 
+//積
 Quaternion Multiply(const Quaternion& q1, const Quaternion& q2);
+
+//単位Quaternion
+Quaternion IdentityQuaternion();
+
+//共役Quaternion
+Quaternion Conjugate(const Quaternion& q);
+
+//norm
+float Norm(const Quaternion& q);
+
+//正規化Quaternion
+Quaternion Normalize(const Quaternion& q);
+
+//逆Quaternion
+Quaternion Inverse(const Quaternion& q);
 
 bool CompereQuaternion(const Quaternion& q1, const Quaternion& q2);
 
-bool CompereVector3(const Vector3& q1, const Vector3& q2);
-
-//Vector2の計算
-Vector2 Add(const Vector2& v1, const Vector2& v2);
-Vector2 Subtruct(const Vector2& v1, const Vector2& v2);
-Vector2 Multiply(float scalar, const Vector2& v);
-
-//Vector3の計算
-Vector3 Add(const Vector3& v1, const Vector3& v2);
-Vector3 Subtruct(const Vector3& v1, const Vector3& v2);
-Vector3 Multiply(float scalar, const Vector3& v);
-Vector3 Multiply(const Vector3& v1, const Vector3& v2);
-
-Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
-Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
-Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
-
-float Lerp(float a, float b, float t);
-float LerpShortAngle(float a, float b, float t);
-
-Quaternion operator+(const Quaternion& q1, const Quaternion& q2);
-Quaternion operator-(const Quaternion& q1, const Quaternion& q2);
-Quaternion operator*(const float t, const Quaternion& q);
-
 Quaternion Lerp(float t, const Quaternion& s, const Quaternion& e);
 Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e);
+
+#pragma endregion
+
+bool IsCollision(const AABB& aabb, const StructSphere& sphere);
+bool IsCollision(const AABB& aabb, const Vector3& point);
+bool IsCollision(const AABB& aabb1, const AABB& aabb2);
+
+bool IsCollision(const OBB& obb, const StructSphere& sphere);
