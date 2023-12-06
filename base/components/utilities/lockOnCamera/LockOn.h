@@ -23,9 +23,9 @@ private:
 	XINPUT_STATE preInputPad;
 	Enemy* target_ = nullptr;
 
-	float minDistance_ = 0.0f;
+	float minDistance_ = 10.0f;
 	float maxDistance_ = 30.0f;
-	float angleRange_ = 50.0f * 3.14159265f / 180.0f;
+	float angleRange_ = 30.0f * 3.14159265f / 180.0f;
 	bool isLockOn_;
 	int count_;
 	bool isAuto = true;

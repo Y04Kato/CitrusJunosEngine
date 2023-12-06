@@ -101,13 +101,14 @@ void GamePlayScene::Update() {
 	collisionManager_->CheckAllCollision();
 
 	debugCamera_->Update();
-	lockOn_->Update(enemys_, viewProjection_);
 
 	viewProjection_.UpdateMatrix();
 	followCamera_->Update();
 	viewProjection_.matView = followCamera_->GetViewProjection().matView;
 	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 	viewProjection_.TransferMatrix();
+
+	lockOn_->Update(enemys_, viewProjection_);
 
 	groundmanager_->Update();
 	player_->Update();

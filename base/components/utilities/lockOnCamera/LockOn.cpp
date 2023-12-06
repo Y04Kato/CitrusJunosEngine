@@ -4,6 +4,7 @@
 void LockOn::Initialize() {
 	textureManager_ = TextureManager::GetInstance();
 	tex_ = textureManager_->Load("project/gamedata/resources/lockon.png");
+	//tex_ = textureManager_->Load("project/gamedata/resources/uvChecker.png");
 	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	SpriteuvTransform_ = {
@@ -20,7 +21,7 @@ void LockOn::Initialize() {
 	count_ = 0;
 }
 
-void LockOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewProjection){
+void LockOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewProjection) {
 	XINPUT_STATE joystate;
 	count_++;
 	if (!Input::GetInstance()->GetJoystickState(0, joystate)) {
@@ -83,11 +84,11 @@ void LockOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 			Reset();
 			return;
 		}
-		Vector3 positionWorld = target_->GetWorldTransform().GetCenter();
+		Vector3 positionWorld = target_->GetWorldTransform().GetWorldPos();
 
 		Vector3 pos = WorldToScreen(positionWorld, viewProjection);
-		spriteTransform_.translate.num[0] = pos.num[0];
-		spriteTransform_.translate.num[1] = pos.num[1];
+		spriteTransform_.translate.num[0] = pos.num[0] + WinApp::kClientWidth/2;
+		spriteTransform_.translate.num[1] = pos.num[1] + WinApp::kClientHeight/2;
 		if (isRangeOut(viewProjection)) {
 			Reset();
 			Search(enemys, viewProjection);
@@ -97,6 +98,7 @@ void LockOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 	ImGui::Begin("LockOn");
 	ImGui::Checkbox("IsAuto", &isAuto);
 	ImGui::Text("%d", iteratornum);
+	ImGui::DragFloat3("translate", spriteTransform_.translate.num);
 	ImGui::End();
 	count_++;
 }
@@ -111,7 +113,7 @@ void LockOn::Target() {
 	target_ = nullptr;
 
 	if (!targets.empty()) {
-		targets.sort([](auto& pair1, auto& pair2) {return pair1.first > pair2.first; });
+		targets.sort([](auto& pair1, auto& pair2) {return pair1.first < pair2.first; });
 		max = (int)targets.size();
 		if (isAuto == true) { target_ = targets.front().second; }
 		else {
@@ -164,27 +166,26 @@ void LockOn::Reset() {
 }
 
 Vector3 LockOn::GetTargetPos() const {
-	{
-		if (target_) {
-			return target_->GetWorldTransform().GetCenter();
-		}
-		return Vector3();
+	if (target_) {
+		return target_->GetWorldTransform().GetCenter();
 	}
+	return Vector3();
+
 }
 
-bool LockOn::isTarget(){
+bool LockOn::isTarget() {
 	if (target_) {
 		return true;
 	}
 	return false;
 }
 
-bool LockOn::isRangeOut(const ViewProjection& viewProjection){
+bool LockOn::isRangeOut(const ViewProjection& viewProjection) {
 	Vector3 positionWorld = target_->GetWorldTransform().GetCenter();
 	Vector3 positionView = TransformN(positionWorld, viewProjection.matView);
 	if (minDistance_ <= positionView.num[2] && positionView.num[2] <= maxDistance_) {
-		Vector3 viewXZ = Normalize(Vector3{ positionView.num[0],0.0f,positionView.num[2]});
-		Vector3 viewZ = Normalize(Vector3{ 0.0f,0.0f,positionView.num[2]});
+		Vector3 viewXZ = Normalize(Vector3{ positionView.num[0],0.0f,positionView.num[2] });
+		Vector3 viewZ = Normalize(Vector3{ 0.0f,0.0f,positionView.num[2] });
 
 		float cos = Length(Cross(viewXZ, viewZ));
 		if (std::abs(cos) <= angleRange_) {
@@ -196,7 +197,7 @@ bool LockOn::isRangeOut(const ViewProjection& viewProjection){
 	return true;
 }
 
-Vector3 LockOn::WorldToScreen(Vector3 world, const ViewProjection& viewProjection){
+Vector3 LockOn::WorldToScreen(Vector3 world, const ViewProjection& viewProjection) {
 	Matrix4x4 matViewport = { 0.0f, 0.0f, WinApp::kClientWidth, WinApp::kClientHeight, 0.0f, 1.0f };
 	Matrix4x4 matViewProjectionViewport =
 		Multiply(viewProjection.matView, Multiply(viewProjection.matProjection, matViewport));

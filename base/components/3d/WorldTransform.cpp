@@ -54,6 +54,6 @@ Vector3 WorldTransform::GetWorldPos(){
 }
 
 Vector3 WorldTransform::GetCenter(){
-	const Vector3 offset = { 0.0f,2.0f,0.0f };
+	const Vector3 offset = { 0.0f,0.0f,0.0f };
 	return TransformN(offset, matWorld_);
 }
