@@ -164,6 +164,7 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 Quaternion operator+(const Quaternion& q1, const Quaternion& q2);
 Quaternion operator-(const Quaternion& q1, const Quaternion& q2);
 Quaternion operator*(const float t, const Quaternion& q);
+Quaternion operator/(const Quaternion& q,const float t);
 
 Vector4 MakeQuaternion(Vector3 axis, float radian);
 

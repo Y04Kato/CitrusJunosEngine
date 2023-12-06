@@ -800,9 +800,10 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 #pragma endregion
 
 #pragma region Quaternion
-Quaternion operator+(const Quaternion& q1, const Quaternion& q2) { return { q1.w + q2.w,q1.x + q2.x, q1.y + q2.y, q1.z + q2.z }; }
-Quaternion operator-(const Quaternion& q1, const Quaternion& q2) { return { q1.w - q2.w,q1.x - q2.x, q1.y - q2.y, q1.z - q2.z }; }
-Quaternion operator*(const float t, const Quaternion& q) { return { q.w * t,q.x * t,q.y * t,q.z * t }; }
+Quaternion operator+(const Quaternion& q1, const Quaternion& q2) { return { q1.x + q2.x, q1.y + q2.y, q1.z + q2.z,q1.w + q2.w }; }
+Quaternion operator-(const Quaternion& q1, const Quaternion& q2) { return { q1.x - q2.x, q1.y - q2.y, q1.z - q2.z,q1.w - q2.w }; }
+Quaternion operator*(const float t, const Quaternion& q) { return { q.x * t,q.y * t,q.z * t,q.w * t }; }
+Quaternion operator/(const Quaternion& q, const float t) { return { q.x / t,q.y / t,q.z / t,q.w / t }; }
 
 Vector4 MakeQuaternion(Vector3 axis, float radian) {
 	Vector4 quaternion;
@@ -828,10 +829,10 @@ Vector4 MakeQuaternion(Vector3 axis, float radian) {
 	halfSin = sinf(radian * 0.5f);
 	halfCos = cosf(radian * 0.5f);
 
-	quaternion.num[3] = halfCos;
 	quaternion.num[0] = axis.num[0] * halfSin;
 	quaternion.num[1] = axis.num[1] * halfSin;
 	quaternion.num[2] = axis.num[2] * halfSin;
+	quaternion.num[3] = halfCos;
 
 	return quaternion;
 }
@@ -944,25 +945,27 @@ Vector3 rotateVectorAndQuaternion(const Quaternion& q, const Vector3& v) {
 
 Quaternion Multiply(const Quaternion& q1, const Quaternion& q2) {
 	Quaternion result;
-	result.w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
 	result.x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
 	result.y = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
 	result.z = q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w;
+	result.w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
 	return result;
 }
 
 Quaternion IdentityQuaternion() {
-
+	return { 0.0f,0.0f,0.0f,1.0f };
 }
 
 Quaternion Conjugate(const Quaternion& q) {
 	Quaternion result;
-
+	result = { -q.x,-q.y,-q.z,q.w };
 	return result;
 }
 
 float Norm(const Quaternion& q) {
-
+	float result;
+	result = LengthQuaternion(q);
+	return result;
 }
 
 Quaternion Normalize(const Quaternion& q) {
@@ -981,7 +984,11 @@ Quaternion Normalize(const Quaternion& q) {
 }
 
 Quaternion Inverse(const Quaternion& q) {
+	Quaternion result;
+	result = Conjugate(q) / std::pow(Norm(q), 2.0f);
 
+
+	return result;
 }
 
 bool CompereQuaternion(const Quaternion& q1, const Quaternion& q2) {

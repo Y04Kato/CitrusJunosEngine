@@ -63,7 +63,7 @@ struct StructSphere {
 };
 
 struct Quaternion {
-	float w, x, y, z;
+	float x, y, z, w;
 };
 
 struct Particle {
