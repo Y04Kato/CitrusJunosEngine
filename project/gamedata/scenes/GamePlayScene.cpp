@@ -259,6 +259,17 @@ void GamePlayScene::Update() {
 }
 
 void GamePlayScene::Draw() {
+#pragma region 背景スプライト描画
+	CJEngine_->PreDraw2D();
+
+	for (int i = 0; i < 2; i++) {
+		if (isSpriteDraw_[i]) {//Sprite描画
+			sprite_[i]->Draw(spriteTransform_[i], SpriteuvTransform_[i], spriteMaterial_[i]);
+		}
+	}
+
+#pragma endregion
+
 #pragma region 3Dオブジェクト描画
 	CJEngine_->PreDraw3D();
 
@@ -289,12 +300,6 @@ void GamePlayScene::Draw() {
 
 #pragma region 前景スプライト描画
 	CJEngine_->PreDraw2D();
-
-	for (int i = 0; i < 2; i++) {
-		if (isSpriteDraw_[i]) {//Sprite描画
-			sprite_[i]->Draw(spriteTransform_[i], SpriteuvTransform_[i], spriteMaterial_[i]);
-		}
-	}
 
 #pragma endregion
 }

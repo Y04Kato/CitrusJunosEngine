@@ -130,6 +130,12 @@
     <Filter Include="ソース ファイル\base\components\utilities\directionalLight">
       <UniqueIdentifier>{dfd6f818-eb7c-42f7-a209-09796a12d3d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\base\components\manager\imGuiManager">
+      <UniqueIdentifier>{0fb1b2e1-7ebe-4904-b1f3-2fd747882177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\manager\imGuiManager">
+      <UniqueIdentifier>{5baf897c-705e-4f83-a648-c703d5c90194}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -140,9 +146,6 @@
     </ClCompile>
     <ClCompile Include="base\components\math\MathCalculation.cpp">
       <Filter>ソース ファイル\base\components\math</Filter>
-    </ClCompile>
-    <ClCompile Include="base\CJEngine.cpp">
-      <Filter>ソース ファイル\base</Filter>
     </ClCompile>
     <ClCompile Include="base\WinApp.cpp">
       <Filter>ソース ファイル\base</Filter>
@@ -228,8 +231,14 @@
     <ClCompile Include="base\components\2d\CreateParticle.cpp">
       <Filter>ソース ファイル\base\components\2d</Filter>
     </ClCompile>
+    <ClCompile Include="base\CJEngine.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\3d\CreateHoudini.cpp">
+      <Filter>ソース ファイル\base\components\3d</Filter>
+    </ClCompile>
     <ClCompile Include="base\components\manager\ImGuiManager\ImGuiManager.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\base\components\manager\imGuiManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -370,8 +379,11 @@
     <ClInclude Include="project\gamedata\resources\resource.h">
       <Filter>ヘッダー ファイル\project\gamedata\resources</Filter>
     </ClInclude>
+    <ClInclude Include="base\components\3d\CreateHoudini.h">
+      <Filter>ヘッダー ファイル\base\components\3d</Filter>
+    </ClInclude>
     <ClInclude Include="base\components\manager\ImGuiManager\ImGuiManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\base\components\manager\imGuiManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

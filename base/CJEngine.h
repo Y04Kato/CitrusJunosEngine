@@ -113,6 +113,7 @@ private:
 	void CreateInputlayOut2D();
 	void RasterizerState2D();
 	void InitializePSO2D();
+	void SettingDepth2D();
 	Microsoft::WRL::ComPtr<ID3DBlob>signatureBlob2D_;
 	Microsoft::WRL::ComPtr<ID3DBlob>errorBlob2D_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature>rootSignature2D_;
@@ -124,6 +125,7 @@ private:
 	D3D12_RASTERIZER_DESC rasterizerDesc2D_{};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs2D_[2];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc2D_{};
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc2D_{};
 
 	//Particle用
 	void CreateRootSignatureParticle();

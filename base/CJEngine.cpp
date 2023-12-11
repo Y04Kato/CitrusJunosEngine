@@ -81,6 +81,7 @@ void CitrusJunosEngine::Initialize(const char* title, int32_t width, int32_t hei
 	RasterizerStateParticle();
 
 	SettingDepth();
+	SettingDepth2D();
 	SettingDepthParticle();
 
 	InitializePSO3D();
@@ -317,7 +318,7 @@ void CitrusJunosEngine::InitializePSO2D() {
 	//どのように画面に色を打ち込むのかの設定（気にしなく良い）
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc_;
+	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc2D_;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	//実際に生成
 	graphicsPipelineState2D_ = nullptr;
@@ -571,6 +572,13 @@ void CitrusJunosEngine::SettingDepth() {
 	depthStencilDesc_.DepthEnable = true;//有効化
 	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;//書き込み
 	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;//比較関数、近ければ描画される
+}
+
+void CitrusJunosEngine::SettingDepth2D() {
+	//DepthStencilStateの設定
+	depthStencilDesc2D_.DepthEnable = true;//有効化
+	depthStencilDesc2D_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;//書き込み
+	depthStencilDesc2D_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;//比較関数、近ければ描画される
 }
 
 void CitrusJunosEngine::SettingDepthParticle() {
