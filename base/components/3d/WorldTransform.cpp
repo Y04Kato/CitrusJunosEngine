@@ -40,7 +40,7 @@ void WorldTransform::UpdateMatrix(){
 }
 
 void WorldTransform::UpdateQuaternionMatrix() {
-	Matrix4x4 quart_ = quaternionToMatrix(quaternion_);
+	Matrix4x4 quart_ = MakeRotateMatrix(quaternion_);
 	Matrix4x4 Afine = MakeQuatAffineMatrix(scale_, quart_, translation_);
 	matWorld_ = Afine;
 	if (parent_) {

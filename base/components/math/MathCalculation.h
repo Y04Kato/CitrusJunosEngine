@@ -168,16 +168,21 @@ Quaternion operator/(const Quaternion& q,const float t);
 
 Vector4 MakeQuaternion(Vector3 axis, float radian);
 
-Quaternion createQuaternion(float Radian, Vector3 axis);
+//任意軸回転を表すQuaternionの生成
+Quaternion MakeRotateAxisAngleQuaternion(Vector3 axis, float Radian);
 
 //クォータニオンからオイラー角への変換
-Vector3 quaternionToEulerAngles(const Quaternion& quat);
+Vector3 QuaternionToEulerAngles(const Quaternion& quat);
 
 Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate);
 
-Matrix4x4 quaternionToMatrix(const Quaternion& quat);
+//Quaternionから回転行列を求める
+Matrix4x4 MakeRotateMatrix(const Quaternion& quat);
 
-Vector3 rotateVectorAndQuaternion(const Quaternion& q, const Vector3& v);
+//ベクトルをQuaternionで回転させた結果のベクトルを求める
+Vector3 RotateVector(const Quaternion& q, const Vector3& v);
+
+Vector3 RotateVectorAndQuaternion(const Quaternion& q, const Vector3& v);
 
 //積
 Quaternion Multiply(const Quaternion& q1, const Quaternion& q2);

@@ -837,7 +837,7 @@ Vector4 MakeQuaternion(Vector3 axis, float radian) {
 	return quaternion;
 }
 
-Quaternion createQuaternion(float Radian, Vector3 axis) {
+Quaternion MakeRotateAxisAngleQuaternion(Vector3 axis, float Radian) {
 	Quaternion quat;
 	float halfAngle = Radian * 0.5f;
 	float sinHalfAngle = sin(halfAngle);
@@ -850,7 +850,7 @@ Quaternion createQuaternion(float Radian, Vector3 axis) {
 	return quat;
 }
 
-Vector3 quaternionToEulerAngles(const Quaternion& quat) {
+Vector3 QuaternionToEulerAngles(const Quaternion& quat) {
 	Vector3 euler;
 	//X軸回転
 	euler.num[0] = atan2(2 * (quat.y * quat.z + quat.w * quat.x), quat.w * quat.w - quat.x * quat.x - quat.y * quat.y + quat.z * quat.z);
@@ -886,7 +886,7 @@ Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, co
 	return result;
 }
 
-Matrix4x4 quaternionToMatrix(const Quaternion& quat) {
+Matrix4x4 MakeRotateMatrix(const Quaternion& quat) {
 	Matrix4x4 result;
 	float xx = quat.x * quat.x;
 	float xy = quat.x * quat.y;
@@ -901,17 +901,17 @@ Matrix4x4 quaternionToMatrix(const Quaternion& quat) {
 	float zw = quat.z * quat.w;
 
 	result.m[0][0] = 1.0f - 2.0f * (yy + zz);
-	result.m[0][1] = 2.0f * (xy - zw);
-	result.m[0][2] = 2.0f * (xz + yw);
+	result.m[0][1] = 2.0f * (xy + zw);
+	result.m[0][2] = 2.0f * (xz - yw);
 	result.m[0][3] = 0.0f;
 
-	result.m[1][0] = 2.0f * (xy + zw);
+	result.m[1][0] = 2.0f * (xy - zw);
 	result.m[1][1] = 1.0f - 2.0f * (xx + zz);
-	result.m[1][2] = 2.0f * (yz - xw);
+	result.m[1][2] = 2.0f * (yz + xw);
 	result.m[1][3] = 0.0f;
 
-	result.m[2][0] = 2.0f * (xz - yw);
-	result.m[2][1] = 2.0f * (yz + xw);
+	result.m[2][0] = 2.0f * (xz + yw);
+	result.m[2][1] = 2.0f * (yz - xw);
 	result.m[2][2] = 1.0f - 2.0f * (xx + yy);
 	result.m[2][3] = 0.0f;
 
@@ -922,9 +922,16 @@ Matrix4x4 quaternionToMatrix(const Quaternion& quat) {
 	return result;
 }
 
-Vector3 rotateVectorAndQuaternion(const Quaternion& q, const Vector3& v) {
+Vector3 RotateVector(const Quaternion& q, const Vector3& v) {
+	Quaternion result = {v.num[0],v.num[1],v.num[2],0};
+
+	result = Multiply(q, Multiply(result, Conjugate(q)));
+	return { result.x,result.y,result.z };
+}
+
+Vector3 RotateVectorAndQuaternion(const Quaternion& q, const Vector3& v) {
 	// クォータニオンの回転行列を取得
-	Matrix4x4 rotationMatrix = quaternionToMatrix(q);
+	Matrix4x4 rotationMatrix = MakeRotateMatrix(q);
 
 	// ベクトルを4次元ベクトルに変換
 	float vector4[4] = { v.num[0], v.num[1], v.num[2], 1.0f };

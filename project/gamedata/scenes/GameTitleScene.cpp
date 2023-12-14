@@ -19,13 +19,14 @@ void GameTitleScene::Update(){
 	ImGui::End();
 
 	ImGui::Begin("Quaternion");
-	ImGui::Text("%.02f %.02f %.02f %.02f : Identity", identity.x, identity.y, identity.z, identity.w);
-	ImGui::Text("%.02f %.02f %.02f %.02f : Conjugate", conj.x, conj.y, conj.z, conj.w);
-	ImGui::Text("%.02f %.02f %.02f %.02f : Inverse", inv.x, inv.y, inv.z, inv.w);
-	ImGui::Text("%.02f %.02f %.02f %.02f : Normalize",normal.x,normal.y,normal.z,normal.w);
-	ImGui::Text("%.02f %.02f %.02f %.02f : Multiply(q1,q2)",mul1.x,mul1.y,mul1.z,mul1.w);
-	ImGui::Text("%.02f %.02f %.02f %.02f : Multiply(q2,q1)",mul2.x,mul2.y,mul2.z,mul2.w);
-	ImGui::Text("%.02f                   : Norm",norm);
+	ImGui::Text("%.02f %.02f %.02f %.02f : Rotation", rotation.x, rotation.y, rotation.z, rotation.w);
+	ImGui::Text("RotateMatrix");
+	ImGui::Text("%.03f %.03f %.03f %.03f", rotateMatrix.m[0][0], rotateMatrix.m[0][1], rotateMatrix.m[0][2], rotateMatrix.m[0][3]);
+	ImGui::Text("%.03f %.03f %.03f %.03f", rotateMatrix.m[1][0], rotateMatrix.m[1][1], rotateMatrix.m[1][2], rotateMatrix.m[1][3]);
+	ImGui::Text("%.03f %.03f %.03f %.03f", rotateMatrix.m[2][0], rotateMatrix.m[2][1], rotateMatrix.m[2][2], rotateMatrix.m[2][3]);
+	ImGui::Text("%.03f %.03f %.03f %.03f", rotateMatrix.m[3][0], rotateMatrix.m[3][1], rotateMatrix.m[3][2], rotateMatrix.m[3][3]);
+	ImGui::Text("%.02f %.02f %.02f : RotateByQuaternion", rotateByQuaternion.num[0], rotateByQuaternion.num[1], rotateByQuaternion.num[2]);
+	ImGui::Text("%.02f %.02f %.02f : RotateByMatrix", rotateByMatrix.num[0], rotateByMatrix.num[1], rotateByMatrix.num[2]);
 	ImGui::End();
 }
 
