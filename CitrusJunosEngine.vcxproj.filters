@@ -19,9 +19,6 @@
     <Filter Include="ヘッダー ファイル\base">
       <UniqueIdentifier>{b2eefb92-010a-4dc6-bef7-115870c63028}</UniqueIdentifier>
     </Filter>
-    <Filter Include="imgui">
-      <UniqueIdentifier>{cfedf8cc-6219-4b5b-b6e1-9bd08bb07fb4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\project">
       <UniqueIdentifier>{514ced14-5c39-42f3-9333-519b2fed6a7c}</UniqueIdentifier>
     </Filter>
@@ -136,6 +133,12 @@
     <Filter Include="ヘッダー ファイル\base\components\manager\imGuiManager">
       <UniqueIdentifier>{5baf897c-705e-4f83-a648-c703d5c90194}</UniqueIdentifier>
     </Filter>
+    <Filter Include="externals">
+      <UniqueIdentifier>{78c433bd-3172-4dcf-ac06-632ec0ddc140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="externals\imgui">
+      <UniqueIdentifier>{cfedf8cc-6219-4b5b-b6e1-9bd08bb07fb4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -151,25 +154,25 @@
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_demo.cpp">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_draw.cpp">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_tables.cpp">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="base\components\audio\Audio.cpp">
       <Filter>ソース ファイル\base\components\audio</Filter>
@@ -281,28 +284,28 @@
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imconfig.h">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui.h">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_impl_win32.h">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_internal.h">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_rectpack.h">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_textedit.h">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="base\components\audio\Audio.h">
       <Filter>ヘッダー ファイル\base\components\audio</Filter>
@@ -388,7 +391,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
-      <Filter>imgui</Filter>
+      <Filter>externals\imgui</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
@@ -411,9 +414,5 @@
     <Image Include="project\gamedata\resources\CitrusJunosEngine.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="externals\HAPI\libHAPI.lib" />
-    <Library Include="externals\HAPI\libHAPIL.lib" />
   </ItemGroup>
 </Project>

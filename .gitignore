@@ -35,6 +35,8 @@ bld/
 [Ll]ogs/
 vc143.idb/
 vc143.pdb/
+libGU.dll
+libSOP.dll
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
