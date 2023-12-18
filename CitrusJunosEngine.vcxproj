@@ -233,6 +233,10 @@
   <ItemGroup>
     <Image Include="project\gamedata\resources\CitrusJunosEngine.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="externals\HAPI\libHAPI.lib" />
+    <Library Include="externals\HAPI\libHAPIL.lib" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

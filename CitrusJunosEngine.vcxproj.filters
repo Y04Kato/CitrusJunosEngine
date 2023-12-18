@@ -415,4 +415,8 @@
       <Filter>リソース ファイル</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="externals\HAPI\libHAPI.lib" />
+    <Library Include="externals\HAPI\libHAPIL.lib" />
+  </ItemGroup>
 </Project>
