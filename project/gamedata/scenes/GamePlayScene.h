@@ -10,6 +10,7 @@
 #include "components/2d/CreateParticle.h"
 #include "components/3d/CreateSphere.h"
 #include "components/3d/Model.h"
+#include "components/3d/CreateHoudini.h"
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
@@ -51,6 +52,8 @@ private:
 	std::unique_ptr<Model> model_;
 	WorldTransform worldTransformModel_;
 	Vector4 modelMaterial_;
+
+	std::unique_ptr<CreateHoudini> houdini_;
 
 	uint32_t uvResourceNum_;
 	uint32_t monsterBallResourceNum_;

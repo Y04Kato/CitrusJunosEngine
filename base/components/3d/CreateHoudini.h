@@ -26,7 +26,6 @@ private:
 	CitrusJunosEngine* CJEngine_;
 
 	HAPI_Session session_;
-	bool bUseInProcess_ = false;
 
 	HAPI_CookOptions cookOptions_;
 
