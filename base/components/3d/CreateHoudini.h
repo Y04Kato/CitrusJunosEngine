@@ -1,7 +1,10 @@
 #pragma once
 #include <iostream>
 #include <HAPI.h>
+#include <HAPI_API.h>
+#include <HAPI_Common.h>
 #pragma comment(lib,"libHAPI.lib")
+#pragma comment(lib,"libHAPIL.lib")
 #include "CJEngine.h"
 #include <string>
 
@@ -19,7 +22,7 @@ public:
 
 	void Finalize();
 
-	void Loadhda(int argc, char** argv, const char* filePath);
+	void Loadhda(const char* filePath);
 
 private:
 	DirectXCommon* dxCommon_;

@@ -74,6 +74,7 @@ void GamePlayScene::Initialize() {
 	//Houdini
 	houdini_ = std::make_unique <CreateHoudini>();
 	houdini_->Initialize();
+	//houdini_->Loadhda("project/gamedata/resources/hda/test.hda");
 
 	//Input
 	input_ = Input::GetInstance();
