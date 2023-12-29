@@ -328,7 +328,7 @@ void CitrusJunosEngine::InitializePSO2D() {
 }
 void CitrusJunosEngine::RasterizerState2D() {
 	//全て表示する
-	rasterizerDesc2D_.CullMode = D3D12_CULL_MODE_NONE;
+	rasterizerDesc2D_.CullMode = D3D12_CULL_MODE_BACK;
 	//三角形の中を塗りつぶす
 	rasterizerDesc2D_.FillMode = D3D12_FILL_MODE_SOLID;
 
