@@ -1,14 +1,13 @@
 #include "CreateSprite.h"
 
-void CreateSprite::Initialize(Vector2 size, uint32_t textureIndex, bool isFlipX, bool isFlipY) {
+void CreateSprite::Initialize(Vector2 size, uint32_t textureIndex) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	CJEngine_ = CitrusJunosEngine::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
 
-	size_ = size;
 	index_ = textureIndex;
-	isFlipX_ = isFlipX;
-	isFlipY_ = isFlipY;
+	AdjustTextureSize();
+	size_ = size;
 
 	SettingVertex();
 	SettingColor();
@@ -71,7 +70,7 @@ void CreateSprite::Draw(const Transform& transform, const Transform& uvTransform
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite_);
 
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(index_));
@@ -145,6 +144,11 @@ void CreateSprite::SetSize(Vector2 size) {
 
 void CreateSprite::SetAnchor(Vector2 anchor) {
 	anchor_ = anchor;
+}
+
+void CreateSprite::SetFlip(bool isFlipX, bool isFlipY) {
+	isFlipX_ = isFlipX;
+	isFlipY_ = isFlipY;
 }
 
 void CreateSprite::SetTextureLTSize(Vector2 textureLeftTop, Vector2 textureSize) {

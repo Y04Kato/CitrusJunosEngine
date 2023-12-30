@@ -7,7 +7,7 @@
 
 class CreateSprite {
 public:
-	void Initialize(Vector2 size, uint32_t textureIndex, bool isFlipX, bool isFlipY);
+	void Initialize(Vector2 size, uint32_t textureIndex);
 	void Draw(const Transform& transform, const Transform& uvTransform, const Vector4& material);
 	void Finalize();
 
@@ -16,6 +16,9 @@ public:
 
 	//アンカーポイントの設定
 	void SetAnchor(Vector2 anchor);
+
+	//フリップの設定
+	void SetFlip(bool isFlipX, bool isFlipY);
 
 	//テクスチャ範囲指定
 	void SetTextureLTSize(Vector2 textureLeftTop, Vector2 textureSize);
@@ -53,8 +56,8 @@ private:
 	Vector2 textureLeftTop_;
 	Vector2 textureSize_;
 
-	bool isFlipX_;
-	bool isFlipY_;
+	bool isFlipX_ = false;
+	bool isFlipY_ = false;
 
 	uint32_t index_;
 

@@ -35,7 +35,7 @@ void GamePlayScene::Initialize() {
 			{0.0f,0.0f,0.0f},
 		};
 		sprite_[i] = std::make_unique <CreateSprite>();
-		sprite_[i]->Initialize(Vector2{ 100.0f,100.0f }, uvResourceNum_, false, false);
+		sprite_[i]->Initialize(Vector2{ 100.0f,100.0f }, uvResourceNum_);
 
 		isSpriteDraw_[i] = false;
 	}
