@@ -3,15 +3,17 @@
 #define ENSURE_SUCCESS( result ) \
 if ( (result) != HAPI_RESULT_SUCCESS ) \
 { \
-    std::cout << "Failure at " << __FILE__ << ": " << __LINE__ << std::endl; \
-    std::cout << getLastError() << std::endl; \
+    std::string errorMessage = "Failure at " + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "\n";\
+    Log(errorMessage);\
+    Log(getLastError());\
     exit( 1 ); \
 }
 #define ENSURE_COOK_SUCCESS( result ) \
 if ( (result) != HAPI_RESULT_SUCCESS ) \
 { \
-    std::cout << "Failure at " << __FILE__ << ": " << __LINE__ << std::endl; \
-    std::cout << getLastCookError() << std::endl; \
+    std::string errorMessage = "Failure at " + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "\n";\
+    Log(errorMessage);\
+    Log(getLastCookError());\
     exit( 1 ); \
 }
 
@@ -61,8 +63,10 @@ void CreateHoudini::Initialize() {
 	CJEngine_ = CitrusJunosEngine::GetInstance();
 
 	cookOptions_ = HAPI_CookOptions_Create();
-	HAPI_CreateInProcessSession(&session_);
-	HAPI_Initialize(&session_,&cookOptions_,true,-1,nullptr,nullptr,nullptr,nullptr,nullptr);
+
+	ENSURE_SUCCESS(HAPI_CreateInProcessSession(&session_));
+
+	ENSURE_SUCCESS(HAPI_Initialize(&session_, &cookOptions_, true, -1, nullptr, nullptr, nullptr, nullptr, nullptr));
 
 	Log(ConvertString(std::format(L"Hello HoudiniEngine!\n")));
 
