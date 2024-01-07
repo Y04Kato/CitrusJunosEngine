@@ -15,6 +15,6 @@ public:
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 protected:
-	Model* model_;
 	WorldTransform worldTransform_;
+	Model* model_;
 };

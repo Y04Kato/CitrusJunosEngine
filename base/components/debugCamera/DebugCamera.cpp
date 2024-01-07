@@ -15,18 +15,18 @@ void DebugCamera::initialize() {
 
 void DebugCamera::Update() {
 #ifdef _DEBUG
-	if (input_->PressKey(DIK_UPARROW)) {
-		viewProjection_.rotation_.num[0] -= 0.02f;
-	}
-	if (input_->PressKey(DIK_DOWNARROW)) {
-		viewProjection_.rotation_.num[0] += 0.02f;
-	}
-	if (input_->PressKey(DIK_RIGHTARROW)) {
-		viewProjection_.rotation_.num[1] += 0.02f;
-	}
-	if (input_->PressKey(DIK_LEFTARROW)) {
-		viewProjection_.rotation_.num[1] -= 0.02f;
-	}
+	//if (input_->PressKey(DIK_UPARROW)) {
+	//	viewProjection_.rotation_.num[0] -= 0.02f;
+	//}
+	//if (input_->PressKey(DIK_DOWNARROW)) {
+	//	viewProjection_.rotation_.num[0] += 0.02f;
+	//}
+	//if (input_->PressKey(DIK_RIGHTARROW)) {
+	//	viewProjection_.rotation_.num[1] += 0.02f;
+	//}
+	//if (input_->PressKey(DIK_LEFTARROW)) {
+	//	viewProjection_.rotation_.num[1] -= 0.02f;
+	//}
 
 	ImGui::Begin("DebugCamera");
 	ImGui::DragFloat3("rotation", viewProjection_.rotation_.num,0.1f);

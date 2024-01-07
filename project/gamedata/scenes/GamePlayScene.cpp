@@ -1,5 +1,7 @@
 #include "GamePlayScene.h"
 #include "components/utilities/globalVariables/GlobalVariables.h"
+#include <stdlib.h>
+#include <time.h>
 
 void GamePlayScene::Initialize() {
 	CJEngine_ = CitrusJunosEngine::GetInstance();
@@ -11,9 +13,10 @@ void GamePlayScene::Initialize() {
 
 	//Audio
 	audio_ = Audio::GetInstance();
-	soundData1_ = audio_->SoundLoadWave("project/gamedata/resources/conjurer.wav");
+	soundData1_ = audio_->SoundLoadWave("project/gamedata/resources/CraftsmansForge.wav");
+	soundData2_ = audio_->SoundLoadWave("project/gamedata/resources/metal.wav");
 	//音声再生
-	audio_->SoundPlayWave(soundData1_, 0.1f, false);
+	audio_->SoundPlayWave(soundData1_, 0.1f, true);
 
 	// デバッグカメラの初期化
 	debugCamera_ = DebugCamera::GetInstance();
@@ -21,9 +24,70 @@ void GamePlayScene::Initialize() {
 
 	viewProjection_.Initialize();
 
+	player_ = std::make_unique<Player>();
+	playerModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/player", "player.obj"));
+	playerModel_->SetDirectionalLightFlag(true);
+	player_->Initialize(playerModel_.get());
+
 	ground_ = std::make_unique<Ground>();
-	model_.reset(Model::CreateModelFromObj("project/gamedata/resources/floor", "Floor.obj"));
-	ground_->Initialize(model_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
+	groundModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/floor", "Floor.obj"));
+	groundModel_->SetDirectionalLightFlag(true);
+	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
+
+	background_ = textureManager_->Load("project/gamedata/resources/paper.png");
+	move1_ = textureManager_->Load("project/gamedata/resources/move1.png");
+	move2_ = textureManager_->Load("project/gamedata/resources/move2.png");
+	move3_ = textureManager_->Load("project/gamedata/resources/move3.png");
+
+	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+	SpriteuvTransform_ = {
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f},
+	};
+
+	sprite_[0] = std::make_unique <CreateSprite>();
+	sprite_[0]->Initialize(Vector2{ 100.0f,100.0f }, background_);
+	sprite_[0]->SetTextureInitialSize();
+	sprite_[0]->SetAnchor(Vector2{ 0.5f,0.5f });
+
+	sprite_[1] = std::make_unique <CreateSprite>();
+	sprite_[1]->Initialize(Vector2{ 100.0f,100.0f }, move1_);
+	sprite_[1]->SetTextureInitialSize();
+	sprite_[1]->SetAnchor(Vector2{ 0.5f,0.5f });
+
+	sprite_[2] = std::make_unique <CreateSprite>();
+	sprite_[2]->Initialize(Vector2{ 100.0f,100.0f }, move2_);
+	sprite_[2]->SetTextureInitialSize();
+	sprite_[2]->SetAnchor(Vector2{ 0.5f,0.5f });
+
+	sprite_[3] = std::make_unique <CreateSprite>();
+	sprite_[3]->Initialize(Vector2{ 100.0f,100.0f }, move3_);
+	sprite_[3]->SetTextureInitialSize();
+	sprite_[3]->SetAnchor(Vector2{ 0.5f,0.5f });
+
+	//パーティクル
+	testEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
+	testEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
+	testEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	testEmitter_.count = 5;
+	testEmitter_.frequency = 0.2f;//0.5秒ごとに発生
+	testEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
+
+	accelerationField.acceleration = { 15.0f,0.0f,0.0f };
+	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
+	accelerationField.area.max = { 1.0f,1.0f,1.0f };
+
+	particleResourceNum_ = textureManager_->Load("project/gamedata/resources/circle.png");
+
+	particle_ = std::make_unique <CreateParticle>();
+	particle_->Initialize(100, testEmitter_, accelerationField, particleResourceNum_);
+	particle_->SetColor(Vector4{ 0.2f,0.2f,0.2f,1.0f });
+
+
+	enemyModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/enemy", "enemy.obj"));
+	enemyModel_->SetDirectionalLightFlag(true);
 
 	//CollisionManager
 	collisionManager_ = CollisionManager::GetInstance();
@@ -34,18 +98,102 @@ void GamePlayScene::Initialize() {
 	const char* groupName = "GamePlayScene";
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Test", 90);
+
+	debugCamera_->SetCamera(Vector3{ 0.0f,44.7f,-55.2f }, Vector3{ 0.8f,0.0f,0.0f });
+
+	srand((unsigned int)time(NULL));
 }
 
 void GamePlayScene::Update() {
+	if (gameStart == true) {
+		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
+
+		for (int i = 0; i < 10; i++) {
+			SetEnemy(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
+		}
+
+		gameStart = false;
+	}
+
+	if (enemyDethCount == 0) {
+		gameStart = true;
+		sceneNo = CLEAR_SCENE;
+	}
+
+	if (player_->isGameover()) {
+		gameStart = true;
+		for (Enemy* enemy : enemys_) {
+			enemy->SetisDead();
+		}
+		enemys_.remove_if([&](Enemy* enemy) {
+			if (enemy->isDead()) {
+				delete enemy;
+				enemyDethCount--;
+				return true;
+			}
+			return false;
+			});
+		sceneNo = OVER_SCENE;
+	}
+
 	ApplyGlobalVariables();
 
+	player_->Update();
+
+	for (Enemy* enemy : enemys_) {
+		enemy->Update();
+	}
+
+	ground_->Update();
 	Obb_.center = ground_->GetWorldTransform().GetWorldPos();
 	GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), Obb_.orientation);
 	Obb_.size = ground_->GetWorldTransform().scale_;
 
-	ground_->Update();
+	if (IsCollision(Obb_, player_->GetStructSphere())) {
+		player_->isHit_ = true;
+		player_->SetObjectPos(ground_->GetWorldTransform());
+	}
+	else {
+		player_->isHit_ = false;
+	}
+
+	for (Enemy* enemy : enemys_) {
+		if (IsCollision(Obb_, enemy->GetStructSphere())) {
+			enemy->isHit_ = true;
+			enemy->SetObjectPos(ground_->GetWorldTransform());
+		}
+		else {
+			enemy->isHit_ = false;
+		}
+		if (enemy->isDead() == true) {
+
+		}
+	}
+
+	player_->SetViewProjection(&viewProjection_);
+
+	particle_->Update();
+	particle_->SetTranslate(player_->GetWorldTransform().translation_);
+
+	enemys_.remove_if([&](Enemy* enemy) {
+		if (enemy->isDead()) {
+			delete enemy;
+			enemyDethCount--;
+			return true;
+		}
+		return false;
+		});
 
 	collisionManager_->ClearColliders();
+	collisionManager_->AddCollider(player_.get());
+	for (Enemy* enemy : enemys_) {
+		collisionManager_->AddCollider(enemy);
+		if (enemy->isCollision_ == true) {
+			enemy->SetVelocity(player_->GetVelocity());
+			audio_->SoundPlayWave(soundData2_, 0.1f, false);
+			enemy->isCollision_ = false;
+		}
+	}
 	collisionManager_->CheckAllCollision();
 
 	debugCamera_->Update();
@@ -60,31 +208,57 @@ void GamePlayScene::Draw() {
 #pragma region 背景スプライト描画
 	CJEngine_->PreDraw2D();
 
+	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画
 	CJEngine_->PreDraw3D();
 
+	player_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
-
+	for (Enemy* enemy : enemys_) {
+		enemy->Draw(viewProjection_);
+	}
 #pragma endregion
 
 #pragma region パーティクル描画
 	CJEngine_->PreDrawParticle();
+
+	particle_->Draw(viewProjection_);
 
 #pragma endregion
 
 #pragma region 前景スプライト描画
 	CJEngine_->PreDraw2D();
 
+	if (player_->GetMoveMode() == 0) {
+		sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+	}
+	if (player_->GetMoveMode() == 1) {
+		sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+	}
+	if (player_->GetMoveMode() == 2) {
+		sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+	}
+
 #pragma endregion
 }
 
 void GamePlayScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
+	audio_->SoundUnload(&soundData2_);
 }
 
 void GamePlayScene::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "GamePlayScene";
+}
+
+void GamePlayScene::SetEnemy(Vector3 pos) {
+	Enemy* enemy = new Enemy();
+	enemy->SetWorldTransform(pos);
+	enemy->Initialize(enemyModel_.get());
+	enemys_.push_back(enemy);
+	enemyDethCount++;
 }

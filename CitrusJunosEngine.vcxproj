@@ -123,9 +123,11 @@
     <ClCompile Include="base\CJEngine.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp" />
-    <ClCompile Include="project\gamedata\baseCharacter\player\player.cpp" />
+    <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp" />
+    <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp" />
     <ClCompile Include="project\gamedata\ground\Ground.cpp" />
     <ClCompile Include="project\gamedata\scenes\GameClearScene.cpp" />
+    <ClCompile Include="project\gamedata\scenes\GameOverScene.cpp" />
     <ClCompile Include="project\gamedata\scenes\GamePlayScene.cpp" />
     <ClCompile Include="project\gamedata\scenes\GameTitleScene.cpp" />
     <ClCompile Include="base\components\manager\SceneManager.cpp" />
@@ -207,9 +209,11 @@
     </ClInclude>
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h" />
-    <ClInclude Include="project\gamedata\baseCharacter\player\player.h" />
+    <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h" />
+    <ClInclude Include="project\gamedata\baseCharacter\player\Player.h" />
     <ClInclude Include="project\gamedata\ground\Ground.h" />
     <ClInclude Include="project\gamedata\scenes\GameClearScene.h" />
+    <ClInclude Include="project\gamedata\scenes\GameOverScene.h" />
     <ClInclude Include="project\gamedata\scenes\GamePlayScene.h" />
     <ClInclude Include="project\gamedata\scenes\GameTitleScene.h" />
     <ClInclude Include="base\components\manager\Iscene.h" />

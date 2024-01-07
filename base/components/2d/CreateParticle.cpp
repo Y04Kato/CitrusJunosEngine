@@ -182,7 +182,12 @@ Particle CreateParticle::MakeNewParticle(std::mt19937& randomEngine, const Trans
 	Vector3 randomTranslate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
 	particles.transform.translate = transform.translate + randomTranslate;
 	particles.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
-	particles.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
+	if (isColor) {
+		particles.color = color_;
+	}
+	else {
+		particles.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
+	}
 	particles.lifeTime = distTime(randomEngine);
 	particles.currentTime = 0;
 

@@ -20,6 +20,11 @@ public:
 
 	void SetTranslate(Vector3 transform) { emitter_.transform.translate = transform; }
 
+	void SetColor(Vector4 color) {
+		color_ = color;
+		isColor = true;
+	}
+
 private:
 	void SettingVertex();
 
@@ -66,5 +71,8 @@ private:
 
 	Emitter emitter_{};
 	AccelerationField accelerationField_;
+
+	Vector4 color_;
+	bool isColor = false;
 };
 

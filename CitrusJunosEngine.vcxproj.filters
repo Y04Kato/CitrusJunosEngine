@@ -249,7 +249,13 @@
     <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\baseCharacter\player\player.cpp">
+    <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\GameOverScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -403,7 +409,13 @@
     <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\baseCharacter\player\player.h">
+    <ClInclude Include="project\gamedata\baseCharacter\player\Player.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\GameOverScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

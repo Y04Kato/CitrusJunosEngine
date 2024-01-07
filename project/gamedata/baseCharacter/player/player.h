@@ -20,8 +20,47 @@ public:
 
 	WorldTransform GetWorldTransform()override { return worldTransform_; }
 
+	void OnCollision() override;
+
+	void IsFallStart();
+
+	void SetWorldTransform(const Vector3 translation);
+
+	void SetObjectPos(const WorldTransform& worldtransform);
+
+	bool isHit_;
+
+	bool isGameover() { return gameOver; }
+
+	StructSphere GetStructSphere() { return structSphere_; }
+
+	void SetViewProjection(const ViewProjection* viewProjection) {
+		viewProjection_ = viewProjection;
+	}
+
+	Vector3 GetVelocity() { return velocity_; }
+
+	int GetMoveMode() { return moveMode; }
+
 private:
 	Input* input_ = nullptr;
 
 	float moveSpeed_ = 0.5f;
+
+	Vector3 velocity_ = {};
+
+	WorldTransform objectPos_;
+
+	bool gameOver = false;
+
+	StructSphere structSphere_;
+
+	Quaternion quaternion_;
+	Vector3 preMove_;
+	Quaternion preQuaternion_;
+
+	const ViewProjection* viewProjection_ = nullptr;
+
+	//0~2で弱~強
+	int moveMode = 0;
 };
