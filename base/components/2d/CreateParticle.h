@@ -74,5 +74,7 @@ private:
 
 	Vector4 color_;
 	bool isColor = false;
+
+	int amount = 0;
 };
 

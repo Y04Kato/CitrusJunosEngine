@@ -47,9 +47,8 @@ void Player::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
 
 	ImGui::Begin("player");
-	ImGui::DragFloat3("translate", worldTransform_.translation_.num);
-	ImGui::DragFloat3("rotate", worldTransform_.rotation_.num);
-	ImGui::Text("isHit %d", isHit_);
+	ImGui::Text("Move WASD");
+	ImGui::Text("MovePowerChange Space");
 	ImGui::End();
 }
 

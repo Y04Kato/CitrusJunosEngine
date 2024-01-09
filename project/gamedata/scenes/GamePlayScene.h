@@ -74,4 +74,6 @@ private:
 	int enemyDethCount = 0;
 
 	bool gameStart = true;
+
+	Vector4 test = { 0.2f,0.2f,0.2f,1.0f };
 };

@@ -83,7 +83,7 @@ void GamePlayScene::Initialize() {
 
 	particle_ = std::make_unique <CreateParticle>();
 	particle_->Initialize(100, testEmitter_, accelerationField, particleResourceNum_);
-	particle_->SetColor(Vector4{ 0.2f,0.2f,0.2f,1.0f });
+	particle_->SetColor(test);
 
 
 	enemyModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/enemy", "enemy.obj"));
@@ -174,6 +174,10 @@ void GamePlayScene::Update() {
 
 	particle_->Update();
 	particle_->SetTranslate(player_->GetWorldTransform().translation_);
+	ImGui::Begin("Particle");
+	ImGui::ColorEdit4("Color",test.num, 0);
+	ImGui::End();
+	particle_->SetColor(test);
 
 	enemys_.remove_if([&](Enemy* enemy) {
 		if (enemy->isDead()) {
