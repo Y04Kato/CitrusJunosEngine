@@ -45,12 +45,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)\externals\HAPI;$(ProjectDir)\externals\nlohmann;$(ProjectDir)\externals;$(ProjectDir)\base;$(ProjectDir)\base\components;$(ProjectDir)\base\components\2d;$(ProjectDir)\base\components\3d;$(ProjectDir)\base\components\audio;$(ProjectDir)\base\components\debugCamera;$(ProjectDir)\base\components\input;$(ProjectDir)\base\components\manager;$(ProjectDir)\base\components\manager\ImGuiManager;$(ProjectDir)\base\components\math;$(ProjectDir)\base\components\utilities;$(ProjectDir)\base\components\utilities\collisionManager;$(ProjectDir)\base\components\utilities\convertString;$(ProjectDir)\base\components\utilities\followCamera;$(ProjectDir)\base\components\utilities\globalVariables;$(ProjectDir)\base\components\utilities\directionalLight;$(ProjectDir)\project;$(ProjectDir)\project\gamedata;$(ProjectDir)\project\gamedata\scenes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\externals\nlohmann;$(ProjectDir)\externals;$(ProjectDir)\base;$(ProjectDir)\base\components;$(ProjectDir)\base\components\2d;$(ProjectDir)\base\components\3d;$(ProjectDir)\base\components\audio;$(ProjectDir)\base\components\debugCamera;$(ProjectDir)\base\components\input;$(ProjectDir)\base\components\manager;$(ProjectDir)\base\components\manager\ImGuiManager;$(ProjectDir)\base\components\math;$(ProjectDir)\base\components\utilities;$(ProjectDir)\base\components\utilities\collisionManager;$(ProjectDir)\base\components\utilities\convertString;$(ProjectDir)\base\components\utilities\followCamera;$(ProjectDir)\base\components\utilities\globalVariables;$(ProjectDir)\base\components\utilities\directionalLight;$(ProjectDir)\project;$(ProjectDir)\project\gamedata;$(ProjectDir)\project\gamedata\scenes;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)\externals\HAPI;$(ProjectDir)\externals\nlohmann;$(ProjectDir)\externals;$(ProjectDir)\base;$(ProjectDir)\base\components;$(ProjectDir)\base\components\2d;$(ProjectDir)\base\components\3d;$(ProjectDir)\base\components\audio;$(ProjectDir)\base\components\debugCamera;$(ProjectDir)\base\components\input;$(ProjectDir)\base\components\manager;$(ProjectDir)\base\components\manager\ImGuiManager;$(ProjectDir)\base\components\math;$(ProjectDir)\base\components\utilities;$(ProjectDir)\base\components\utilities\collisionManager;$(ProjectDir)\base\components\utilities\convertString;$(ProjectDir)\base\components\utilities\followCamera;$(ProjectDir)\base\components\utilities\globalVariables;$(ProjectDir)\base\components\utilities\directionalLight;$(ProjectDir)\project;$(ProjectDir)\project\gamedata;$(ProjectDir)\project\gamedata\scenes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\externals\nlohmann;$(ProjectDir)\externals;$(ProjectDir)\base;$(ProjectDir)\base\components;$(ProjectDir)\base\components\2d;$(ProjectDir)\base\components\3d;$(ProjectDir)\base\components\audio;$(ProjectDir)\base\components\debugCamera;$(ProjectDir)\base\components\input;$(ProjectDir)\base\components\manager;$(ProjectDir)\base\components\manager\ImGuiManager;$(ProjectDir)\base\components\math;$(ProjectDir)\base\components\utilities;$(ProjectDir)\base\components\utilities\collisionManager;$(ProjectDir)\base\components\utilities\convertString;$(ProjectDir)\base\components\utilities\followCamera;$(ProjectDir)\base\components\utilities\globalVariables;$(ProjectDir)\base\components\utilities\directionalLight;$(ProjectDir)\project;$(ProjectDir)\project\gamedata;$(ProjectDir)\project\gamedata\scenes;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -95,7 +95,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="base\components\2d\CreateParticle.cpp" />
-    <ClCompile Include="base\components\3d\CreateHoudini.cpp" />
     <ClCompile Include="base\components\3d\ViewProjection.cpp" />
     <ClCompile Include="base\components\3d\WorldTransform.cpp" />
     <ClCompile Include="base\components\audio\Audio.cpp" />
@@ -169,7 +168,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\components\2d\CreateParticle.h" />
-    <ClInclude Include="base\components\3d\CreateHoudini.h" />
     <ClInclude Include="base\components\3d\ViewProjection.h" />
     <ClInclude Include="base\components\3d\WorldTransform.h" />
     <ClInclude Include="base\components\audio\Audio.h" />
@@ -232,10 +230,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="project\gamedata\resources\CitrusJunosEngine.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="externals\HAPI\libHAPI.lib" />
-    <Library Include="externals\HAPI\libHAPIL.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

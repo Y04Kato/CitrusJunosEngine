@@ -71,11 +71,6 @@ void GamePlayScene::Initialize() {
 	worldTransformModel_.Initialize();
 	modelMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 
-	//Houdini
-	houdini_ = std::make_unique <CreateHoudini>();
-	houdini_->Initialize();
-	//houdini_->Loadhda("project/gamedata/resources/hda/test.hda");
-
 	//Input
 	input_ = Input::GetInstance();
 

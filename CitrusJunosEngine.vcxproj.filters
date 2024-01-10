@@ -237,9 +237,6 @@
     <ClCompile Include="base\CJEngine.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\3d\CreateHoudini.cpp">
-      <Filter>ソース ファイル\base\components\3d</Filter>
-    </ClCompile>
     <ClCompile Include="base\components\manager\ImGuiManager\ImGuiManager.cpp">
       <Filter>ソース ファイル\base\components\manager\imGuiManager</Filter>
     </ClCompile>
@@ -382,9 +379,6 @@
     <ClInclude Include="project\gamedata\resources\resource.h">
       <Filter>ヘッダー ファイル\project\gamedata\resources</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\3d\CreateHoudini.h">
-      <Filter>ヘッダー ファイル\base\components\3d</Filter>
-    </ClInclude>
     <ClInclude Include="base\components\manager\ImGuiManager\ImGuiManager.h">
       <Filter>ヘッダー ファイル\base\components\manager\imGuiManager</Filter>
     </ClInclude>
@@ -414,9 +408,5 @@
     <Image Include="project\gamedata\resources\CitrusJunosEngine.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="externals\HAPI\libHAPI.lib" />
-    <Library Include="externals\HAPI\libHAPIL.lib" />
   </ItemGroup>
 </Project>
