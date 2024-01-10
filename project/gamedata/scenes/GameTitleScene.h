@@ -15,9 +15,12 @@ private:
 
 	Input* input_ = nullptr;
 
-	Quaternion rotation = MakeRotateAxisAngleQuaternion(Normalize(Vector3{ 1.0f,0.4f,-0.2f }), 0.45f);
-	Vector3 pointY = { 2.1f,-0.9f,1.3f };
-	Matrix4x4 rotateMatrix = MakeRotateMatrix(rotation);
-	Vector3 rotateByQuaternion = RotateVector(rotation,pointY);
-	Vector3 rotateByMatrix = TransformNormal(pointY, rotateMatrix);
+	Quaternion rotation0 = MakeRotateAxisAngleQuaternion({ 0.71f,0.71f,0.0f }, 0.3f);
+	Quaternion rotation1 = MakeRotateAxisAngleQuaternion({ 0.71f,0.0f,0.71f }, 3.141592f);
+
+	Quaternion interpolate0 = Slerp(0.0f, rotation0, rotation1);
+	Quaternion interpolate1 = Slerp(0.3f, rotation0, rotation1);
+	Quaternion interpolate2 = Slerp(0.5f, rotation0, rotation1);
+	Quaternion interpolate3 = Slerp(0.7f, rotation0, rotation1);
+	Quaternion interpolate4 = Slerp(1.0f, rotation0, rotation1);
 };

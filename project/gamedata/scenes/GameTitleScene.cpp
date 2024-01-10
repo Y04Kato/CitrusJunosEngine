@@ -19,14 +19,11 @@ void GameTitleScene::Update(){
 	ImGui::End();
 
 	ImGui::Begin("Quaternion");
-	ImGui::Text("%.02f %.02f %.02f %.02f : Rotation", rotation.x, rotation.y, rotation.z, rotation.w);
-	ImGui::Text("RotateMatrix");
-	ImGui::Text("%.03f %.03f %.03f %.03f", rotateMatrix.m[0][0], rotateMatrix.m[0][1], rotateMatrix.m[0][2], rotateMatrix.m[0][3]);
-	ImGui::Text("%.03f %.03f %.03f %.03f", rotateMatrix.m[1][0], rotateMatrix.m[1][1], rotateMatrix.m[1][2], rotateMatrix.m[1][3]);
-	ImGui::Text("%.03f %.03f %.03f %.03f", rotateMatrix.m[2][0], rotateMatrix.m[2][1], rotateMatrix.m[2][2], rotateMatrix.m[2][3]);
-	ImGui::Text("%.03f %.03f %.03f %.03f", rotateMatrix.m[3][0], rotateMatrix.m[3][1], rotateMatrix.m[3][2], rotateMatrix.m[3][3]);
-	ImGui::Text("%.02f %.02f %.02f : RotateByQuaternion", rotateByQuaternion.num[0], rotateByQuaternion.num[1], rotateByQuaternion.num[2]);
-	ImGui::Text("%.02f %.02f %.02f : RotateByMatrix", rotateByMatrix.num[0], rotateByMatrix.num[1], rotateByMatrix.num[2]);
+	ImGui::Text("%.02f %.02f %.02f %.02f : interpolate0, Slerp(q0,q1,0.0f)", interpolate0.x, interpolate0.y, interpolate0.z, interpolate0.w);
+	ImGui::Text("%.02f %.02f %.02f %.02f : interpolate1, Slerp(q0,q1,0.3f)", interpolate1.x, interpolate1.y, interpolate1.z, interpolate1.w);
+	ImGui::Text("%.02f %.02f %.02f %.02f : interpolate2, Slerp(q0,q1,0.5f)", interpolate2.x, interpolate2.y, interpolate2.z, interpolate2.w);
+	ImGui::Text("%.02f %.02f %.02f %.02f : interpolate3, Slerp(q0,q1,0.7f)", interpolate3.x, interpolate3.y, interpolate3.z, interpolate3.w);
+	ImGui::Text("%.02f %.02f %.02f %.02f : interpolate4, Slerp(q0,q1,1.0f)", interpolate4.x, interpolate4.y, interpolate4.z, interpolate4.w);
 	ImGui::End();
 }
 
