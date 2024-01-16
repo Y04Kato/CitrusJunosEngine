@@ -63,6 +63,7 @@ void GamePlayScene::Initialize() {
 	sphere_->Initialize();
 	worldTransformSphere_.Initialize();
 	sphereMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	sphere_->SetDirectionalLightFlag(true, 2);
 
 	isSphereDraw_ = false;
 

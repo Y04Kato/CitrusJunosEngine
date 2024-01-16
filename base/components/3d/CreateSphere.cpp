@@ -20,8 +20,14 @@ void CreateSphere::Draw(const WorldTransform& worldTransform, const ViewProjecti
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.num[2]));
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
 
-	*materialData_ = { material,true };
+	if (isDirectionalLight_ == false) {
+		*materialData_ = { material,0 };
+	}
+	else {
+		*materialData_ = { material,lightNum_ };
+	}
 	materialData_->uvTransform = uvtransformMtrix;
+	materialData_->shininess = 50.0f;
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
 
 	//VBVを設定
@@ -36,6 +42,7 @@ void CreateSphere::Draw(const WorldTransform& worldTransform, const ViewProjecti
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, worldTransform.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
 	//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]のこと
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(textureIndex));
@@ -140,4 +147,14 @@ void CreateSphere::SettingColor() {
 void CreateSphere::SettingDictionalLight() {
 	directionalLightResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(DirectionalLight));
 	directionalLightResource_->Map(0, NULL, reinterpret_cast<void**>(&directionalLight_));
+
+	//ライティング用のカメラリソース
+	cameraResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(CameraForGPU));
+	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
+	cameraData_->worldPosition = { 0,0,0 };
+}
+
+void CreateSphere::SetDirectionalLightFlag(bool isDirectionalLight, int lightNum) {
+	isDirectionalLight_ = isDirectionalLight;
+	lightNum_ = lightNum;
 }
