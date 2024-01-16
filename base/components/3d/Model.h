@@ -20,7 +20,7 @@ public:
 
 	ModelData modelData_;
 	
-	void SetDirectionalLightFlag(bool isDirectionalLight);
+	void SetDirectionalLightFlag(bool isDirectionalLight,int lightNum);
 
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
 	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
@@ -46,6 +46,11 @@ private:
 	DirectionalLight* directionalLight_;
 	bool isDirectionalLight_ = false;
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
+
+	int lightNum_;
+	
+	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
+	CameraForGPU* cameraData_ = nullptr;
 
 private:
 	void CreateVartexData();

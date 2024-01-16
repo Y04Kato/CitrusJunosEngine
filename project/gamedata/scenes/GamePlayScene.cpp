@@ -70,6 +70,7 @@ void GamePlayScene::Initialize() {
 	model_.reset(Model::CreateModelFromObj("project/gamedata/resources/fence", "fence.obj"));
 	worldTransformModel_.Initialize();
 	modelMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	model_->SetDirectionalLightFlag(true,2);
 
 	//Input
 	input_ = Input::GetInstance();
