@@ -20,7 +20,12 @@ public:
 
 	ModelData modelData_;
 	
-	//ライティングを行うかどうか、trueに1でHalfLambert、2でPhongReflection
+	/// <summary>
+	/// ライティングを行うかどうか＆ライティングの種類
+	/// 1:HalfLambert
+	/// 2:PhongReflection
+	/// 2:BlinnPhongReflection
+	/// </summary>
 	void SetDirectionalLightFlag(bool isDirectionalLight,int lightNum);
 
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
