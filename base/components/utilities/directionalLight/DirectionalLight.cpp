@@ -16,5 +16,6 @@ void DirectionalLights::Update() {
 	ImGui::Begin("DirectionalLight");
 	ImGui::DragFloat3("LightColor", directionalLight_.color.num, 1.0f);
 	ImGui::DragFloat3("lightDirection", directionalLight_.direction.num, 0.1f);
+	ImGui::DragFloat("lightIntensity", &directionalLight_.intensity, 0.1f,0.0f,1.0f);
 	ImGui::End();
 }

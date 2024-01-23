@@ -5,13 +5,14 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	CJEngine_ = CitrusJunosEngine::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
 	directionalLights_ = DirectionalLights::GetInstance();
+	pointLights_ = PointLights::GetInstance();
 
 	modelData_ = LoadObjFile(directoryPath, filename);
 	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
 
 	CreateVartexData();
 	SetColor();
-	CreateDictionalLight();
+	CreateLight();
 }
 
 void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material) {
@@ -31,11 +32,13 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	material_->uvTransform = uvtransformMtrix;
 	material_->shininess = 100.0f;
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
+	*pointLight_ = pointLights_->GetPointLight();
 
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0にせっていしているものとはまた別
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, worldTransform.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
@@ -174,9 +177,14 @@ void Model::SetColor() {
 
 }
 
-void Model::CreateDictionalLight() {
+void Model::CreateLight() {
+	//DirectionalLight
 	directionalLightResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(DirectionalLight));
 	directionalLightResource_->Map(0, NULL, reinterpret_cast<void**>(&directionalLight_));
+
+	//PointLight
+	pointLightResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(PointLight));
+	pointLightResource_->Map(0, NULL, reinterpret_cast<void**>(&pointLight_));
 
 	//ライティング用のカメラリソース
 	cameraResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(CameraForGPU));

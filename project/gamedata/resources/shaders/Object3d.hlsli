@@ -42,3 +42,12 @@ struct DirectionalLight {
 struct Camera {
 	float32_t3 worldPosition;
 };
+
+struct PointLight {
+	float32_t4 color;
+	float32_t3 position;
+	float intensity;
+	float radius;
+	float decay;
+	float padding[2];
+};

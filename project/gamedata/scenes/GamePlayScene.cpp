@@ -68,10 +68,13 @@ void GamePlayScene::Initialize() {
 	isSphereDraw_ = false;
 
 	//objモデル
-	model_.reset(Model::CreateModelFromObj("project/gamedata/resources/fence", "fence.obj"));
-	worldTransformModel_.Initialize();
-	modelMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-	model_->SetDirectionalLightFlag(true,3);
+	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/fence", "fence.obj"));
+	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj"));
+	for (int i = 0; i < 2; i++) {
+		worldTransformModel_[i].Initialize();
+		modelMaterial_[i] = {1.0f,1.0f,1.0f,1.0f};
+		model_[i]->SetDirectionalLightFlag(true, 3);
+	}
 
 	//Input
 	input_ = Input::GetInstance();
@@ -124,9 +127,10 @@ void GamePlayScene::Update() {
 
 	for (int i = 0; i < 2; i++) {
 		worldTransformTriangle_[i].UpdateMatrix();
+	
+		worldTransformModel_[i].UpdateMatrix();
 	}
 	worldTransformSphere_.UpdateMatrix();
-	worldTransformModel_.UpdateMatrix();
 
 	ImGui::Begin("debug");
 	ImGui::Text("GamePlayScene");
@@ -235,9 +239,12 @@ void GamePlayScene::Update() {
 				isModelDraw_ = false;
 			}
 		}
-		ImGui::DragFloat3("Translate", worldTransformModel_.translation_.num, 0.05f);
-		ImGui::DragFloat3("Rotate", worldTransformModel_.rotation_.num, 0.05f);
-		ImGui::DragFloat3("Scale", worldTransformModel_.scale_.num, 0.05f);
+		ImGui::DragFloat3("Translate", worldTransformModel_[0].translation_.num, 0.05f);
+		ImGui::DragFloat3("Rotate", worldTransformModel_[0].rotation_.num, 0.05f);
+		ImGui::DragFloat3("Scale", worldTransformModel_[0].scale_.num, 0.05f);
+		ImGui::DragFloat3("Translate2", worldTransformModel_[1].translation_.num, 0.05f);
+		ImGui::DragFloat3("Rotate2", worldTransformModel_[1].rotation_.num, 0.05f);
+		ImGui::DragFloat3("Scale2", worldTransformModel_[1].scale_.num, 0.05f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Particle")) {//パーティクル
@@ -287,7 +294,9 @@ void GamePlayScene::Draw() {
 	}
 
 	if (isModelDraw_) {
-		model_->Draw(worldTransformModel_, viewProjection_, modelMaterial_);
+		for (int i = 0; i < 2; i++) {
+			model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
+		}
 	}
 #pragma endregion
 

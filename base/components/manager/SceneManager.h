@@ -6,6 +6,7 @@
 #include "GlobalVariables.h"
 #include "TextureManager.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include "ImGuiManager.h"
 
 //sceneInclude
@@ -31,6 +32,7 @@ private:
 	TextureManager* textureManager_ = nullptr;
 
 	DirectionalLights* directionalLight_ = nullptr;
+	PointLights* pointLight_ = nullptr;
 
 	ImGuiManager* imGuiManager_ = nullptr;
 

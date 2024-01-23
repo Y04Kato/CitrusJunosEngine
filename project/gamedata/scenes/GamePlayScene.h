@@ -48,9 +48,9 @@ private:
 	WorldTransform worldTransformSphere_;
 	Vector4 sphereMaterial_;
 
-	std::unique_ptr<Model> model_;
-	WorldTransform worldTransformModel_;
-	Vector4 modelMaterial_;
+	std::unique_ptr<Model> model_[2];
+	WorldTransform worldTransformModel_[2];
+	Vector4 modelMaterial_[2];
 
 	uint32_t uvResourceNum_;
 	uint32_t monsterBallResourceNum_;

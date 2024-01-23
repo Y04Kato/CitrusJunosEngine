@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include<wrl.h>
 
 class Model {
@@ -53,6 +54,10 @@ private:
 	bool isDirectionalLight_ = false;
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
 
+	PointLights* pointLights_;
+	PointLight* pointLight_;
+	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource_;
+
 	int lightNum_;
 	
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
@@ -61,6 +66,6 @@ private:
 private:
 	void CreateVartexData();
 	void SetColor();
-	void CreateDictionalLight();
+	void CreateLight();
 
 };
