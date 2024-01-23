@@ -63,7 +63,7 @@ void GamePlayScene::Initialize() {
 	sphere_->Initialize();
 	worldTransformSphere_.Initialize();
 	sphereMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-	sphere_->SetDirectionalLightFlag(true, 2);
+	sphere_->SetDirectionalLightFlag(true, 3);
 
 	isSphereDraw_ = false;
 
@@ -71,7 +71,7 @@ void GamePlayScene::Initialize() {
 	model_.reset(Model::CreateModelFromObj("project/gamedata/resources/fence", "fence.obj"));
 	worldTransformModel_.Initialize();
 	modelMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-	model_->SetDirectionalLightFlag(true,2);
+	model_->SetDirectionalLightFlag(true,3);
 
 	//Input
 	input_ = Input::GetInstance();

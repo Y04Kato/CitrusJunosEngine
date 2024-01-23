@@ -43,6 +43,20 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		output.color.rgb = diffuse + specular;
 		output.color.a = gMaterial.color.a * textureColor.a;
 	}
+	else if (gMaterial.enableLighting == 3) {//BlinnPhongReflection
+		float32_t3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
+		float32_t3 halfVector = normalize(-gDirectionalLight.direction + toEye);
+		float NdotH = dot(normalize(input.normal), halfVector);
+		float specularPow = pow(saturate(NdotH), gMaterial.shininess);//反射強度
+
+		//拡散反射
+		float32_t3 diffuse = gMaterial.color.rgb * textureColor.rgb * cos * gDirectionalLight.intensity;
+		//鏡面反射
+		float32_t3 specular = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f);
+
+		output.color.rgb = diffuse + specular;
+		output.color.a = gMaterial.color.a * textureColor.a;
+	}
 	else {
 		output.color = gMaterial.color * textureColor;
 	}
