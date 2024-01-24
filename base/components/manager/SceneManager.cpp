@@ -27,6 +27,8 @@ void SceneManager::Initialize() {
 	//Light
 	directionalLight_ = DirectionalLights::GetInstance();
 	directionalLight_->Initialize();
+	pointLight_ = PointLights::GetInstance();
+	pointLight_->Initialize();
 
 	//TextureManager
 	textureManager_ = TextureManager::GetInstance();
@@ -65,6 +67,7 @@ void SceneManager::Update() {
 		input_->Update();
 		GlobalVariables::GetInstance()->Update();
 		directionalLight_->Update();
+		pointLight_->Update();
 		scene_[Iscene::sceneNo]->Update();
 		scene_[Iscene::sceneNo]->Draw();
 		imGuiManager_->End();

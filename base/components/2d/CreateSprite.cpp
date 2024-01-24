@@ -82,6 +82,12 @@ void CreateSprite::Finalize() {
 
 }
 
+CreateSprite* CreateSprite::CreateSpriteFromTexture(Vector2 size, uint32_t textureIndex) {
+	CreateSprite* sprite = new CreateSprite();
+	sprite->Initialize(size, textureIndex);
+	return sprite;
+}
+
 void CreateSprite::SettingVertex() {
 	//Sprite用のリソースを作る
 	vertexResourceSprite_ = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexData) * 6);

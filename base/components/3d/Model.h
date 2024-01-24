@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include<wrl.h>
 
 class Model {
@@ -20,7 +21,13 @@ public:
 
 	ModelData modelData_;
 	
-	void SetDirectionalLightFlag(bool isDirectionalLight);
+	/// <summary>
+	/// ライティングを行うかどうか＆ライティングの種類
+	/// 1:HalfLambert
+	/// 2:PhongReflection
+	/// 2:BlinnPhongReflection
+	/// </summary>
+	void SetDirectionalLightFlag(bool isDirectionalLight,int lightNum);
 
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
 	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
@@ -47,9 +54,18 @@ private:
 	bool isDirectionalLight_ = false;
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
 
+	PointLights* pointLights_;
+	PointLight* pointLight_;
+	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource_;
+
+	int lightNum_;
+	
+	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
+	CameraForGPU* cameraData_ = nullptr;
+
 private:
 	void CreateVartexData();
 	void SetColor();
-	void CreateDictionalLight();
+	void CreateLight();
 
 };

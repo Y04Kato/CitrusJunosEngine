@@ -21,6 +21,7 @@ struct VertexData {
 struct TransformationMatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
+	Matrix4x4 WorldInverseTranspose;
 };
 
 struct Material {
@@ -28,6 +29,7 @@ struct Material {
 	int32_t enableLighting;
 	float padding[3];
 	Matrix4x4 uvTransform;
+	float shininess;
 };
 
 struct DirectionalLight {
@@ -89,4 +91,16 @@ struct Emitter {
 struct AccelerationField {
 	Vector3 acceleration;//加速度
 	AABB area;//範囲
+};
+
+struct CameraForGPU {
+	Vector3 worldPosition;
+};
+
+struct PointLight {
+	Vector4 color;
+	Vector3 position;
+	float intensity;
+	float radius;
+	float decay;
 };

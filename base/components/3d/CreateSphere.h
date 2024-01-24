@@ -16,6 +16,14 @@ public:
 	
 	void Finalize();
 
+	/// <summary>
+	/// ライティングを行うかどうか＆ライティングの種類
+	/// 1:HalfLambert
+	/// 2:PhongReflection
+	/// 2:BlinnPhongReflection
+	/// </summary>
+	void SetDirectionalLightFlag(bool isDirectionalLight, int lightNum);
+
 private:
 	void SettingVertex();
 	void SettingColor();
@@ -39,9 +47,15 @@ private:
 
 	DirectionalLights* directionalLights_;
 	DirectionalLight* directionalLight_;
+	bool isDirectionalLight_ = false;
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
 
 	Microsoft::WRL::ComPtr <ID3D12Resource> indexResourceSphere_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewSphere_{};
 	uint32_t* indexDataSphere_;
+
+	int lightNum_;
+
+	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
+	CameraForGPU* cameraData_ = nullptr;
 };

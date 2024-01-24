@@ -11,6 +11,8 @@ public:
 	void Draw(const Transform& transform, const Transform& uvTransform, const Vector4& material);
 	void Finalize();
 
+	static CreateSprite* CreateSpriteFromTexture(Vector2 size, uint32_t textureIndex);
+
 	//サイズ変更
 	void SetSize(Vector2 size);
 

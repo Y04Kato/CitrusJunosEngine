@@ -50,8 +50,8 @@ void CreateParticle::Update() {
 	ImGui::DragFloat3("AccelerationField", accelerationField_.acceleration.num, 0.1f);
 	ImGui::DragFloat3("OccurrenceRangeMin", accelerationField_.area.min.num, 0.1f);
 	ImGui::DragFloat3("OccurrenceRangeMax", accelerationField_.area.max.num, 0.1f);
-	ImGui::DragInt("Amount",&amount,1,0, kNumMaxInstance_);
-	ImGui::DragFloat("Frequency",&emitter_.frequency,0.1f,0.0f,100.0f);
+	ImGui::DragInt("Amount", &amount, 1, 0, kNumMaxInstance_);
+	ImGui::DragFloat("Frequency", &emitter_.frequency, 0.1f, 0.0f, 100.0f);
 	ImGui::End();
 
 	emitter_.count = amount;
