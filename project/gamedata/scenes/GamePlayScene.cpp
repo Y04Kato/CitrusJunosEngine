@@ -26,12 +26,12 @@ void GamePlayScene::Initialize() {
 
 	player_ = std::make_unique<Player>();
 	playerModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/player", "player.obj"));
-	playerModel_->SetDirectionalLightFlag(true);
+	playerModel_->SetDirectionalLightFlag(true,2);
 	player_->Initialize(playerModel_.get());
 
 	ground_ = std::make_unique<Ground>();
 	groundModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/floor", "Floor.obj"));
-	groundModel_->SetDirectionalLightFlag(true);
+	groundModel_->SetDirectionalLightFlag(true,2);
 	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
 
 	background_ = textureManager_->Load("project/gamedata/resources/paper.png");
@@ -87,7 +87,7 @@ void GamePlayScene::Initialize() {
 
 
 	enemyModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/enemy", "enemy.obj"));
-	enemyModel_->SetDirectionalLightFlag(true);
+	enemyModel_->SetDirectionalLightFlag(true,2);
 
 	//CollisionManager
 	collisionManager_ = CollisionManager::GetInstance();

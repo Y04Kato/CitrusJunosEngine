@@ -10,7 +10,6 @@
 #include "components/2d/CreateParticle.h"
 #include "components/3d/CreateSphere.h"
 #include "components/3d/Model.h"
-#include "components/3d/CreateHoudini.h"
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
