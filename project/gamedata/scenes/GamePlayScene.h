@@ -60,7 +60,7 @@ private:
 	std::list<Enemy*> enemys_;
 	std::unique_ptr<Model> enemyModel_;
 
-	std::unique_ptr <CreateSprite> sprite_[4];
+	std::unique_ptr <CreateSprite> sprite_[5];
 	Transform spriteTransform_;
 	Transform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
@@ -75,4 +75,10 @@ private:
 	bool gameStart = true;
 
 	Vector4 test = { 0.2f,0.2f,0.2f,1.0f };
+
+	float fadeAlpha_ = 256.0f;
+	bool isfadeIn = false;
+
+	bool gameover = false;
+	bool gameclear = false;
 };

@@ -27,7 +27,7 @@ void Enemy::Update() {
 		hitCount++;
 	}
 
-	if (hitCount >= 40) {
+	if (hitCount >= 10) {
 		hitCount = 0;
 		isHit = false;
 	}
@@ -55,27 +55,40 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 }
 
 void Enemy::Move() {
+	moveCount++;
+	/*if (test == false) {
+		if (moveCount == 0) {
+			velocity_.num[0] = 0.1f;
+		}
+		if (moveCount == 120) {
+			velocity_.num[0] = -0.1f;
+		}
+		if (moveCount == 240) {
+			moveCount = -1;
+		}
+	}*/
+
 	const float kGravityAcceleration = 0.01f;
+	if (test == true) {
+		if (velocity_.num[0] >= 0.01f) {
+			velocity_.num[0] -= kGravityAcceleration;
+		}
+		else if (velocity_.num[0] <= -0.01f) {
+			velocity_.num[0] += kGravityAcceleration;
+		}
+		else {
+			velocity_.num[0] = 0.0f;
+		}
 
-	if (velocity_.num[0] >= 0.01f) {
-		;
-		velocity_.num[0] -= kGravityAcceleration;
-	}
-	else if (velocity_.num[0] <= -0.01f) {
-		velocity_.num[0] += kGravityAcceleration;
-	}
-	else {
-		velocity_.num[0] = 0.0f;
-	}
-
-	if (velocity_.num[2] >= 0.01f) {;
-		velocity_.num[2] -= kGravityAcceleration;
-	}
-	else if (velocity_.num[2] <= -0.01f) {
-		velocity_.num[2] += kGravityAcceleration;
-	}
-	else {
-		velocity_.num[2] = 0.0f;
+		if (velocity_.num[2] >= 0.01f) {
+			velocity_.num[2] -= kGravityAcceleration;
+		}
+		else if (velocity_.num[2] <= -0.01f) {
+			velocity_.num[2] += kGravityAcceleration;
+		}
+		else {
+			velocity_.num[2] = 0.0f;
+		}
 	}
 }
 
@@ -102,9 +115,9 @@ void Enemy::SetObjectPos(const WorldTransform& worldtransform) {
 
 void Enemy::SetVelocity(const Vector3 velocity) {
 	if (isHit == false) {
-		velocity_ = velocity * -1.0f;
-		velocity_.num[1] = 0.001f;
+		velocity_ = velocity;
 		isHit = true;
+		test = true;
 	}
 }
 

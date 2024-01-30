@@ -20,18 +20,17 @@ void GamePlayScene::Initialize() {
 
 	// デバッグカメラの初期化
 	debugCamera_ = DebugCamera::GetInstance();
-	debugCamera_->initialize();
 
 	viewProjection_.Initialize();
 
 	player_ = std::make_unique<Player>();
 	playerModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/player", "player.obj"));
-	playerModel_->SetDirectionalLightFlag(true,2);
+	playerModel_->SetDirectionalLightFlag(true, 2);
 	player_->Initialize(playerModel_.get());
 
 	ground_ = std::make_unique<Ground>();
 	groundModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/floor", "Floor.obj"));
-	groundModel_->SetDirectionalLightFlag(true,2);
+	groundModel_->SetDirectionalLightFlag(true, 2);
 	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
 
 	background_ = textureManager_->Load("project/gamedata/resources/paper.png");
@@ -67,6 +66,11 @@ void GamePlayScene::Initialize() {
 	sprite_[3]->SetTextureInitialSize();
 	sprite_[3]->SetAnchor(Vector2{ 0.5f,0.5f });
 
+	sprite_[4] = std::make_unique <CreateSprite>();
+	sprite_[4]->Initialize(Vector2{ 100.0f,100.0f }, background_);
+	sprite_[4]->SetTextureInitialSize();
+	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
+
 	//パーティクル
 	testEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
 	testEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
@@ -87,7 +91,7 @@ void GamePlayScene::Initialize() {
 
 
 	enemyModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/enemy", "enemy.obj"));
-	enemyModel_->SetDirectionalLightFlag(true,2);
+	enemyModel_->SetDirectionalLightFlag(true, 2);
 
 	//CollisionManager
 	collisionManager_ = CollisionManager::GetInstance();
@@ -99,14 +103,13 @@ void GamePlayScene::Initialize() {
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Test", 90);
 
-	debugCamera_->SetCamera(Vector3{ 0.0f,44.7f,-55.2f }, Vector3{ 0.8f,0.0f,0.0f });
-
 	srand((unsigned int)time(NULL));
 }
 
 void GamePlayScene::Update() {
 	if (gameStart == true) {
 		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
+		debugCamera_->SetCamera(Vector3{ 0.0f,44.7f,-55.2f }, Vector3{ 0.8f,0.0f,0.0f });
 
 		for (int i = 0; i < 10; i++) {
 			SetEnemy(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
@@ -115,25 +118,51 @@ void GamePlayScene::Update() {
 		gameStart = false;
 	}
 
-	if (enemyDethCount == 0) {
-		gameStart = true;
-		sceneNo = CLEAR_SCENE;
+	if (enemyDethCount == 0 && isfadeIn == false) {
+		gameclear = true;
+		isfadeIn = true;
 	}
 
-	if (player_->isGameover()) {
-		gameStart = true;
-		for (Enemy* enemy : enemys_) {
-			enemy->SetisDead();
+	if (player_->isGameover() && isfadeIn == false) {
+		gameover = true;
+		isfadeIn = true;
+	}
+
+
+	if (isfadeIn == false) {
+		fadeAlpha_ -= 4;
+		if (fadeAlpha_ <= 0) {
+			fadeAlpha_ = 0;
 		}
-		enemys_.remove_if([&](Enemy* enemy) {
-			if (enemy->isDead()) {
-				delete enemy;
-				enemyDethCount--;
-				return true;
+	}
+	else if (isfadeIn == true && gameclear == true) {
+		fadeAlpha_ += 4;
+		if (fadeAlpha_ >= 256) {
+			gameStart = true;
+			isfadeIn = false;
+			gameclear = false;
+			sceneNo = CLEAR_SCENE;
+		}
+	}
+	else if (isfadeIn == true && gameover == true) {
+		fadeAlpha_ += 4;
+		if (fadeAlpha_ >= 256) {
+			gameStart = true;
+			for (Enemy* enemy : enemys_) {
+				enemy->SetisDead();
 			}
-			return false;
-			});
-		sceneNo = OVER_SCENE;
+			enemys_.remove_if([&](Enemy* enemy) {
+				if (enemy->isDead()) {
+					delete enemy;
+					enemyDethCount--;
+					return true;
+				}
+				return false;
+				});
+			isfadeIn = false;
+			gameover = false;
+			sceneNo = OVER_SCENE;
+		}
 	}
 
 	ApplyGlobalVariables();
@@ -175,7 +204,7 @@ void GamePlayScene::Update() {
 	particle_->Update();
 	particle_->SetTranslate(player_->GetWorldTransform().translation_);
 	ImGui::Begin("Particle");
-	ImGui::ColorEdit4("Color",test.num, 0);
+	ImGui::ColorEdit4("Color", test.num, 0);
 	ImGui::End();
 	particle_->SetColor(test);
 
@@ -193,8 +222,12 @@ void GamePlayScene::Update() {
 	for (Enemy* enemy : enemys_) {
 		collisionManager_->AddCollider(enemy);
 		if (enemy->isCollision_ == true) {
-			enemy->SetVelocity(player_->GetVelocity());
-			audio_->SoundPlayWave(soundData2_, 0.1f, false);
+			if (enemy->isHit == false) {
+				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), 0.8f, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
+				player_->SetVelocity(pair.first);
+				enemy->SetVelocity(pair.second);
+				audio_->SoundPlayWave(soundData2_, 0.1f, false);
+			}
 			enemy->isCollision_ = false;
 		}
 	}
@@ -245,6 +278,8 @@ void GamePlayScene::Draw() {
 	if (player_->GetMoveMode() == 2) {
 		sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 	}
+
+	sprite_[4]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlpha_ / 256.0f });
 
 #pragma endregion
 }

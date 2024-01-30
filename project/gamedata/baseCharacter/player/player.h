@@ -14,6 +14,8 @@ public:
 
 	void Update() override;
 
+	void UpdateView();
+
 	void Draw(const ViewProjection& viewProjection) override;
 
 	void Move();
@@ -37,6 +39,8 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	}
+
+	void SetVelocity(const Vector3 velocity);
 
 	Vector3 GetVelocity() { return velocity_; }
 
@@ -63,4 +67,7 @@ private:
 
 	//0~2で弱~強
 	int moveMode = 0;
+
+	int hitCount = 0;
+	bool isHit = false;
 };

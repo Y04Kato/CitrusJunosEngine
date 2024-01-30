@@ -30,6 +30,8 @@ public:
 
 	bool isHit_;
 
+	bool isHit = false;
+
 	bool isCollision_;
 
 	bool isDead() { return dead_; }
@@ -39,6 +41,8 @@ public:
 	StructSphere GetStructSphere() { return structSphere_; }
 
 	void SetVelocity(const Vector3 velocity);
+
+	Vector3 GetVelocity() { return velocity_; }
 
 private:
 	Input* input_ = nullptr;
@@ -62,6 +66,9 @@ private:
 
 	const ViewProjection* viewProjection_ = nullptr;
 
-	bool isHit = false;
 	int hitCount = 0;
+
+	int moveCount = 0;
+
+	bool test = false;
 };
