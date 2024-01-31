@@ -67,8 +67,6 @@ void GameTitleScene::Initialize() {
 }
 
 void GameTitleScene::Update() {
-	player_->SetWorldTransform(Vector3{ 0.0f,0.0f,0.0f });
-	debugCamera_->SetCamera(Vector3{ 0.0f,11.0f,-8.0f }, Vector3{ 0.8f,0.0f,0.0f });
 	if (input_->TriggerKey(DIK_SPACE) && count < 2) {
 		if (pageChange_ == false) {
 			pageChange_ = true;
@@ -101,6 +99,8 @@ void GameTitleScene::Update() {
 	}
 
 	if (count == 0) {
+		player_->SetWorldTransform(Vector3{ 0.0f,0.0f,0.0f });
+		debugCamera_->SetCamera(Vector3{ 0.0f,11.0f,-8.0f }, Vector3{ 0.8f,0.0f,0.0f });
 		fadeAlpha_ -= 4;
 		if (fadeAlpha_ <= 0) {
 			fadeAlpha_ = 0;
@@ -113,6 +113,7 @@ void GameTitleScene::Update() {
 		}
 	}
 	if (count == 2) {
+		debugCamera_->MovingCamera(Vector3{ 0.0f,44.7f,-55.2f }, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ += 4;
 		if (fadeAlpha_ >= 256) {
 			count = 0;

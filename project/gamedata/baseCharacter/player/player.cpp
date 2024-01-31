@@ -14,6 +14,7 @@ void Player::Initialize(Model* model) {
 
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributePlayer);
 	SetCollisionMask(~CollisionConfig::kCollisionAttributePlayer);
+	SetRadius(1.4f);
 }
 
 void Player::Update() {

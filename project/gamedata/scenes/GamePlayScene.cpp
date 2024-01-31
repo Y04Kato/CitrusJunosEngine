@@ -109,12 +109,11 @@ void GamePlayScene::Initialize() {
 void GamePlayScene::Update() {
 	if (gameStart == true) {
 		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
-		debugCamera_->SetCamera(Vector3{ 0.0f,44.7f,-55.2f }, Vector3{ 0.8f,0.0f,0.0f });
 
 		for (int i = 0; i < 10; i++) {
 			SetEnemy(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
 		}
-
+		debugCamera_->SetCamera(Vector3{ 0.0f,44.7f,-55.2f }, Vector3{ 0.8f,0.0f,0.0f });
 		gameStart = false;
 	}
 
@@ -136,6 +135,7 @@ void GamePlayScene::Update() {
 		}
 	}
 	else if (isfadeIn == true && gameclear == true) {
+		debugCamera_->MovingCamera(player_->GetWorldTransform().translation_, Vector3{0.8f,0.0f,0.0f}, 0.05f);
 		fadeAlpha_ += 4;
 		if (fadeAlpha_ >= 256) {
 			gameStart = true;

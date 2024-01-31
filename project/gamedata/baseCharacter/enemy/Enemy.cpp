@@ -12,6 +12,7 @@ void Enemy::Initialize(Model* model) {
 
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributeEnemy);
 	SetCollisionMask(~CollisionConfig::kCollisionAttributeEnemy);
+	SetRadius(1.4f);
 }
 
 void Enemy::Update() {
