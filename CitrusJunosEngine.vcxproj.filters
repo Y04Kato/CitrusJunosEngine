@@ -139,6 +139,12 @@
     <Filter Include="externals\imgui">
       <UniqueIdentifier>{cfedf8cc-6219-4b5b-b6e1-9bd08bb07fb4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\base\components\utilities\pointLight">
+      <UniqueIdentifier>{827a6ecc-7cff-4cd3-bc5e-2a8ce103c6be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\utilities\pointLight">
+      <UniqueIdentifier>{811c93f2-5e69-4b8f-b350-cfa48158c1e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -241,7 +247,7 @@
       <Filter>ソース ファイル\base\components\manager\imGuiManager</Filter>
     </ClCompile>
     <ClCompile Include="base\components\utilities\pointLight\PointLight.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\base\components\utilities\pointLight</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -386,7 +392,7 @@
       <Filter>ヘッダー ファイル\base\components\manager\imGuiManager</Filter>
     </ClInclude>
     <ClInclude Include="base\components\utilities\pointLight\PointLight.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\base\components\utilities\pointLight</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
