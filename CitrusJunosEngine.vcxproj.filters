@@ -250,7 +250,7 @@
       <Filter>ソース ファイル\base\components\utilities\pointLight</Filter>
     </ClCompile>
     <ClCompile Include="project\gamedata\scenes\GameDemoScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -398,7 +398,7 @@
       <Filter>ヘッダー ファイル\base\components\utilities\pointLight</Filter>
     </ClInclude>
     <ClInclude Include="project\gamedata\scenes\GameDemoScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
