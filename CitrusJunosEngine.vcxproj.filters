@@ -249,6 +249,9 @@
     <ClCompile Include="base\components\utilities\pointLight\PointLight.cpp">
       <Filter>ソース ファイル\base\components\utilities\pointLight</Filter>
     </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\GameDemoScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -393,6 +396,9 @@
     </ClInclude>
     <ClInclude Include="base\components\utilities\pointLight\PointLight.h">
       <Filter>ヘッダー ファイル\base\components\utilities\pointLight</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\GameDemoScene.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

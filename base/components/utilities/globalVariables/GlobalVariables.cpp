@@ -11,7 +11,6 @@ GlobalVariables* GlobalVariables::GetInstance() {
 void GlobalVariables::CreateGroup(const std::string& groupName) { datas_[groupName]; }
 
 void GlobalVariables::Update() {
-#ifdef _DEBUG
 	if (!ImGui::Begin("Global Variables", nullptr, ImGuiWindowFlags_MenuBar)) {
 		ImGui::End();
 		return;
@@ -58,7 +57,6 @@ void GlobalVariables::Update() {
 
 	ImGui::EndMenuBar();
 	ImGui::End();
-#endif
 }
 
 void GlobalVariables::SetValue(
@@ -110,7 +108,7 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 
 		if (std::holds_alternative<Vector3>(item.value)) {
 			Vector3 value = std::get<Vector3>(item.value);
-			root[groupName][itemName] = json::array({ value.num[0], value.num[1], value.num[2]});
+			root[groupName][itemName] = json::array({ value.num[0], value.num[1], value.num[2] });
 		}
 	}
 

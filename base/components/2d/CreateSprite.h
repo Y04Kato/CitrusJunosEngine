@@ -28,6 +28,9 @@ public:
 	//テクスチャの大きさと同じサイズに変更
 	void SetTextureInitialSize();
 
+	//テクスチャ変更
+	void SetTextureIndex(uint32_t textureIndex);
+
 	Vector2* GetSize() { return &size_; }
 	Vector2* GetTextureLeftTop() { return &textureLeftTop_; }
 	Vector2* GetTextureSize() { return &textureSize_; }

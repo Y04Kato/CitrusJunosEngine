@@ -13,6 +13,7 @@
 #include "GameTitleScene.h"
 #include "GamePlayScene.h"
 #include "GameClearScene.h"
+#include "GameDemoScene.h"
 
 class SceneManager {
 public:

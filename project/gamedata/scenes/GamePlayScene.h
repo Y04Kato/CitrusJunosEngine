@@ -28,48 +28,8 @@ private:
 	DirectXCommon* dxCommon_;
 	ViewProjection viewProjection_;
 	TextureManager* textureManager_;
-
-	int blendCount_;
-
-	std::unique_ptr <CreateTriangle> triangle_[2];
-	WorldTransform worldTransformTriangle_[2];
-	Vector4 triangleMaterial_[2];
-
-	std::unique_ptr <CreateSprite> sprite_[2];
-	Transform spriteTransform_[2];
-	Transform SpriteuvTransform_[2];
-	Vector4 spriteMaterial_[2];
-
-	std::unique_ptr<CreateParticle> particle_;
-	Emitter testEmitter_{};
-	AccelerationField accelerationField;
-
-	std::unique_ptr <CreateSphere> sphere_;
-	WorldTransform worldTransformSphere_;
-	Vector4 sphereMaterial_;
-
-	std::unique_ptr<Model> model_[2];
-	WorldTransform worldTransformModel_[2];
-	Vector4 modelMaterial_[2];
-
-	uint32_t uvResourceNum_;
-	uint32_t monsterBallResourceNum_;
-	uint32_t particleResourceNum_;
-
 	Audio* audio_;
-	SoundData soundData1_;
-
 	Input* input_;
-
 	DebugCamera* debugCamera_;
-
 	CollisionManager* collisionManager_;
-
-	int texture_;
-
-	bool isTriangleDraw_[2];
-	bool isSphereDraw_;
-	bool isSpriteDraw_[2];
-	bool isModelDraw_;
-	bool isParticleDraw_;
 };
