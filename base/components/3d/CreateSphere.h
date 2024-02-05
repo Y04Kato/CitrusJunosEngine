@@ -4,6 +4,7 @@
 #include "ViewProjection.h"
 #include "TextureManager.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include<wrl.h>
 
 class CitrusJunosEngine;
@@ -49,6 +50,10 @@ private:
 	DirectionalLight* directionalLight_;
 	bool isDirectionalLight_ = false;
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
+
+	PointLights* pointLights_;
+	PointLight* pointLight_;
+	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource_;
 
 	Microsoft::WRL::ComPtr <ID3D12Resource> indexResourceSphere_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewSphere_{};

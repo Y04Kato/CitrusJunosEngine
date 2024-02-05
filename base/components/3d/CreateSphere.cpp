@@ -7,6 +7,8 @@ void CreateSphere::Initialize() {
 	CJEngine_ = CitrusJunosEngine::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
 	directionalLights_ = DirectionalLights::GetInstance();
+	pointLights_ = PointLights::GetInstance();
+
 	kSubDivision_ = 16;
 	vertexCount_ = kSubDivision_ * kSubDivision_ * 6;
 	SettingVertex();
@@ -29,6 +31,7 @@ void CreateSphere::Draw(const WorldTransform& worldTransform, const ViewProjecti
 	materialData_->uvTransform = uvtransformMtrix;
 	materialData_->shininess = 50.0f;
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
+	*pointLight_ = pointLights_->GetPointLight();
 
 	//VBVを設定
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -43,6 +46,7 @@ void CreateSphere::Draw(const WorldTransform& worldTransform, const ViewProjecti
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 
 	//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]のこと
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(textureIndex));
@@ -145,8 +149,13 @@ void CreateSphere::SettingColor() {
 }
 
 void CreateSphere::SettingDictionalLight() {
+	//DirectionalLight
 	directionalLightResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(DirectionalLight));
 	directionalLightResource_->Map(0, NULL, reinterpret_cast<void**>(&directionalLight_));
+
+	//PointLight
+	pointLightResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(PointLight));
+	pointLightResource_->Map(0, NULL, reinterpret_cast<void**>(&pointLight_));
 
 	//ライティング用のカメラリソース
 	cameraResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(CameraForGPU));
