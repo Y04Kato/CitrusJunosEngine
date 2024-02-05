@@ -28,6 +28,19 @@ std::string ConvertString(const std::wstring& str){
 	return result;
 }
 
+const char ConvertStringC(const std::string& str) {
+	auto&& stringPath = ConvertString(str);
+	size_t len = stringPath.length() + 1;
+	std::vector<char> vectorStr;
+	vectorStr.resize(len);
+
+	std::size_t convertedChars = 0;
+	wcstombs_s(&convertedChars, vectorStr.data(), len, stringPath.c_str(), _TRUNCATE);
+	const std::string& result = vectorStr.data();
+
+	return *result.c_str();
+}
+
 void Log(const std::string& message) {
 	OutputDebugStringA(message.c_str());
 }
