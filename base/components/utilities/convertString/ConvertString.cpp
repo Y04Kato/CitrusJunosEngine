@@ -41,6 +41,10 @@ const char ConvertStringC(const std::string& str) {
 	return *result.c_str();
 }
 
+std::string ConvertStringC(const char& c) {
+	return &c;
+}
+
 void Log(const std::string& message) {
 	OutputDebugStringA(message.c_str());
 }
