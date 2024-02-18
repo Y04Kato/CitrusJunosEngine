@@ -88,6 +88,7 @@ void GameDemoScene::Initialize() {
 	//Audio
 	audio_ = Audio::GetInstance();
 	soundData1_ = audio_->SoundLoadWave("project/gamedata/resources/LethargicWitch.wav");
+	soundData2_ = audio_->SoundLoadWave("project/gamedata/resources/system.wav");
 	//音声再生
 	audio_->SoundPlayWave(soundData1_, 0.1f, false);
 
@@ -129,6 +130,7 @@ void GameDemoScene::Update() {
 	}
 	if (input_->TriggerKey(DIK_D)) {
 		OutputDebugStringA("Trigger D\n");
+		audio_->SoundPlayWave(soundData2_, 0.1f, false);
 	}
 
 	for (int i = 0; i < 2; i++) {
@@ -443,6 +445,7 @@ void GameDemoScene::Draw() {
 
 void GameDemoScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
+	audio_->SoundUnload(&soundData2_);
 }
 
 void GameDemoScene::ApplyGlobalVariables() {

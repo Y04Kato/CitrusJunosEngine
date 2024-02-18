@@ -62,6 +62,7 @@ private:
 
 	Audio* audio_;
 	SoundData soundData1_;
+	SoundData soundData2_;
 
 	Input* input_;
 
