@@ -57,7 +57,8 @@ private:
 
 	uint32_t uvResourceNum_;
 	uint32_t monsterBallResourceNum_;
-	uint32_t particleResourceNum_;
+	uint32_t kaedeResourceNum_;
+	uint32_t cjEngineResourceNum_;
 
 	Audio* audio_;
 	SoundData soundData1_;

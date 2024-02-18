@@ -11,7 +11,9 @@ void GameDemoScene::Initialize() {
 
 	monsterBallResourceNum_ = textureManager_->Load("project/gamedata/resources/monsterBall.png");
 
-	particleResourceNum_ = textureManager_->Load("project/gamedata/resources/circle.png");
+	kaedeResourceNum_ = textureManager_->Load("project/gamedata/resources/kaede.png");
+
+	cjEngineResourceNum_ = textureManager_->Load("project/gamedata/resources/CitrusJunosEngine.png");
 
 	//三角形
 	for (int i = 0; i < 2; i++) {
@@ -58,8 +60,8 @@ void GameDemoScene::Initialize() {
 
 		particle_[i] = std::make_unique <CreateParticle>();
 	}
-	particle_[0]->Initialize(100, testEmitter_[0], accelerationField_[0], particleResourceNum_);
-	particle_[1]->Initialize(100, testEmitter_[1], accelerationField_[1], uvResourceNum_);
+	particle_[0]->Initialize(100, testEmitter_[0], accelerationField_[0], cjEngineResourceNum_);
+	particle_[1]->Initialize(100, testEmitter_[1], accelerationField_[1], kaedeResourceNum_);
 
 	//球体
 	for (int i = 0; i < 2; i++) {
@@ -72,8 +74,8 @@ void GameDemoScene::Initialize() {
 	}
 
 	//objモデル
-	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/fence", "fence.obj"));
-	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj"));
+	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/drum", "drum.obj"));
+	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/chest", "chest.obj"));
 	for (int i = 0; i < 2; i++) {
 		worldTransformModel_[i].Initialize();
 		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
@@ -85,7 +87,7 @@ void GameDemoScene::Initialize() {
 
 	//Audio
 	audio_ = Audio::GetInstance();
-	soundData1_ = audio_->SoundLoadWave("project/gamedata/resources/conjurer.wav");
+	soundData1_ = audio_->SoundLoadWave("project/gamedata/resources/LethargicWitch.wav");
 	//音声再生
 	audio_->SoundPlayWave(soundData1_, 0.1f, false);
 
