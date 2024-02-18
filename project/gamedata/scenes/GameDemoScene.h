@@ -51,9 +51,9 @@ private:
 	WorldTransform worldTransformSphere_[2];
 	Vector4 sphereMaterial_[2];
 
-	std::unique_ptr<Model> model_[2];
-	WorldTransform worldTransformModel_[2];
-	Vector4 modelMaterial_[2];
+	std::unique_ptr<Model> model_[3];
+	WorldTransform worldTransformModel_[3];
+	Vector4 modelMaterial_[3];
 
 	uint32_t uvResourceNum_;
 	uint32_t monsterBallResourceNum_;
@@ -75,7 +75,7 @@ private:
 	bool isTriangleDraw_[2];
 	bool isSphereDraw_[2];
 	bool isSpriteDraw_[2];
-	bool isModelDraw_[2];
+	bool isModelDraw_[3];
 	bool isParticleDraw_[2];
 };
 

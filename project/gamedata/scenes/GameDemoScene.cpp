@@ -76,7 +76,8 @@ void GameDemoScene::Initialize() {
 	//objモデル
 	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/drum", "drum.obj"));
 	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/chest", "chest.obj"));
-	for (int i = 0; i < 2; i++) {
+	model_[2].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj"));
+	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].Initialize();
 		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
 		model_[i]->SetDirectionalLightFlag(true, 3);
@@ -135,10 +136,11 @@ void GameDemoScene::Update() {
 
 	for (int i = 0; i < 2; i++) {
 		worldTransformTriangle_[i].UpdateMatrix();
-
-		worldTransformModel_[i].UpdateMatrix();
-
 		worldTransformSphere_[i].UpdateMatrix();
+	}
+
+	for (int i = 0; i < 3; i++) {
+		worldTransformModel_[i].UpdateMatrix();
 	}
 
 	ImGui::Begin("debug");
@@ -279,6 +281,14 @@ void GameDemoScene::Update() {
 				isModelDraw_[1] = false;
 			}
 		}
+		if (ImGui::Button("DrawModel3")) {
+			if (isModelDraw_[2] == false) {
+				isModelDraw_[2] = true;
+			}
+			else {
+				isModelDraw_[2] = false;
+			}
+		}
 		if (isModelDraw_[0] == true) {
 			if (ImGui::TreeNode("Model1")) {
 				ImGui::DragFloat3("Translate", worldTransformModel_[0].translation_.num, 0.05f);
@@ -292,6 +302,14 @@ void GameDemoScene::Update() {
 				ImGui::DragFloat3("Translate2", worldTransformModel_[1].translation_.num, 0.05f);
 				ImGui::DragFloat3("Rotate2", worldTransformModel_[1].rotation_.num, 0.05f);
 				ImGui::DragFloat3("Scale2", worldTransformModel_[1].scale_.num, 0.05f);
+				ImGui::TreePop();
+			}
+		}
+		if (isModelDraw_[2] == true) {
+			if (ImGui::TreeNode("Model3")) {
+				ImGui::DragFloat3("Translate3", worldTransformModel_[2].translation_.num, 0.05f);
+				ImGui::DragFloat3("Rotate3", worldTransformModel_[2].rotation_.num, 0.05f);
+				ImGui::DragFloat3("Scale3", worldTransformModel_[2].scale_.num, 0.05f);
 				ImGui::TreePop();
 			}
 		}
@@ -419,11 +437,14 @@ void GameDemoScene::Draw() {
 		if (isSphereDraw_[i]) {
 			sphere_[i]->Draw(worldTransformSphere_[i], viewProjection_, sphereMaterial_[i], texture_[i]);
 		}
+	}
 
+	for (int i = 0; i < 3; i++) {
 		if (isModelDraw_[i]) {
 			model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
 		}
 	}
+
 #pragma endregion
 
 #pragma region パーティクル描画
