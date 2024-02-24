@@ -12,8 +12,10 @@ public:
 
 	void ShakeCamera(int shakePower,int dividePower);
 
+	//カメラの場所決め
 	void SetCamera(Vector3 translation, Vector3 rotation);
 
+	//カメラを移動させる
 	void MovingCamera(Vector3 translation, Vector3 rotation, float timerSpeed);
 
 	//目標が動いている場合使用

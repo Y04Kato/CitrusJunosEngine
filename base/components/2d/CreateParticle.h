@@ -18,13 +18,22 @@ public:
 	Particle MakeNewParticle(std::mt19937& randomEngine,const Transform transform);
 	std::list<Particle> Emission(const Emitter& emitter, std::mt19937& randomEngine);
 
-	void SetTranslate(Vector3 transform) { emitter_.transform.translate = transform; }
+	void SetEmitter(const Emitter& emitter) {
+		emitter_.count = emitter.count; 
+		emitter_.frequency = emitter.frequency;
+		emitter_.transform = emitter.transform;
+	};
+	void SetAccelerationField(const AccelerationField& accelerationField) { accelerationField_ = accelerationField; };
+	void SetisBillBoard(const bool isBillBoard) { isBillBoard_ = isBillBoard; };
+	void SetisColor(const bool isColor) { isColor_ = isColor; };
 
 	//パーティクルの色をランダムから指定した色に変更出来る
 	void SetColor(Vector4 color) {
 		color_ = color;
-		isColor = true;
+		isColor_ = true;
 	}
+
+	int GetkNumMaxInstance() { return kNumMaxInstance_; }
 
 private:
 	void SettingVertex();
@@ -74,8 +83,6 @@ private:
 	AccelerationField accelerationField_;
 
 	Vector4 color_;
-	bool isColor = false;
-
-	int amount = 0;
+	bool isColor_ = false;
 };
 

@@ -139,6 +139,12 @@
     <Filter Include="externals\imgui">
       <UniqueIdentifier>{cfedf8cc-6219-4b5b-b6e1-9bd08bb07fb4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\base\components\utilities\pointLight">
+      <UniqueIdentifier>{827a6ecc-7cff-4cd3-bc5e-2a8ce103c6be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\utilities\pointLight">
+      <UniqueIdentifier>{811c93f2-5e69-4b8f-b350-cfa48158c1e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -257,6 +263,11 @@
     </ClCompile>
     <ClCompile Include="project\gamedata\scenes\GameOverScene.cpp">
       <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\utilities\pointLight\PointLight.cpp">
+      <Filter>ソース ファイル\base\components\utilities\pointLight</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\GameDemoScene.cpp">
+      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -417,6 +428,11 @@
     </ClInclude>
     <ClInclude Include="project\gamedata\scenes\GameOverScene.h">
       <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\utilities\pointLight\PointLight.h">
+      <Filter>ヘッダー ファイル\base\components\utilities\pointLight</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\GameDemoScene.h">
+      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

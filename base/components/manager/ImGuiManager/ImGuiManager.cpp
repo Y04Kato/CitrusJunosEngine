@@ -34,7 +34,7 @@ void ImGuiManager::End(){
 }
 
 void ImGuiManager::Draw(){
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon_->GetCommandList().Get());
 #endif
 

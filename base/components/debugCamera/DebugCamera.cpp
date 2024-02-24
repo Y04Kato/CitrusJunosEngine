@@ -39,6 +39,7 @@ void DebugCamera::Update() {
 		viewProjection_.rotation_.num[2] = (1.0f - timer_) * movingStartRotate_.num[2] + timer_ * movingEndRotate_.num[2];
 	}
 
+
 	viewProjection_.UpdateMatrix();
 }
 

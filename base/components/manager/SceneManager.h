@@ -14,6 +14,7 @@
 #include "GamePlayScene.h"
 #include "GameClearScene.h"
 #include "GameOverScene.h"
+#include "GameDemoScene.h"
 
 class SceneManager {
 public:

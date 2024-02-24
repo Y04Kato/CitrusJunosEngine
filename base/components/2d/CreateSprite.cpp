@@ -176,3 +176,8 @@ void CreateSprite::AdjustTextureSize() {
 	textureSize_.num[0] = static_cast<float>(resDesc.Width);
 	textureSize_.num[1] = static_cast<float>(resDesc.Height);
 }
+
+void CreateSprite::SetTextureIndex(uint32_t textureIndex) {
+	index_ = textureIndex;
+	AdjustTextureSize();
+}

@@ -7,7 +7,7 @@ PointLights* PointLights::GetInstance() {
 }
 
 void PointLights::Initialize() {
-	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,2.0f,0.0f},1.0f ,1.0f,1.0f };
+	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
 }
 
 void PointLights::Update() {
