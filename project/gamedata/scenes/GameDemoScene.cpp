@@ -90,8 +90,6 @@ void GameDemoScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	soundData1_ = audio_->SoundLoadWave("project/gamedata/resources/LethargicWitch.wav");
 	soundData2_ = audio_->SoundLoadWave("project/gamedata/resources/system.wav");
-	//音声再生
-	audio_->SoundPlayWave(soundData1_, 0.1f, false);
 
 	// デバッグカメラの初期化
 	debugCamera_ = DebugCamera::GetInstance();

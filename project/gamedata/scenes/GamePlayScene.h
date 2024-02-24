@@ -81,4 +81,10 @@ private:
 
 	bool gameover = false;
 	bool gameclear = false;
+
+	DirectionalLights* directionalLights_;
+	DirectionalLight directionalLight_;
+
+	PointLights* pointLights_;
+	PointLight pointLight_;
 };

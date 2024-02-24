@@ -27,6 +27,8 @@ public:
 	void SetisBillBoard(const bool isBillBoard) { isBillBoard_ = isBillBoard; };
 	void SetisColor(const bool isColor) { isColor_ = isColor; };
 
+	void SetTranslate(Vector3 transform) { emitter_.transform.translate = transform; }
+
 	//パーティクルの色をランダムから指定した色に変更出来る
 	void SetColor(Vector4 color) {
 		color_ = color;

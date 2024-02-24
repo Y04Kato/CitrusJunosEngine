@@ -25,12 +25,12 @@ void GamePlayScene::Initialize() {
 
 	player_ = std::make_unique<Player>();
 	playerModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/player", "player.obj"));
-	playerModel_->SetDirectionalLightFlag(true, 2);
+	playerModel_->SetDirectionalLightFlag(true, 3);
 	player_->Initialize(playerModel_.get());
 
 	ground_ = std::make_unique<Ground>();
 	groundModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/floor", "Floor.obj"));
-	groundModel_->SetDirectionalLightFlag(true, 2);
+	groundModel_->SetDirectionalLightFlag(true, 3);
 	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
 
 	background_ = textureManager_->Load("project/gamedata/resources/paper.png");
@@ -104,12 +104,16 @@ void GamePlayScene::Initialize() {
 	globalVariables->AddItem(groupName, "Test", 90);
 
 	srand((unsigned int)time(NULL));
+
+	directionalLights_ = DirectionalLights::GetInstance();
+	pointLights_ = PointLights::GetInstance();
 }
 
 void GamePlayScene::Update() {
 	if (gameStart == true) {
 		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
-
+		directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.5f };
+		pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
 		for (int i = 0; i < 10; i++) {
 			SetEnemy(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
 		}
@@ -141,6 +145,8 @@ void GamePlayScene::Update() {
 			gameStart = true;
 			isfadeIn = false;
 			gameclear = false;
+			directionalLight_.intensity = 1.0f;
+			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
 			sceneNo = CLEAR_SCENE;
 		}
 	}
@@ -161,6 +167,8 @@ void GamePlayScene::Update() {
 				});
 			isfadeIn = false;
 			gameover = false;
+			directionalLight_.intensity = 1.0f;
+			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
 			sceneNo = OVER_SCENE;
 		}
 	}
@@ -168,6 +176,10 @@ void GamePlayScene::Update() {
 	ApplyGlobalVariables();
 
 	player_->Update();
+	directionalLights_->SetTarget(directionalLight_);
+	pointLight_.position.num[0] = player_->GetWorldTransform().GetWorldPos().num[0];
+	pointLight_.position.num[2] = player_->GetWorldTransform().GetWorldPos().num[2];
+	pointLights_->SetTarget(pointLight_);
 
 	for (Enemy* enemy : enemys_) {
 		enemy->Update();
