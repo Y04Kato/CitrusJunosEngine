@@ -123,6 +123,7 @@ void GameDemoScene::Update() {
 
 	if (input_->PressKey(DIK_A)) {
 		OutputDebugStringA("Press A\n");
+		audio_->SoundStopWave(&soundData1_);
 	}
 	if (input_->ReleaseKey(DIK_S)) {
 		OutputDebugStringA("Release S\n");

@@ -151,6 +151,13 @@ void Audio::SoundPlayWave(const SoundData& soundData, float AudioVolume, bool is
 	result = xAudio2_.Get()->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
 	assert(SUCCEEDED(result));
 
+	// 再生中データ
+	PlaySoundData* voice = new PlaySoundData();
+	voice->soundData = const_cast<SoundData *>(&soundData);
+	voice->sourceVoice = pSourceVoice;
+	// 再生中データコンテナに登録
+	voices_.insert(voice);
+
 	//再生する波形データの設定
 	XAUDIO2_BUFFER buf{};
 	buf.pAudioData = soundData.pBuffer;
@@ -166,6 +173,19 @@ void Audio::SoundPlayWave(const SoundData& soundData, float AudioVolume, bool is
 	result = pSourceVoice->SetVolume(AudioVolume);
 	result = pSourceVoice->Start();
 }
+
+void Audio::SoundStopWave(SoundData* soundData){
+	//再生中の音声リストから検索
+	auto it = std::find_if(
+		voices_.begin(), voices_.end(), [&](PlaySoundData* voice) { return voice->soundData == soundData; });
+	//検索した音声データの停止
+	if (it != voices_.end()) {
+		(*it)->sourceVoice->DestroyVoice();
+
+		voices_.erase(it);
+	}
+}
+
 
 void Audio::Finalize() {
 	xAudio2_.Reset();

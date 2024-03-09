@@ -3,6 +3,7 @@
 #pragma comment(lib,"xaudio2.lib")
 #include <fstream>
 #include <wrl.h>
+#include <set>
 
 struct ChunkHeader {
 	char id[4];//チャンク毎のID
@@ -28,6 +29,12 @@ struct SoundData {
 	unsigned int bufferSize;
 };
 
+//再生中の音声データ
+struct PlaySoundData {
+	SoundData* soundData = {};
+	IXAudio2SourceVoice* sourceVoice = nullptr;
+};
+
 class Audio{
 public:
 	static Audio* GetInstance();
@@ -43,6 +50,9 @@ public:
 	//音声再生
 	void SoundPlayWave(const SoundData& soundData, float AudioVolume, bool isLoop);
 
+	//音声停止
+	void SoundStopWave(SoundData* soundData);
+
 	void Finalize();
 
 	Audio(const Audio& obj) = delete;
@@ -54,4 +64,6 @@ private:
 
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
 	IXAudio2MasteringVoice* masterVoice_;
+
+	std::set<PlaySoundData*> voices_;
 };
