@@ -91,7 +91,7 @@ void GameDemoScene::Initialize() {
 	soundData1_ = audio_->SoundLoadWave("project/gamedata/resources/LethargicWitch.wav");
 	soundData2_ = audio_->SoundLoadWave("project/gamedata/resources/system.wav");
 	//音声再生
-	audio_->SoundPlayWave(soundData1_, 0.1f, false);
+	audio_->SoundPlayWave(soundData1_, 0.1f, true);
 
 	// デバッグカメラの初期化
 	debugCamera_ = DebugCamera::GetInstance();
@@ -125,6 +125,7 @@ void GameDemoScene::Update() {
 
 	if (input_->PressKey(DIK_A)) {
 		OutputDebugStringA("Press A\n");
+		audio_->SoundStopWave(&soundData1_);
 	}
 	if (input_->ReleaseKey(DIK_S)) {
 		OutputDebugStringA("Release S\n");
