@@ -272,6 +272,8 @@
     <FxCompile Include="project\gamedata\resources\shaders\Particle.PS.hlsl">
       <Filter>ヘッダー ファイル\project\gamedata\resources\shaders</Filter>
     </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\VTA.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\VTA.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\DirectXCommon.h">
@@ -416,6 +418,7 @@
     <None Include="project\gamedata\resources\shaders\Particle.hlsli">
       <Filter>ヘッダー ファイル\project\gamedata\resources\shaders</Filter>
     </None>
+    <None Include="project\gamedata\resources\shaders\VTA.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CitrusJunosEngine.rc">
