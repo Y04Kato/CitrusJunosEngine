@@ -9,7 +9,11 @@
 #include <sstream>
 #include "DirectionalLight.h"
 #include "PointLight.h"
-#include<wrl.h>
+#include <wrl.h>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 class Model {
 public:

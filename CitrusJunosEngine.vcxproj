@@ -59,17 +59,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)\externals\nlohmann;$(ProjectDir)\externals;$(ProjectDir)\base;$(ProjectDir)\base\components;$(ProjectDir)\base\components\2d;$(ProjectDir)\base\components\3d;$(ProjectDir)\base\components\audio;$(ProjectDir)\base\components\debugCamera;$(ProjectDir)\base\components\input;$(ProjectDir)\base\components\manager;$(ProjectDir)\base\components\manager\ImGuiManager;$(ProjectDir)\base\components\math;$(ProjectDir)\base\components\utilities;$(ProjectDir)\base\components\utilities\collisionManager;$(ProjectDir)\base\components\utilities\convertString;$(ProjectDir)\base\components\utilities\followCamera;$(ProjectDir)\base\components\utilities\globalVariables;$(ProjectDir)\base\components\utilities\directionalLight;$(ProjectDir)\base\components\utilities\pointLight;$(ProjectDir)\project;$(ProjectDir)\project\gamedata;$(ProjectDir)\project\gamedata\scenes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\math;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)\externals\nlohmann;$(ProjectDir)\externals;$(ProjectDir)\base;$(ProjectDir)\base\components;$(ProjectDir)\base\components\2d;$(ProjectDir)\base\components\3d;$(ProjectDir)\base\components\audio;$(ProjectDir)\base\components\debugCamera;$(ProjectDir)\base\components\input;$(ProjectDir)\base\components\manager;$(ProjectDir)\base\components\manager\ImGuiManager;$(ProjectDir)\base\components\math;$(ProjectDir)\base\components\utilities;$(ProjectDir)\base\components\utilities\collisionManager;$(ProjectDir)\base\components\utilities\convertString;$(ProjectDir)\base\components\utilities\followCamera;$(ProjectDir)\base\components\utilities\globalVariables;$(ProjectDir)\base\components\utilities\directionalLight;$(ProjectDir)\base\components\utilities\pointLight;$(ProjectDir)\project;$(ProjectDir)\project\gamedata;$(ProjectDir)\project\gamedata\scenes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\math;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">
-    <IncludePath>$(ProjectDir)\externals\nlohmann;$(ProjectDir)\externals;$(ProjectDir)\base;$(ProjectDir)\base\components;$(ProjectDir)\base\components\2d;$(ProjectDir)\base\components\3d;$(ProjectDir)\base\components\audio;$(ProjectDir)\base\components\debugCamera;$(ProjectDir)\base\components\input;$(ProjectDir)\base\components\manager;$(ProjectDir)\base\components\manager\ImGuiManager;$(ProjectDir)\base\components\math;$(ProjectDir)\base\components\utilities;$(ProjectDir)\base\components\utilities\collisionManager;$(ProjectDir)\base\components\utilities\convertString;$(ProjectDir)\base\components\utilities\followCamera;$(ProjectDir)\base\components\utilities\globalVariables;$(ProjectDir)\base\components\utilities\directionalLight;$(ProjectDir)\base\components\utilities\pointLight;$(ProjectDir)\project;$(ProjectDir)\project\gamedata;$(ProjectDir)\project\gamedata\scenes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\math;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -83,6 +83,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -90,6 +91,8 @@
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib</AdditionalDependencies>
       <AdditionalOptions>/ignore:4049 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -105,6 +108,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -113,6 +117,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">
@@ -128,6 +134,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -136,6 +143,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -306,6 +315,5 @@
     <Image Include="project\gamedata\resources\CitrusJunosEngine.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>
