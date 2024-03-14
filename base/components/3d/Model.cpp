@@ -7,7 +7,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
 
-	modelData_ = LoadObjFile(directoryPath, filename);
+	modelData_ = LoadModelFile(directoryPath, filename);
 	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
 
 	CreateVartexData();
@@ -59,7 +59,7 @@ Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::st
 	return model;
 }
 
-ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+ModelData Model::LoadModelFile(const std::string& directoryPath, const std::string& filename) {
 	ModelData modelData;//構築するModelData
 
 	Assimp::Importer importer;
@@ -70,6 +70,8 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
 
 	//meshが存在しない物は対応しない
 	assert(scene->HasMeshes());
+
+	modelData.rootNode = ReadNode(scene->mRootNode);
 
 	//meshの解析
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
@@ -113,6 +115,29 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
 	}
 
 	return modelData;
+}
+
+Node Model::ReadNode(aiNode* node) {
+	Node result;
+	//nodeのlocalMatrixを取得
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation;
+	//列ベクトル形式を行ベクトル形式に転置
+	aiLocalMatrix.Transpose();
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			result.localMatrix.m[i][j] = aiLocalMatrix[i][j];
+		}
+	}
+	//Node名を格納
+	result.name = node->mName.C_Str();
+	//子供の数だけ確保
+	result.children.resize(node->mNumChildren);
+	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
+		//再帰的に読んで階層構造を作っていく
+		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
+	}
+
+	return result;
 }
 
 void Model::CreateVartexData() {

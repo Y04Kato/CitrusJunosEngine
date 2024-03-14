@@ -33,7 +33,9 @@ public:
 	/// </summary>
 	void SetDirectionalLightFlag(bool isDirectionalLight,int lightNum);
 
-	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+	ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
+
+	Node ReadNode(aiNode* node);
 
 	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
 

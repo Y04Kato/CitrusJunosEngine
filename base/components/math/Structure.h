@@ -32,10 +32,11 @@ struct Material {
 	float shininess;
 };
 
-struct DirectionalLight {
-	Vector4 color;
-	Vector3 direction;
-	float intensity;
+//Node情報格納用構造体
+struct Node {
+	Matrix4x4 localMatrix;
+	std::string name;
+	std::vector<Node> children;
 };
 
 struct MaterialData {
@@ -46,6 +47,7 @@ struct ModelData {
 	std::vector<VertexData> vertices;
 	MaterialData material;
 	int textureIndex;
+	Node rootNode;
 };
 
 struct AABB {
@@ -68,6 +70,7 @@ struct Quaternion {
 	float x, y, z, w;
 };
 
+#pragma region Particle
 struct Particle {
 	Transform transform;
 	Vector3 velocity;
@@ -93,8 +96,17 @@ struct AccelerationField {
 	AABB area;//範囲
 };
 
+#pragma endregion
+
+#pragma region Lighting
 struct CameraForGPU {
 	Vector3 worldPosition;
+};
+
+struct DirectionalLight {
+	Vector4 color;
+	Vector3 direction;
+	float intensity;
 };
 
 struct PointLight {
@@ -104,3 +116,5 @@ struct PointLight {
 	float radius;
 	float decay;
 };
+
+#pragma endregion
