@@ -61,97 +61,58 @@ Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::st
 
 ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
 	ModelData modelData;//構築するModelData
-	std::vector<Vector4> positions;//位置
-	std::vector<Vector3> normals;//法線
-	std::vector<Vector2> texcoords;//テクスチャ座標
-	std::string line;//ファイルから読んだ1行を格納するもの
 
-	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
-	assert(file.is_open());
+	Assimp::Importer importer;
 
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;//先頭の識別子を読む
+	std::string file(directoryPath + "/" + filename);//ファイルを開く
+	
+	const aiScene* scene = importer.ReadFile(file.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 
-		//identifierに応じた処理
-		if (identifier == "v") {
-			Vector4 position;
-			s >> position.num[0] >> position.num[1] >> position.num[2];
-			position.num[2] *= -1.0f;
-			position.num[3] = 1.0f;
-			positions.push_back(position);
-		}
-		else if (identifier == "vt") {
-			Vector2 texcoord;
-			s >> texcoord.num[0] >> texcoord.num[1];
-			texcoord.num[1] = 1.0f - texcoord.num[1];
-			texcoords.push_back(texcoord);
-		}
-		else if (identifier == "vn") {
-			Vector3 normal;
-			s >> normal.num[0] >> normal.num[1] >> normal.num[2];
-			normal.num[2] *= -1.0f;
-			normals.push_back(normal);
-		}
-		else if (identifier == "f") {
-			VertexData triangle[3];
-			//面は三角形限定 その他は未対応
-			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
-				std::string vertexDefinition;
-				s >> vertexDefinition;
-				//頂点の要素へのIndexは【位置/UV/法線】で格納されているので、分解してIndexを取得する
-				std::istringstream v(vertexDefinition);
-				uint32_t elementIndeices[3];
-				for (int32_t element = 0; element < 3; ++element) {
-					std::string index;
-					std::getline(v, index, '/');// /区切りでIndexを積んでいく
-					elementIndeices[element] = std::stoi(index);
-				}
-				//要素へのIndexから、実際の要素の値を取得して、頂点を構築する
-				Vector4 position = positions[elementIndeices[0] - 1];
-				Vector2 texcoord = texcoords[elementIndeices[1] - 1];
-				Vector3 normal = normals[elementIndeices[2] - 1];
-				VertexData vertex = { position,texcoord,normal };
+	//meshが存在しない物は対応しない
+	assert(scene->HasMeshes());
+
+	//meshの解析
+	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+		assert(mesh->HasNormals());//法線がないmeshは非対応
+		assert(mesh->HasTextureCoords(0));//Texcoordがないmeshは非対応
+
+		//meshの中身(face)の解析を行う
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+			aiFace& face = mesh->mFaces[faceIndex];
+			assert(face.mNumIndices == 3);//三角形のみ対応
+
+			//faceの中身(vertex)の解析を行う
+			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+				//faceから取得したvertexIndexでmeshからデータを取り出す
+				uint32_t vertexIndex = face.mIndices[element];
+				aiVector3D& position = mesh->mVertices[vertexIndex];
+				aiVector3D& normal = mesh->mNormals[vertexIndex];
+				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+				VertexData vertex;
+				vertex.position = { position.x,position.y,position.z,1.0f };
+				vertex.normal = { normal.x,normal.y,normal.z };
+				vertex.texcoord = { texcoord.x,texcoord.y };
+				
 				modelData.vertices.push_back(vertex);
-				triangle[faceVertex] = { position,texcoord,normal };
-
 			}
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
 		}
-		else if (identifier == "mtllib") {
-			//materialTemplateLibraryファイルの名前を取得
-			std::string materialFilname;
-			s >> materialFilname;
-			//基本的にobjファイルと同一階層にmtlは存在させるから、ディレクトリ名とファイル名を渡す
-			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilname);
-		}
-
 	}
+
+	//materialの解析(現在はマルチマテリアル非対応)
+	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
+		aiMaterial* material = scene->mMaterials[materialIndex];
+		
+		//Materialに設定されているTextureを用途に応じて取得する
+		//模様
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+			aiString textureFilePath;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+			modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
+		}
+	}
+
 	return modelData;
-}
-
-MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
-	MaterialData materialData;//構築するマテリアルデータ
-	std::string line;
-	std::ifstream file(directoryPath + "/" + filename);
-	assert(file.is_open());
-	while (std::getline(file, line))
-	{
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-		//identifierに応じた処理
-		if (identifier == "map_Kd") {
-			std::string textureFilname;
-			s >> textureFilname;
-			//連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilname;
-		}
-	}
-	return materialData;
 }
 
 void Model::CreateVartexData() {

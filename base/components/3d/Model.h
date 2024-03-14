@@ -34,7 +34,6 @@ public:
 	void SetDirectionalLightFlag(bool isDirectionalLight,int lightNum);
 
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
-	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
 
