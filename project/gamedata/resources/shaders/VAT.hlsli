@@ -3,7 +3,6 @@ struct VertexShaderOutput {
 	float32_t2 texcoord : TEXCOORD0;
 	float32_t3 normal : NORMAL0;
 	float32_t3 worldPosition : POSITION0;
-	float32_t3 VATColor : TEXCOORD1;
 };
 
 struct VertexShaderInput {
@@ -25,6 +24,12 @@ struct ViewProjectionMatrix {
 	float32_t4x4 view;
 	float32_t4x4 projection;
 	float32_t3 camera;
+};
+
+struct VATData {
+	float AnimationTimeOffset;
+	float VatAnimFps;
+	float VatAnimLength;
 };
 
 struct Material {
