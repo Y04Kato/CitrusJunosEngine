@@ -5,9 +5,6 @@ ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
 ConstantBuffer<VATData> vatData : register(b2)
 
-Texture2D<float4> MainTex : register(t0);
-SamplerState MainTexSampler : register(s0);
-
 Texture2D<float4> VatPositionTex : register(t1);
 Texture2D<float4> VatNormalTex : register(t2);
 
@@ -23,18 +20,18 @@ inline float4 CalcVatTexCoord(uint vertexId, float animationTime){
 }
 
 inline float3 GetVatPosition(uint vertexId, float animationTime){
-    return VatPositionTex.SampleLevel(MainTexSampler, CalcVatTexCoord(vertexId, animationTime), 0);
+    return tex2Dlod(VatPositionTex, CalcVatTexCoord(vertexId, animationTime));
 }
 
 inline float3 GetVatNormal(uint vertexId, float animationTime){
-    return VatNormalTex.SampleLevel(MainTexSampler, CalcVatTexCoord(vertexId, animationTime), 0);
+    return tex2Dlod(VatNormalTex, CalcVatTexCoord(vertexId, animationTime));
 }
 
-VertexShaderOutput main(VertexShaderInput input, uint vId : SV_VertexID) {
+VertexShaderOutput main(VertexShaderInput input, uint vertexId) {
 	VertexShaderOutput output;
 
     float animTime = CalcVatAnimationTime(Time.y + AnimationTimeOffset);
-    float3 pos = GetVatPosition(vId, animTime);
+    float3 pos = GetVatPosition(vertexId, animTime);
 	
 	float32_t4x4 WorldViewProjection = mul(gViewProjectionMatrix.view, gViewProjectionMatrix.projection);
 

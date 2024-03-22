@@ -70,6 +70,12 @@ struct Quaternion {
 	float x, y, z, w;
 };
 
+struct VATData {
+	float AnimationTimeOffset;
+	float VatAnimFps;
+	float VatAnimLength;
+};
+
 #pragma region Particle
 struct Particle {
 	Transform transform;
