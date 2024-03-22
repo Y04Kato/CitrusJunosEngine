@@ -11,6 +11,7 @@
 *.sln.docstates
 
 !/externals/assimp/build
+!\externals\assimp\build\
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
