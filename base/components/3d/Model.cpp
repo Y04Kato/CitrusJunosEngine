@@ -82,7 +82,12 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
 		aiMesh* mesh = scene->mMeshes[meshIndex];
 		assert(mesh->HasNormals());//法線がないmeshは非対応
-		assert(mesh->HasTextureCoords(0));//Texcoordがないmeshは非対応
+		if (mesh->HasTextureCoords(0) == true) {//TexCoordの確認
+			isLoadTexCoord = true;
+		}
+		else {//TexCoordがない場合
+			isLoadTexCoord = false;
+		}
 
 		//meshの中身(face)の解析を行う
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
@@ -99,7 +104,12 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				VertexData vertex;
 				vertex.position = { position.x,position.y,position.z,1.0f };
 				vertex.normal = { normal.x,normal.y,normal.z };
-				vertex.texcoord = { texcoord.x,texcoord.y };
+				if (isLoadTexCoord == true) {//TexCoordの設定
+					vertex.texcoord = { texcoord.x,texcoord.y };
+				}
+				else {//無い場合、手動で設定する
+					vertex.texcoord = { 1.0f,1.0f };
+				}
 				
 				modelData.vertices.push_back(vertex);
 			}
@@ -107,16 +117,21 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 	}
 
 	//materialの解析(現在はマルチマテリアル非対応)
-	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
-		aiMaterial* material = scene->mMaterials[materialIndex];
-		
-		//Materialに設定されているTextureを用途に応じて取得する
-		//模様
-		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
-			aiString textureFilePath;
-			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
-			modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
+	if (isLoadTexCoord == true) {//モデルにテクスチャがテクスチャが設定されている場合
+		for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
+			aiMaterial* material = scene->mMaterials[materialIndex];
+
+			//Materialに設定されているTextureを用途に応じて取得する
+			//模様
+			if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+				aiString textureFilePath;
+				material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+				modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
+			}
 		}
+	}
+	else {//モデルにテクスチャがテクスチャが設定されていない場合
+		modelData.material.textureFilePath = "project/gamedata/resources/null.png";
 	}
 
 	return modelData;

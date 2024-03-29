@@ -68,6 +68,8 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
 	CameraForGPU* cameraData_ = nullptr;
 
+	bool isLoadTexCoord = false;
+
 private:
 	void CreateVartexData();
 	void SetColor();
