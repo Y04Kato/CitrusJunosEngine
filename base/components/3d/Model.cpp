@@ -49,6 +49,10 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
+	if (isVAT_ == true) {//VATモデルである場合
+		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(2, vatResource_->GetGPUVirtualAddress());
+	}
+
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texture_));
 	dxCommon_->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
 
@@ -70,7 +74,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 	Assimp::Importer importer;
 
 	std::string file(directoryPath + "/" + filename);//ファイルを開く
-	
+
 	const aiScene* scene = importer.ReadFile(file.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 
 	//meshが存在しない物は対応しない
@@ -83,10 +87,10 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 		aiMesh* mesh = scene->mMeshes[meshIndex];
 		assert(mesh->HasNormals());//法線がないmeshは非対応
 		if (mesh->HasTextureCoords(0) == true) {//TexCoordの確認
-			isLoadTexCoord = true;
+			isLoadTexCoord_ = true;
 		}
 		else {//TexCoordがない場合
-			isLoadTexCoord = false;
+			isLoadTexCoord_ = false;
 		}
 
 		//meshの中身(face)の解析を行う
@@ -104,20 +108,20 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				VertexData vertex;
 				vertex.position = { position.x,position.y,position.z,1.0f };
 				vertex.normal = { normal.x,normal.y,normal.z };
-				if (isLoadTexCoord == true) {//TexCoordの設定
+				if (isLoadTexCoord_ == true) {//TexCoordの設定
 					vertex.texcoord = { texcoord.x,texcoord.y };
 				}
 				else {//無い場合、手動で設定する
-					vertex.texcoord = { 1.0f,1.0f };
+					vertex.texcoord = { 32.0f,32.0f };
 				}
-				
+
 				modelData.vertices.push_back(vertex);
 			}
 		}
 	}
 
 	//materialの解析(現在はマルチマテリアル非対応)
-	if (isLoadTexCoord == true) {//モデルにテクスチャがテクスチャが設定されている場合
+	if (isLoadTexCoord_ == true) {//モデルにテクスチャがテクスチャが設定されている場合
 		for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
 			aiMaterial* material = scene->mMaterials[materialIndex];
 
@@ -163,7 +167,6 @@ Node Model::ReadNode(aiNode* node) {
 void Model::CreateVartexData() {
 	vertexResource_ = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexData) * modelData_.vertices.size());
 
-
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
 	vertexBufferView_.SizeInBytes = sizeof(VertexData) * (UINT)modelData_.vertices.size();
@@ -198,7 +201,19 @@ void Model::CreateLight() {
 	cameraData_->worldPosition = { 0,0,0 };
 }
 
-void Model::SetDirectionalLightFlag(bool isDirectionalLight,int lightNum) {
+void Model::SetDirectionalLightFlag(bool isDirectionalLight, int lightNum) {
 	isDirectionalLight_ = isDirectionalLight;
 	lightNum_ = lightNum;
+}
+
+void Model::LoadVATData(const std::string& directoryPath, const VATData& vatData) {
+	isVAT_ = true;
+
+	vatData_ = vatData;
+
+	std::string vatPos = directoryPath + "/VATpos.png";
+	std::string vatRot = directoryPath + "/VATrot.png";
+
+	vatResource_ = DirectXCommon::CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(VATData));
+	vatResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&vatData_));
 }

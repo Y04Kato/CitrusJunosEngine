@@ -39,6 +39,13 @@ public:
 
 	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
 
+	/// <summary>
+	/// VATに必要なテクスチャのロード(テクスチャの名前は固定)
+	/// 1:VATpos.png
+	/// 2:VATrot.png
+	/// </summary>
+	void LoadVATData(const std::string& directoryPath,const VATData& vatData);
+
 private:
 	DirectXCommon* dxCommon_;
 	CitrusJunosEngine* CJEngine_;
@@ -68,7 +75,11 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
 	CameraForGPU* cameraData_ = nullptr;
 
-	bool isLoadTexCoord = false;
+	bool isLoadTexCoord_ = false;//TexCoordがモデルに設定されているか
+
+	VATData vatData_;//VATに必要なデータ
+	bool isVAT_ = false;//VATモデルかどうか
+	Microsoft::WRL::ComPtr<ID3D12Resource> vatResource_;
 
 private:
 	void CreateVartexData();

@@ -5,8 +5,8 @@ ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
 ConstantBuffer<VATData> vatData : register(b2)
 
-Texture2D<float4> VatPositionTex : register(t1);
-Texture2D<float4> VatNormalTex : register(t2);
+Texture2D<float4> VatPositionTex : register(t0);
+Texture2D<float4> VatNormalTex : register(t1);
 
 inline float CalcVatAnimationTime(float time){
     return fmod(time, VatAnimLength) * VatAnimFps;
