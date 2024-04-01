@@ -67,15 +67,11 @@ void CreateLine::Draw(const WorldTransform& worldTransform1, const WorldTransfor
 	world_.translation_.num[0] = (worldTransform1.translation_.num[0] + worldTransform2.translation_.num[0]) / 2.0f;
 	world_.translation_.num[1] = (worldTransform1.translation_.num[1] + worldTransform2.translation_.num[1]) / 2.0f;
 	world_.translation_.num[2] = (worldTransform1.translation_.num[2] + worldTransform2.translation_.num[2]) / 2.0f;
+	world_.scale_.num[0] = 0.2f;
 	world_.scale_.num[1] = Distance(worldTransform1.translation_, worldTransform2.translation_) / 2.0f;
+	world_.scale_.num[2] = 0.2f;
 	world_.rotation_ = CalculateAngle(worldTransform1.translation_, worldTransform2.translation_);
 	world_.UpdateMatrix();
-
-	ImGui::Begin("line");
-	ImGui::DragFloat3("Translate", world_.translation_.num, 0.05f);
-	ImGui::DragFloat3("Rotate", world_.rotation_.num, 0.05f);
-	ImGui::DragFloat3("Scale", world_.scale_.num, 0.05f);
-	ImGui::End();
 
 	Transform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 	Matrix4x4 uvtransformMtrix = MakeScaleMatrix(uvTransform.scale);

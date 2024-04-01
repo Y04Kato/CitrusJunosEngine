@@ -155,12 +155,8 @@ void GameDemoScene::Update() {
 		worldTransformModel_[i].UpdateMatrix();
 	}
 
-	ImGui::DragFloat3("Translate", worldTransformLine_[0].translation_.num, 0.05f);
-	ImGui::DragFloat3("Rotate", worldTransformLine_[0].rotation_.num, 0.05f);
-	ImGui::DragFloat3("Scale", worldTransformLine_[0].scale_.num, 0.05f);
-	ImGui::DragFloat3("Translate2", worldTransformLine_[1].translation_.num, 0.05f);
-	ImGui::DragFloat3("Rotate2", worldTransformLine_[1].rotation_.num, 0.05f);
-	ImGui::DragFloat3("Scale2", worldTransformLine_[1].scale_.num, 0.05f);
+	worldTransformLine_[0].translation_ = worldTransformModel_[0].translation_;
+	worldTransformLine_[1].translation_ = worldTransformModel_[2].translation_;
 
 	ImGui::Begin("debug");
 	ImGui::Text("GameDemoScene");

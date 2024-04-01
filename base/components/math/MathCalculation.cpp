@@ -134,25 +134,14 @@ Vector3 Multiply(const Vector3& v1, const Vector3& v2) {
 Vector3 CalculateAngle(const Vector3& v1, const Vector3& v2) {
 	// 2つの頂点を結ぶベクトルを計算
 	Vector3 result;
-	Vector3 v = { v2.num[0] - v1.num[0], v2.num[1] - v1.num[1], v2.num[2] - v1.num[2] };
 
-	// 各軸方向の単位ベクトル
-	Vector3 unitX = { 1.0f, 0.0f, 0.0f };
-	Vector3 unitY = { 0.0f, 1.0f, 0.0f };
-	Vector3 unitZ = { 0.0f, 0.0f, 1.0f };
+	float dx = v2.num[0] - v1.num[0];
+	float dy = v2.num[1] - v1.num[1];
+	float dz = v2.num[2] - v1.num[2];
 
-	// ベクトルと各軸方向の内積を計算
-	float dotX = Dot(v, unitX);
-	float dotY = Dot(v, unitY);
-	float dotZ = Dot(v, unitZ);
-
-	// ベクトルの大きさを計算
-	float magnitude = Magnitude(v);
-
-	//// 各軸方向との角度を計算
-	result.num[0] = acos(dotX / magnitude);
-	result.num[1] = acos(dotY / magnitude);
-	result.num[2] = acos(dotZ / magnitude);
+	result.num[0] = atan2(dy, dz);
+	result.num[1] = atan2(dx, dz);
+	result.num[2] = atan2(dy, dx);
 
 	return result;
 }
