@@ -252,6 +252,9 @@
     <ClCompile Include="project\gamedata\scenes\GameDemoScene.cpp">
       <Filter>ソース ファイル\project\gamedata\scenes</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\3d\CreateLine.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -401,6 +404,9 @@
     </ClInclude>
     <ClInclude Include="project\gamedata\scenes\GameDemoScene.h">
       <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\3d\CreateLine.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

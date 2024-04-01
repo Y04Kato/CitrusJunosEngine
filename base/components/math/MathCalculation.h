@@ -2,16 +2,21 @@
 #include "Structure.h"
 #include <assert.h>
 #include <cmath>
+#define _USE_MATH_DEFINES
+#include <math.h> 
 #include <numbers>
 #include <algorithm>
 
 #pragma region float
 float Length(const Vector3& v);
 float Dot(const Vector3& v1, const Vector3& v2);
+float Magnitude(const Vector3& v);
 
 float LengthQuaternion(const Quaternion& q);
 
-float contangent(float b, float a);
+float Contangent(float b, float a);
+
+float Distance(const Vector3& v1, const Vector3& v2);
 
 float Lerp(float a, float b, float t);
 float LerpShortAngle(float a, float b, float t);
@@ -54,6 +59,7 @@ Vector3 Add(const Vector3& v1, const Vector3& v2);
 Vector3 Subtruct(const Vector3& v1, const Vector3& v2);
 Vector3 Multiply(float scalar, const Vector3& v);
 Vector3 Multiply(const Vector3& v1, const Vector3& v2);
+Vector3 CalculateAngle(const Vector3& v1, const Vector3& v2);
 
 //TransformNormal
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);

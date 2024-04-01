@@ -12,6 +12,7 @@ public:
 	static const int maxtex = 256;
 	const D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(uint32_t textureHandle);
 
+	//テクスチャの読み込み、0番はwhiteがInitialize時に入っているので1番から割り当て開始
 	uint32_t Load(const std::string& filePath); 
 
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_[maxtex];

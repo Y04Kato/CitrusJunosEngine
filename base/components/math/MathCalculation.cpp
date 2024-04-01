@@ -9,12 +9,20 @@ float Dot(const Vector3& v1, const Vector3& v2) {
 	return v1.num[0] * v2.num[0] + v1.num[1] * v2.num[1] + v1.num[2] * v2.num[2];
 }
 
+float Magnitude(const Vector3& v) {
+	return sqrt(v.num[0] * v.num[0] + v.num[1] * v.num[1] + v.num[2] * v.num[2]);
+}
+
 float LengthQuaternion(const Quaternion& q) {
 	return sqrtf(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
 }
 
-float contangent(float b, float a) {
+float Contangent(float b, float a) {
 	return(b / tan(a));
+}
+
+float Distance(const Vector3& v1, const Vector3& v2) {
+	return sqrt((v2.num[0] - v1.num[0]) * (v2.num[0] - v1.num[0])+ (v2.num[1] - v1.num[1]) * (v2.num[1] - v1.num[1])+ (v2.num[2] - v1.num[2]) * (v2.num[2] - v1.num[2]));
 }
 
 float Lerp(float a, float b, float t) {
@@ -121,6 +129,32 @@ Vector3 Multiply(const Vector3& v1, const Vector3& v2) {
 	returnV.num[1] = v1.num[1] * v2.num[1];
 	returnV.num[2] = v1.num[2] * v2.num[2];
 	return returnV;
+}
+
+Vector3 CalculateAngle(const Vector3& v1, const Vector3& v2) {
+	// 2つの頂点を結ぶベクトルを計算
+	Vector3 result;
+	Vector3 v = { v2.num[0] - v1.num[0], v2.num[1] - v1.num[1], v2.num[2] - v1.num[2] };
+
+	// 各軸方向の単位ベクトル
+	Vector3 unitX = { 1.0f, 0.0f, 0.0f };
+	Vector3 unitY = { 0.0f, 1.0f, 0.0f };
+	Vector3 unitZ = { 0.0f, 0.0f, 1.0f };
+
+	// ベクトルと各軸方向の内積を計算
+	float dotX = Dot(v, unitX);
+	float dotY = Dot(v, unitY);
+	float dotZ = Dot(v, unitZ);
+
+	// ベクトルの大きさを計算
+	float magnitude = Magnitude(v);
+
+	//// 各軸方向との角度を計算
+	result.num[0] = acos(dotX / magnitude);
+	result.num[1] = acos(dotY / magnitude);
+	result.num[2] = acos(dotZ / magnitude);
+
+	return result;
 }
 
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
@@ -544,7 +578,6 @@ Matrix4x4 Inverse(const Matrix4x4& m1) {
 		m1.m[0][2] * m1.m[1][1] * m1.m[2][3] * m1.m[3][0] +
 		m1.m[0][1] * m1.m[1][3] * m1.m[2][2] * m1.m[3][0];
 
-	assert(deterninant != 0.0f);
 	float deterninantRect = 1.0f / deterninant;
 
 	result.m[0][0] =
@@ -688,13 +721,13 @@ Matrix4x4 MakeIdentity4x4() {
 //透視投影行列
 Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRadio, float nearClip, float farClip) {
 	Matrix4x4 result;
-	result.m[0][0] = contangent((1 / aspectRadio), (fovY / 2));
+	result.m[0][0] = Contangent((1 / aspectRadio), (fovY / 2));
 	result.m[0][1] = 0.0f;
 	result.m[0][2] = 0.0f;
 	result.m[0][3] = 0.0f;
 
 	result.m[1][0] = 0.0f;
-	result.m[1][1] = contangent(1, fovY / 2);
+	result.m[1][1] = Contangent(1, fovY / 2);
 	result.m[1][2] = 0.0f;
 	result.m[1][3] = 0.0f;
 

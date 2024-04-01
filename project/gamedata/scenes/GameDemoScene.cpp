@@ -29,7 +29,7 @@ void GameDemoScene::Initialize() {
 	//スプライト
 	for (int i = 0; i < 2; i++) {
 		spriteMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
-		spriteTransform_[i] = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280/2.0f,720/2.0f,0.0f} };
+		spriteTransform_[i] = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280 / 2.0f,720 / 2.0f,0.0f} };
 		SpriteuvTransform_[i] = {
 			{1.0f,1.0f,1.0f},
 			{0.0f,0.0f,0.0f},
@@ -62,6 +62,16 @@ void GameDemoScene::Initialize() {
 	}
 	particle_[0]->Initialize(100, testEmitter_[0], accelerationField_[0], cjEngineResourceNum_);
 	particle_[1]->Initialize(100, testEmitter_[1], accelerationField_[1], kaedeResourceNum_);
+
+
+	//Line
+	line_ = std::make_unique <CreateLine>();
+	line_->Initialize();
+	line_->SetDirectionalLightFlag(false, 0);
+	lineMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	for (int i = 0; i < 2; i++) {
+		worldTransformLine_[i].Initialize();
+	}
 
 	//球体
 	for (int i = 0; i < 2; i++) {
@@ -138,11 +148,19 @@ void GameDemoScene::Update() {
 	for (int i = 0; i < 2; i++) {
 		worldTransformTriangle_[i].UpdateMatrix();
 		worldTransformSphere_[i].UpdateMatrix();
+		worldTransformLine_[i].UpdateMatrix();
 	}
 
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].UpdateMatrix();
 	}
+
+	ImGui::DragFloat3("Translate", worldTransformLine_[0].translation_.num, 0.05f);
+	ImGui::DragFloat3("Rotate", worldTransformLine_[0].rotation_.num, 0.05f);
+	ImGui::DragFloat3("Scale", worldTransformLine_[0].scale_.num, 0.05f);
+	ImGui::DragFloat3("Translate2", worldTransformLine_[1].translation_.num, 0.05f);
+	ImGui::DragFloat3("Rotate2", worldTransformLine_[1].rotation_.num, 0.05f);
+	ImGui::DragFloat3("Scale2", worldTransformLine_[1].scale_.num, 0.05f);
 
 	ImGui::Begin("debug");
 	ImGui::Text("GameDemoScene");
@@ -429,6 +447,8 @@ void GameDemoScene::Draw() {
 
 #pragma region 3Dオブジェクト描画
 	CJEngine_->PreDraw3D();
+
+	line_->Draw(worldTransformLine_[0], worldTransformLine_[1], viewProjection_, lineMaterial_);
 
 	for (int i = 0; i < 2; i++) {
 		if (isTriangleDraw_[i]) {//Triangle描画

@@ -8,6 +8,7 @@
 #include "components/2d/CreateTriangle.h"
 #include "components/2d/CreateSprite.h"
 #include "components/2d/CreateParticle.h"
+#include "components/3d/CreateLine.h"
 #include "components/3d/CreateSphere.h"
 #include "components/3d/Model.h"
 #include "components/debugcamera/DebugCamera.h"
@@ -46,6 +47,10 @@ private:
 	bool isBillBoard_[2] = {true,true};
 	bool isColor_[2];
 	Vector4 particleColor_[2] = {0.0f,0.0f,0.0f,0.0f};
+
+	std::unique_ptr<CreateLine> line_;
+	WorldTransform worldTransformLine_[2];
+	Vector4 lineMaterial_;
 
 	std::unique_ptr <CreateSphere> sphere_[2];
 	WorldTransform worldTransformSphere_[2];
