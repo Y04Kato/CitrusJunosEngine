@@ -70,12 +70,6 @@ struct Quaternion {
 	float x, y, z, w;
 };
 
-struct VATData {
-	float AnimationTimeOffset;//アニメーションの開始時間
-	float VatAnimFps;//アニメーションのフレームレート
-	float VatAnimLength;//アニメーション全体の長さ
-};
-
 #pragma region Particle
 struct Particle {
 	Transform transform;

@@ -7,8 +7,7 @@ ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
 ConstantBuffer<PointLight> gPointLight : register(b3);
 
-PixelShaderOutput main(VertexShaderOutput input)
-{
+PixelShaderOutput main(VertexShaderOutput input){
     PixelShaderOutput output;
 
     float4 transformedUV = mul(float32_t4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);

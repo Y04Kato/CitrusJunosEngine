@@ -11,6 +11,10 @@ struct VertexShaderInput {
 	float32_t3 normal : NORMAL0;
 };
 
+struct Appdata {
+	uint32_t vertexId : SV_VertexID;
+};
+
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
 };
@@ -24,12 +28,6 @@ struct ViewProjectionMatrix {
 	float32_t4x4 view;
 	float32_t4x4 projection;
 	float32_t3 camera;
-};
-
-struct VATData {
-	float32_t AnimationTimeOffset;
-	float32_t VatAnimFps;
-	float32_t VatAnimLength;
 };
 
 struct Material {
