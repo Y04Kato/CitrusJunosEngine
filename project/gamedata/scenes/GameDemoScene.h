@@ -51,6 +51,10 @@ private:
 	std::unique_ptr<CreateLine> line_;
 	WorldTransform worldTransformLine_[2];
 	Vector4 lineMaterial_;
+	float lineThickness_ = 0.2f;
+
+	std::unique_ptr <CreateSphere> linePoint_[2];
+	Vector4 linePointMaterial_;
 
 	std::unique_ptr <CreateSphere> sphere_[2];
 	WorldTransform worldTransformSphere_[2];
@@ -82,5 +86,6 @@ private:
 	bool isSpriteDraw_[2];
 	bool isModelDraw_[3];
 	bool isParticleDraw_[2];
+	bool isLineDraw_;
 };
 

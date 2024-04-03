@@ -25,6 +25,9 @@ public:
 	/// </summary>
 	void SetDirectionalLightFlag(bool isDirectionalLight, int lightNum);
 
+	//ラインの太さ
+	void SetLineThickness(float thickness) { size_ = thickness; };
+
 private:
 	void SettingVertex();
 	void SettingColor();
@@ -60,6 +63,7 @@ private:
 	int lightNum_;
 
 	WorldTransform world_;
+	float size_ = 0.1f;
 
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
 	CameraForGPU* cameraData_ = nullptr;

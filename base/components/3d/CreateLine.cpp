@@ -15,62 +15,57 @@ void CreateLine::Initialize() {
 	SettingDictionalLight();
 }
 
-void CreateLine::Draw(const WorldTransform& worldTransform1, const WorldTransform& worldTransform2, const ViewProjection& viewProjection, const Vector4& material) {
-	//前面
-	vertexData_[0].position = { -1.0f,-1.0f,1.0f ,1.0f };//左上
-	vertexData_[1].position = { 1.0f,-1.0f,1.0f ,1.0f };
-	vertexData_[2].position = { 1.0f,1.0f,1.0f ,1.0f };//右下
-	vertexData_[3].position = { -1.0f,-1.0f,1.0f ,1.0f };//左上
-	vertexData_[4].position = { -1.0f,1.0f,1.0f ,1.0f };
-	vertexData_[5].position = { 1.0f,1.0f,1.0f ,1.0f };//右下
-	//背面
-	vertexData_[6].position = { -1.0f,-1.0f,-1.0f ,1.0f };
-	vertexData_[7].position = { 1.0f,-1.0f,-1.0f ,1.0f };
-	vertexData_[8].position = { 1.0f,1.0f,-1.0f ,1.0f };
-	vertexData_[9].position = { -1.0f,-1.0f,-1.0f ,1.0f };
-	vertexData_[10].position = { -1.0f,1.0f,-1.0f ,1.0f };
-	vertexData_[11].position = { 1.0f,1.0f,-1.0f ,1.0f };
+void CreateLine::Draw(const WorldTransform& worldTransform1, const WorldTransform& worldTransform2, const ViewProjection& viewProjection, const Vector4& material) {	
 	//上面
-	vertexData_[12].position = { -1.0f,1.0f,-1.0f ,1.0f };
-	vertexData_[13].position = { -1.0f,1.0f,1.0f ,1.0f };
-	vertexData_[14].position = { 1.0f,1.0f,1.0f ,1.0f };
-	vertexData_[15].position = { -1.0f,1.0f,-1.0f ,1.0f };
-	vertexData_[16].position = { 1.0f,1.0f,-1.0f ,1.0f };
-	vertexData_[17].position = { 1.0f,1.0f,1.0f ,1.0f };
+	vertexData_[12].position = { worldTransform1.translation_.num[0] - size_,worldTransform1.translation_.num[1],worldTransform1.translation_.num[2] - size_ ,1.0f };
+	vertexData_[13].position = { worldTransform1.translation_.num[0] - size_,worldTransform1.translation_.num[1],worldTransform1.translation_.num[2] + size_ ,1.0f };
+	vertexData_[14].position = { worldTransform1.translation_.num[0] + size_,worldTransform1.translation_.num[1],worldTransform1.translation_.num[2] + size_ ,1.0f };
+	vertexData_[15].position = vertexData_[12].position;
+	vertexData_[16].position = { worldTransform1.translation_.num[0] + size_,worldTransform1.translation_.num[1],worldTransform1.translation_.num[2] - size_ ,1.0f };
+	vertexData_[17].position = vertexData_[14].position;
 	//底面
-	vertexData_[18].position = { -1.0f,-1.0f,-1.0f ,1.0f };
-	vertexData_[19].position = { -1.0f,-1.0f,1.0f ,1.0f };
-	vertexData_[20].position = { 1.0f,-1.0f,1.0f ,1.0f };
-	vertexData_[21].position = { -1.0f,-1.0f,-1.0f ,1.0f };
-	vertexData_[22].position = { 1.0f,-1.0f,-1.0f ,1.0f };
-	vertexData_[23].position = { 1.0f,-1.0f,1.0f ,1.0f };
+	vertexData_[18].position = { worldTransform2.translation_.num[0] - size_,worldTransform2.translation_.num[1],worldTransform2.translation_.num[2] - size_ ,1.0f };
+	vertexData_[19].position = { worldTransform2.translation_.num[0] - size_,worldTransform2.translation_.num[1],worldTransform2.translation_.num[2] + size_ ,1.0f };
+	vertexData_[20].position = { worldTransform2.translation_.num[0] + size_,worldTransform2.translation_.num[1],worldTransform2.translation_.num[2] + size_ ,1.0f };
+	vertexData_[21].position = vertexData_[18].position;
+	vertexData_[22].position = { worldTransform2.translation_.num[0] + size_,worldTransform2.translation_.num[1],worldTransform2.translation_.num[2] - size_ ,1.0f };
+	vertexData_[23].position = vertexData_[20].position;
+	//前面
+	vertexData_[0].position = vertexData_[19].position;//左上
+	vertexData_[1].position = vertexData_[20].position;
+	vertexData_[2].position = vertexData_[14].position;//右下
+	vertexData_[3].position = vertexData_[19].position;//左上
+	vertexData_[4].position = vertexData_[13].position;
+	vertexData_[5].position = vertexData_[14].position;//右下
+	//背面
+	vertexData_[6].position = vertexData_[18].position;
+	vertexData_[7].position = vertexData_[22].position;
+	vertexData_[8].position = vertexData_[16].position;
+	vertexData_[9].position = vertexData_[18].position;
+	vertexData_[10].position = vertexData_[12].position;
+	vertexData_[11].position = vertexData_[16].position;
 	//右側面
-	vertexData_[24].position = { 1.0f,-1.0f,-1.0f ,1.0f };
-	vertexData_[25].position = { 1.0f,1.0f,-1.0f ,1.0f };
-	vertexData_[26].position = { 1.0f,1.0f,1.0f ,1.0f };
-	vertexData_[27].position = { 1.0f,-1.0f,-1.0f ,1.0f };
-	vertexData_[28].position = { 1.0f,-1.0f,1.0f ,1.0f };
-	vertexData_[29].position = { 1.0f,1.0f,1.0f ,1.0f };
+	vertexData_[24].position = vertexData_[22].position;
+	vertexData_[25].position = vertexData_[16].position;
+	vertexData_[26].position = vertexData_[14].position;
+	vertexData_[27].position = vertexData_[22].position;
+	vertexData_[28].position = vertexData_[20].position;
+	vertexData_[29].position = vertexData_[14].position;
 	//左側面
-	vertexData_[30].position = { -1.0f,-1.0f,-1.0f ,1.0f };
-	vertexData_[31].position = { -1.0f,1.0f,-1.0f ,1.0f };
-	vertexData_[32].position = { -1.0f,1.0f,1.0f ,1.0f };
-	vertexData_[33].position = { -1.0f,-1.0f,-1.0f ,1.0f };
-	vertexData_[34].position = { -1.0f,-1.0f,1.0f ,1.0f };
-	vertexData_[35].position = { -1.0f,1.0f,1.0f ,1.0f };
+	vertexData_[30].position = vertexData_[18].position;
+	vertexData_[31].position = vertexData_[12].position;
+	vertexData_[32].position = vertexData_[13].position;
+	vertexData_[33].position = vertexData_[18].position;
+	vertexData_[34].position = vertexData_[19].position;
+	vertexData_[35].position = vertexData_[13].position;
 
 	for (uint32_t i = 0; i < vertexCount_; ++i) {
 		vertexData_[i].texcoord = { 0.0f,0.0f };
 		vertexData_[i].normal = { 0.0f,0.0f,1.0f };
 	}
 
-	world_.translation_.num[0] = (worldTransform1.translation_.num[0] + worldTransform2.translation_.num[0]) / 2.0f;
-	world_.translation_.num[1] = (worldTransform1.translation_.num[1] + worldTransform2.translation_.num[1]) / 2.0f;
-	world_.translation_.num[2] = (worldTransform1.translation_.num[2] + worldTransform2.translation_.num[2]) / 2.0f;
-	world_.scale_.num[0] = 0.2f;
-	world_.scale_.num[1] = Distance(worldTransform1.translation_, worldTransform2.translation_) / 2.0f;
-	world_.scale_.num[2] = 0.2f;
-	world_.rotation_ = CalculateAngle(worldTransform1.translation_, worldTransform2.translation_);
+	world_.translation_ = { 0.0f,0.0f,0.0f };
+	world_.scale_ = { 1.0f,1.0f,1.0f };
 	world_.UpdateMatrix();
 
 	Transform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };

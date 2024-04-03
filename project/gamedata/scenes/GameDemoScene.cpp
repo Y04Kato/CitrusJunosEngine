@@ -69,8 +69,11 @@ void GameDemoScene::Initialize() {
 	line_->Initialize();
 	line_->SetDirectionalLightFlag(false, 0);
 	lineMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	linePointMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	for (int i = 0; i < 2; i++) {
 		worldTransformLine_[i].Initialize();
+		linePoint_[i] = std::make_unique <CreateSphere>();
+		linePoint_[i]->Initialize();
 	}
 
 	//球体
@@ -154,9 +157,6 @@ void GameDemoScene::Update() {
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].UpdateMatrix();
 	}
-
-	worldTransformLine_[0].translation_ = worldTransformModel_[0].translation_;
-	worldTransformLine_[1].translation_ = worldTransformModel_[2].translation_;
 
 	ImGui::Begin("debug");
 	ImGui::Text("GameDemoScene");
@@ -330,6 +330,26 @@ void GameDemoScene::Update() {
 		}
 		ImGui::TreePop();
 	}
+	if (ImGui::TreeNode("Line")) {//ライン
+		if (ImGui::Button("DrawLine")) {
+			if (isLineDraw_ == false) {
+				isLineDraw_ = true;
+			}
+			else {
+				isLineDraw_ = false;
+			}
+		}
+		if (isLineDraw_ == true) {
+			if (ImGui::TreeNode("Line")) {
+				ImGui::DragFloat3("Point1", worldTransformLine_[0].translation_.num, 0.05f);
+				ImGui::DragFloat3("Point2", worldTransformLine_[1].translation_.num, 0.05f);
+				ImGui::DragFloat("LineThickness", &lineThickness_, 0.05f, 0.0f);
+				line_->SetLineThickness(lineThickness_);
+				ImGui::TreePop();
+			}
+		}
+		ImGui::TreePop();
+	}
 	if (ImGui::TreeNode("Particle")) {//パーティクル
 		if (ImGui::Button("DrawParticle1")) {
 			if (isParticleDraw_[0] == false) {
@@ -444,20 +464,25 @@ void GameDemoScene::Draw() {
 #pragma region 3Dオブジェクト描画
 	CJEngine_->PreDraw3D();
 
-	line_->Draw(worldTransformLine_[0], worldTransformLine_[1], viewProjection_, lineMaterial_);
+	if (isLineDraw_) {//Line描画
+		line_->Draw(worldTransformLine_[0], worldTransformLine_[1], viewProjection_, lineMaterial_);
+
+		linePoint_[0]->Draw(worldTransformLine_[0], viewProjection_, lineMaterial_, 0);
+		linePoint_[1]->Draw(worldTransformLine_[1], viewProjection_, lineMaterial_, 0);
+	}
 
 	for (int i = 0; i < 2; i++) {
 		if (isTriangleDraw_[i]) {//Triangle描画
 			triangle_[i]->Draw(worldTransformTriangle_[i], viewProjection_, triangleMaterial_[i], uvResourceNum_);
 		}
 
-		if (isSphereDraw_[i]) {
+		if (isSphereDraw_[i]) {//Sphere描画
 			sphere_[i]->Draw(worldTransformSphere_[i], viewProjection_, sphereMaterial_[i], texture_[i]);
 		}
 	}
 
 	for (int i = 0; i < 3; i++) {
-		if (isModelDraw_[i]) {
+		if (isModelDraw_[i]) {//Model描画
 			model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
 		}
 	}
@@ -468,7 +493,7 @@ void GameDemoScene::Draw() {
 	CJEngine_->PreDrawParticle();
 
 	for (int i = 0; i < 2; i++) {
-		if (isParticleDraw_[i]) {
+		if (isParticleDraw_[i]) {//Particle描画
 			particle_[i]->Draw(viewProjection_);
 		}
 	}

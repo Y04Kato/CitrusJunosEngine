@@ -131,21 +131,6 @@ Vector3 Multiply(const Vector3& v1, const Vector3& v2) {
 	return returnV;
 }
 
-Vector3 CalculateAngle(const Vector3& v1, const Vector3& v2) {
-	// 2つの頂点を結ぶベクトルを計算
-	Vector3 result;
-
-	float dx = v2.num[0] - v1.num[0];
-	float dy = v2.num[1] - v1.num[1];
-	float dz = v2.num[2] - v1.num[2];
-
-	result.num[0] = atan2(dy, dz);
-	result.num[1] = atan2(dx, dz);
-	result.num[2] = atan2(dy, dx);
-
-	return result;
-}
-
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	Vector3 result{
 		v.num[0] * m.m[0][0] + v.num[1] * m.m[1][0] + v.num[2] * m.m[2][0],
