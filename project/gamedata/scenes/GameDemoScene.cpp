@@ -87,9 +87,9 @@ void GameDemoScene::Initialize() {
 	}
 
 	//objモデル
-	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/drum", "drum.obj"));
-	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/vatSphere", "vatSphere.gltf"));
-	model_[2].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj"));
+	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/drum", "drum.obj",false));
+	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/vatSphere", "vatSphere.gltf",false));
+	model_[2].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj",false));
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].Initialize();
 		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };

@@ -95,6 +95,7 @@ Vector3 operator*(float k, const Vector3& v) { return Multiply(k, v); }
 Vector3 operator*(const Vector3& v, float k) { return Multiply(k, v); }
 Vector3 operator*(const Vector3& v1, const Vector3& v2) { return Multiply(v1, v2); }
 Vector3 operator*(const Vector3& v, const Matrix4x4& matrix) { return TransformN(v, matrix); }
+Vector3 operator/(const Vector3& v, float k) { return Division(k, v); }
 Vector3 operator+=(Vector3& v1, Vector3& v2) { return v1 = Add(v1, v2); }
 Vector3 operator+=(Vector3& v1, const Vector3& v2) { return v1 = Add(v1, v2); }
 Vector3 operator-=(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }
@@ -128,6 +129,14 @@ Vector3 Multiply(const Vector3& v1, const Vector3& v2) {
 	returnV.num[0] = v1.num[0] * v2.num[0];
 	returnV.num[1] = v1.num[1] * v2.num[1];
 	returnV.num[2] = v1.num[2] * v2.num[2];
+	return returnV;
+}
+
+Vector3 Division(float scalar, const Vector3& v) {
+	Vector3 returnV;
+	returnV.num[0] = v.num[0] / scalar;
+	returnV.num[1] = v.num[1] / scalar;
+	returnV.num[2] = v.num[2] / scalar;
 	return returnV;
 }
 
@@ -317,6 +326,26 @@ Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) {
 		return Lerp(a, b, t);
 	}
 	return s * ((std::sinf((1.0f - t) * theta) / std::sinf(theta)) * a + (std::sinf(t * theta) / std::sinf(theta)) * b);
+}
+
+Vector3 Project(const Vector3& v, const Vector3 n) {
+	float projectionLength = Dot(v, n);
+	return n * projectionLength;
+}
+
+std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector3& velocity1, float mass2, const Vector3& velocity2, float coefficientOfRestitution, const Vector3& normal) {
+	//衝突面法線方向(射影)とその他に分解
+	Vector3 project1 = Project(velocity1, normal);
+	Vector3 project2 = Project(velocity2, normal);
+	Vector3 sub1 = velocity1 - project1;
+	Vector3 sub2 = velocity2 - project2;
+
+	//衝突面方向に対する反発後の速度を求める
+	Vector3 velocityAfter1 = mass1 * velocity1 + mass2 * velocity2 + coefficientOfRestitution * mass2 * (velocity2 - velocity1) / (mass1 + mass2);
+	Vector3 velocityAfter2 = mass1 * velocity1 + mass2 * velocity2 + coefficientOfRestitution * mass1 * (velocity1 - velocity2) / (mass1 + mass2);
+
+	//反発後の衝突面方向の速度と、元々の速度で分解していて反発に関わらない速度を足して最終的反発後の速度を計算する
+	return std::make_pair(velocityAfter1 + sub1, velocityAfter2 + sub2);
 }
 
 #pragma endregion

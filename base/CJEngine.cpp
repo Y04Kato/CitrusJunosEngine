@@ -67,24 +67,29 @@ void CitrusJunosEngine::Initialize(const char* title, int32_t width, int32_t hei
 	InitializeDxcCompiler();
 
 	CreateRootSignature3D();
+	CreateRootSignatureVAT();
 	CreateRootSignature2D();
 	CreateRootSignatureParticle();
 
 	CreateInputlayOut3D();
+	CreateInputlayOutVAT();
 	CreateInputlayOut2D();
 	CreateInputlayOutParticle();
 
 	BlendState();
 
 	RasterizerState3D();
+	RasterizerStateVAT();
 	RasterizerState2D();
 	RasterizerStateParticle();
 
 	SettingDepth3D();
+	SettingDepthVAT();
 	SettingDepth2D();
 	SettingDepthParticle();
 
 	InitializePSO3D();
+	InitializePSOVAT();
 	InitializePSO2D();
 	InitializePSOParticle();
 
@@ -322,21 +327,23 @@ void CitrusJunosEngine::CreateRootSignatureVAT() {
 	//RootParameter作成、複数設定可能な為、配列に
 	D3D12_ROOT_PARAMETER rootParameters[10] = {};
 
-	D3D12_DESCRIPTOR_RANGE descriptoraRange[3] = {};
+	D3D12_DESCRIPTOR_RANGE descriptoraRange[1] = {};
 	descriptoraRange[0].BaseShaderRegister = 0;//0から始まる
 	descriptoraRange[0].NumDescriptors = 1;//数は1つ
 	descriptoraRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
 	descriptoraRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
-	descriptoraRange[1].BaseShaderRegister = 1;//1から始まる
-	descriptoraRange[1].NumDescriptors = 1;//数は1つ
-	descriptoraRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptoraRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+	D3D12_DESCRIPTOR_RANGE descriptoraRange2[1] = {};
+	descriptoraRange2[0].BaseShaderRegister = 1;//1から始まる
+	descriptoraRange2[0].NumDescriptors = 1;//数は1つ
+	descriptoraRange2[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptoraRange2[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
-	descriptoraRange[1].BaseShaderRegister = 2;//2から始まる
-	descriptoraRange[1].NumDescriptors = 1;//数は1つ
-	descriptoraRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptoraRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+	D3D12_DESCRIPTOR_RANGE descriptoraRange3[1] = {};
+	descriptoraRange3[0].BaseShaderRegister = 2;//2から始まる
+	descriptoraRange3[0].NumDescriptors = 1;//数は1つ
+	descriptoraRange3[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptoraRange3[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
 	//VertexShader
 	//Worldtransform
@@ -363,15 +370,15 @@ void CitrusJunosEngine::CreateRootSignatureVAT() {
 	//VATRotTex
 	rootParameters[9].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
 	rootParameters[9].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
-	rootParameters[9].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
-	rootParameters[9].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+	rootParameters[9].DescriptorTable.pDescriptorRanges = descriptoraRange2;//tableの中身の配列を指定
+	rootParameters[9].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange2);//Tableで利用する数
 
 	//PixelShader
 	//Texture
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixcelShaderを使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptoraRange3;//tableの中身の配列を指定
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange3);//Tableで利用する数
 
 	//MaterialResource
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
@@ -393,7 +400,7 @@ void CitrusJunosEngine::CreateRootSignatureVAT() {
 	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixcelShaderで使う
 	rootParameters[6].Descriptor.ShaderRegister = 3;//レジスタ番号3を使う
 
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};//Samplerの設定
+	D3D12_STATIC_SAMPLER_DESC staticSamplers[2] = {};//Samplerの設定
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
 	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//０～１の範囲外をリピート
 	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -401,7 +408,17 @@ void CitrusJunosEngine::CreateRootSignatureVAT() {
 	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
 	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;//ありったけのmipmapを使う
 	staticSamplers[0].ShaderRegister = 0;//レジスタ番号0を使う
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderで使う
+
+	staticSamplers[1].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
+	staticSamplers[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//０～１の範囲外をリピート
+	staticSamplers[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[1].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
+	staticSamplers[1].MaxLOD = D3D12_FLOAT32_MAX;//ありったけのmipmapを使う
+	staticSamplers[1].ShaderRegister = 1;//レジスタ番号1を使う
+	staticSamplers[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+
 	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 

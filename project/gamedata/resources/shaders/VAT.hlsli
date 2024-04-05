@@ -11,7 +11,7 @@ struct VertexShaderInput {
 	float32_t3 normal : NORMAL0;
 };
 
-struct Appdata {
+struct AppData {
 	uint32_t vertexId : VERTEXID0;
 };
 

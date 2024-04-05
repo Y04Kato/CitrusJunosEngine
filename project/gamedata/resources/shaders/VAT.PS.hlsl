@@ -6,7 +6,7 @@ ConstantBuffer<Camera> gCamera : register(b2);
 ConstantBuffer<PointLight> gPointLight : register(b3);
 
 Texture2D<float32_t4> gTexture : register(t2);
-SamplerState gSampler : register(s0);
+SamplerState gSampler : register(s1);
 
 PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;

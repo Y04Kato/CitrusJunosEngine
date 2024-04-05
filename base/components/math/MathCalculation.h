@@ -50,6 +50,7 @@ Vector3 operator*(float k, const Vector3& v);
 Vector3 operator*(const Vector3& v, float k);
 Vector3 operator*(const Vector3& v1, const Vector3& v2);
 Vector3 operator*(const Vector3& v, const Matrix4x4& matrix);
+Vector3 operator/(const Vector3& v, float k);
 Vector3 operator+=(Vector3&, Vector3&);
 Vector3 operator+=(Vector3&, const Vector3&);
 Vector3 operator-=(const Vector3&, const Vector3&);
@@ -59,6 +60,7 @@ Vector3 Add(const Vector3& v1, const Vector3& v2);
 Vector3 Subtruct(const Vector3& v1, const Vector3& v2);
 Vector3 Multiply(float scalar, const Vector3& v);
 Vector3 Multiply(const Vector3& v1, const Vector3& v2);
+Vector3 Division(float scalar, const Vector3& v);
 
 //TransformNormal
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
@@ -93,6 +95,12 @@ bool CompereVector3(const Vector3& q1, const Vector3& q2);
 
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
+
+//射影
+Vector3 Project(const Vector3& v, const Vector3 n);
+
+//衝突＆反発
+std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector3& velocity1, float mass2, const Vector3& velocity2, float coefficientOfRestitution, const Vector3& normal);
 
 #pragma endregion
 

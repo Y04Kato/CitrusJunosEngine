@@ -1,11 +1,15 @@
 #include "Model.h"
 
-void Model::Initialize(const std::string& directoryPath, const std::string& filename) {
+void Model::Initialize(const std::string& directoryPath, const std::string& filename,bool isVATModel) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	CJEngine_ = CitrusJunosEngine::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
+
+	if (isVATModel == true) {
+		LoadVATData(directoryPath);
+	}
 
 	modelData_ = LoadModelFile(directoryPath, filename);
 	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
@@ -50,6 +54,9 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
 	if (isVAT_ == true) {//VATモデルである場合
+		vatResource_ = DirectXCommon::CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Appdata));
+		vatResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&appData_));
+
 		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(7, vatResource_->GetGPUVirtualAddress());
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatPosTex_));
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(9, textureManager_->GetGPUHandle(vatRotTex_));
@@ -65,9 +72,9 @@ void Model::Finalize() {
 
 }
 
-Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::string& filename) {
+Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::string& filename, bool isVATModel) {
 	Model* model = new Model();
-	model->Initialize(directoryPath, filename);
+	model->Initialize(directoryPath, filename,isVATModel);
 	return model;
 }
 
@@ -119,6 +126,9 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				}
 
 				modelData.vertices.push_back(vertex);
+				if (isVAT_) {
+					appData_->vertexId = vertexIndex;
+				}
 			}
 		}
 	}
@@ -217,7 +227,4 @@ void Model::LoadVATData(const std::string& directoryPath) {
 
 	vatPosTex_ = textureManager_->Load(vatPos);
 	vatRotTex_ = textureManager_->Load(vatRot);
-
-	vatResource_ = DirectXCommon::CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Appdata));
-	vatResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&appData_));
 }

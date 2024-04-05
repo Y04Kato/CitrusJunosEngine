@@ -1,5 +1,4 @@
 #include "VAT.hlsli"
-#include "ShaderStructures.h"
 
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
@@ -7,6 +6,7 @@ ConstantBuffer<AppData> gAppData : register(b2);
 
 Texture2D<float4> VatPositionTex : register(t0);
 Texture2D<float4> VatNormalTex : register(t1);
+SamplerState gSampler : register(s0);
 
 VertexShaderOutput main(VertexShaderInput input) {
 	VertexShaderOutput output;
