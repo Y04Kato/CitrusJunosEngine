@@ -24,6 +24,10 @@ struct TransformationMatrix {
 	Matrix4x4 WorldInverseTranspose;
 };
 
+struct Appdata {
+	uint32_t vertexId;
+};
+
 struct Material {
 	Vector4 color;
 	int32_t enableLighting;

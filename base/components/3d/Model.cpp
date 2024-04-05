@@ -50,7 +50,10 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
 	if (isVAT_ == true) {//VATモデルである場合
-		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(2, vatResource_->GetGPUVirtualAddress());
+		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(7, vatResource_->GetGPUVirtualAddress());
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatPosTex_));
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(9, textureManager_->GetGPUHandle(vatRotTex_));
+
 	}
 
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texture_));
@@ -206,14 +209,15 @@ void Model::SetDirectionalLightFlag(bool isDirectionalLight, int lightNum) {
 	lightNum_ = lightNum;
 }
 
-void Model::LoadVATData(const std::string& directoryPath, const VATData& vatData) {
+void Model::LoadVATData(const std::string& directoryPath) {
 	isVAT_ = true;
-
-	vatData_ = vatData;
 
 	std::string vatPos = directoryPath + "/VATpos.png";
 	std::string vatRot = directoryPath + "/VATrot.png";
 
-	vatResource_ = DirectXCommon::CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(VATData));
-	vatResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&vatData_));
+	vatPosTex_ = textureManager_->Load(vatPos);
+	vatRotTex_ = textureManager_->Load(vatRot);
+
+	vatResource_ = DirectXCommon::CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Appdata));
+	vatResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&appData_));
 }

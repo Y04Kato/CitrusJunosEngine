@@ -12,7 +12,7 @@ struct VertexShaderInput {
 };
 
 struct Appdata {
-	uint32_t vertexId : SV_VertexID;
+	uint32_t vertexId : VERTEXID0;
 };
 
 struct PixelShaderOutput {

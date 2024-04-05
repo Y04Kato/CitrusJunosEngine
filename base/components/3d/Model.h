@@ -44,7 +44,7 @@ public:
 	/// 1:VATpos.png
 	/// 2:VATrot.png
 	/// </summary>
-	void LoadVATData(const std::string& directoryPath,const VATData& vatData);
+	void LoadVATData(const std::string& directoryPath);
 
 private:
 	DirectXCommon* dxCommon_;
@@ -77,8 +77,10 @@ private:
 
 	bool isLoadTexCoord_ = false;//TexCoordがモデルに設定されているか
 
-	VATData vatData_;//VATに必要なデータ
+	Appdata* appData_;
 	bool isVAT_ = false;//VATモデルかどうか
+	uint32_t vatPosTex_;
+	uint32_t vatRotTex_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> vatResource_;
 
 private:
