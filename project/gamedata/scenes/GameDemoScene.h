@@ -64,6 +64,10 @@ private:
 	WorldTransform worldTransformModel_[3];
 	Vector4 modelMaterial_[3];
 
+	std::unique_ptr<Model> modelVAT_;
+	WorldTransform worldTransformModelVAT_;
+	Vector4 modelMaterialVAT_;
+
 	uint32_t uvResourceNum_;
 	uint32_t monsterBallResourceNum_;
 	uint32_t kaedeResourceNum_;
@@ -87,5 +91,6 @@ private:
 	bool isModelDraw_[3];
 	bool isParticleDraw_[2];
 	bool isLineDraw_;
+	bool isVATDraw_;
 };
 

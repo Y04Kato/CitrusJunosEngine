@@ -6,7 +6,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	textureManager_ = TextureManager::GetInstance();
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
-
+	
 	if (isVATModel == true) {
 		LoadVATData(directoryPath);
 	}
@@ -125,10 +125,11 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 					vertex.texcoord = { 32.0f,32.0f };
 				}
 
-				modelData.vertices.push_back(vertex);
 				if (isVAT_) {
-					appData_->vertexId = vertexIndex;
+					appData_.vertexId = vertexIndex;
 				}
+
+				modelData.vertices.push_back(vertex);
 			}
 		}
 	}

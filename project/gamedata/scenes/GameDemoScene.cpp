@@ -88,13 +88,19 @@ void GameDemoScene::Initialize() {
 
 	//objモデル
 	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/drum", "drum.obj",false));
-	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/vatSphere", "vatSphere.gltf",false));
+	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/chest", "chest.obj",false));
 	model_[2].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj",false));
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].Initialize();
 		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
 		model_[i]->SetDirectionalLightFlag(true, 3);
 	}
+
+	//VAT
+	modelVAT_.reset(Model::CreateModelFromObj("project/gamedata/resources/vatSphere", "vatSphere.gltf", true));
+	worldTransformModelVAT_.Initialize();
+	modelMaterialVAT_ = { 1.0f,1.0f,1.0f,1.0f };
+	modelVAT_->SetDirectionalLightFlag(true, 3);
 
 	//Input
 	input_ = Input::GetInstance();
@@ -157,6 +163,8 @@ void GameDemoScene::Update() {
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].UpdateMatrix();
 	}
+
+	worldTransformModelVAT_.UpdateMatrix();
 
 	ImGui::Begin("debug");
 	ImGui::Text("GameDemoScene");
@@ -330,6 +338,25 @@ void GameDemoScene::Update() {
 		}
 		ImGui::TreePop();
 	}
+	if (ImGui::TreeNode("VAT")) {//vatモデル
+		if (ImGui::Button("DrawModelVAT")) {
+			if (isVATDraw_ == false) {
+				isVATDraw_ = true;
+			}
+			else {
+				isVATDraw_ = false;
+			}
+		}
+		if (isVATDraw_ == true) {
+			if (ImGui::TreeNode("ModelVAT")) {
+				ImGui::DragFloat3("Translate", worldTransformModelVAT_.translation_.num, 0.05f);
+				ImGui::DragFloat3("Rotate", worldTransformModelVAT_.rotation_.num, 0.05f);
+				ImGui::DragFloat3("Scale", worldTransformModelVAT_.scale_.num, 0.05f);
+				ImGui::TreePop();
+			}
+		}
+		ImGui::TreePop();
+	}
 	if (ImGui::TreeNode("Line")) {//ライン
 		if (ImGui::Button("DrawLine")) {
 			if (isLineDraw_ == false) {
@@ -485,6 +512,14 @@ void GameDemoScene::Draw() {
 		if (isModelDraw_[i]) {//Model描画
 			model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
 		}
+	}
+
+#pragma endregion
+
+#pragma region VATモデル描画
+	CJEngine_->PreDrawVAT();
+	if (isVATDraw_) {//VATModel描画
+		modelVAT_->Draw(worldTransformModelVAT_, viewProjection_, modelMaterialVAT_);
 	}
 
 #pragma endregion
