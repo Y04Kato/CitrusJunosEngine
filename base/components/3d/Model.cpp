@@ -6,10 +6,6 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	textureManager_ = TextureManager::GetInstance();
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
-	
-	if (isVATModel == true) {
-		LoadVATData(directoryPath);
-	}
 
 	modelData_ = LoadModelFile(directoryPath, filename);
 	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
@@ -17,6 +13,10 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	CreateVartexData();
 	SetColor();
 	CreateLight();
+
+	if (isVATModel == true) {
+		LoadVATData(directoryPath);
+	}
 }
 
 void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material) {
@@ -54,9 +54,6 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
 	if (isVAT_ == true) {//VATモデルである場合
-		vatResource_ = DirectXCommon::CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Appdata));
-		vatResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&appData_));
-
 		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(7, vatResource_->GetGPUVirtualAddress());
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatPosTex_));
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(9, textureManager_->GetGPUHandle(vatRotTex_));
@@ -228,4 +225,7 @@ void Model::LoadVATData(const std::string& directoryPath) {
 
 	vatPosTex_ = textureManager_->Load(vatPos);
 	vatRotTex_ = textureManager_->Load(vatRot);
+
+	vatResource_ = DirectXCommon::CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Appdata));
+	vatResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&appData_));
 }
