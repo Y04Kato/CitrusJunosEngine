@@ -24,8 +24,8 @@ struct TransformationMatrix {
 	Matrix4x4 WorldInverseTranspose;
 };
 
-struct Appdata {
-	uint32_t vertexId;
+struct VATData {
+	float VATtime;
 };
 
 struct Material {

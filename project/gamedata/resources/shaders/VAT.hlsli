@@ -15,6 +15,10 @@ struct AppData {
 	uint32_t vertexId : VERTEXID0;
 };
 
+struct VATData {
+	float32_t VATtime;
+};
+
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
 };

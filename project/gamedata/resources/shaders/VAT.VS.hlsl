@@ -2,6 +2,7 @@
 
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
+ConstantBuffer<VATData> gVATData : register(b2);
 
 Texture2D<float4> VatPositionTex : register(t0);
 Texture2D<float4> VatNormalTex : register(t1);
@@ -11,14 +12,15 @@ VertexShaderOutput main(VertexShaderInput input,AppData v) {
 	VertexShaderOutput output;
     
     float32_t vertCoords = v.vertexId;
-    float32_t animCoords = 0;
+    float32_t animCoords = gVATData.VATtime;
     
-    float32_t3 pos1 = VatPositionTex.Load(int3(int(vertCoords), animCoords, 0)).xyz;
+    float32_t4 pos2 = VatPositionTex.Load(int3(vertCoords, (int)animCoords, 0));
     
     float32_t4x4 WorldViewProjection = mul(gViewProjectionMatrix.view, gViewProjectionMatrix.projection);
-    output.position = mul(input.position, mul(gTransformationMatrix.matWorld, WorldViewProjection));
+    float32_t4 pos = input.position + pos2;
+    output.position = mul(pos, mul(gTransformationMatrix.matWorld, WorldViewProjection));
     output.texcoord = input.texcoord;
     output.normal = normalize(mul(input.normal, (float32_t3x3) gTransformationMatrix.WorldInverseTranspose));
-    output.worldPosition = mul(input.position, gTransformationMatrix.matWorld).xyz + pos1;
+    output.worldPosition = mul(input.position, gTransformationMatrix.matWorld).xyz;
 	return output;
 }

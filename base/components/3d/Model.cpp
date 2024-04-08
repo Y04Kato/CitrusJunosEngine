@@ -1,6 +1,6 @@
 #include "Model.h"
 
-void Model::Initialize(const std::string& directoryPath, const std::string& filename,bool isVATModel) {
+void Model::Initialize(const std::string& directoryPath, const std::string& filename, bool isVATModel) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	CJEngine_ = CitrusJunosEngine::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
@@ -54,8 +54,11 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
 	if (isVAT_ == true) {//VATモデルである場合
+		ImGui::DragFloat("VATTimer", &vatData_.VATtime, 1.0f,0.0f,240.0f);
+
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(vatPosTex_));
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatRotTex_));
+		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(9, vatResource_->GetGPUVirtualAddress());
 
 	}
 
@@ -70,7 +73,7 @@ void Model::Finalize() {
 
 Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::string& filename, bool isVATModel) {
 	Model* model = new Model();
-	model->Initialize(directoryPath, filename,isVATModel);
+	model->Initialize(directoryPath, filename, isVATModel);
 	return model;
 }
 
@@ -220,4 +223,9 @@ void Model::LoadVATData(const std::string& directoryPath) {
 
 	vatPosTex_ = textureManager_->Load(vatPos);
 	vatRotTex_ = textureManager_->Load(vatRot);
+
+	vatResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(VATData));
+	vatResource_->Map(0, NULL, reinterpret_cast<void**>(&vatData_));
+
+	vatData_.VATtime = 0.0f;
 }

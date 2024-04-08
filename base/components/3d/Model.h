@@ -81,6 +81,7 @@ private:
 	uint32_t vatPosTex_;
 	uint32_t vatRotTex_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> vatResource_;
+	VATData vatData_;
 
 private:
 	void CreateVartexData();

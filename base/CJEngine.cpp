@@ -325,7 +325,7 @@ void CitrusJunosEngine::CreateRootSignatureVAT() {
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	//RootParameter作成、複数設定可能な為、配列に
-	D3D12_ROOT_PARAMETER rootParameters[9] = {};
+	D3D12_ROOT_PARAMETER rootParameters[10] = {};
 
 	D3D12_DESCRIPTOR_RANGE descriptoraRange[1] = {};
 	descriptoraRange[0].BaseShaderRegister = 0;//0から始まる
@@ -355,6 +355,11 @@ void CitrusJunosEngine::CreateRootSignatureVAT() {
 	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
 	rootParameters[4].Descriptor.ShaderRegister = 1;//レジスタ番号1にバインド
+
+	//VATTimer
+	rootParameters[9].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[9].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
+	rootParameters[9].Descriptor.ShaderRegister = 2;//レジスタ番号2にバインド
 
 	//VATPosTex
 	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
@@ -455,7 +460,7 @@ void CitrusJunosEngine::CreateInputlayOutVAT() {
 
 	inputElementDescsVAT_[3].SemanticName = "VERTEXID";
 	inputElementDescsVAT_[3].SemanticIndex = 0;
-	inputElementDescsVAT_[3].Format = DXGI_FORMAT_R32G32B32_UINT;
+	inputElementDescsVAT_[3].Format = DXGI_FORMAT_R32_UINT;
 	inputElementDescsVAT_[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
 	inputLayoutDescVAT_.pInputElementDescs = inputElementDescsVAT_;
