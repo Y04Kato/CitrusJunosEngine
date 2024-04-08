@@ -11,12 +11,11 @@ struct VertexShaderInput {
 	float32_t3 normal : NORMAL0;
 };
 
-struct AppData {
-	uint32_t vertexId : VERTEXID0;
-};
-
 struct VATData {
-	float32_t VATtime;
+	float32_t VATTime;
+	float32_t MaxVATTime;
+	float32_t4 VatPositionTexSize;//(1.0/width, 1.0/height, width, height)
+	float32_t4 VatNormalTexSize;//(1.0/width, 1.0/height, width, height)
 };
 
 struct PixelShaderOutput {

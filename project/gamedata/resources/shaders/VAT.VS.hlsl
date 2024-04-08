@@ -8,17 +8,18 @@ Texture2D<float4> VatPositionTex : register(t0);
 Texture2D<float4> VatNormalTex : register(t1);
 SamplerState gSampler : register(s0);
 
-VertexShaderOutput main(VertexShaderInput input,AppData v) {
+VertexShaderOutput main(VertexShaderInput input, uint32_t index : SV_VertexID) {
 	VertexShaderOutput output;
     
-    float32_t vertCoords = v.vertexId;
-    float32_t animCoords = gVATData.VATtime;
+    float32_t vertCoords = index;
+    float32_t animCoords = gVATData.VATTime;
+    float32_t3 texCoords = float32_t3(vertCoords, animCoords, 0);
     
-    float32_t4 pos2 = VatPositionTex.Load(int3(vertCoords, (int)animCoords, 0));
+    float32_t4 pos = VatPositionTex.Load(int32_t3(texCoords));
     
     float32_t4x4 WorldViewProjection = mul(gViewProjectionMatrix.view, gViewProjectionMatrix.projection);
-    float32_t4 pos = input.position + pos2;
-    output.position = mul(pos, mul(gTransformationMatrix.matWorld, WorldViewProjection));
+    float32_t4 pos2 = input.position + pos;
+    output.position = mul(pos2, mul(gTransformationMatrix.matWorld, WorldViewProjection));
     output.texcoord = input.texcoord;
     output.normal = normalize(mul(input.normal, (float32_t3x3) gTransformationMatrix.WorldInverseTranspose));
     output.worldPosition = mul(input.position, gTransformationMatrix.matWorld).xyz;

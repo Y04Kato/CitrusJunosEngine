@@ -458,11 +458,6 @@ void CitrusJunosEngine::CreateInputlayOutVAT() {
 	inputElementDescsVAT_[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	inputElementDescsVAT_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
-	inputElementDescsVAT_[3].SemanticName = "VERTEXID";
-	inputElementDescsVAT_[3].SemanticIndex = 0;
-	inputElementDescsVAT_[3].Format = DXGI_FORMAT_R32_UINT;
-	inputElementDescsVAT_[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
 	inputLayoutDescVAT_.pInputElementDescs = inputElementDescsVAT_;
 	inputLayoutDescVAT_.NumElements = _countof(inputElementDescsVAT_);
 }

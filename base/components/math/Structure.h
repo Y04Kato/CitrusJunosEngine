@@ -25,7 +25,10 @@ struct TransformationMatrix {
 };
 
 struct VATData {
-	float VATtime;
+	float VATTime;
+	float MaxVATTime;
+	Vector4 VatPositionTexSize;//(1.0/width, 1.0/height, width, height)
+	Vector4 VatNormalTexSize;//(1.0/width, 1.0/height, width, height)
 };
 
 struct Material {

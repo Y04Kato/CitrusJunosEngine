@@ -54,7 +54,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
 	if (isVAT_ == true) {//VATモデルである場合
-		ImGui::DragFloat("VATTimer", &vatData_.VATtime, 1.0f,0.0f,240.0f);
+		ImGui::DragFloat("VATTimer", &vatData_.VATTime, 1.0f,0.0f,240.0f);
 
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(vatPosTex_));
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatRotTex_));
@@ -227,5 +227,8 @@ void Model::LoadVATData(const std::string& directoryPath) {
 	vatResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(VATData));
 	vatResource_->Map(0, NULL, reinterpret_cast<void**>(&vatData_));
 
-	vatData_.VATtime = 0.0f;
+	vatData_.VATTime = 0.0f;
+	vatData_.MaxVATTime = 240.0f;
+	vatData_.VatPositionTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
+	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
 }

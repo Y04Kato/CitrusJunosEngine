@@ -122,7 +122,7 @@ private:
 
 	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineStateVAT_;
 	D3D12_RASTERIZER_DESC rasterizerDescVAT_{};
-	D3D12_INPUT_ELEMENT_DESC inputElementDescsVAT_[4];
+	D3D12_INPUT_ELEMENT_DESC inputElementDescsVAT_[3];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDescVAT_{};
 	D3D12_DEPTH_STENCIL_DESC depthStencilDescVAT_{};
 
