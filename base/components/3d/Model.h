@@ -77,7 +77,6 @@ private:
 
 	bool isLoadTexCoord_ = false;//TexCoordがモデルに設定されているか
 
-	Appdata appData_;
 	bool isVAT_ = false;//VATモデルかどうか
 	uint32_t vatPosTex_;
 	uint32_t vatRotTex_;

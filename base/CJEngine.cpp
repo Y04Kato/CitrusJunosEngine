@@ -325,7 +325,7 @@ void CitrusJunosEngine::CreateRootSignatureVAT() {
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	//RootParameter作成、複数設定可能な為、配列に
-	D3D12_ROOT_PARAMETER rootParameters[10] = {};
+	D3D12_ROOT_PARAMETER rootParameters[9] = {};
 
 	D3D12_DESCRIPTOR_RANGE descriptoraRange[1] = {};
 	descriptoraRange[0].BaseShaderRegister = 0;//0から始まる
@@ -355,23 +355,18 @@ void CitrusJunosEngine::CreateRootSignatureVAT() {
 	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
 	rootParameters[4].Descriptor.ShaderRegister = 1;//レジスタ番号1にバインド
-	
-	//VertexID
-	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
-	rootParameters[7].Descriptor.ShaderRegister = 2;//レジスタ番号2にバインド
 
 	//VATPosTex
-	rootParameters[8].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
-	rootParameters[8].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
-	rootParameters[8].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
-	rootParameters[8].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
+	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
+	rootParameters[7].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
+	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
 
 	//VATRotTex
-	rootParameters[9].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
-	rootParameters[9].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
-	rootParameters[9].DescriptorTable.pDescriptorRanges = descriptoraRange2;//tableの中身の配列を指定
-	rootParameters[9].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange2);//Tableで利用する数
+	rootParameters[8].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
+	rootParameters[8].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
+	rootParameters[8].DescriptorTable.pDescriptorRanges = descriptoraRange2;//tableの中身の配列を指定
+	rootParameters[8].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange2);//Tableで利用する数
 
 	//PixelShader
 	//Texture

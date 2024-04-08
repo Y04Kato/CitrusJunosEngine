@@ -54,9 +54,8 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
 	if (isVAT_ == true) {//VATモデルである場合
-		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(7, vatResource_->GetGPUVirtualAddress());
-		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatPosTex_));
-		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(9, textureManager_->GetGPUHandle(vatRotTex_));
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(vatPosTex_));
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatRotTex_));
 
 	}
 
@@ -120,10 +119,6 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				}
 				else {//無い場合、手動で設定する
 					vertex.texcoord = { 32.0f,32.0f };
-				}
-
-				if (isVAT_) {
-					appData_.vertexId = vertexIndex;
 				}
 
 				modelData.vertices.push_back(vertex);
@@ -225,7 +220,4 @@ void Model::LoadVATData(const std::string& directoryPath) {
 
 	vatPosTex_ = textureManager_->Load(vatPos);
 	vatRotTex_ = textureManager_->Load(vatRot);
-
-	vatResource_ = DirectXCommon::CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Appdata));
-	vatResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&appData_));
 }
