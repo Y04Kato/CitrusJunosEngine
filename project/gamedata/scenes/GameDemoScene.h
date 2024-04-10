@@ -15,6 +15,8 @@
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
 
+#include "components/utilities/globalVariables/GlobalVariables.h"
+
 class GameDemoScene :public Iscene {
 public:
 	void Initialize() override;
@@ -23,6 +25,8 @@ public:
 	void Finalize() override;
 
 	void ApplyGlobalVariables();
+
+	void SetObject(Transform trans, const std::string& name);
 
 private:
 	CitrusJunosEngine* CJEngine_;
@@ -93,5 +97,21 @@ private:
 	bool isParticleDraw_[2];
 	bool isLineDraw_;
 	bool isVATDraw_;
+
+	struct Obj {
+		Model model;
+		WorldTransform world;
+		Vector4 material;
+		std::string name;
+	};
+
+	std::list<Obj> objects_;
+	ModelData ObjModelData_;
+	uint32_t ObjTexture_;
+	char objName_[64];
+	int objNum_ = 0;
+
+	GlobalVariables* globalVariables{};
+	const char* groupName = "GameDemoScene";
 };
 

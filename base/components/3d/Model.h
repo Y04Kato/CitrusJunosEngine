@@ -18,6 +18,7 @@
 class Model {
 public:
 	void Initialize(const std::string& directoryPath, const std::string& filename);
+	void Initialize(const ModelData modeldata, const uint32_t texture);
 
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material);
 	
@@ -38,6 +39,7 @@ public:
 	Node ReadNode(aiNode* node);
 
 	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
+	static Model* CreateModelFromObj(const ModelData modeldata,const uint32_t texture);
 
 	/// <summary>
 	/// VATに必要なテクスチャのロード(テクスチャの名前は固定、モデルファイルと同じディレクトリを参照)

@@ -15,6 +15,21 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	CreateLight();
 }
 
+void Model::Initialize(const ModelData modeldata, const uint32_t texture) {
+	dxCommon_ = DirectXCommon::GetInstance();
+	CJEngine_ = CitrusJunosEngine::GetInstance();
+	textureManager_ = TextureManager::GetInstance();
+	directionalLights_ = DirectionalLights::GetInstance();
+	pointLights_ = PointLights::GetInstance();
+
+	modelData_ = modeldata;
+	texture_ = texture;
+
+	CreateVartexData();
+	SetColor();
+	CreateLight();
+}
+
 void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material) {
 	Transform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 
@@ -70,6 +85,12 @@ void Model::Finalize() {
 Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::string& filename) {
 	Model* model = new Model();
 	model->Initialize(directoryPath, filename);
+	return model;
+}
+
+Model* Model::CreateModelFromObj(const ModelData modeldata, const uint32_t texture) {
+	Model* model = new Model();
+	model->Initialize(modeldata, texture);
 	return model;
 }
 

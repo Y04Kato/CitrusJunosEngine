@@ -1,5 +1,4 @@
 #include "GameDemoScene.h"
-#include "components/utilities/globalVariables/GlobalVariables.h"
 
 void GameDemoScene::Initialize() {
 	CJEngine_ = CitrusJunosEngine::GetInstance();
@@ -126,12 +125,23 @@ void GameDemoScene::Initialize() {
 	//CollisionManager
 	collisionManager_ = CollisionManager::GetInstance();
 
-	GlobalVariables* globalVariables{};
+	//
+	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
+	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
+
 	globalVariables = GlobalVariables::GetInstance();
 
-	const char* groupName = "GameDemoScene";
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Test", 90);
+	globalVariables->AddItem(groupName, "ObjectCount", objNum_);
+	SetObject(Transform{{ 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f}}, "test1");
+	SetObject(Transform{{ 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f}}, "test2");
+	SetObject(Transform{{ 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f}}, "test3");
+	for (Obj& obj : objects_) {
+		globalVariables->AddItem(groupName,obj.name + "Translate", obj.world.translation_);
+		//globalVariables->AddItem(groupName,obj.name + "Rotate", obj.world.rotation_);
+		globalVariables->AddItem(groupName,obj.name + "Scale", obj.world.scale_);
+	}
 }
 
 void GameDemoScene::Update() {
@@ -170,6 +180,10 @@ void GameDemoScene::Update() {
 	}
 
 	worldTransformModelVAT_.UpdateMatrix();
+
+	for (Obj& obj : objects_) {
+		obj.world.UpdateMatrix();
+	}
 
 	ImGui::Begin("debug");
 	ImGui::Text("GameDemoScene");
@@ -456,6 +470,32 @@ void GameDemoScene::Update() {
 
 	ImGui::Text("%f", ImGui::GetIO().Framerate);
 
+	ImGui::InputText("BlockName",objName_, sizeof(objName_));
+	if (ImGui::Button("SpawnBlock")) {
+		SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+		for (Obj& obj : objects_) {
+			globalVariables->AddItem(groupName, obj.name, (std::string)objName_);
+			globalVariables->AddItem(groupName, obj.name + "Translate", obj.world.translation_);
+			//globalVariables->AddItem(groupName,obj.name + "Rotate", obj.world.rotation_);
+			globalVariables->AddItem(groupName, obj.name + "Scale", obj.world.scale_);
+		}
+	}
+	if (ImGui::Button("DeleteBlock")) {
+		SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+		for (auto it = objects_.begin(); it != objects_.end();) {
+			if (it->name == objName_) {
+				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Translate");
+				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Scale");
+				it = objects_.erase(it);
+				objNum_--;
+				globalVariables->SetValue(groupName, "ObjectCount", objNum_);
+			}
+			else {
+				++it;
+			}
+		}
+	}
+
 	ImGui::End();
 
 	for (int i = 0; i < 2; i++) {
@@ -521,6 +561,10 @@ void GameDemoScene::Draw() {
 		}
 	}
 
+	for (Obj& obj : objects_) {
+		obj.model.Draw(obj.world, viewProjection_, obj.material);
+	}
+
 #pragma endregion
 
 #pragma region VATモデル描画
@@ -551,9 +595,36 @@ void GameDemoScene::Draw() {
 void GameDemoScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 	audio_->SoundUnload(&soundData2_);
+
+	objects_.clear();
 }
 
 void GameDemoScene::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "GameDemoScene";
+	objNum_ = globalVariables->GetIntValue(groupName, "ObjectCount");
+	for (Obj& obj : objects_) {
+		obj.world.translation_ = globalVariables->GetVector3Value(groupName, obj.name + "Translate");
+		//obj.world.rotation_ = globalVariables->GetVector3Value(groupName, obj.name + "Rotate");
+		obj.world.scale_ = globalVariables->GetVector3Value(groupName, obj.name + "Scale");
+	}
+}
+
+void GameDemoScene::SetObject(Transform trans , const std::string& name) {
+	Obj obj;
+	obj.model.Initialize(ObjModelData_, ObjTexture_);
+	obj.model.SetDirectionalLightFlag(true, 3);
+
+	obj.world.Initialize();
+	obj.world.translation_ = trans.translate;
+	obj.world.rotation_ = trans.rotate;
+	obj.world.scale_ = trans.scale;
+
+	obj.material = { 1.0f,1.0f,1.0f,1.0f };
+
+	obj.name = name;
+	objects_.push_back(obj);
+
+	objNum_++;
+	globalVariables->SetValue(groupName, "ObjectCount", objNum_);
 }

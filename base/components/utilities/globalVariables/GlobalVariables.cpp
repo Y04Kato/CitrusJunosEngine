@@ -34,15 +34,18 @@ void GlobalVariables::Update() {
 
 			if (std::holds_alternative<int32_t>(item.value)) {
 				int32_t* ptr = std::get_if<int32_t>(&item.value);
-				ImGui::SliderInt(itemName.c_str(), ptr, 0, 100);
+				ImGui::DragInt(itemName.c_str(), ptr);
 			}
 			else if (std::holds_alternative<float>(item.value)) {
 				float* ptr = std::get_if<float>(&item.value);
-				ImGui::SliderFloat(itemName.c_str(), ptr, 0, 100);
+				ImGui::DragFloat(itemName.c_str(), ptr);
 			}
 			else if (std::holds_alternative<Vector3>(item.value)) {
 				Vector3* ptr = std::get_if<Vector3>(&item.value);
-				ImGui::SliderFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), -10.0f, 10.0f);
+				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr));
+			}
+			else if (std::holds_alternative<std::string>(item.value)) {
+				std::string* ptr = std::get_if<std::string>(&item.value);
 			}
 		}
 
@@ -85,6 +88,15 @@ void GlobalVariables::SetValue(
 	group.items[key] = newItems;
 }
 
+void GlobalVariables::SetValue(
+	const std::string& groupName, const std::string& key, std::string value){
+	Group& group = datas_[groupName];
+	Item newItems{};
+
+	newItems.value = value;
+	group.items[key] = newItems;
+}
+
 void GlobalVariables::SaveFile(const std::string& groupName) {
 	std::map<std::string, Group>::iterator itGroup = datas_.find(groupName);
 	assert(itGroup != datas_.end());
@@ -104,6 +116,9 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 		}
 		else if (std::holds_alternative<float>(item.value)) {
 			root[groupName][itemName] = std::get<float>(item.value);
+		}
+		else if (std::holds_alternative<std::string>(item.value)) {
+			root[groupName][itemName] = std::get<std::string>(item.value);
 		}
 
 		if (std::holds_alternative<Vector3>(item.value)) {
@@ -217,6 +232,14 @@ void GlobalVariables::AddItem(const std::string& groupName, const std::string& k
 	}
 }
 
+void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, std::string value) {
+	Group& group = datas_[groupName];
+
+	if (group.items.find(key) == group.items.end()) {
+		SetValue(groupName, key, value);
+	}
+}
+
 int32_t GlobalVariables::GetIntValue(const std::string& groupName, const std::string& key) {
 	assert(datas_.find(groupName) != datas_.end());
 
@@ -242,4 +265,30 @@ Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std
 	assert(group.items.find(key) != group.items.end());
 
 	return std::get<Vector3>(group.items[key].value);
+}
+
+std::string GlobalVariables::GetStringValue(const std::string& groupName, const std::string& key) {
+	assert(datas_.find(groupName) != datas_.end());
+
+	Group& group = datas_[groupName];
+	assert(group.items.find(key) != group.items.end());
+
+	return std::get<std::string>(group.items[key].value);
+}
+
+void GlobalVariables::RemoveItem(const std::string& groupName, const std::string& key) {
+	// グループが存在するかを確認
+	auto groupIt = datas_.find(groupName);
+	if (groupIt == datas_.end()) {
+		return; // グループが存在しない場合は何もしない
+	}
+
+	// グループ内にアイテムが存在するかを確認
+	auto itemIt = groupIt->second.items.find(key);
+	if (itemIt == groupIt->second.items.end()) {
+		return; // アイテムが存在しない場合は何もしない
+	}
+
+	// アイテムを削除
+	groupIt->second.items.erase(itemIt);
 }
