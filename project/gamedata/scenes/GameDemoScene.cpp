@@ -87,9 +87,9 @@ void GameDemoScene::Initialize() {
 	}
 
 	//objモデル
-	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/drum", "drum.obj",false));
-	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/chest", "chest.obj",false));
-	model_[2].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj",false));
+	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/drum", "drum.obj"));
+	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/chest", "chest.obj"));
+	model_[2].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj"));
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].Initialize();
 		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
@@ -97,9 +97,14 @@ void GameDemoScene::Initialize() {
 	}
 
 	//VAT
-	modelVAT_.reset(Model::CreateModelFromObj("project/gamedata/resources/vatSphere", "vatSphere.gltf", true));
+	modelVAT_.reset(Model::CreateModelFromObj("project/gamedata/resources/vatSphere", "vatSphere.gltf"));
 	worldTransformModelVAT_.Initialize();
 	modelMaterialVAT_ = { 1.0f,1.0f,1.0f,1.0f };
+	vatData_.VATTime = 0.0f;
+	vatData_.MaxVATTime = 240.0f;
+	vatData_.VatPositionTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
+	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
+	modelVAT_->LoadVATData("project/gamedata/resources/vatSphere", vatData_);
 	modelVAT_->SetDirectionalLightFlag(true, 3);
 
 	//Input
@@ -352,6 +357,8 @@ void GameDemoScene::Update() {
 				ImGui::DragFloat3("Translate", worldTransformModelVAT_.translation_.num, 0.05f);
 				ImGui::DragFloat3("Rotate", worldTransformModelVAT_.rotation_.num, 0.05f);
 				ImGui::DragFloat3("Scale", worldTransformModelVAT_.scale_.num, 0.05f);
+				ImGui::DragFloat("AnimTime", &vatData_.VATTime, 1.0f, 0.0f, vatData_.MaxVATTime);
+				modelVAT_->SetAnimationTime(vatData_.VATTime);
 				ImGui::TreePop();
 			}
 		}

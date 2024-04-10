@@ -67,6 +67,7 @@ private:
 	std::unique_ptr<Model> modelVAT_;
 	WorldTransform worldTransformModelVAT_;
 	Vector4 modelMaterialVAT_;
+	VATData vatData_;
 
 	uint32_t uvResourceNum_;
 	uint32_t monsterBallResourceNum_;

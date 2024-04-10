@@ -17,7 +17,7 @@
 
 class Model {
 public:
-	void Initialize(const std::string& directoryPath, const std::string& filename, bool isVATModel);
+	void Initialize(const std::string& directoryPath, const std::string& filename);
 
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material);
 	
@@ -37,14 +37,16 @@ public:
 
 	Node ReadNode(aiNode* node);
 
-	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename, bool isVATModel);
+	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
 	/// VATに必要なテクスチャのロード(テクスチャの名前は固定、モデルファイルと同じディレクトリを参照)
 	/// 1:VATpos.png
 	/// 2:VATrot.png
 	/// </summary>
-	void LoadVATData(const std::string& directoryPath);
+	void LoadVATData(const std::string& directoryPath, const VATData& vatdata);
+
+	void SetAnimationTime(float animTime);
 
 private:
 	DirectXCommon* dxCommon_;

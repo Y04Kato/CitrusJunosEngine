@@ -1,6 +1,6 @@
 #include "Model.h"
 
-void Model::Initialize(const std::string& directoryPath, const std::string& filename, bool isVATModel) {
+void Model::Initialize(const std::string& directoryPath, const std::string& filename) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	CJEngine_ = CitrusJunosEngine::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
@@ -13,10 +13,6 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	CreateVartexData();
 	SetColor();
 	CreateLight();
-
-	if (isVATModel == true) {
-		LoadVATData(directoryPath);
-	}
 }
 
 void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material) {
@@ -54,7 +50,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
 	if (isVAT_ == true) {//VATモデルである場合
-		ImGui::DragFloat("VATTimer", &vatData_.VATTime, 1.0f,0.0f,240.0f);
+		ImGui::Text("%d", (int)vatData_.VATTime);
 
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(vatPosTex_));
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatRotTex_));
@@ -71,9 +67,9 @@ void Model::Finalize() {
 
 }
 
-Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::string& filename, bool isVATModel) {
+Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::string& filename) {
 	Model* model = new Model();
-	model->Initialize(directoryPath, filename, isVATModel);
+	model->Initialize(directoryPath, filename);
 	return model;
 }
 
@@ -215,7 +211,7 @@ void Model::SetDirectionalLightFlag(bool isDirectionalLight, int lightNum) {
 	lightNum_ = lightNum;
 }
 
-void Model::LoadVATData(const std::string& directoryPath) {
+void Model::LoadVATData(const std::string& directoryPath, const VATData& vatdata) {
 	isVAT_ = true;
 
 	std::string vatPos = directoryPath + "/VATpos.png";
@@ -227,8 +223,13 @@ void Model::LoadVATData(const std::string& directoryPath) {
 	vatResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(VATData));
 	vatResource_->Map(0, NULL, reinterpret_cast<void**>(&vatData_));
 
-	vatData_.VATTime = 0.0f;
-	vatData_.MaxVATTime = 240.0f;
-	vatData_.VatPositionTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
+	vatData_.VATTime = vatdata.VATTime;
+	vatData_.MaxVATTime = vatdata.MaxVATTime;
+	vatData_.VatPositionTexSize = vatdata.VatPositionTexSize;
+	vatData_.VatNormalTexSize = vatdata.VatNormalTexSize;
 	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
+}
+
+void Model::SetAnimationTime(float animTime) {
+	vatData_.VATTime = animTime;
 }
