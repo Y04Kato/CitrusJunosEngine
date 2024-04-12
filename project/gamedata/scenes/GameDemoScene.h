@@ -109,7 +109,6 @@ private:
 	ModelData ObjModelData_;
 	uint32_t ObjTexture_;
 	char objName_[64];
-	int objNum_ = 0;
 
 	GlobalVariables* globalVariables{};
 	const char* groupName = "GameDemoScene";

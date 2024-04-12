@@ -133,15 +133,16 @@ void GameDemoScene::Initialize() {
 
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Test", 90);
-	globalVariables->AddItem(groupName, "ObjectCount", objNum_);
-	SetObject(Transform{{ 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f}}, "test1");
-	SetObject(Transform{{ 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f}}, "test2");
-	SetObject(Transform{{ 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f}}, "test3");
 	for (Obj& obj : objects_) {
 		globalVariables->AddItem(groupName,obj.name + "Translate", obj.world.translation_);
 		//globalVariables->AddItem(groupName,obj.name + "Rotate", obj.world.rotation_);
 		globalVariables->AddItem(groupName,obj.name + "Scale", obj.world.scale_);
+		globalVariables->AddItem(groupName,obj.name + "Name", obj.name);
 	}
+
+	/*SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, "test1");
+	SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, "test2");
+	SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, "test3");*/
 }
 
 void GameDemoScene::Update() {
@@ -487,13 +488,14 @@ void GameDemoScene::Update() {
 				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Translate");
 				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Scale");
 				it = objects_.erase(it);
-				objNum_--;
-				globalVariables->SetValue(groupName, "ObjectCount", objNum_);
 			}
 			else {
 				++it;
 			}
 		}
+	}
+	if (ImGui::Button("StartSetBlock")) {
+
 	}
 
 	ImGui::End();
@@ -602,7 +604,6 @@ void GameDemoScene::Finalize() {
 void GameDemoScene::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "GameDemoScene";
-	objNum_ = globalVariables->GetIntValue(groupName, "ObjectCount");
 	for (Obj& obj : objects_) {
 		obj.world.translation_ = globalVariables->GetVector3Value(groupName, obj.name + "Translate");
 		//obj.world.rotation_ = globalVariables->GetVector3Value(groupName, obj.name + "Rotate");
@@ -624,7 +625,4 @@ void GameDemoScene::SetObject(Transform trans , const std::string& name) {
 
 	obj.name = name;
 	objects_.push_back(obj);
-
-	objNum_++;
-	globalVariables->SetValue(groupName, "ObjectCount", objNum_);
 }
