@@ -8,6 +8,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	pointLights_ = PointLights::GetInstance();
 
 	modelData_ = LoadModelFile(directoryPath, filename);
+	animation_ = LoadAnimationFile(directoryPath, filename);
 	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
 
 	CreateVartexData();
@@ -48,6 +49,12 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	material_->shininess = 100.0f;
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
 	*pointLight_ = pointLights_->GetPointLight();
+
+	if (isKeyframeAnim_) {
+		animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+		animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
+		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
+	}
 
 	//rootのMatrixの適用
 	WorldTransform world = worldTransform;
@@ -165,6 +172,54 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 	}
 
 	return modelData;
+}
+
+Animation Model::LoadAnimationFile(const std::string& directoryPath, const std::string& filename) {
+	Animation animation;//今回作るアニメーション
+	Assimp::Importer importer;
+	
+	std::string file(directoryPath + "/" + filename);//ファイルを開く
+
+	const aiScene* scene = importer.ReadFile(file.c_str(), 0);
+
+	//アニメーションが存在しない場合はスルー
+	if (scene->mNumAnimations != 0) {
+		isKeyframeAnim_ = true;
+		aiAnimation* animationAssimp = scene->mAnimations[0];//最初のアニメーションのみ現在は対応
+		animation.duration = float(animationAssimp->mDuration / animationAssimp->mTicksPerSecond);//時間の単位を秒に変換
+
+		//assimpでは個々のNodeAnimationをchannelと呼び、channelを回してNodeAnimation情報を取る
+		for (uint32_t channelIndex = 0; channelIndex < animationAssimp->mNumChannels; ++channelIndex) {
+			aiNodeAnim* nodeAnimationAssimp = animationAssimp->mChannels[channelIndex];
+			NodeAnimation& nodeAnimation = animation.nodeAnimations[nodeAnimationAssimp->mNodeName.C_Str()];
+			//Translate
+			for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumPositionKeys; ++keyIndex) {
+				aiVectorKey& keyAssimp = nodeAnimationAssimp->mPositionKeys[keyIndex];
+				KeyframeVector3 keyframe;
+				keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);//秒に変換
+				keyframe.value = { -keyAssimp.mValue.x,keyAssimp.mValue.y,keyAssimp.mValue.z };//右手➡左手
+				nodeAnimation.translate.keyframes.push_back(keyframe);
+			}
+			//Rotate
+			for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumRotationKeys; ++keyIndex) {
+				aiQuatKey& keyAssimp = nodeAnimationAssimp->mRotationKeys[keyIndex];
+				KeyframeQuaternion keyframe;
+				keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);//秒に変換
+				keyframe.value = { keyAssimp.mValue.x,-keyAssimp.mValue.y,-keyAssimp.mValue.z ,keyAssimp.mValue.w };//右手➡左手
+				nodeAnimation.rotate.keyframes.push_back(keyframe);
+			}
+			//Scale
+			for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumScalingKeys; ++keyIndex) {
+				aiVectorKey& keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
+				KeyframeVector3 keyframe;
+				keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);//秒に変換
+				keyframe.value = { -keyAssimp.mValue.x,keyAssimp.mValue.y,keyAssimp.mValue.z };//右手➡左手
+				nodeAnimation.scale.keyframes.push_back(keyframe);
+			}
+		}
+	}
+
+	return animation;
 }
 
 Node Model::ReadNode(aiNode* node) {

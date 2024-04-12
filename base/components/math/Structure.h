@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include <map>
 
 struct Transform {
 	Vector3 scale;
@@ -39,11 +40,42 @@ struct Material {
 	float shininess;
 };
 
+struct Quaternion {
+	float x, y, z, w;
+};
+
 //Node情報格納用構造体
 struct Node {
 	Matrix4x4 localMatrix;
 	std::string name;
 	std::vector<Node> children;
+};
+
+//Keyframe構造体
+template <typename tValue>
+struct Keyframe {
+	float time;//キーフレームの時間(単位：秒)
+	tValue value;//キーフレームの値
+};
+using KeyframeVector3 = Keyframe<Vector3>;
+using KeyframeQuaternion = Keyframe<Quaternion>;
+
+//KeyframeをNodeごとにまとめる
+template <typename tValue>
+struct AnimationCurve {
+	std::vector<Keyframe<tValue>> keyframes;
+};
+
+struct NodeAnimation {
+	AnimationCurve<Vector3> translate;
+	AnimationCurve<Quaternion> rotate;
+	AnimationCurve<Vector3> scale;
+};
+
+struct Animation {
+	float duration;//アニメーションの全体の長さ(単位：秒)
+	//NodeAnimationの集合、Node名で引けるようにする
+	std::map<std::string, NodeAnimation> nodeAnimations;
 };
 
 struct MaterialData {
@@ -71,10 +103,6 @@ struct OBB {
 struct StructSphere {
 	Vector3 center;
 	float radius;
-};
-
-struct Quaternion {
-	float x, y, z, w;
 };
 
 #pragma region Particle

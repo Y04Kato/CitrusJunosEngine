@@ -35,6 +35,7 @@ public:
 	void SetDirectionalLightFlag(bool isDirectionalLight,int lightNum);
 
 	ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
+	Animation LoadAnimationFile(const std::string& directoryPath, const std::string& filename);
 
 	Node ReadNode(aiNode* node);
 
@@ -80,6 +81,10 @@ private:
 	CameraForGPU* cameraData_ = nullptr;
 
 	bool isLoadTexCoord_ = false;//TexCoordがモデルに設定されているか
+
+	bool isKeyframeAnim_ = false;//KeyframeAnimationかどうか
+	float animationTime_ = 0.0f;
+	Animation animation_;
 
 	bool isVAT_ = false;//VATモデルかどうか
 	uint32_t vatPosTex_;
