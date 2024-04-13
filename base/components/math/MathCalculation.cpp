@@ -348,6 +348,46 @@ std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector
 	return std::make_pair(velocityAfter1 + sub1, velocityAfter2 + sub2);
 }
 
+Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time) {
+	assert(!keyframe.empty());//キーがない物は返す値がないのでダメ
+	if (keyframe.size() == 1 || time <= keyframe[0].time) {
+		return keyframe[0].value;
+	}
+
+	for (size_t index = 0; index < keyframe.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		//indexとnextIndexの2つのkeyframeを取得して範囲内に時刻があるかを判定
+		if (keyframe[index].time <= time && time <= keyframe[nextIndex].time) {
+			//範囲内の補完
+			float t = (time - keyframe[index].time) / (keyframe[nextIndex].time - keyframe[index].time);
+			return Lerp(keyframe[index].value, keyframe[nextIndex].value, t);
+		}
+	}
+
+	//ここまで来た場合、一番後の時刻より後ろになっているので最後の値を返す
+	return (*keyframe.rbegin()).value;
+}
+
+Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframe, float time) {
+	assert(!keyframe.empty());//キーがない物は返す値がないのでダメ
+	if (keyframe.size() == 1 || time <= keyframe[0].time) {
+		return keyframe[0].value;
+	}
+
+	for (size_t index = 0; index < keyframe.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		//indexとnextIndexの2つのkeyframeを取得して範囲内に時刻があるかを判定
+		if (keyframe[index].time <= time && time <= keyframe[nextIndex].time) {
+			//範囲内の補完
+			float t = (time - keyframe[index].time) / (keyframe[nextIndex].time - keyframe[index].time);
+			return Slerp(t,keyframe[index].value, keyframe[nextIndex].value);
+		}
+	}
+
+	//ここまで来た場合、一番後の時刻より後ろになっているので最後の値を返す
+	return (*keyframe.rbegin()).value;
+}
+
 #pragma endregion
 
 #pragma region Matrix4x4

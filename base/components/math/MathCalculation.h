@@ -102,6 +102,10 @@ Vector3 Project(const Vector3& v, const Vector3 n);
 //衝突＆反発
 std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector3& velocity1, float mass2, const Vector3& velocity2, float coefficientOfRestitution, const Vector3& normal);
 
+//任意の時刻の値を取得する
+Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time);
+Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframe, float time);
+
 #pragma endregion
 
 #pragma region Matrix4x4

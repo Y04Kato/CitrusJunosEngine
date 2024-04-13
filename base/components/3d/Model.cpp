@@ -50,16 +50,26 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
 	*pointLight_ = pointLights_->GetPointLight();
 
-	if (isKeyframeAnim_) {
+	if (isKeyframeAnim_) {//KeyframeAnimationの場合
 		animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
 		animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
 		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
-	}
+		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
+		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
+		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
+		Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
 
-	//rootのMatrixの適用
-	WorldTransform world = worldTransform;
-	world.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
-	world.constMap->inverseTranspose = Inverse(Transpose(world.constMap->matWorld));
+		//rootのMatrixの適用
+		world_ = worldTransform;
+		world_.constMap->matWorld = Multiply(localM,Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
+		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	}
+	else {
+		//rootのMatrixの適用
+		world_ = worldTransform;
+		world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
+		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	}
 
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0にせっていしているものとはまた別
@@ -67,7 +77,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, world.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, world_.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
@@ -177,7 +187,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 Animation Model::LoadAnimationFile(const std::string& directoryPath, const std::string& filename) {
 	Animation animation;//今回作るアニメーション
 	Assimp::Importer importer;
-	
+
 	std::string file(directoryPath + "/" + filename);//ファイルを開く
 
 	const aiScene* scene = importer.ReadFile(file.c_str(), 0);

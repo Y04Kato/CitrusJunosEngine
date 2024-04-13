@@ -11,15 +11,11 @@ SamplerState gSampler : register(s0);
 VertexShaderOutput main(VertexShaderInput input, uint32_t index : SV_VertexID) {
 	VertexShaderOutput output;
 
-	float32_t vertCoords = index;
+    float32_t vertCoords = index * gVATData.VatPositionTexSize.x;
 	float32_t animCoords = 220.0f * gVATData.VatPositionTexSize.y;
 	float32_t2 texCoords = { vertCoords, animCoords };
 
 	float32_t4 pos = VatPositionTex.SampleLevel(gSampler, texCoords, 0);
-
-	//float32_t4 texCoords = float32_t4(vertCoords, animCoords, 0, 0);
-
-	//float32_t4 pos = tex2Dlod(VatPositionTex, texCoords);
 
 	float32_t4x4 WorldViewProjection = mul(gViewProjectionMatrix.view, gViewProjectionMatrix.projection);
 	float32_t4 pos2 = input.position + pos;

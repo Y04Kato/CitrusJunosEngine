@@ -82,6 +82,8 @@ private:
 
 	bool isLoadTexCoord_ = false;//TexCoordがモデルに設定されているか
 
+	WorldTransform world_;
+
 	bool isKeyframeAnim_ = false;//KeyframeAnimationかどうか
 	float animationTime_ = 0.0f;
 	Animation animation_;
