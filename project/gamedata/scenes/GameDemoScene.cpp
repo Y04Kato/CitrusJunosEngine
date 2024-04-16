@@ -129,24 +129,20 @@ void GameDemoScene::Initialize() {
 	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
 	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
 
+	for (int i = 0; i < testCount_; i++) {
+		test_[i] = "test" + std::to_string(i);
+	}
+
+	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
-	globalVariables->AddItem(groupName, "Test", 90);
-	for (Obj& obj : objects_) {
-		globalVariables->AddItem(groupName,obj.name + "Translate", obj.world.translation_);
-		//globalVariables->AddItem(groupName,obj.name + "Rotate", obj.world.rotation_);
-		globalVariables->AddItem(groupName,obj.name + "Scale", obj.world.scale_);
-		globalVariables->AddItem(groupName,obj.name + "Name", obj.name);
-	}
-
-	/*SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, "test1");
-	SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, "test2");
-	SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, "test3");*/
 }
 
 void GameDemoScene::Update() {
 
+	GlobalVariables* globalVariables{};
+	globalVariables = GlobalVariables::GetInstance();
 	ApplyGlobalVariables();
 
 	collisionManager_->ClearColliders();
@@ -471,9 +467,11 @@ void GameDemoScene::Update() {
 
 	ImGui::Text("%f", ImGui::GetIO().Framerate);
 
-	ImGui::InputText("BlockName",objName_, sizeof(objName_));
+	ImGui::InputText("BlockName", objName_, sizeof(objName_));
 	if (ImGui::Button("SpawnBlock")) {
 		SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+		globalVariables->AddItem(groupName, test_[objCount_] + "Name", objName_);
+		objCount_++;
 		for (Obj& obj : objects_) {
 			globalVariables->AddItem(groupName, obj.name, (std::string)objName_);
 			globalVariables->AddItem(groupName, obj.name + "Translate", obj.world.translation_);
@@ -487,6 +485,12 @@ void GameDemoScene::Update() {
 			if (it->name == objName_) {
 				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Translate");
 				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Scale");
+				for (int i = 0; i < testCount_; i++) {
+					if (test_[i] == objName_) {
+						globalVariables->RemoveItem(groupName, test_[i] + "Name");
+					}
+				}
+				objCount_--;
 				it = objects_.erase(it);
 			}
 			else {
@@ -495,7 +499,25 @@ void GameDemoScene::Update() {
 		}
 	}
 	if (ImGui::Button("StartSetBlock")) {
-
+		for (auto it = objects_.begin(); it != objects_.end();) {
+			if (it->name == objName_) {
+				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Translate");
+				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Scale");
+				for (int i = 0; i < testCount_; i++) {
+					if (test_[i] == objName_) {
+						globalVariables->RemoveItem(groupName, test_[i] + "Name");
+					}
+				}
+				objCount_--;
+				it = objects_.erase(it);
+			}
+			else {
+				++it;
+			}
+		}
+		for (int i = 0; i < 2; i++) {
+			SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, test_[i]);
+		}
 	}
 
 	ImGui::End();
@@ -604,6 +626,12 @@ void GameDemoScene::Finalize() {
 void GameDemoScene::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "GameDemoScene";
+
+	for (int i = 0; i < objCount_; i++) {
+		std::string test = "test" + std::to_string(i);
+		test_[i] = globalVariables->GetStringValue(groupName, test + "Name");
+	}
+
 	for (Obj& obj : objects_) {
 		obj.world.translation_ = globalVariables->GetVector3Value(groupName, obj.name + "Translate");
 		//obj.world.rotation_ = globalVariables->GetVector3Value(groupName, obj.name + "Rotate");
@@ -611,7 +639,7 @@ void GameDemoScene::ApplyGlobalVariables() {
 	}
 }
 
-void GameDemoScene::SetObject(Transform trans , const std::string& name) {
+void GameDemoScene::SetObject(Transform trans, const std::string& name) {
 	Obj obj;
 	obj.model.Initialize(ObjModelData_, ObjTexture_);
 	obj.model.SetDirectionalLightFlag(true, 3);

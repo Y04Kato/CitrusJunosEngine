@@ -109,8 +109,10 @@ private:
 	ModelData ObjModelData_;
 	uint32_t ObjTexture_;
 	char objName_[64];
+	static const int testCount_ = 100;
+	int objCount_ = 0;
+	std::string test_[testCount_];
 
-	GlobalVariables* globalVariables{};
 	const char* groupName = "GameDemoScene";
 };
 
