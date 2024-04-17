@@ -1,27 +1,26 @@
 {
     "GameDemoScene": {
-        "test0Name": "test1",
+        "ObjCount": 2,
+        "test0": "test0",
+        "test0Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "test0Translate": [
+            6.0,
+            0.0,
+            0.0
+        ],
         "test1": "test1",
-        "test1Name": "test2",
         "test1Scale": [
             1.0,
             1.0,
             1.0
         ],
         "test1Translate": [
-            6.0,
-            -8.0,
-            0.0
-        ],
-        "test2": "test2",
-        "test2Scale": [
-            -4.0,
-            1.0,
-            1.0
-        ],
-        "test2Translate": [
-            -6.0,
-            -9.0,
+            0.0,
+            -7.0,
             0.0
         ]
     }

@@ -137,6 +137,8 @@ void GameDemoScene::Initialize() {
 	globalVariables = GlobalVariables::GetInstance();
 
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
+
+	globalVariables->AddItem(groupName, "ObjCount", objCount_);
 }
 
 void GameDemoScene::Update() {
@@ -470,8 +472,8 @@ void GameDemoScene::Update() {
 	ImGui::InputText("BlockName", objName_, sizeof(objName_));
 	if (ImGui::Button("SpawnBlock")) {
 		SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
-		globalVariables->AddItem(groupName, test_[objCount_] + "Name", objName_);
 		objCount_++;
+		globalVariables->SetValue(groupName, "ObjCount", objCount_);
 		for (Obj& obj : objects_) {
 			globalVariables->AddItem(groupName, obj.name, (std::string)objName_);
 			globalVariables->AddItem(groupName, obj.name + "Translate", obj.world.translation_);
@@ -485,12 +487,8 @@ void GameDemoScene::Update() {
 			if (it->name == objName_) {
 				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Translate");
 				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Scale");
-				for (int i = 0; i < testCount_; i++) {
-					if (test_[i] == objName_) {
-						globalVariables->RemoveItem(groupName, test_[i] + "Name");
-					}
-				}
 				objCount_--;
+				globalVariables->SetValue(groupName, "ObjCount", objCount_);
 				it = objects_.erase(it);
 			}
 			else {
@@ -499,23 +497,7 @@ void GameDemoScene::Update() {
 		}
 	}
 	if (ImGui::Button("StartSetBlock")) {
-		for (auto it = objects_.begin(); it != objects_.end();) {
-			if (it->name == objName_) {
-				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Translate");
-				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Scale");
-				for (int i = 0; i < testCount_; i++) {
-					if (test_[i] == objName_) {
-						globalVariables->RemoveItem(groupName, test_[i] + "Name");
-					}
-				}
-				objCount_--;
-				it = objects_.erase(it);
-			}
-			else {
-				++it;
-			}
-		}
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < objCount_; i++) {
 			SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, test_[i]);
 		}
 	}
@@ -627,14 +609,11 @@ void GameDemoScene::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "GameDemoScene";
 
-	for (int i = 0; i < objCount_; i++) {
-		std::string test = "test" + std::to_string(i);
-		test_[i] = globalVariables->GetStringValue(groupName, test + "Name");
-	}
+	objCount_ = globalVariables->GetIntValue(groupName, "ObjCount");
 
 	for (Obj& obj : objects_) {
 		obj.world.translation_ = globalVariables->GetVector3Value(groupName, obj.name + "Translate");
-		//obj.world.rotation_ = globalVariables->GetVector3Value(groupName, obj.name + "Rotate");
+		//obj.world.rotation_ = globalVariables->GetVector3Value(groupName,  obj.name + "Rotate");
 		obj.world.scale_ = globalVariables->GetVector3Value(groupName, obj.name + "Scale");
 	}
 }
