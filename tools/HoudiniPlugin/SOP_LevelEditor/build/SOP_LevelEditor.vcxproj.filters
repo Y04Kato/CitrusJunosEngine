@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Yuzu\source\repos\HoudiniPlugin\SOP_LevelEditor\SOP_LevelEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Yuzu\source\repos\HoudiniPlugin\SOP_LevelEditor\SOP_LevelEditor.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Yuzu\source\repos\HoudiniPlugin\SOP_LevelEditor\build\CMakeFiles\cfbc46a293c67d3da0601189fbd7c49b\SOP_LevelEditor.proto.h.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Yuzu\source\repos\HoudiniPlugin\SOP_LevelEditor\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{35FE1520-8B50-303D-AA7F-99AD6B847885}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{86562CAE-2998-357C-93F2-592619300093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{8A4240CD-59D5-3369-9054-FCAE729DBA1D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
