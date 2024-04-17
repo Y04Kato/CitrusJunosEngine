@@ -12,7 +12,7 @@ VertexShaderOutput main(VertexShaderInput input, uint32_t index : SV_VertexID) {
 	VertexShaderOutput output;
 
     float32_t vertCoords = index * gVATData.VatPositionTexSize.x;
-	float32_t animCoords = 220.0f * gVATData.VatPositionTexSize.y;
+	float32_t animCoords = gVATData.VATTime * gVATData.VatPositionTexSize.y;
 	float32_t2 texCoords = { vertCoords, animCoords };
 
 	float32_t4 pos = VatPositionTex.SampleLevel(gSampler, texCoords, 0);
