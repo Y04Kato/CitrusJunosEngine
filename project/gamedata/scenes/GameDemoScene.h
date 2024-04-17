@@ -8,11 +8,14 @@
 #include "components/2d/CreateTriangle.h"
 #include "components/2d/CreateSprite.h"
 #include "components/2d/CreateParticle.h"
+#include "components/3d/CreateLine.h"
 #include "components/3d/CreateSphere.h"
 #include "components/3d/Model.h"
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
+
+#include "components/utilities/globalVariables/GlobalVariables.h"
 
 class GameDemoScene :public Iscene {
 public:
@@ -22,6 +25,8 @@ public:
 	void Finalize() override;
 
 	void ApplyGlobalVariables();
+
+	void SetObject(Transform trans, const std::string& name);
 
 private:
 	CitrusJunosEngine* CJEngine_;
@@ -47,6 +52,14 @@ private:
 	bool isColor_[2];
 	Vector4 particleColor_[2] = {0.0f,0.0f,0.0f,0.0f};
 
+	std::unique_ptr<CreateLine> line_;
+	WorldTransform worldTransformLine_[2];
+	Vector4 lineMaterial_;
+	float lineThickness_ = 0.2f;
+
+	std::unique_ptr <CreateSphere> linePoint_[2];
+	Vector4 linePointMaterial_;
+
 	std::unique_ptr <CreateSphere> sphere_[2];
 	WorldTransform worldTransformSphere_[2];
 	Vector4 sphereMaterial_[2];
@@ -54,6 +67,11 @@ private:
 	std::unique_ptr<Model> model_[3];
 	WorldTransform worldTransformModel_[3];
 	Vector4 modelMaterial_[3];
+
+	std::unique_ptr<Model> modelVAT_;
+	WorldTransform worldTransformModelVAT_;
+	Vector4 modelMaterialVAT_;
+	VATData vatData_;
 
 	uint32_t uvResourceNum_;
 	uint32_t monsterBallResourceNum_;
@@ -77,5 +95,24 @@ private:
 	bool isSpriteDraw_[2];
 	bool isModelDraw_[3];
 	bool isParticleDraw_[2];
+	bool isLineDraw_;
+	bool isVATDraw_;
+
+	//ステージエディター擬き、名前をtest0~始め、それを記録する
+	struct Obj {
+		Model model;
+		WorldTransform world;
+		Vector4 material;
+		std::string name;
+	};
+	std::list<Obj> objects_;
+	ModelData ObjModelData_;
+	uint32_t ObjTexture_;
+	char objName_[64];
+	static const int objCountMax_ = 100;
+	int objCount_ = 0;
+	std::string objNameHolder_[objCountMax_];
+
+	const char* groupName = "GameDemoScene";
 };
 

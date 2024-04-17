@@ -1,0 +1,27 @@
+{
+    "GameDemoScene": {
+        "ObjCount": 2,
+        "test0": "test0",
+        "test0Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "test0Translate": [
+            6.0,
+            0.0,
+            0.0
+        ],
+        "test1": "test1",
+        "test1Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "test1Translate": [
+            0.0,
+            -7.0,
+            0.0
+        ]
+    }
+}

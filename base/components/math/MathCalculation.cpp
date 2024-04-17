@@ -9,12 +9,20 @@ float Dot(const Vector3& v1, const Vector3& v2) {
 	return v1.num[0] * v2.num[0] + v1.num[1] * v2.num[1] + v1.num[2] * v2.num[2];
 }
 
+float Magnitude(const Vector3& v) {
+	return sqrt(v.num[0] * v.num[0] + v.num[1] * v.num[1] + v.num[2] * v.num[2]);
+}
+
 float LengthQuaternion(const Quaternion& q) {
 	return sqrtf(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
 }
 
-float contangent(float b, float a) {
+float Contangent(float b, float a) {
 	return(b / tan(a));
+}
+
+float Distance(const Vector3& v1, const Vector3& v2) {
+	return sqrt((v2.num[0] - v1.num[0]) * (v2.num[0] - v1.num[0])+ (v2.num[1] - v1.num[1]) * (v2.num[1] - v1.num[1])+ (v2.num[2] - v1.num[2]) * (v2.num[2] - v1.num[2]));
 }
 
 float Lerp(float a, float b, float t) {
@@ -321,7 +329,7 @@ Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) {
 }
 
 Vector3 Project(const Vector3& v, const Vector3 n) {
-	float projectionLength = Dot(v,n);
+	float projectionLength = Dot(v, n);
 	return n * projectionLength;
 }
 
@@ -338,6 +346,46 @@ std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector
 
 	//反発後の衝突面方向の速度と、元々の速度で分解していて反発に関わらない速度を足して最終的反発後の速度を計算する
 	return std::make_pair(velocityAfter1 + sub1, velocityAfter2 + sub2);
+}
+
+Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time) {
+	assert(!keyframe.empty());//キーがない物は返す値がないのでダメ
+	if (keyframe.size() == 1 || time <= keyframe[0].time) {
+		return keyframe[0].value;
+	}
+
+	for (size_t index = 0; index < keyframe.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		//indexとnextIndexの2つのkeyframeを取得して範囲内に時刻があるかを判定
+		if (keyframe[index].time <= time && time <= keyframe[nextIndex].time) {
+			//範囲内の補完
+			float t = (time - keyframe[index].time) / (keyframe[nextIndex].time - keyframe[index].time);
+			return Lerp(keyframe[index].value, keyframe[nextIndex].value, t);
+		}
+	}
+
+	//ここまで来た場合、一番後の時刻より後ろになっているので最後の値を返す
+	return (*keyframe.rbegin()).value;
+}
+
+Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframe, float time) {
+	assert(!keyframe.empty());//キーがない物は返す値がないのでダメ
+	if (keyframe.size() == 1 || time <= keyframe[0].time) {
+		return keyframe[0].value;
+	}
+
+	for (size_t index = 0; index < keyframe.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		//indexとnextIndexの2つのkeyframeを取得して範囲内に時刻があるかを判定
+		if (keyframe[index].time <= time && time <= keyframe[nextIndex].time) {
+			//範囲内の補完
+			float t = (time - keyframe[index].time) / (keyframe[nextIndex].time - keyframe[index].time);
+			return Slerp(t,keyframe[index].value, keyframe[nextIndex].value);
+		}
+	}
+
+	//ここまで来た場合、一番後の時刻より後ろになっているので最後の値を返す
+	return (*keyframe.rbegin()).value;
 }
 
 #pragma endregion
@@ -573,7 +621,6 @@ Matrix4x4 Inverse(const Matrix4x4& m1) {
 		m1.m[0][2] * m1.m[1][1] * m1.m[2][3] * m1.m[3][0] +
 		m1.m[0][1] * m1.m[1][3] * m1.m[2][2] * m1.m[3][0];
 
-	assert(deterninant != 0.0f);
 	float deterninantRect = 1.0f / deterninant;
 
 	result.m[0][0] =
@@ -717,13 +764,13 @@ Matrix4x4 MakeIdentity4x4() {
 //透視投影行列
 Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRadio, float nearClip, float farClip) {
 	Matrix4x4 result;
-	result.m[0][0] = contangent((1 / aspectRadio), (fovY / 2));
+	result.m[0][0] = Contangent((1 / aspectRadio), (fovY / 2));
 	result.m[0][1] = 0.0f;
 	result.m[0][2] = 0.0f;
 	result.m[0][3] = 0.0f;
 
 	result.m[1][0] = 0.0f;
-	result.m[1][1] = contangent(1, fovY / 2);
+	result.m[1][1] = Contangent(1, fovY / 2);
 	result.m[1][2] = 0.0f;
 	result.m[1][3] = 0.0f;
 

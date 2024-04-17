@@ -1,5 +1,4 @@
 #include "GameDemoScene.h"
-#include "components/utilities/globalVariables/GlobalVariables.h"
 
 void GameDemoScene::Initialize() {
 	CJEngine_ = CitrusJunosEngine::GetInstance();
@@ -29,7 +28,7 @@ void GameDemoScene::Initialize() {
 	//スプライト
 	for (int i = 0; i < 2; i++) {
 		spriteMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
-		spriteTransform_[i] = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280/2.0f,720/2.0f,0.0f} };
+		spriteTransform_[i] = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280 / 2.0f,720 / 2.0f,0.0f} };
 		SpriteuvTransform_[i] = {
 			{1.0f,1.0f,1.0f},
 			{0.0f,0.0f,0.0f},
@@ -63,6 +62,19 @@ void GameDemoScene::Initialize() {
 	particle_[0]->Initialize(100, testEmitter_[0], accelerationField_[0], cjEngineResourceNum_);
 	particle_[1]->Initialize(100, testEmitter_[1], accelerationField_[1], kaedeResourceNum_);
 
+
+	//Line
+	line_ = std::make_unique <CreateLine>();
+	line_->Initialize();
+	line_->SetDirectionalLightFlag(false, 0);
+	lineMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	linePointMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	for (int i = 0; i < 2; i++) {
+		worldTransformLine_[i].Initialize();
+		linePoint_[i] = std::make_unique <CreateSphere>();
+		linePoint_[i]->Initialize();
+	}
+
 	//球体
 	for (int i = 0; i < 2; i++) {
 		sphere_[i] = std::make_unique <CreateSphere>();
@@ -75,13 +87,24 @@ void GameDemoScene::Initialize() {
 
 	//objモデル
 	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/drum", "drum.obj"));
-	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/chest", "chest.obj"));
+	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/AnimatedCube", "AnimatedCube.gltf"));
 	model_[2].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj"));
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].Initialize();
 		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
 		model_[i]->SetDirectionalLightFlag(true, 3);
 	}
+
+	//VAT
+	modelVAT_.reset(Model::CreateModelFromObj("project/gamedata/resources/vatSphere", "vatSphere.gltf"));
+	worldTransformModelVAT_.Initialize();
+	modelMaterialVAT_ = { 1.0f,1.0f,1.0f,1.0f };
+	vatData_.VATTime = 0.0f;
+	vatData_.MaxVATTime = 240.0f;
+	vatData_.VatPositionTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
+	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
+	modelVAT_->LoadVATData("project/gamedata/resources/vatSphere", vatData_);
+	modelVAT_->SetDirectionalLightFlag(true, 3);
 
 	//Input
 	input_ = Input::GetInstance();
@@ -100,16 +123,26 @@ void GameDemoScene::Initialize() {
 	//CollisionManager
 	collisionManager_ = CollisionManager::GetInstance();
 
+	//
+	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
+	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
+
+	for (int i = 0; i < objCountMax_; i++) {
+		objNameHolder_[i] = "test" + std::to_string(i);
+	}
+
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 
-	const char* groupName = "GameDemoScene";
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
-	globalVariables->AddItem(groupName, "Test", 90);
+
+	globalVariables->AddItem(groupName, "ObjCount", objCount_);
 }
 
 void GameDemoScene::Update() {
 
+	GlobalVariables* globalVariables{};
+	globalVariables = GlobalVariables::GetInstance();
 	ApplyGlobalVariables();
 
 	collisionManager_->ClearColliders();
@@ -136,10 +169,17 @@ void GameDemoScene::Update() {
 	for (int i = 0; i < 2; i++) {
 		worldTransformTriangle_[i].UpdateMatrix();
 		worldTransformSphere_[i].UpdateMatrix();
+		worldTransformLine_[i].UpdateMatrix();
 	}
 
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].UpdateMatrix();
+	}
+
+	worldTransformModelVAT_.UpdateMatrix();
+
+	for (Obj& obj : objects_) {
+		obj.world.UpdateMatrix();
 	}
 
 	ImGui::Begin("debug");
@@ -314,6 +354,47 @@ void GameDemoScene::Update() {
 		}
 		ImGui::TreePop();
 	}
+	if (ImGui::TreeNode("VAT")) {//vatモデル
+		if (ImGui::Button("DrawModelVAT")) {
+			if (isVATDraw_ == false) {
+				isVATDraw_ = true;
+			}
+			else {
+				isVATDraw_ = false;
+			}
+		}
+		if (isVATDraw_ == true) {
+			if (ImGui::TreeNode("ModelVAT")) {
+				ImGui::DragFloat3("Translate", worldTransformModelVAT_.translation_.num, 0.05f);
+				ImGui::DragFloat3("Rotate", worldTransformModelVAT_.rotation_.num, 0.05f);
+				ImGui::DragFloat3("Scale", worldTransformModelVAT_.scale_.num, 0.05f);
+				ImGui::DragFloat("AnimTime", &vatData_.VATTime, 1.0f, 0.0f, vatData_.MaxVATTime);
+				modelVAT_->SetAnimationTime(vatData_.VATTime);
+				ImGui::TreePop();
+			}
+		}
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("Line")) {//ライン
+		if (ImGui::Button("DrawLine")) {
+			if (isLineDraw_ == false) {
+				isLineDraw_ = true;
+			}
+			else {
+				isLineDraw_ = false;
+			}
+		}
+		if (isLineDraw_ == true) {
+			if (ImGui::TreeNode("Line")) {
+				ImGui::DragFloat3("Point1", worldTransformLine_[0].translation_.num, 0.05f);
+				ImGui::DragFloat3("Point2", worldTransformLine_[1].translation_.num, 0.05f);
+				ImGui::DragFloat("LineThickness", &lineThickness_, 0.05f, 0.0f);
+				line_->SetLineThickness(lineThickness_);
+				ImGui::TreePop();
+			}
+		}
+		ImGui::TreePop();
+	}
 	if (ImGui::TreeNode("Particle")) {//パーティクル
 		if (ImGui::Button("DrawParticle1")) {
 			if (isParticleDraw_[0] == false) {
@@ -386,6 +467,39 @@ void GameDemoScene::Update() {
 
 	ImGui::Text("%f", ImGui::GetIO().Framerate);
 
+	ImGui::InputText("BlockName", objName_, sizeof(objName_));
+	if (ImGui::Button("SpawnBlock")) {
+		SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+		objCount_++;
+		globalVariables->SetValue(groupName, "ObjCount", objCount_);
+		for (Obj& obj : objects_) {
+			globalVariables->AddItem(groupName, obj.name, (std::string)objName_);
+			globalVariables->AddItem(groupName, obj.name + "Translate", obj.world.translation_);
+			//globalVariables->AddItem(groupName,obj.name + "Rotate", obj.world.rotation_);
+			globalVariables->AddItem(groupName, obj.name + "Scale", obj.world.scale_);
+		}
+	}
+	if (ImGui::Button("DeleteBlock")) {
+		SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+		for (auto it = objects_.begin(); it != objects_.end();) {
+			if (it->name == objName_) {
+				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Translate");
+				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Scale");
+				objCount_--;
+				globalVariables->SetValue(groupName, "ObjCount", objCount_);
+				it = objects_.erase(it);
+			}
+			else {
+				++it;
+			}
+		}
+	}
+	if (ImGui::Button("StartSetBlock")) {
+		for (int i = 0; i < objCount_; i++) {
+			SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
+		}
+	}
+
 	ImGui::End();
 
 	for (int i = 0; i < 2; i++) {
@@ -428,20 +542,39 @@ void GameDemoScene::Draw() {
 #pragma region 3Dオブジェクト描画
 	CJEngine_->PreDraw3D();
 
+	if (isLineDraw_) {//Line描画
+		line_->Draw(worldTransformLine_[0], worldTransformLine_[1], viewProjection_, lineMaterial_);
+
+		linePoint_[0]->Draw(worldTransformLine_[0], viewProjection_, lineMaterial_, 0);
+		linePoint_[1]->Draw(worldTransformLine_[1], viewProjection_, lineMaterial_, 0);
+	}
+
 	for (int i = 0; i < 2; i++) {
 		if (isTriangleDraw_[i]) {//Triangle描画
 			triangle_[i]->Draw(worldTransformTriangle_[i], viewProjection_, triangleMaterial_[i], uvResourceNum_);
 		}
 
-		if (isSphereDraw_[i]) {
+		if (isSphereDraw_[i]) {//Sphere描画
 			sphere_[i]->Draw(worldTransformSphere_[i], viewProjection_, sphereMaterial_[i], texture_[i]);
 		}
 	}
 
 	for (int i = 0; i < 3; i++) {
-		if (isModelDraw_[i]) {
+		if (isModelDraw_[i]) {//Model描画
 			model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
 		}
+	}
+
+	for (Obj& obj : objects_) {
+		obj.model.Draw(obj.world, viewProjection_, obj.material);
+	}
+
+#pragma endregion
+
+#pragma region VATモデル描画
+	CJEngine_->PreDrawVAT();
+	if (isVATDraw_) {//VATModel描画
+		modelVAT_->Draw(worldTransformModelVAT_, viewProjection_, modelMaterialVAT_);
 	}
 
 #pragma endregion
@@ -450,7 +583,7 @@ void GameDemoScene::Draw() {
 	CJEngine_->PreDrawParticle();
 
 	for (int i = 0; i < 2; i++) {
-		if (isParticleDraw_[i]) {
+		if (isParticleDraw_[i]) {//Particle描画
 			particle_[i]->Draw(viewProjection_);
 		}
 	}
@@ -466,9 +599,35 @@ void GameDemoScene::Draw() {
 void GameDemoScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 	audio_->SoundUnload(&soundData2_);
+
+	objects_.clear();
 }
 
 void GameDemoScene::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "GameDemoScene";
+
+	objCount_ = globalVariables->GetIntValue(groupName, "ObjCount");
+
+	for (Obj& obj : objects_) {
+		obj.world.translation_ = globalVariables->GetVector3Value(groupName, obj.name + "Translate");
+		//obj.world.rotation_ = globalVariables->GetVector3Value(groupName,  obj.name + "Rotate");
+		obj.world.scale_ = globalVariables->GetVector3Value(groupName, obj.name + "Scale");
+	}
+}
+
+void GameDemoScene::SetObject(Transform trans, const std::string& name) {
+	Obj obj;
+	obj.model.Initialize(ObjModelData_, ObjTexture_);
+	obj.model.SetDirectionalLightFlag(true, 3);
+
+	obj.world.Initialize();
+	obj.world.translation_ = trans.translate;
+	obj.world.rotation_ = trans.rotate;
+	obj.world.scale_ = trans.scale;
+
+	obj.material = { 1.0f,1.0f,1.0f,1.0f };
+
+	obj.name = name;
+	objects_.push_back(obj);
 }

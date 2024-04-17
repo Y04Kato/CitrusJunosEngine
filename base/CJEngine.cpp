@@ -67,24 +67,29 @@ void CitrusJunosEngine::Initialize(const char* title, int32_t width, int32_t hei
 	InitializeDxcCompiler();
 
 	CreateRootSignature3D();
+	CreateRootSignatureVAT();
 	CreateRootSignature2D();
 	CreateRootSignatureParticle();
 
 	CreateInputlayOut3D();
+	CreateInputlayOutVAT();
 	CreateInputlayOut2D();
 	CreateInputlayOutParticle();
 
 	BlendState();
 
 	RasterizerState3D();
+	RasterizerStateVAT();
 	RasterizerState2D();
 	RasterizerStateParticle();
 
-	SettingDepth();
+	SettingDepth3D();
+	SettingDepthVAT();
 	SettingDepth2D();
 	SettingDepthParticle();
 
 	InitializePSO3D();
+	InitializePSOVAT();
 	InitializePSO2D();
 	InitializePSOParticle();
 
@@ -173,14 +178,11 @@ void CitrusJunosEngine::CreateRootSignature3D() {
 
 	//RootParameter作成、複数設定可能な為、配列に
 	D3D12_ROOT_PARAMETER rootParameters[7] = {};
-	//MaterialResource
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
 	//Worldtransform
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderを使う
 	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
+	
 	//ViewProjection
 	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
@@ -196,6 +198,11 @@ void CitrusJunosEngine::CreateRootSignature3D() {
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixcelShaderを使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+
+	//MaterialResource
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
 
 	//DirectionalLight
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
@@ -300,12 +307,203 @@ void CitrusJunosEngine::InitializePSO3D() {
 	//どのように画面に色を打ち込むのかの設定（気にしなく良い）
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc_;
+	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc3D_;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	//実際に生成
 	graphicsPipelineState3D_ = nullptr;
 	HRESULT hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState3D_));
+	assert(SUCCEEDED(hr));
+}
+#pragma endregion
+
+#pragma region VAT用パイプライン
+void CitrusJunosEngine::CreateRootSignatureVAT() {
+	//RootSignature作成
+	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
+	descriptionRootSignature.Flags =
+		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	//RootParameter作成、複数設定可能な為、配列に
+	D3D12_ROOT_PARAMETER rootParameters[10] = {};
+
+	D3D12_DESCRIPTOR_RANGE descriptoraRange[1] = {};
+	descriptoraRange[0].BaseShaderRegister = 0;//0から始まる
+	descriptoraRange[0].NumDescriptors = 1;//数は1つ
+	descriptoraRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptoraRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE descriptoraRange2[1] = {};
+	descriptoraRange2[0].BaseShaderRegister = 1;//1から始まる
+	descriptoraRange2[0].NumDescriptors = 1;//数は1つ
+	descriptoraRange2[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptoraRange2[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE descriptoraRange3[1] = {};
+	descriptoraRange3[0].BaseShaderRegister = 2;//2から始まる
+	descriptoraRange3[0].NumDescriptors = 1;//数は1つ
+	descriptoraRange3[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptoraRange3[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+
+	//VertexShader
+	//Worldtransform
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderを使う
+	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
+	
+	//ViewProjection
+	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
+	rootParameters[4].Descriptor.ShaderRegister = 1;//レジスタ番号1にバインド
+
+	//VATTimer
+	rootParameters[9].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[9].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
+	rootParameters[9].Descriptor.ShaderRegister = 2;//レジスタ番号2にバインド
+
+	//VATPosTex
+	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
+	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
+	rootParameters[7].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
+	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+
+	//VATRotTex
+	rootParameters[8].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
+	rootParameters[8].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
+	rootParameters[8].DescriptorTable.pDescriptorRanges = descriptoraRange2;//tableの中身の配列を指定
+	rootParameters[8].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange2);//Tableで利用する数
+
+	//PixelShader
+	//Texture
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixcelShaderを使う
+	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptoraRange3;//tableの中身の配列を指定
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange3);//Tableで利用する数
+
+	//MaterialResource
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
+
+	//DirectionalLight
+	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixcelShaderで使う
+	rootParameters[3].Descriptor.ShaderRegister = 1;//レジスタ番号1を使う
+
+	//Camera
+	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixcelShaderで使う
+	rootParameters[5].Descriptor.ShaderRegister = 2;//レジスタ番号2を使う
+
+	//PointLight
+	rootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixcelShaderで使う
+	rootParameters[6].Descriptor.ShaderRegister = 3;//レジスタ番号3を使う
+
+	D3D12_STATIC_SAMPLER_DESC staticSamplers[2] = {};//Samplerの設定
+	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
+	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//０～１の範囲外をリピート
+	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
+	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;//ありったけのmipmapを使う
+	staticSamplers[0].ShaderRegister = 0;//レジスタ番号0を使う
+	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderで使う
+
+	staticSamplers[1].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
+	staticSamplers[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//０～１の範囲外をリピート
+	staticSamplers[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[1].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
+	staticSamplers[1].MaxLOD = D3D12_FLOAT32_MAX;//ありったけのmipmapを使う
+	staticSamplers[1].ShaderRegister = 1;//レジスタ番号1を使う
+	staticSamplers[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+
+	descriptionRootSignature.pStaticSamplers = staticSamplers;
+	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
+
+	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = _countof(rootParameters);//配列の長さ
+
+	//シリアライズしてバイナリにする
+	signatureBlobVAT_ = nullptr;
+	errorBlobVAT_ = nullptr;
+	HRESULT hr;
+	hr = D3D12SerializeRootSignature(&descriptionRootSignature,
+		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlobVAT_, &errorBlobVAT_);
+	if (FAILED(dxCommon_->GetHr())) {
+		Log(reinterpret_cast<char*>(errorBlobVAT_->GetBufferPointer()));
+		assert(false);
+	}
+	//バイナリを元に生成
+	rootSignatureVAT_ = nullptr;
+	hr = dxCommon_->GetDevice()->CreateRootSignature(0, signatureBlobVAT_->GetBufferPointer(),
+		signatureBlobVAT_->GetBufferSize(), IID_PPV_ARGS(&rootSignatureVAT_));
+	assert(SUCCEEDED(hr));
+}
+
+void CitrusJunosEngine::CreateInputlayOutVAT() {
+	inputElementDescsVAT_[0].SemanticName = "POSITION";
+	inputElementDescsVAT_[0].SemanticIndex = 0;
+	inputElementDescsVAT_[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescsVAT_[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescsVAT_[1].SemanticName = "TEXCOORD";
+	inputElementDescsVAT_[1].SemanticIndex = 0;
+	inputElementDescsVAT_[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDescsVAT_[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescsVAT_[2].SemanticName = "NORMAL";
+	inputElementDescsVAT_[2].SemanticIndex = 0;
+	inputElementDescsVAT_[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescsVAT_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputLayoutDescVAT_.pInputElementDescs = inputElementDescsVAT_;
+	inputLayoutDescVAT_.NumElements = _countof(inputElementDescsVAT_);
+}
+
+void CitrusJunosEngine::RasterizerStateVAT() {
+	//裏面（時計回り）を表示する
+	rasterizerDescVAT_.CullMode = D3D12_CULL_MODE_NONE;
+	//三角形の中を塗りつぶす
+	rasterizerDescVAT_.FillMode = D3D12_FILL_MODE_SOLID;
+
+	//Shaderをコンパイルする
+	vertexShaderBlobVAT_ = CompileShader(L"project/gamedata/resources/shaders/VAT.VS.hlsl",
+		L"vs_6_0", dxcUtils_, dxcCompiler_, includeHandler_);
+	assert(vertexShaderBlobVAT_ != nullptr);
+
+
+	pixelShaderBlobVAT_ = CompileShader(L"project/gamedata/resources/shaders/VAT.PS.hlsl",
+		L"ps_6_0", dxcUtils_, dxcCompiler_, includeHandler_);
+	assert(pixelShaderBlobVAT_ != nullptr);
+}
+
+void CitrusJunosEngine::InitializePSOVAT() {
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
+	graphicsPipelineStateDesc.pRootSignature = rootSignatureVAT_.Get();//RootSignature
+	graphicsPipelineStateDesc.InputLayout = inputLayoutDescVAT_;//Inputlayout
+	graphicsPipelineStateDesc.VS = { vertexShaderBlobVAT_->GetBufferPointer(),
+		vertexShaderBlobVAT_->GetBufferSize() };//vertexShader
+	graphicsPipelineStateDesc.PS = { pixelShaderBlobVAT_->GetBufferPointer(),
+		pixelShaderBlobVAT_->GetBufferSize() };//pixcelShader
+	graphicsPipelineStateDesc.BlendState = blendDesc_[kBlendModeNormal];//BlendState
+	graphicsPipelineStateDesc.RasterizerState = rasterizerDescVAT_;//rasterizerState
+	//書き込むRTVの情報
+	graphicsPipelineStateDesc.NumRenderTargets = 1;
+	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	//利用するトポロジ（形状）のタイプ。三角形
+	graphicsPipelineStateDesc.PrimitiveTopologyType =
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	//どのように画面に色を打ち込むのかの設定（気にしなく良い）
+	graphicsPipelineStateDesc.SampleDesc.Count = 1;
+	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc3D_;
+	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	//実際に生成
+	graphicsPipelineStateVAT_ = nullptr;
+	HRESULT hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(&graphicsPipelineStateVAT_));
 	assert(SUCCEEDED(hr));
 }
 #pragma endregion
@@ -362,9 +560,7 @@ void CitrusJunosEngine::CreateRootSignature2D() {
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	//RootParameter作成。複数設定できるので配列。今回は結果1つだけなので長さ１の配列
 	D3D12_ROOT_PARAMETER rootParameters[3] = {};
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//pixelShaderを使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
+	//Worldtransform
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderを使う
 	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
@@ -374,11 +570,16 @@ void CitrusJunosEngine::CreateRootSignature2D() {
 	descriptoraRange[0].NumDescriptors = 1;
 	descriptoraRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使用
 	descriptoraRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+	//Texture
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixcelShaderを使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);
 
+	//MaterialResource
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//pixelShaderを使う
+	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
 
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
@@ -435,10 +636,6 @@ void CitrusJunosEngine::CreateRootSignatureParticle() {
 
 	//RootParameter作成、複数設定可能な為、配列に
 	D3D12_ROOT_PARAMETER rootParameters[5] = {};
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
-
 	//viewProjection
 	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
@@ -453,11 +650,16 @@ void CitrusJunosEngine::CreateRootSignatureParticle() {
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VERTEXShaderを使う
 	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
 	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
-	
+	//Texture
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+
+	//MaterialResource
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
 
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixcelShaderで使う
@@ -580,11 +782,18 @@ void CitrusJunosEngine::ScissorRect() {
 	scissorRect_.bottom = WinApp::kClientHeight;
 }
 
-void CitrusJunosEngine::SettingDepth() {
+void CitrusJunosEngine::SettingDepth3D() {
 	//DepthStencilStateの設定
-	depthStencilDesc_.DepthEnable = true;//有効化
-	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;//書き込み
-	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;//比較関数、近ければ描画される
+	depthStencilDesc3D_.DepthEnable = true;//有効化
+	depthStencilDesc3D_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;//書き込み
+	depthStencilDesc3D_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;//比較関数、近ければ描画される
+}
+
+void CitrusJunosEngine::SettingDepthVAT() {
+	//DepthStencilStateの設定
+	depthStencilDescVAT_.DepthEnable = true;//有効化
+	depthStencilDescVAT_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;//書き込み
+	depthStencilDescVAT_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;//比較関数、近ければ描画される
 }
 
 void CitrusJunosEngine::SettingDepth2D() {
@@ -614,6 +823,13 @@ void CitrusJunosEngine::PreDraw3D() {
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature3D_.Get());
 	//PS0を設定
 	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState3D_.Get());
+}
+
+void CitrusJunosEngine::PreDrawVAT() {
+	//RootSignatureを設定。PS0とは別途設定が必要3D
+	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignatureVAT_.Get());
+	//PS0を設定
+	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineStateVAT_.Get());
 }
 
 void CitrusJunosEngine::PreDraw2D() {

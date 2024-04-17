@@ -2,16 +2,21 @@
 #include "Structure.h"
 #include <assert.h>
 #include <cmath>
+#define _USE_MATH_DEFINES
+#include <math.h> 
 #include <numbers>
 #include <algorithm>
 
 #pragma region float
 float Length(const Vector3& v);
 float Dot(const Vector3& v1, const Vector3& v2);
+float Magnitude(const Vector3& v);
 
 float LengthQuaternion(const Quaternion& q);
 
-float contangent(float b, float a);
+float Contangent(float b, float a);
+
+float Distance(const Vector3& v1, const Vector3& v2);
 
 float Lerp(float a, float b, float t);
 float LerpShortAngle(float a, float b, float t);
@@ -92,10 +97,14 @@ Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
 //射影
-Vector3 Project(const Vector3& v , const Vector3 n);
+Vector3 Project(const Vector3& v, const Vector3 n);
 
 //衝突＆反発
 std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector3& velocity1, float mass2, const Vector3& velocity2, float coefficientOfRestitution, const Vector3& normal);
+
+//任意の時刻の値を取得する
+Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time);
+Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframe, float time);
 
 #pragma endregion
 

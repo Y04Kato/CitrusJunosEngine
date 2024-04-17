@@ -1,0 +1,3 @@
+C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/SOP_LevelEditor.dir
+C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/ZERO_CHECK.dir

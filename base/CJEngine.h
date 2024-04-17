@@ -42,6 +42,7 @@ public:
 	void Update();
 
 	void PreDraw3D();
+	void PreDrawVAT();
 	void PreDraw2D();
 	void PreDrawParticle();
 
@@ -71,9 +72,6 @@ private:
 	//頂点リソースにデータを書き込む
 	Vector4* vertexData_;
 
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_{};
-
-
 	IDxcBlob* CompileShader(
 		//CompileShaderするShaderファイルへのパス
 		const std::wstring& filePath,
@@ -89,13 +87,13 @@ private:
 	void BlendState();
 	void ViewPort();
 	void ScissorRect();
-	void SettingDepth();
 
 	//3D用
 	void CreateRootSignature3D();
 	void CreateInputlayOut3D();
 	void RasterizerState3D();
 	void InitializePSO3D();
+	void SettingDepth3D();
 	Microsoft::WRL::ComPtr <ID3DBlob> signatureBlob3D_;
 	Microsoft::WRL::ComPtr <ID3DBlob> errorBlob3D_;
 	Microsoft::WRL::ComPtr <ID3D12RootSignature> rootSignature3D_;
@@ -107,6 +105,26 @@ private:
 	D3D12_RASTERIZER_DESC rasterizerDesc3D_{};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs3D_[3];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc3D_{};
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc3D_{};
+
+	//VAT(VertexAnimationTexture)用
+	void CreateRootSignatureVAT();
+	void CreateInputlayOutVAT();
+	void RasterizerStateVAT();
+	void InitializePSOVAT();
+	void SettingDepthVAT();
+	Microsoft::WRL::ComPtr <ID3DBlob> signatureBlobVAT_;
+	Microsoft::WRL::ComPtr <ID3DBlob> errorBlobVAT_;
+	Microsoft::WRL::ComPtr <ID3D12RootSignature> rootSignatureVAT_;
+
+	Microsoft::WRL::ComPtr <IDxcBlob> vertexShaderBlobVAT_;
+	Microsoft::WRL::ComPtr <IDxcBlob> pixelShaderBlobVAT_;
+
+	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineStateVAT_;
+	D3D12_RASTERIZER_DESC rasterizerDescVAT_{};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescsVAT_[3];
+	D3D12_INPUT_LAYOUT_DESC inputLayoutDescVAT_{};
+	D3D12_DEPTH_STENCIL_DESC depthStencilDescVAT_{};
 
 	//2D用
 	void CreateRootSignature2D();

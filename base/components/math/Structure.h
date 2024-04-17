@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include <map>
 
 struct Transform {
 	Vector3 scale;
@@ -24,6 +25,13 @@ struct TransformationMatrix {
 	Matrix4x4 WorldInverseTranspose;
 };
 
+struct VATData {
+	float VATTime;
+	float MaxVATTime;
+	Vector4 VatPositionTexSize;//(1.0/width, 1.0/height, width, height)
+	Vector4 VatNormalTexSize;//(1.0/width, 1.0/height, width, height)
+};
+
 struct Material {
 	Vector4 color;
 	int32_t enableLighting;
@@ -32,10 +40,42 @@ struct Material {
 	float shininess;
 };
 
-struct DirectionalLight {
-	Vector4 color;
-	Vector3 direction;
-	float intensity;
+struct Quaternion {
+	float x, y, z, w;
+};
+
+//Node情報格納用構造体
+struct Node {
+	Matrix4x4 localMatrix;
+	std::string name;
+	std::vector<Node> children;
+};
+
+//Keyframe構造体
+template <typename tValue>
+struct Keyframe {
+	float time;//キーフレームの時間(単位：秒)
+	tValue value;//キーフレームの値
+};
+using KeyframeVector3 = Keyframe<Vector3>;
+using KeyframeQuaternion = Keyframe<Quaternion>;
+
+//KeyframeをNodeごとにまとめる
+template <typename tValue>
+struct AnimationCurve {
+	std::vector<Keyframe<tValue>> keyframes;
+};
+
+struct NodeAnimation {
+	AnimationCurve<Vector3> translate;
+	AnimationCurve<Quaternion> rotate;
+	AnimationCurve<Vector3> scale;
+};
+
+struct Animation {
+	float duration;//アニメーションの全体の長さ(単位：秒)
+	//NodeAnimationの集合、Node名で引けるようにする
+	std::map<std::string, NodeAnimation> nodeAnimations;
 };
 
 struct MaterialData {
@@ -46,6 +86,7 @@ struct ModelData {
 	std::vector<VertexData> vertices;
 	MaterialData material;
 	int textureIndex;
+	Node rootNode;
 };
 
 struct AABB {
@@ -64,10 +105,7 @@ struct StructSphere {
 	float radius;
 };
 
-struct Quaternion {
-	float x, y, z, w;
-};
-
+#pragma region Particle
 struct Particle {
 	Transform transform;
 	Vector3 velocity;
@@ -93,8 +131,17 @@ struct AccelerationField {
 	AABB area;//範囲
 };
 
+#pragma endregion
+
+#pragma region Lighting
 struct CameraForGPU {
 	Vector3 worldPosition;
+};
+
+struct DirectionalLight {
+	Vector4 color;
+	Vector3 direction;
+	float intensity;
 };
 
 struct PointLight {
@@ -104,3 +151,5 @@ struct PointLight {
 	float radius;
 	float decay;
 };
+
+#pragma endregion

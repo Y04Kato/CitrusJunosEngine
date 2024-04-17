@@ -7,8 +7,24 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
 
-	modelData_ = LoadObjFile(directoryPath, filename);
+	modelData_ = LoadModelFile(directoryPath, filename);
+	animation_ = LoadAnimationFile(directoryPath, filename);
 	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
+
+	CreateVartexData();
+	SetColor();
+	CreateLight();
+}
+
+void Model::Initialize(const ModelData modeldata, const uint32_t texture) {
+	dxCommon_ = DirectXCommon::GetInstance();
+	CJEngine_ = CitrusJunosEngine::GetInstance();
+	textureManager_ = TextureManager::GetInstance();
+	directionalLights_ = DirectionalLights::GetInstance();
+	pointLights_ = PointLights::GetInstance();
+
+	modelData_ = modeldata;
+	texture_ = texture;
 
 	CreateVartexData();
 	SetColor();
@@ -34,15 +50,45 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
 	*pointLight_ = pointLights_->GetPointLight();
 
+	if (isKeyframeAnim_) {//KeyframeAnimationの場合
+		animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+		animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
+		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
+		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
+		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
+		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
+		Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
+
+		//rootのMatrixの適用
+		world_ = worldTransform;
+		world_.constMap->matWorld = Multiply(localM,Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
+		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	}
+	else {
+		//rootのMatrixの適用
+		world_ = worldTransform;
+		world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
+		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	}
+
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0にせっていしているものとはまた別
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, worldTransform.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, world_.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
+
+	if (isVAT_ == true) {//VATモデルである場合
+		ImGui::Text("%d", (int)vatData_.VATTime);
+
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(vatPosTex_));
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatRotTex_));
+		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(9, vatResource_->GetGPUVirtualAddress());
+
+	}
 
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texture_));
 	dxCommon_->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
@@ -59,104 +105,158 @@ Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::st
 	return model;
 }
 
-ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+Model* Model::CreateModelFromObj(const ModelData modeldata, const uint32_t texture) {
+	Model* model = new Model();
+	model->Initialize(modeldata, texture);
+	return model;
+}
+
+ModelData Model::LoadModelFile(const std::string& directoryPath, const std::string& filename) {
 	ModelData modelData;//構築するModelData
-	std::vector<Vector4> positions;//位置
-	std::vector<Vector3> normals;//法線
-	std::vector<Vector2> texcoords;//テクスチャ座標
-	std::string line;//ファイルから読んだ1行を格納するもの
 
-	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
-	assert(file.is_open());
+	Assimp::Importer importer;
 
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;//先頭の識別子を読む
+	std::string file(directoryPath + "/" + filename);//ファイルを開く
 
-		//identifierに応じた処理
-		if (identifier == "v") {
-			Vector4 position;
-			s >> position.num[0] >> position.num[1] >> position.num[2];
-			position.num[2] *= -1.0f;
-			position.num[3] = 1.0f;
-			positions.push_back(position);
+	const aiScene* scene = importer.ReadFile(file.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+
+	//meshが存在しない物は対応しない
+	assert(scene->HasMeshes());
+
+	modelData.rootNode = ReadNode(scene->mRootNode);
+
+	//meshの解析
+	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+		assert(mesh->HasNormals());//法線がないmeshは非対応
+		if (mesh->HasTextureCoords(0) == true) {//TexCoordの確認
+			isLoadTexCoord_ = true;
 		}
-		else if (identifier == "vt") {
-			Vector2 texcoord;
-			s >> texcoord.num[0] >> texcoord.num[1];
-			texcoord.num[1] = 1.0f - texcoord.num[1];
-			texcoords.push_back(texcoord);
+		else {//TexCoordがない場合
+			isLoadTexCoord_ = false;
 		}
-		else if (identifier == "vn") {
-			Vector3 normal;
-			s >> normal.num[0] >> normal.num[1] >> normal.num[2];
-			normal.num[2] *= -1.0f;
-			normals.push_back(normal);
-		}
-		else if (identifier == "f") {
-			VertexData triangle[3];
-			//面は三角形限定 その他は未対応
-			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
-				std::string vertexDefinition;
-				s >> vertexDefinition;
-				//頂点の要素へのIndexは【位置/UV/法線】で格納されているので、分解してIndexを取得する
-				std::istringstream v(vertexDefinition);
-				uint32_t elementIndeices[3];
-				for (int32_t element = 0; element < 3; ++element) {
-					std::string index;
-					std::getline(v, index, '/');// /区切りでIndexを積んでいく
-					elementIndeices[element] = std::stoi(index);
+
+		//meshの中身(face)の解析を行う
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+			aiFace& face = mesh->mFaces[faceIndex];
+			assert(face.mNumIndices == 3);//三角形のみ対応
+
+			//faceの中身(vertex)の解析を行う
+			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+				//faceから取得したvertexIndexでmeshからデータを取り出す
+				uint32_t vertexIndex = face.mIndices[element];
+				aiVector3D& position = mesh->mVertices[vertexIndex];
+				aiVector3D& normal = mesh->mNormals[vertexIndex];
+				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+				VertexData vertex;
+				vertex.position = { position.x,position.y,position.z,1.0f };
+				vertex.normal = { normal.x,normal.y,normal.z };
+				if (isLoadTexCoord_ == true) {//TexCoordの設定
+					vertex.texcoord = { texcoord.x,texcoord.y };
 				}
-				//要素へのIndexから、実際の要素の値を取得して、頂点を構築する
-				Vector4 position = positions[elementIndeices[0] - 1];
-				Vector2 texcoord = texcoords[elementIndeices[1] - 1];
-				Vector3 normal = normals[elementIndeices[2] - 1];
-				VertexData vertex = { position,texcoord,normal };
+				else {//無い場合、手動で設定する
+					vertex.texcoord = { 32.0f,32.0f };
+				}
+
 				modelData.vertices.push_back(vertex);
-				triangle[faceVertex] = { position,texcoord,normal };
-
 			}
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
 		}
-		else if (identifier == "mtllib") {
-			//materialTemplateLibraryファイルの名前を取得
-			std::string materialFilname;
-			s >> materialFilname;
-			//基本的にobjファイルと同一階層にmtlは存在させるから、ディレクトリ名とファイル名を渡す
-			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilname);
-		}
-
 	}
+
+	//materialの解析(現在はマルチマテリアル非対応)
+	if (isLoadTexCoord_ == true) {//モデルにテクスチャがテクスチャが設定されている場合
+		for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
+			aiMaterial* material = scene->mMaterials[materialIndex];
+
+			//Materialに設定されているTextureを用途に応じて取得する
+			//模様
+			if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+				aiString textureFilePath;
+				material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+				modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
+			}
+		}
+	}
+	else {//モデルにテクスチャがテクスチャが設定されていない場合
+		modelData.material.textureFilePath = "project/gamedata/resources/null.png";
+	}
+
 	return modelData;
 }
 
-MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
-	MaterialData materialData;//構築するマテリアルデータ
-	std::string line;
-	std::ifstream file(directoryPath + "/" + filename);
-	assert(file.is_open());
-	while (std::getline(file, line))
-	{
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-		//identifierに応じた処理
-		if (identifier == "map_Kd") {
-			std::string textureFilname;
-			s >> textureFilname;
-			//連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilname;
+Animation Model::LoadAnimationFile(const std::string& directoryPath, const std::string& filename) {
+	Animation animation;//今回作るアニメーション
+	Assimp::Importer importer;
+
+	std::string file(directoryPath + "/" + filename);//ファイルを開く
+
+	const aiScene* scene = importer.ReadFile(file.c_str(), 0);
+
+	//アニメーションが存在しない場合はスルー
+	if (scene->mNumAnimations != 0) {
+		isKeyframeAnim_ = true;
+		aiAnimation* animationAssimp = scene->mAnimations[0];//最初のアニメーションのみ現在は対応
+		animation.duration = float(animationAssimp->mDuration / animationAssimp->mTicksPerSecond);//時間の単位を秒に変換
+
+		//assimpでは個々のNodeAnimationをchannelと呼び、channelを回してNodeAnimation情報を取る
+		for (uint32_t channelIndex = 0; channelIndex < animationAssimp->mNumChannels; ++channelIndex) {
+			aiNodeAnim* nodeAnimationAssimp = animationAssimp->mChannels[channelIndex];
+			NodeAnimation& nodeAnimation = animation.nodeAnimations[nodeAnimationAssimp->mNodeName.C_Str()];
+			//Translate
+			for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumPositionKeys; ++keyIndex) {
+				aiVectorKey& keyAssimp = nodeAnimationAssimp->mPositionKeys[keyIndex];
+				KeyframeVector3 keyframe;
+				keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);//秒に変換
+				keyframe.value = { -keyAssimp.mValue.x,keyAssimp.mValue.y,keyAssimp.mValue.z };//右手➡左手
+				nodeAnimation.translate.keyframes.push_back(keyframe);
+			}
+			//Rotate
+			for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumRotationKeys; ++keyIndex) {
+				aiQuatKey& keyAssimp = nodeAnimationAssimp->mRotationKeys[keyIndex];
+				KeyframeQuaternion keyframe;
+				keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);//秒に変換
+				keyframe.value = { keyAssimp.mValue.x,-keyAssimp.mValue.y,-keyAssimp.mValue.z ,keyAssimp.mValue.w };//右手➡左手
+				nodeAnimation.rotate.keyframes.push_back(keyframe);
+			}
+			//Scale
+			for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumScalingKeys; ++keyIndex) {
+				aiVectorKey& keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
+				KeyframeVector3 keyframe;
+				keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);//秒に変換
+				keyframe.value = { -keyAssimp.mValue.x,keyAssimp.mValue.y,keyAssimp.mValue.z };//右手➡左手
+				nodeAnimation.scale.keyframes.push_back(keyframe);
+			}
 		}
 	}
-	return materialData;
+
+	return animation;
+}
+
+Node Model::ReadNode(aiNode* node) {
+	Node result;
+	//nodeのlocalMatrixを取得
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation;
+	//列ベクトル形式を行ベクトル形式に転置
+	aiLocalMatrix.Transpose();
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			result.localMatrix.m[i][j] = aiLocalMatrix[i][j];
+		}
+	}
+	//Node名を格納
+	result.name = node->mName.C_Str();
+	//子供の数だけ確保
+	result.children.resize(node->mNumChildren);
+	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
+		//再帰的に読んで階層構造を作っていく
+		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
+	}
+
+	return result;
 }
 
 void Model::CreateVartexData() {
 	vertexResource_ = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexData) * modelData_.vertices.size());
-
 
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
@@ -192,7 +292,30 @@ void Model::CreateLight() {
 	cameraData_->worldPosition = { 0,0,0 };
 }
 
-void Model::SetDirectionalLightFlag(bool isDirectionalLight,int lightNum) {
+void Model::SetDirectionalLightFlag(bool isDirectionalLight, int lightNum) {
 	isDirectionalLight_ = isDirectionalLight;
 	lightNum_ = lightNum;
+}
+
+void Model::LoadVATData(const std::string& directoryPath, const VATData& vatdata) {
+	isVAT_ = true;
+
+	std::string vatPos = directoryPath + "/VATpos.png";
+	std::string vatRot = directoryPath + "/VATrot.png";
+
+	vatPosTex_ = textureManager_->Load(vatPos);
+	vatRotTex_ = textureManager_->Load(vatRot);
+
+	vatResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(VATData));
+	vatResource_->Map(0, NULL, reinterpret_cast<void**>(&vatData_));
+
+	vatData_.VATTime = vatdata.VATTime;
+	vatData_.MaxVATTime = vatdata.MaxVATTime;
+	vatData_.VatPositionTexSize = vatdata.VatPositionTexSize;
+	vatData_.VatNormalTexSize = vatdata.VatNormalTexSize;
+	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
+}
+
+void Model::SetAnimationTime(float animTime) {
+	vatData_.VATTime = animTime;
 }

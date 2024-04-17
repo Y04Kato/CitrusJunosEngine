@@ -9,11 +9,16 @@
 #include <sstream>
 #include "DirectionalLight.h"
 #include "PointLight.h"
-#include<wrl.h>
+#include <wrl.h>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 class Model {
 public:
 	void Initialize(const std::string& directoryPath, const std::string& filename);
+	void Initialize(const ModelData modeldata, const uint32_t texture);
 
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material);
 	
@@ -29,10 +34,22 @@ public:
 	/// </summary>
 	void SetDirectionalLightFlag(bool isDirectionalLight,int lightNum);
 
-	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
-	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+	ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
+	Animation LoadAnimationFile(const std::string& directoryPath, const std::string& filename);
+
+	Node ReadNode(aiNode* node);
 
 	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
+	static Model* CreateModelFromObj(const ModelData modeldata,const uint32_t texture);
+
+	/// <summary>
+	/// VATに必要なテクスチャのロード(テクスチャの名前は固定、モデルファイルと同じディレクトリを参照)
+	/// 1:VATpos.png
+	/// 2:VATrot.png
+	/// </summary>
+	void LoadVATData(const std::string& directoryPath, const VATData& vatdata);
+
+	void SetAnimationTime(float animTime);
 
 private:
 	DirectXCommon* dxCommon_;
@@ -62,6 +79,20 @@ private:
 	
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
 	CameraForGPU* cameraData_ = nullptr;
+
+	bool isLoadTexCoord_ = false;//TexCoordがモデルに設定されているか
+
+	WorldTransform world_;
+
+	bool isKeyframeAnim_ = false;//KeyframeAnimationかどうか
+	float animationTime_ = 0.0f;
+	Animation animation_;
+
+	bool isVAT_ = false;//VATモデルかどうか
+	uint32_t vatPosTex_;
+	uint32_t vatRotTex_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> vatResource_;
+	VATData vatData_;
 
 private:
 	void CreateVartexData();

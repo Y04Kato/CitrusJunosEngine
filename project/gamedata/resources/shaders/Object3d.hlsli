@@ -36,7 +36,7 @@ struct Material {
 struct DirectionalLight {
 	float32_t4 color;
 	float32_t3 direction;
-	float intensity;
+	float32_t intensity;
 };
 
 struct Camera {
@@ -46,8 +46,8 @@ struct Camera {
 struct PointLight {
 	float32_t4 color;
 	float32_t3 position;
-	float intensity;
-	float radius;
-	float decay;
-	float padding[2];
+	float32_t intensity;
+	float32_t radius;
+	float32_t decay;
+	float32_t padding[2];
 };
