@@ -129,8 +129,8 @@ void GameDemoScene::Initialize() {
 	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
 	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
 
-	for (int i = 0; i < testCount_; i++) {
-		test_[i] = "test" + std::to_string(i);
+	for (int i = 0; i < objCountMax_; i++) {
+		objNameHolder_[i] = "test" + std::to_string(i);
 	}
 
 	GlobalVariables* globalVariables{};
@@ -498,7 +498,7 @@ void GameDemoScene::Update() {
 	}
 	if (ImGui::Button("StartSetBlock")) {
 		for (int i = 0; i < objCount_; i++) {
-			SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, test_[i]);
+			SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
 		}
 	}
 

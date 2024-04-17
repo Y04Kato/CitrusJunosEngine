@@ -98,20 +98,20 @@ private:
 	bool isLineDraw_;
 	bool isVATDraw_;
 
+	//ステージエディター擬き、名前をtest0~始め、それを記録する
 	struct Obj {
 		Model model;
 		WorldTransform world;
 		Vector4 material;
 		std::string name;
 	};
-
 	std::list<Obj> objects_;
 	ModelData ObjModelData_;
 	uint32_t ObjTexture_;
 	char objName_[64];
-	static const int testCount_ = 100;
+	static const int objCountMax_ = 100;
 	int objCount_ = 0;
-	std::string test_[testCount_];
+	std::string objNameHolder_[objCountMax_];
 
 	const char* groupName = "GameDemoScene";
 };
