@@ -155,6 +155,7 @@
     <ClCompile Include="base\components\audio\Audio.cpp" />
     <ClCompile Include="base\components\manager\ImGuiManager\ImGuiManager.cpp" />
     <ClCompile Include="base\components\manager\TextureManager.cpp" />
+    <ClCompile Include="base\components\postEffect\PostEffect.cpp" />
     <ClCompile Include="base\components\utilities\convertString\ConvertString.cpp" />
     <ClCompile Include="base\components\utilities\directionalLight\DirectionalLight.cpp" />
     <ClCompile Include="base\components\utilities\followCamera\FollowCamera.cpp" />
@@ -256,6 +257,7 @@
     <ClInclude Include="base\components\manager\ImGuiManager\ImGuiManager.h" />
     <ClInclude Include="base\components\manager\TextureManager.h" />
     <ClInclude Include="base\components\math\Structure.h" />
+    <ClInclude Include="base\components\postEffect\PostEffect.h" />
     <ClInclude Include="base\components\utilities\convertString\ConvertString.h" />
     <ClInclude Include="base\components\utilities\directionalLight\DirectionalLight.h" />
     <ClInclude Include="base\components\utilities\followCamera\FollowCamera.h" />

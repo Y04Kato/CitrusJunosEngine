@@ -24,6 +24,8 @@ public:
 	void ClearRenderTarget();
 	void Finalize();
 
+	uint32_t GetSRVIndex() { return renderSRVIndex_; }
+
 	static Microsoft::WRL::ComPtr <ID3D12Resource> CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes);
 
 	WinApp* GetWin() { return WinApp::GetInstance(); }
@@ -75,8 +77,10 @@ private:
 
 	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> srvDescriptorHeap_;//srv用
 
-	//RTVを２つ作るのでディスクリプタを２つ用意
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
+	uint32_t renderRTVIndex_ = 0;
+	uint32_t renderSRVIndex_ = 0;
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[256];
+	D3D12_CPU_DESCRIPTOR_HANDLE srvHandles_[256];
 	Microsoft::WRL::ComPtr <ID3D12Resource> swapChainResources_[2];
 
 	//Fence
