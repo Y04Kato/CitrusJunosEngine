@@ -818,6 +818,14 @@ void CitrusJunosEngine::BeginFrame() {
 	dxCommon_->GetCommandList()->RSSetScissorRects(1, &scissorRect_);
 }
 
+void CitrusJunosEngine::BeginFrameT() {
+	dxCommon_->PreDrawT();
+	//viewportを設定
+	dxCommon_->GetCommandList()->RSSetViewports(1, &viewport_);
+	//scirssorを設定
+	dxCommon_->GetCommandList()->RSSetScissorRects(1, &scissorRect_);
+}
+
 void CitrusJunosEngine::PreDraw3D() {
 	//RootSignatureを設定。PS0とは別途設定が必要3D
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature3D_.Get());
@@ -849,6 +857,11 @@ void CitrusJunosEngine::PreDrawParticle() {
 void CitrusJunosEngine::EndFrame() {
 	//内部コマンドを生成する
 	dxCommon_->PostDraw();
+}
+
+void CitrusJunosEngine::EndFrameT() {
+	//内部コマンドを生成する
+	dxCommon_->PostDrawT();
 }
 
 void CitrusJunosEngine::Finalize() {

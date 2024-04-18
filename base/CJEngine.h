@@ -1,6 +1,5 @@
 #pragma once
 #include "DirectXCommon.h"
-#include "Vector.h"
 #include "CreateTriangle.h"
 #include "MathCalculation.h"
 
@@ -34,8 +33,10 @@ public:
 	void Initialize(const char* title, int32_t width, int32_t height);
 
 	void BeginFrame();
+	void BeginFrameT();
 
 	void EndFrame();
+	void EndFrameT();
 
 	void Finalize();
 
