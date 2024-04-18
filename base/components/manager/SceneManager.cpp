@@ -62,16 +62,14 @@ void SceneManager::Update() {
 			break;
 		}
 
+		CJEngine_->BeginFrame();
 		imGuiManager_->Begin();
-		CJEngine_->BeginFrameT();
 		input_->Update();
 		GlobalVariables::GetInstance()->Update();
 		directionalLight_->Update();
 		pointLight_->Update();
 		scene_[Iscene::sceneNo]->Update();
 		scene_[Iscene::sceneNo]->Draw();
-		CJEngine_->EndFrameT();
-		CJEngine_->BeginFrame();
 		imGuiManager_->End();
 		imGuiManager_->Draw();
 		CJEngine_->EndFrame();

@@ -1,7 +1,6 @@
 #pragma once
 #include "WinApp.h"
 #include "ConvertString.h"
-#include "Vector.h"
 
 #include <chrono>
 #include <cstdlib>
@@ -19,13 +18,8 @@ public:
 
 	void Initialization(const wchar_t* title, int32_t backBufferWidth = WinApp::kClientWidth, int32_t backBufferHeight = WinApp::kClientHeight);
 
-	//Swapchain
 	void PreDraw();
 	void PostDraw();
-
-	//RenderTexture
-	void PreDrawT();
-	void PostDrawT();
 
 	void ClearRenderTarget();
 	void Finalize();
@@ -80,11 +74,9 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> srvDescriptorHeap_;//srv用
-	uint32_t renderSRVIndex_ = 256;
-	D3D12_CPU_DESCRIPTOR_HANDLE srvHandles_[256];
 
 	//RTVを２つ作るのでディスクリプタを２つ用意
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[256];
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 	Microsoft::WRL::ComPtr <ID3D12Resource> swapChainResources_[2];
 
 	//Fence
@@ -105,11 +97,6 @@ private:
 
 	std::chrono::steady_clock::time_point reference_;
 
-	//RenderTexture
-	Microsoft::WRL::ComPtr <ID3D12Resource> CreateRenderTexResource(Microsoft::WRL::ComPtr <ID3D12Device> device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
-	Microsoft::WRL::ComPtr <ID3D12Resource> RenderTexResource_;
-	uint32_t RTVHandelCount_ = 2;
-
 	//テキスト関連
 	Microsoft::WRL::ComPtr <IDWriteFactory> pDWriteFactory_;
 	Microsoft::WRL::ComPtr <IDWriteTextFormat> pTextFormat_;
@@ -129,10 +116,6 @@ private:
 	void InitializeCommand();
 
 	void CreateFinalRenderTargets();
-	void CreateFinalRenderTextures();
-
-	void CreateRenderTargetViewAppend(Microsoft::WRL::ComPtr <ID3D12Resource> RenderTexResource);
-	void CreateShaderResourceViewAppend(Microsoft::WRL::ComPtr <ID3D12Resource> RenderTexResource);
 
 	void CreateFence();
 
