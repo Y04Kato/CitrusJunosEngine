@@ -9,6 +9,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 
 	modelData_ = LoadModelFile(directoryPath, filename);
 	animation_ = LoadAnimationFile(directoryPath, filename);
+	skeleton_ = CreateSkeleton(modelData_.rootNode);
 	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
 
 	CreateVartexData();
@@ -53,31 +54,22 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	if (isKeyframeAnim_) {//KeyframeAnimationの場合
 		animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
 		animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
-		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
-		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
-		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
-		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
-		Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
 
-		//rootのMatrixの適用
-		world_ = worldTransform;
-		world_.constMap->matWorld = Multiply(localM,Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
-		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+		ApplyAnimation(skeleton_, animation_, animationTime_);
+		Update(skeleton_);
 	}
 	else {
-		//rootのMatrixの適用
-		world_ = worldTransform;
-		world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
-		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+
 	}
 
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	//形状を設定。PS0にせっていしているものとはまた別
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, world_.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, worldTransform.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
@@ -91,7 +83,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	}
 
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texture_));
-	dxCommon_->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
+	dxCommon_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.indices.size()),1,0,0,0);
 
 }
 
@@ -135,6 +127,21 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 		else {//TexCoordがない場合
 			isLoadTexCoord_ = false;
 		}
+		modelData.vertices.resize(mesh->mNumVertices);//最初に頂点数分のメモリ確保
+
+		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
+			aiVector3D& position = mesh->mVertices[vertexIndex];
+			aiVector3D& normal = mesh->mNormals[vertexIndex];
+			aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+			modelData.vertices[vertexIndex].position = { -position.x,position.y,position.z,1.0f };
+			modelData.vertices[vertexIndex].normal = { -normal.x,normal.y,normal.z };
+			if (isLoadTexCoord_ == true) {//TexCoordの設定
+				modelData.vertices[vertexIndex].texcoord = { texcoord.x,texcoord.y };
+			}
+			else {//無い場合、手動で設定する
+				modelData.vertices[vertexIndex].texcoord = { 32.0f,32.0f };
+			}
+		}
 
 		//meshの中身(face)の解析を行う
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
@@ -145,20 +152,8 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
 				//faceから取得したvertexIndexでmeshからデータを取り出す
 				uint32_t vertexIndex = face.mIndices[element];
-				aiVector3D& position = mesh->mVertices[vertexIndex];
-				aiVector3D& normal = mesh->mNormals[vertexIndex];
-				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
-				VertexData vertex;
-				vertex.position = { position.x,position.y,position.z,1.0f };
-				vertex.normal = { normal.x,normal.y,normal.z };
-				if (isLoadTexCoord_ == true) {//TexCoordの設定
-					vertex.texcoord = { texcoord.x,texcoord.y };
-				}
-				else {//無い場合、手動で設定する
-					vertex.texcoord = { 32.0f,32.0f };
-				}
 
-				modelData.vertices.push_back(vertex);
+				modelData.indices.push_back(vertexIndex);
 			}
 		}
 	}
@@ -266,6 +261,63 @@ Node Model::ReadNode(aiNode* node) {
 	return result;
 }
 
+Skeleton Model::CreateSkeleton(const Node& rootNode) {
+	Skeleton skeleton;
+	skeleton.root = CreateJoint(rootNode, {}, skeleton.joints);
+
+	//名前とIndexのマッピングを行い、アクセスしやすくする
+	for (const Joint& joint : skeleton.joints) {
+		skeleton.jointMap.emplace(joint.name, joint.index);
+	}
+
+	return skeleton;
+}
+
+int32_t Model::CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints) {
+	Joint joint;
+	joint.name = node.name;
+	joint.localMatrix = node.localMatrix;
+	joint.skeletonSpaceMatrix = MakeIdentity4x4();
+	joint.transform = node.transform;
+	joint.index = int32_t(joints.size());
+	joint.parent = parent;
+	joints.push_back(joint);//SkeletonのJoint列に追加
+	for (const Node& child : node.children) {
+		//子Jointを作成し、そのIndexを登録
+		int32_t childIndex = CreateJoint(child, joint.index, joints);
+		joints[joint.index].children.push_back(childIndex);
+	}
+
+	//自身のIndexを返す
+	return joint.index;
+}
+
+void Model::Update(Skeleton& skeleton) {
+	//全てのジョイントを更新
+	for (Joint& joint : skeleton.joints) {
+		joint.localMatrix = MakeQuatAffineMatrix(joint.transform.scale, MakeRotateMatrix(joint.transform.rotate), joint.transform.translate);
+		if (joint.parent) {//親が居れば親の行列を掛ける
+			joint.skeletonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeletonSpaceMatrix;
+		}
+		else {//親が居ないのでLocalMatrixとSkeletonSpaceMatrixは一致する
+			joint.skeletonSpaceMatrix = joint.localMatrix;
+		}
+	}
+}
+
+void Model::ApplyAnimation(Skeleton& skeleton, const Animation& animation, float animationTime) {
+	for (Joint& joint : skeleton.joints) {
+		//対象のJointのAnimationがあれば値の適用を行う
+		//このif文は初期化付きのif文
+		if (auto it = animation.nodeAnimations.find(joint.name); it != animation.nodeAnimations.end()) {
+			const NodeAnimation& rootNodeAnimation = (*it).second;
+			joint.transform.translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime);
+			joint.transform.rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime);
+			joint.transform.scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime);
+		}
+	}
+}
+
 void Model::CreateVartexData() {
 	vertexResource_ = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexData) * modelData_.vertices.size());
 
@@ -278,6 +330,15 @@ void Model::CreateVartexData() {
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
 	std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
+
+	//IndexBuffer用のResourceとIndexBufferViewを作成
+	indexResource_ = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(uint32_t) * modelData_.indices.size());
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * modelData_.indices.size());
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+	//ResourceにIndexの内容をコピー
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedIndex_));
+	std::memcpy(mappedIndex_, modelData_.indices.data(), sizeof(uint32_t) * modelData_.indices.size());
 }
 
 void Model::SetColor() {
@@ -285,7 +346,6 @@ void Model::SetColor() {
 
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&material_));
 	material_->uvTransform = MakeIdentity4x4();
-
 }
 
 void Model::CreateLight() {

@@ -6,6 +6,7 @@
 #include <string>
 #include <math.h>
 #include <map>
+#include <optional>
 
 struct EulerTransform {
 	Vector3 scale;
@@ -85,12 +86,29 @@ struct Animation {
 	std::map<std::string, NodeAnimation> nodeAnimations;
 };
 
+struct Joint {
+	QuaternionTransform transform;
+	Matrix4x4 localMatrix;
+	Matrix4x4 skeletonSpaceMatrix;//SkeltonSpaceでの変換行列
+	std::string name;//名前
+	std::vector<int32_t> children;//子JointのIndexリスト
+	int32_t index;//自身のIndex
+	std::optional<int32_t> parent;//親JointのIndex
+};
+
+struct Skeleton {
+	int32_t root;//RootJointのIndex
+	std::map<std::string, int32_t> jointMap;//Joint名とIndexの辞書
+	std::vector<Joint> joints;//所持しているジョイント
+};
+
 struct MaterialData {
 	std::string textureFilePath;
 };
 
 struct ModelData {
 	std::vector<VertexData> vertices;
+	std::vector<uint32_t> indices;
 	MaterialData material;
 	int textureIndex;
 	Node rootNode;

@@ -86,7 +86,7 @@ void GameDemoScene::Initialize() {
 	}
 
 	//objモデル
-	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/drum", "drum.obj"));
+	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/human", "walk.gltf"));
 	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/AnimatedCube", "AnimatedCube.gltf"));
 	model_[2].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj"));
 	for (int i = 0; i < 3; i++) {
