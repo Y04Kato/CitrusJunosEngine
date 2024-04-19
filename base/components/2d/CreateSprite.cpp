@@ -14,7 +14,7 @@ void CreateSprite::Initialize(Vector2 size, uint32_t textureIndex) {
 	SettingTransform();
 }
 
-void CreateSprite::Draw(const Transform& transform, const Transform& uvTransform, const Vector4& material) {
+void CreateSprite::Draw(const EulerTransform& transform, const EulerTransform& uvTransform, const Vector4& material) {
 	Matrix4x4 uvtransformMtrix = MakeScaleMatrix(uvTransform.scale);
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.num[2]));
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));

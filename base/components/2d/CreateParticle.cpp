@@ -163,7 +163,7 @@ void CreateParticle::LoadBuffer(uint32_t index, int kNumInstance) {
 	dxCommon_->GetDevice()->CreateShaderResourceView(instancingResource_.Get(), &srvDesc, textureManager_->textureSrvHandleCPU_[index]);
 }
 
-Particle CreateParticle::MakeNewParticle(std::mt19937& randomEngine, const Transform transform) {
+Particle CreateParticle::MakeNewParticle(std::mt19937& randomEngine, const EulerTransform transform) {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);

@@ -32,7 +32,7 @@ void Model::Initialize(const ModelData modeldata, const uint32_t texture) {
 }
 
 void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material) {
-	Transform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
+	EulerTransform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 
 	Matrix4x4 uvtransformMtrix = MakeScaleMatrix(uvTransform.scale);
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.num[2]));
@@ -234,13 +234,24 @@ Animation Model::LoadAnimationFile(const std::string& directoryPath, const std::
 
 Node Model::ReadNode(aiNode* node) {
 	Node result;
-	//nodeのlocalMatrixを取得
-	aiMatrix4x4 aiLocalMatrix = node->mTransformation;
+	//NodeからTransform情報を得る
+	aiVector3D scale, translate;
+	aiQuaternion rotate;
+	//assimpの行列からSRTを抽出する関数
+	node->mTransformation.Decompose(scale, rotate, translate);
+	//Scaleはそのまま
+	result.transform.scale = { scale.x,scale.y,scale.z };
+	//x軸反転、更に回転方向の為に軸反転
+	result.transform.rotate = { rotate.x,-rotate.y,-rotate.z,rotate.w };
+	//x軸を反転
+	result.transform.translate = { -translate.x,translate.y,translate.z };
+	result.localMatrix = MakeQuatAffineMatrix(result.transform.scale, MakeRotateMatrix(result.transform.rotate), result.transform.translate);
+
 	//列ベクトル形式を行ベクトル形式に転置
-	aiLocalMatrix.Transpose();
+	Matrix4x4 localM = Transpose(result.localMatrix);
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			result.localMatrix.m[i][j] = aiLocalMatrix[i][j];
+			result.localMatrix.m[i][j] = localM.m[i][j];
 		}
 	}
 	//Node名を格納

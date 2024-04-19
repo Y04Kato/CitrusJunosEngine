@@ -471,7 +471,7 @@ void GameDemoScene::Update() {
 
 	ImGui::InputText("BlockName", objName_, sizeof(objName_));
 	if (ImGui::Button("SpawnBlock")) {
-		SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+		SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
 		objCount_++;
 		globalVariables->SetValue(groupName, "ObjCount", objCount_);
 		for (Obj& obj : objects_) {
@@ -482,7 +482,7 @@ void GameDemoScene::Update() {
 		}
 	}
 	if (ImGui::Button("DeleteBlock")) {
-		SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+		SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
 		for (auto it = objects_.begin(); it != objects_.end();) {
 			if (it->name == objName_) {
 				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Translate");
@@ -498,7 +498,7 @@ void GameDemoScene::Update() {
 	}
 	if (ImGui::Button("StartSetBlock")) {
 		for (int i = 0; i < objCount_; i++) {
-			SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
+			SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
 		}
 	}
 
@@ -618,7 +618,7 @@ void GameDemoScene::ApplyGlobalVariables() {
 	}
 }
 
-void GameDemoScene::SetObject(Transform trans, const std::string& name) {
+void GameDemoScene::SetObject(EulerTransform trans, const std::string& name) {
 	Obj obj;
 	obj.model.Initialize(ObjModelData_, ObjTexture_);
 	obj.model.SetDirectionalLightFlag(true, 3);

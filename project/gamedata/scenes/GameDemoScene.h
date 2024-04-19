@@ -26,7 +26,7 @@ public:
 
 	void ApplyGlobalVariables();
 
-	void SetObject(Transform trans, const std::string& name);
+	void SetObject(EulerTransform trans, const std::string& name);
 
 private:
 	CitrusJunosEngine* CJEngine_;
@@ -41,8 +41,8 @@ private:
 	Vector4 triangleMaterial_[2];
 
 	std::unique_ptr <CreateSprite> sprite_[2];
-	Transform spriteTransform_[2];
-	Transform SpriteuvTransform_[2];
+	EulerTransform spriteTransform_[2];
+	EulerTransform SpriteuvTransform_[2];
 	Vector4 spriteMaterial_[2];
 
 	std::unique_ptr<CreateParticle> particle_[2];

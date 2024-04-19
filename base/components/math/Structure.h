@@ -7,9 +7,19 @@
 #include <math.h>
 #include <map>
 
-struct Transform {
+struct EulerTransform {
 	Vector3 scale;
 	Vector3 rotate;
+	Vector3 translate;
+};
+
+struct Quaternion {
+	float x, y, z, w;
+};
+
+struct QuaternionTransform {
+	Vector3 scale;
+	Quaternion rotate;
 	Vector3 translate;
 };
 
@@ -40,12 +50,9 @@ struct Material {
 	float shininess;
 };
 
-struct Quaternion {
-	float x, y, z, w;
-};
-
 //Node情報格納用構造体
 struct Node {
+	QuaternionTransform transform;
 	Matrix4x4 localMatrix;
 	std::string name;
 	std::vector<Node> children;
@@ -107,7 +114,7 @@ struct StructSphere {
 
 #pragma region Particle
 struct Particle {
-	Transform transform;
+	EulerTransform transform;
 	Vector3 velocity;
 	Vector4 color;
 	float lifeTime;
@@ -120,7 +127,7 @@ struct ParticleForGPU {
 };
 
 struct Emitter {
-	Transform transform;
+	EulerTransform transform;
 	uint32_t count;//発生数
 	float frequency;//発生頻度
 	float frequencyTime;//頻度用時刻

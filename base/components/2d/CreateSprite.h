@@ -8,7 +8,7 @@
 class CreateSprite {
 public:
 	void Initialize(Vector2 size, uint32_t textureIndex);
-	void Draw(const Transform& transform, const Transform& uvTransform, const Vector4& material);
+	void Draw(const EulerTransform& transform, const EulerTransform& uvTransform, const Vector4& material);
 	void Finalize();
 
 	static CreateSprite* CreateSpriteFromTexture(Vector2 size, uint32_t textureIndex);
