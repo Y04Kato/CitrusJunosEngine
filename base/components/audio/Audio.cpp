@@ -13,6 +13,9 @@ void Audio::Initialize() {
 	result = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	// マスターボイスを生成
 	result = xAudio2_->CreateMasteringVoice(&masterVoice_);
+
+	// Media Foundation
+	MFStartup(MF_VERSION, MFSTARTUP_NOSOCKET);
 }
 
 SoundData Audio::SoundLoadWave(const char* filename) {
@@ -134,6 +137,74 @@ SoundData Audio::SoundLoadWave(const char* filename) {
 	return soundData;
 }
 
+SoundData Audio::SoundLoadMp3(const char* filename) {
+	std::wstring path = ConvertString(filename);
+
+	IMFSourceReader* pMFSourceReader{ nullptr };
+	MFCreateSourceReaderFromURL(path.c_str(), NULL, &pMFSourceReader);
+
+	IMFMediaType* pMFMediaType{ nullptr };
+	MFCreateMediaType(&pMFMediaType);
+	pMFMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
+	pMFMediaType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
+	pMFSourceReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, pMFMediaType);
+
+	pMFMediaType->Release();
+	pMFMediaType = nullptr;
+	pMFSourceReader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, &pMFMediaType);
+
+	WAVEFORMATEX* waveFormat{ nullptr };
+	MFCreateWaveFormatExFromMFMediaType(pMFMediaType, &waveFormat, nullptr);
+
+	std::vector<BYTE> mediaData;
+
+	while (1) {
+
+		IMFSample* pMFSample{ nullptr };
+		DWORD dwStreamFlags{ 0 };
+		pMFSourceReader->ReadSample(
+			MF_SOURCE_READER_FIRST_AUDIO_STREAM,
+			0, nullptr,
+			&dwStreamFlags, nullptr,
+			&pMFSample);
+
+		if (dwStreamFlags & MF_SOURCE_READERF_ENDOFSTREAM) {
+			break;
+		}
+
+		IMFMediaBuffer* pMFMediaBuffer{ nullptr };
+		pMFSample->ConvertToContiguousBuffer(&pMFMediaBuffer);
+
+		BYTE* pBuffer{ nullptr };
+		DWORD cbCurrentLength{ 0 };
+		pMFMediaBuffer->Lock(&pBuffer, nullptr, &cbCurrentLength);
+
+		mediaData.resize(mediaData.size() + cbCurrentLength);
+		memcpy(mediaData.data() + mediaData.size() - cbCurrentLength, pBuffer, cbCurrentLength);
+
+		pMFMediaBuffer->Unlock();
+
+		pMFMediaBuffer->Release();
+		pMFSample->Release();
+
+	}
+
+	SoundData soundData = {};
+
+	BYTE* pBuffer = new BYTE[mediaData.size()];
+	memcpy(pBuffer, mediaData.data(), mediaData.size());
+
+	soundData.wfex = *waveFormat;
+	soundData.pBuffer = pBuffer;
+	soundData.bufferSize = static_cast<uint32_t>(mediaData.size());
+
+	//CoTaskMemFree(waveFormat);
+	pMFMediaType->Release();
+	pMFSourceReader->Release();
+
+	return soundData;
+}
+
 void Audio::SoundUnload(SoundData* soundData) {
 	//バッファのメモリを解放
 	delete[] soundData->pBuffer;
@@ -189,4 +260,5 @@ void Audio::SoundStopWave(SoundData* soundData){
 
 void Audio::Finalize() {
 	xAudio2_.Reset();
+	MFShutdown();
 }

@@ -4,6 +4,16 @@
 #include <fstream>
 #include <wrl.h>
 #include <set>
+#include <convertString/ConvertString.h>
+
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
+
+#pragma comment(lib, "Mf.lib")
+#pragma comment(lib, "mfplat.lib")
+#pragma comment(lib, "Mfreadwrite.lib")
+#pragma comment(lib, "mfuuid.lib")
 
 struct ChunkHeader {
 	char id[4];//チャンク毎のID
@@ -42,6 +52,7 @@ public:
 	void Initialize();
 
 	//音声データの読み込み
+	SoundData SoundLoadMp3(const char* filename);
 	SoundData SoundLoadWave(const char* filename);
 
 	//音声データ解放
