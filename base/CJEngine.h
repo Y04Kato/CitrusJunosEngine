@@ -103,7 +103,7 @@ private:
 
 	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState3D_;
 	D3D12_RASTERIZER_DESC rasterizerDesc3D_{};
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs3D_[3];
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs3D_[5];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc3D_{};
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc3D_{};
 

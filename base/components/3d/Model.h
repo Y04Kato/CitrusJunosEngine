@@ -41,8 +41,10 @@ public:
 
 	Skeleton CreateSkeleton(const Node& rootNode);
 	int32_t CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
-	void Update(Skeleton& skeleton);
+	void Update(Skeleton& skeleton , SkinCluster& skinCluster);
 	void ApplyAnimation(Skeleton& skeleton, const Animation& animation, float animationTime);
+
+	SkinCluster CreateSkinCluster();
 
 	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
 	static Model* CreateModelFromObj(const ModelData modeldata,const uint32_t texture);
@@ -92,6 +94,7 @@ private:
 	Animation animation_;
 
 	Skeleton skeleton_;
+	SkinCluster skinCluster_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
 	uint32_t* mappedIndex_ = 0;

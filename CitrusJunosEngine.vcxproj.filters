@@ -280,6 +280,7 @@
     </FxCompile>
     <FxCompile Include="project\gamedata\resources\shaders\VAT.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\VAT.VS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\DirectXCommon.h">

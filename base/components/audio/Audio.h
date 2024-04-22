@@ -15,21 +15,6 @@
 #pragma comment(lib, "Mfreadwrite.lib")
 #pragma comment(lib, "mfuuid.lib")
 
-struct ChunkHeader {
-	char id[4];//チャンク毎のID
-	int32_t size;//チャンクサイズ
-};
-
-struct RiffHeader {
-	ChunkHeader chunk;//"RIFF"
-	char type[4];//"WAVE"
-};
-
-struct FormatChunk {
-	ChunkHeader chunk;//"fmt "
-	WAVEFORMATEX fmt;//波形フォーマット
-};
-
 struct SoundData {
 	//波形フォーマット
 	WAVEFORMATEX wfex;
@@ -52,8 +37,7 @@ public:
 	void Initialize();
 
 	//音声データの読み込み
-	SoundData SoundLoadMp3(const char* filename);
-	SoundData SoundLoadWave(const char* filename);
+	SoundData SoundLoad(const char* filename);
 
 	//音声データ解放
 	void SoundUnload(SoundData* soundData);

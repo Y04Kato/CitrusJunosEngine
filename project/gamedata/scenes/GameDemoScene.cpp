@@ -111,8 +111,8 @@ void GameDemoScene::Initialize() {
 
 	//Audio
 	audio_ = Audio::GetInstance();
-	soundData1_ = audio_->SoundLoadMp3("project/gamedata/resources/kamui.mp3");
-	soundData2_ = audio_->SoundLoadWave("project/gamedata/resources/system.wav");
+	soundData1_ = audio_->SoundLoad("project/gamedata/resources/kamui.mp3");
+	soundData2_ = audio_->SoundLoad("project/gamedata/resources/system.wav");
 	//音声再生
 	audio_->SoundPlayWave(soundData1_, 0.1f, true);
 

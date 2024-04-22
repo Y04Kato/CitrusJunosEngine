@@ -177,7 +177,7 @@ void CitrusJunosEngine::CreateRootSignature3D() {
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	//RootParameter作成、複数設定可能な為、配列に
-	D3D12_ROOT_PARAMETER rootParameters[7] = {};
+	D3D12_ROOT_PARAMETER rootParameters[8] = {};
 	//Worldtransform
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderを使う
@@ -187,6 +187,11 @@ void CitrusJunosEngine::CreateRootSignature3D() {
 	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
 	rootParameters[4].Descriptor.ShaderRegister = 1;//レジスタ番号を1にバインド
+
+
+	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;//SRVを使う
+	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
+	rootParameters[7].Descriptor.ShaderRegister = 0;//レジスタ番号を0にバインド
 
 	D3D12_DESCRIPTOR_RANGE descriptoraRange[1] = {};
 	descriptoraRange[0].BaseShaderRegister = 0;//0から始まる
@@ -267,6 +272,18 @@ void CitrusJunosEngine::CreateInputlayOut3D() {
 	inputElementDescs3D_[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	inputElementDescs3D_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
+	inputElementDescs3D_[3].SemanticName = "WEIGHT";
+	inputElementDescs3D_[3].SemanticIndex = 0;
+	inputElementDescs3D_[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescs3D_[3].InputSlot = 1;
+	inputElementDescs3D_[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs3D_[4].SemanticName = "INDEX";
+	inputElementDescs3D_[4].SemanticIndex = 0;
+	inputElementDescs3D_[4].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescs3D_[4].InputSlot = 1;
+	inputElementDescs3D_[4].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
 	inputLayoutDesc3D_.pInputElementDescs = inputElementDescs3D_;
 	inputLayoutDesc3D_.NumElements = _countof(inputElementDescs3D_);
 }
@@ -278,7 +295,7 @@ void CitrusJunosEngine::RasterizerState3D() {
 	rasterizerDesc3D_.FillMode = D3D12_FILL_MODE_SOLID;
 
 	//Shaderをコンパイルする
-	vertexShaderBlob3D_ = CompileShader(L"project/gamedata/resources/shaders/Object3d.VS.hlsl",
+	vertexShaderBlob3D_ = CompileShader(L"project/gamedata/resources/shaders/SkinningObject3d.VS.hlsl",
 		L"vs_6_0", dxcUtils_, dxcCompiler_, includeHandler_);
 	assert(vertexShaderBlob3D_ != nullptr);
 
