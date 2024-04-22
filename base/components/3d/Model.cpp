@@ -56,11 +56,23 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 		animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
 		animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
 
-		ApplyAnimation(skeleton_, animation_, animationTime_);
-		Update(skeleton_, skinCluster_);
+		//ApplyAnimation(skeleton_, animation_, animationTime_);
+		//Update(skeleton_, skinCluster_);
+
+		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
+		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
+		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
+		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
+		Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
+
+		world_ = worldTransform;
+		world_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
+		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
 	}
 	else {
-
+		world_ = worldTransform;
+		world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
+		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
 	}
 
 	/*D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
@@ -76,7 +88,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, worldTransform.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, world_.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 

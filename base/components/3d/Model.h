@@ -105,6 +105,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> vatResource_;
 	VATData vatData_;
 
+	WorldTransform world_;
+
 private:
 	void CreateVartexData();
 	void SetColor();
