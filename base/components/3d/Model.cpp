@@ -10,7 +10,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	modelData_ = LoadModelFile(directoryPath, filename);
 	animation_ = LoadAnimationFile(directoryPath, filename);
 	skeleton_ = CreateSkeleton(modelData_.rootNode);
-	skinCluster_ = CreateSkinCluster();
+	//skinCluster_ = CreateSkinCluster();
 	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
 
 	CreateVartexData();
@@ -63,12 +63,13 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 
 	}
 
-	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
+	/*D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
 	vertexBufferView_,
 	skinCluster_.influenveBufferView
-	};
+	};*/
 
-	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
+	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1,&vertexBufferView_);
+	//dxCommon_->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	//形状を設定。PS0にせっていしているものとはまた別
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
