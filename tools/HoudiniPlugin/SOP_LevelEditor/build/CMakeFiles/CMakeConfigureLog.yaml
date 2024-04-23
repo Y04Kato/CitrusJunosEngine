@@ -24,9 +24,9 @@ events:
       The output was:
       0
       MSBuild のバージョン 17.9.8+b34f75857 (.NET Framework)
-      2024/04/17 14:58:04 にビルドを開始しました。
+      2024/04/18 10:33:41 にビルドを開始しました。
       
-      ノード 1 上のプロジェクト "C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdC\\CompilerIdC.vcxproj" (既定のターゲット)。
+      ノード 1 上のプロジェクト "C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdC\\CompilerIdC.vcxproj" (既定のターゲット)。
       PrepareForBuild:
         ディレクトリ "Debug\\" を作成しています。
         構造化出力が有効になっています。コンパイラ診断の書式設定にはエラー階層が反映されます。詳細については、https://aka.ms/cpp/structured-output を参照してください。
@@ -39,7 +39,7 @@ events:
         CMakeCCompilerId.c
       Link:
         C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
-        CompilerIdC.vcxproj -> C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdC\\CompilerIdC.exe
+        CompilerIdC.vcxproj -> C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdC\\CompilerIdC.exe
       PostBuildEvent:
         for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
         :VCEnd
@@ -47,13 +47,13 @@ events:
       FinalizeBuildStatus:
         ファイル "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" を削除しています。
         "Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate" のタッチ タスクを実行しています。
-      プロジェクト "C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdC\\CompilerIdC.vcxproj" (既定のターゲット) のビルドが完了しました。
+      プロジェクト "C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdC\\CompilerIdC.vcxproj" (既定のターゲット) のビルドが完了しました。
       
       ビルドに成功しました。
           0 個の警告
           0 エラー
       
-      経過時間 00:00:00.71
+      経過時間 00:00:00.87
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -61,7 +61,7 @@ events:
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
       
       The C compiler identification is MSVC, found in:
-        C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/3.29.0-rc3/CompilerIdC/CompilerIdC.exe
+        C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/3.29.0-rc3/CompilerIdC/CompilerIdC.exe
       
   -
     kind: "message-v1"
@@ -79,9 +79,9 @@ events:
       The output was:
       0
       MSBuild のバージョン 17.9.8+b34f75857 (.NET Framework)
-      2024/04/17 14:58:05 にビルドを開始しました。
+      2024/04/18 10:33:43 にビルドを開始しました。
       
-      ノード 1 上のプロジェクト "C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (既定のターゲット)。
+      ノード 1 上のプロジェクト "C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (既定のターゲット)。
       PrepareForBuild:
         ディレクトリ "Debug\\" を作成しています。
         構造化出力が有効になっています。コンパイラ診断の書式設定にはエラー階層が反映されます。詳細については、https://aka.ms/cpp/structured-output を参照してください。
@@ -94,7 +94,7 @@ events:
         CMakeCXXCompilerId.cpp
       Link:
         C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
-        CompilerIdCXX.vcxproj -> C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdCXX\\CompilerIdCXX.exe
+        CompilerIdCXX.vcxproj -> C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdCXX\\CompilerIdCXX.exe
       PostBuildEvent:
         for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
         :VCEnd
@@ -102,13 +102,13 @@ events:
       FinalizeBuildStatus:
         ファイル "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" を削除しています。
         "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate" のタッチ タスクを実行しています。
-      プロジェクト "C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (既定のターゲット) のビルドが完了しました。
+      プロジェクト "C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\3.29.0-rc3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (既定のターゲット) のビルドが完了しました。
       
       ビルドに成功しました。
           0 個の警告
           0 エラー
       
-      経過時間 00:00:00.54
+      経過時間 00:00:00.50
       
       
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -116,7 +116,7 @@ events:
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
       
       The CXX compiler identification is MSVC, found in:
-        C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/3.29.0-rc3/CompilerIdCXX/CompilerIdCXX.exe
+        C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/3.29.0-rc3/CompilerIdCXX/CompilerIdCXX.exe
       
   -
     kind: "try_compile-v1"
@@ -127,8 +127,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-iaa6le"
-      binary: "C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-iaa6le"
+      source: "C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-ka6owk"
+      binary: "C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-ka6owk"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
       CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
@@ -136,34 +136,34 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-iaa6le'
+        Change Dir: 'C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-ka6owk'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_4c687.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_984da.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild のバージョン 17.9.8+b34f75857 (.NET Framework)
-        2024/04/17 14:58:05 にビルドを開始しました。
+        2024/04/18 10:33:44 にビルドを開始しました。
         
-        ノード 1 上のプロジェクト "C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-iaa6le\\cmTC_4c687.vcxproj" (既定のターゲット)。
+        ノード 1 上のプロジェクト "C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ka6owk\\cmTC_984da.vcxproj" (既定のターゲット)。
         PrepareForBuild:
-          ディレクトリ "cmTC_4c687.dir\\Debug\\" を作成しています。
+          ディレクトリ "cmTC_984da.dir\\Debug\\" を作成しています。
           構造化出力が有効になっています。コンパイラ診断の書式設定にはエラー階層が反映されます。詳細については、https://aka.ms/cpp/structured-output を参照してください。
-          ディレクトリ "C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-iaa6le\\Debug\\" を作成しています。
-          ディレクトリ "cmTC_4c687.dir\\Debug\\cmTC_4c687.tlog\\" を作成しています。
+          ディレクトリ "C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ka6owk\\Debug\\" を作成しています。
+          ディレクトリ "cmTC_984da.dir\\Debug\\cmTC_984da.tlog\\" を作成しています。
         InitializeBuildStatus:
-          "AlwaysCreate" が指定されたため "cmTC_4c687.dir\\Debug\\cmTC_4c687.tlog\\unsuccessfulbuild" を作成しています。
-          "cmTC_4c687.dir\\Debug\\cmTC_4c687.tlog\\unsuccessfulbuild" のタッチ タスクを実行しています。
+          "AlwaysCreate" が指定されたため "cmTC_984da.dir\\Debug\\cmTC_984da.tlog\\unsuccessfulbuild" を作成しています。
+          "cmTC_984da.dir\\Debug\\cmTC_984da.tlog\\unsuccessfulbuild" のタッチ タスクを実行しています。
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_4c687.dir\\Debug\\\\" /Fd"cmTC_4c687.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_984da.dir\\Debug\\\\" /Fd"cmTC_984da.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
           Microsoft(R) C/C++ Optimizing Compiler Version 19.39.33523 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_4c687.dir\\Debug\\\\" /Fd"cmTC_4c687.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_984da.dir\\Debug\\\\" /Fd"cmTC_984da.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-iaa6le\\Debug\\cmTC_4c687.exe" /INCREMENTAL /ILK:"cmTC_4c687.dir\\Debug\\cmTC_4c687.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-iaa6le/Debug/cmTC_4c687.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-iaa6le/Debug/cmTC_4c687.lib" /MACHINE:X64  /machine:x64 cmTC_4c687.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_4c687.vcxproj -> C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-iaa6le\\Debug\\cmTC_4c687.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ka6owk\\Debug\\cmTC_984da.exe" /INCREMENTAL /ILK:"cmTC_984da.dir\\Debug\\cmTC_984da.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-ka6owk/Debug/cmTC_984da.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-ka6owk/Debug/cmTC_984da.lib" /MACHINE:X64  /machine:x64 cmTC_984da.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_984da.vcxproj -> C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ka6owk\\Debug\\cmTC_984da.exe
         FinalizeBuildStatus:
-          ファイル "cmTC_4c687.dir\\Debug\\cmTC_4c687.tlog\\unsuccessfulbuild" を削除しています。
-          "cmTC_4c687.dir\\Debug\\cmTC_4c687.tlog\\cmTC_4c687.lastbuildstate" のタッチ タスクを実行しています。
-        プロジェクト "C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-iaa6le\\cmTC_4c687.vcxproj" (既定のターゲット) のビルドが完了しました。
+          ファイル "cmTC_984da.dir\\Debug\\cmTC_984da.tlog\\unsuccessfulbuild" を削除しています。
+          "cmTC_984da.dir\\Debug\\cmTC_984da.tlog\\cmTC_984da.lastbuildstate" のタッチ タスクを実行しています。
+        プロジェクト "C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ka6owk\\cmTC_984da.vcxproj" (既定のターゲット) のビルドが完了しました。
         
         ビルドに成功しました。
             0 個の警告
@@ -209,8 +209,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-a0ghs9"
-      binary: "C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-a0ghs9"
+      source: "C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-1p802r"
+      binary: "C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-1p802r"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /W3 /GR /EHsc"
       CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
@@ -218,40 +218,40 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-a0ghs9'
+        Change Dir: 'C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-1p802r'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_8d80c.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_ac0ec.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild のバージョン 17.9.8+b34f75857 (.NET Framework)
-        2024/04/17 14:58:06 にビルドを開始しました。
+        2024/04/18 10:33:45 にビルドを開始しました。
         
-        ノード 1 上のプロジェクト "C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-a0ghs9\\cmTC_8d80c.vcxproj" (既定のターゲット)。
+        ノード 1 上のプロジェクト "C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1p802r\\cmTC_ac0ec.vcxproj" (既定のターゲット)。
         PrepareForBuild:
-          ディレクトリ "cmTC_8d80c.dir\\Debug\\" を作成しています。
+          ディレクトリ "cmTC_ac0ec.dir\\Debug\\" を作成しています。
           構造化出力が有効になっています。コンパイラ診断の書式設定にはエラー階層が反映されます。詳細については、https://aka.ms/cpp/structured-output を参照してください。
-          ディレクトリ "C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-a0ghs9\\Debug\\" を作成しています。
-          ディレクトリ "cmTC_8d80c.dir\\Debug\\cmTC_8d80c.tlog\\" を作成しています。
+          ディレクトリ "C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1p802r\\Debug\\" を作成しています。
+          ディレクトリ "cmTC_ac0ec.dir\\Debug\\cmTC_ac0ec.tlog\\" を作成しています。
         InitializeBuildStatus:
-          "AlwaysCreate" が指定されたため "cmTC_8d80c.dir\\Debug\\cmTC_8d80c.tlog\\unsuccessfulbuild" を作成しています。
-          "cmTC_8d80c.dir\\Debug\\cmTC_8d80c.tlog\\unsuccessfulbuild" のタッチ タスクを実行しています。
+          "AlwaysCreate" が指定されたため "cmTC_ac0ec.dir\\Debug\\cmTC_ac0ec.tlog\\unsuccessfulbuild" を作成しています。
+          "cmTC_ac0ec.dir\\Debug\\cmTC_ac0ec.tlog\\unsuccessfulbuild" のタッチ タスクを実行しています。
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_8d80c.dir\\Debug\\\\" /Fd"cmTC_8d80c.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_ac0ec.dir\\Debug\\\\" /Fd"cmTC_ac0ec.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
           Microsoft(R) C/C++ Optimizing Compiler Version 19.39.33523 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_8d80c.dir\\Debug\\\\" /Fd"cmTC_8d80c.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_ac0ec.dir\\Debug\\\\" /Fd"cmTC_ac0ec.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
           CMakeCXXCompilerABI.cpp
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-a0ghs9\\Debug\\cmTC_8d80c.exe" /INCREMENTAL /ILK:"cmTC_8d80c.dir\\Debug\\cmTC_8d80c.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-a0ghs9/Debug/cmTC_8d80c.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Yuzu/source/repos/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-a0ghs9/Debug/cmTC_8d80c.lib" /MACHINE:X64  /machine:x64 cmTC_8d80c.dir\\Debug\\CMakeCXXCompilerABI.obj
-          cmTC_8d80c.vcxproj -> C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-a0ghs9\\Debug\\cmTC_8d80c.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1p802r\\Debug\\cmTC_ac0ec.exe" /INCREMENTAL /ILK:"cmTC_ac0ec.dir\\Debug\\cmTC_ac0ec.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-1p802r/Debug/cmTC_ac0ec.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Yuzu/source/repos/CitrusJunosEngine/tools/HoudiniPlugin/SOP_LevelEditor/build/CMakeFiles/CMakeScratch/TryCompile-1p802r/Debug/cmTC_ac0ec.lib" /MACHINE:X64  /machine:x64 cmTC_ac0ec.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_ac0ec.vcxproj -> C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1p802r\\Debug\\cmTC_ac0ec.exe
         FinalizeBuildStatus:
-          ファイル "cmTC_8d80c.dir\\Debug\\cmTC_8d80c.tlog\\unsuccessfulbuild" を削除しています。
-          "cmTC_8d80c.dir\\Debug\\cmTC_8d80c.tlog\\cmTC_8d80c.lastbuildstate" のタッチ タスクを実行しています。
-        プロジェクト "C:\\Users\\Yuzu\\source\\repos\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-a0ghs9\\cmTC_8d80c.vcxproj" (既定のターゲット) のビルドが完了しました。
+          ファイル "cmTC_ac0ec.dir\\Debug\\cmTC_ac0ec.tlog\\unsuccessfulbuild" を削除しています。
+          "cmTC_ac0ec.dir\\Debug\\cmTC_ac0ec.tlog\\cmTC_ac0ec.lastbuildstate" のタッチ タスクを実行しています。
+        プロジェクト "C:\\Users\\Yuzu\\source\\repos\\CitrusJunosEngine\\tools\\HoudiniPlugin\\SOP_LevelEditor\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1p802r\\cmTC_ac0ec.vcxproj" (既定のターゲット) のビルドが完了しました。
         
         ビルドに成功しました。
             0 個の警告
             0 エラー
         
-        経過時間 00:00:00.53
+        経過時間 00:00:00.49
         
       exitCode: 0
   -

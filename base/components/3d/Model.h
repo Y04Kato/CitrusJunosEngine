@@ -39,6 +39,13 @@ public:
 
 	Node ReadNode(aiNode* node);
 
+	Skeleton CreateSkeleton(const Node& rootNode);
+	int32_t CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
+	void Update(Skeleton& skeleton , SkinCluster& skinCluster);
+	void ApplyAnimation(Skeleton& skeleton, const Animation& animation, float animationTime);
+
+	SkinCluster CreateSkinCluster();
+
 	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
 	static Model* CreateModelFromObj(const ModelData modeldata,const uint32_t texture);
 
@@ -82,17 +89,23 @@ private:
 
 	bool isLoadTexCoord_ = false;//TexCoordがモデルに設定されているか
 
-	WorldTransform world_;
-
 	bool isKeyframeAnim_ = false;//KeyframeAnimationかどうか
 	float animationTime_ = 0.0f;
 	Animation animation_;
+
+	Skeleton skeleton_;
+	SkinCluster skinCluster_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
+	uint32_t* mappedIndex_ = 0;
 
 	bool isVAT_ = false;//VATモデルかどうか
 	uint32_t vatPosTex_;
 	uint32_t vatRotTex_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> vatResource_;
 	VATData vatData_;
+
+	WorldTransform world_;
 
 private:
 	void CreateVartexData();

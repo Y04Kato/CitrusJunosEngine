@@ -86,7 +86,7 @@ void GameDemoScene::Initialize() {
 	}
 
 	//objモデル
-	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/drum", "drum.obj"));
+	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/human", "walk.gltf"));
 	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/AnimatedCube", "AnimatedCube.gltf"));
 	model_[2].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj"));
 	for (int i = 0; i < 3; i++) {
@@ -111,8 +111,10 @@ void GameDemoScene::Initialize() {
 
 	//Audio
 	audio_ = Audio::GetInstance();
-	soundData1_ = audio_->SoundLoadWave("project/gamedata/resources/LethargicWitch.wav");
-	soundData2_ = audio_->SoundLoadWave("project/gamedata/resources/system.wav");
+	soundData1_ = audio_->SoundLoad("project/gamedata/resources/kamui.mp3");
+	soundData2_ = audio_->SoundLoad("project/gamedata/resources/system.wav");
+	//音声再生
+	audio_->SoundPlayWave(soundData1_, 0.1f, true);
 
 	// デバッグカメラの初期化
 	debugCamera_ = DebugCamera::GetInstance();
@@ -469,7 +471,7 @@ void GameDemoScene::Update() {
 
 	ImGui::InputText("BlockName", objName_, sizeof(objName_));
 	if (ImGui::Button("SpawnBlock")) {
-		SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+		SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
 		objCount_++;
 		globalVariables->SetValue(groupName, "ObjCount", objCount_);
 		for (Obj& obj : objects_) {
@@ -480,7 +482,7 @@ void GameDemoScene::Update() {
 		}
 	}
 	if (ImGui::Button("DeleteBlock")) {
-		SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+		SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
 		for (auto it = objects_.begin(); it != objects_.end();) {
 			if (it->name == objName_) {
 				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Translate");
@@ -496,7 +498,7 @@ void GameDemoScene::Update() {
 	}
 	if (ImGui::Button("StartSetBlock")) {
 		for (int i = 0; i < objCount_; i++) {
-			SetObject(Transform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
+			SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
 		}
 	}
 
@@ -616,7 +618,7 @@ void GameDemoScene::ApplyGlobalVariables() {
 	}
 }
 
-void GameDemoScene::SetObject(Transform trans, const std::string& name) {
+void GameDemoScene::SetObject(EulerTransform trans, const std::string& name) {
 	Obj obj;
 	obj.model.Initialize(ObjModelData_, ObjTexture_);
 	obj.model.SetDirectionalLightFlag(true, 3);

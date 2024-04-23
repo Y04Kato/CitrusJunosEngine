@@ -27,6 +27,7 @@ public:
 
     SOP_LevelEditorParms()
     {
+        myTestparameter = 0;
 
     }
 
@@ -39,6 +40,7 @@ public:
 
     bool operator==(const SOP_LevelEditorParms &src) const
     {
+        if (myTestparameter != src.myTestparameter) return false;
 
         return true;
     }
@@ -51,6 +53,9 @@ public:
 
     void        buildFromOp(const OP_GraphProxy *graph, exint nodeidx, fpreal time, DEP_MicroNode *depnode)
     {
+        myTestparameter = 0;
+        if (true)
+            graph->evalOpParm(myTestparameter, nodeidx, "testParameter", time, 0);
 
     }
 
@@ -77,6 +82,9 @@ public:
             return;
         switch (idx[0])
         {
+            case 0:
+                coerceValue(value, myTestparameter);
+                break;
 
         }
     }
@@ -124,6 +132,9 @@ public:
             return;
         switch (idx[0])
         {
+            case 0:
+                coerceValue(myTestparameter, clampMinValue(2,  ( value ) ));
+                break;
 
         }
     }
@@ -154,7 +165,7 @@ public:
     exint getNestNumParms(TempIndex idx) const override
     {
         if (idx.size() == 0)
-            return 0;
+            return 1;
         switch (idx[0])
         {
 
@@ -169,6 +180,8 @@ public:
             return 0;
         switch (fieldnum[0])
         {
+            case 0:
+                return "testParameter";
 
         }
         return 0;
@@ -180,6 +193,8 @@ public:
             return PARM_UNSUPPORTED;
         switch (fieldnum[0])
         {
+            case 0:
+                return PARM_INTEGER;
 
         }
         return PARM_UNSUPPORTED;
@@ -294,6 +309,7 @@ public:
     {
         int32           v = version();
         UTwrite(os, &v);
+        saveData(os, myTestparameter);
 
     }
 
@@ -306,11 +322,23 @@ public:
             // Fail incompatible versions
             return false;
         }
+        loadData(is, myTestparameter);
 
         return true;
     }
 
+    int64 getTestparameter() const { return myTestparameter; }
+    void setTestparameter(int64 val) { myTestparameter = val; }
+    int64 opTestparameter(const SOP_NodeVerb::CookParms &cookparms) const
+    { 
+        SOP_Node *thissop = cookparms.getNode();
+        if (!thissop) return getTestparameter();
+        int64 result;
+        OP_Utils::evalOpParm(result, thissop, "testParameter", cookparms.getCookTime(), 0);
+        return result;
+    }
 
 private:
+    int64 myTestparameter;
 
 };

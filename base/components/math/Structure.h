@@ -6,10 +6,28 @@
 #include <string>
 #include <math.h>
 #include <map>
+#include <optional>
+#include <span>
+#include <array>
+#include <utility>
+#include <d3d12.h>
+#pragma comment(lib,"d3d12.lib")
+#include <wrl.h>
 
-struct Transform {
+
+struct EulerTransform {
 	Vector3 scale;
 	Vector3 rotate;
+	Vector3 translate;
+};
+
+struct Quaternion {
+	float x, y, z, w;
+};
+
+struct QuaternionTransform {
+	Vector3 scale;
+	Quaternion rotate;
 	Vector3 translate;
 };
 
@@ -40,12 +58,9 @@ struct Material {
 	float shininess;
 };
 
-struct Quaternion {
-	float x, y, z, w;
-};
-
 //Node情報格納用構造体
 struct Node {
+	QuaternionTransform transform;
 	Matrix4x4 localMatrix;
 	std::string name;
 	std::vector<Node> children;
@@ -78,12 +93,61 @@ struct Animation {
 	std::map<std::string, NodeAnimation> nodeAnimations;
 };
 
+struct Joint {
+	QuaternionTransform transform;
+	Matrix4x4 localMatrix;
+	Matrix4x4 skeletonSpaceMatrix;//SkeltonSpaceでの変換行列
+	std::string name;//名前
+	std::vector<int32_t> children;//子JointのIndexリスト
+	int32_t index;//自身のIndex
+	std::optional<int32_t> parent;//親JointのIndex
+};
+
+struct Skeleton {
+	int32_t root;//RootJointのIndex
+	std::map<std::string, int32_t> jointMap;//Joint名とIndexの辞書
+	std::vector<Joint> joints;//所持しているジョイント
+};
+
+struct VertexWeightData {
+	float weight;
+	uint32_t vertexIndex;
+};
+
+struct JointWeightData {
+	Matrix4x4 inverseBindPoseMatrix;
+	std::vector<VertexWeightData> vertexWeights;
+};
+
+const uint32_t kNumMaxInfluence = 4;
+struct VertexInfluence {
+	std::array <float, kNumMaxInfluence> weight;
+	std::array<int32_t, kNumMaxInfluence> jointIndices;
+};
+
+struct WellForGPU {
+	Matrix4x4 skeletonSpaceMatrix;//位置用
+	Matrix4x4 skeletonSpaceInverseTransposeMatrix;//法線用
+};
+
+struct SkinCluster {
+	std::vector<Matrix4x4> inverseBindPoseMatrices;
+	Microsoft::WRL::ComPtr <ID3D12Resource> influenceResource;
+	D3D12_VERTEX_BUFFER_VIEW influenveBufferView;
+	std::span<VertexInfluence> mappedInfluence;
+	Microsoft::WRL::ComPtr <ID3D12Resource> paletteResource;
+	std::span<WellForGPU> mappedPalette;
+	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> paletteSrvHandle;
+};
+
 struct MaterialData {
 	std::string textureFilePath;
 };
 
 struct ModelData {
 	std::vector<VertexData> vertices;
+	std::vector<uint32_t> indices;
+	std::map<std::string, JointWeightData> skinClusterData;
 	MaterialData material;
 	int textureIndex;
 	Node rootNode;
@@ -107,7 +171,7 @@ struct StructSphere {
 
 #pragma region Particle
 struct Particle {
-	Transform transform;
+	EulerTransform transform;
 	Vector3 velocity;
 	Vector4 color;
 	float lifeTime;
@@ -120,7 +184,7 @@ struct ParticleForGPU {
 };
 
 struct Emitter {
-	Transform transform;
+	EulerTransform transform;
 	uint32_t count;//発生数
 	float frequency;//発生頻度
 	float frequencyTime;//頻度用時刻

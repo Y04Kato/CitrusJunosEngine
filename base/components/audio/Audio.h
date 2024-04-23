@@ -4,21 +4,16 @@
 #include <fstream>
 #include <wrl.h>
 #include <set>
+#include <convertString/ConvertString.h>
 
-struct ChunkHeader {
-	char id[4];//チャンク毎のID
-	int32_t size;//チャンクサイズ
-};
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
 
-struct RiffHeader {
-	ChunkHeader chunk;//"RIFF"
-	char type[4];//"WAVE"
-};
-
-struct FormatChunk {
-	ChunkHeader chunk;//"fmt "
-	WAVEFORMATEX fmt;//波形フォーマット
-};
+#pragma comment(lib, "Mf.lib")
+#pragma comment(lib, "mfplat.lib")
+#pragma comment(lib, "Mfreadwrite.lib")
+#pragma comment(lib, "mfuuid.lib")
 
 struct SoundData {
 	//波形フォーマット
@@ -42,7 +37,7 @@ public:
 	void Initialize();
 
 	//音声データの読み込み
-	SoundData SoundLoadWave(const char* filename);
+	SoundData SoundLoad(const char* filename);
 
 	//音声データ解放
 	void SoundUnload(SoundData* soundData);

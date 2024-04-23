@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\Users\Yuzu\source\repos\HoudiniPlugin\SOP_LevelEditor\build\CMakeFiles\225ce892a186b209b78eae744fb20716\generate.stamp.rule">
+    <CustomBuild Include="C:\Users\Yuzu\source\repos\CitrusJunosEngine\tools\HoudiniPlugin\SOP_LevelEditor\build\CMakeFiles\422fe1d5fddd8fa4c1f1af5515982e05\generate.stamp.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{35FE1520-8B50-303D-AA7F-99AD6B847885}</UniqueIdentifier>
+      <UniqueIdentifier>{28A6668D-722A-3D58-8C96-3DDED5C1792F}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
