@@ -13,8 +13,8 @@ void GamePlayScene::Initialize() {
 
 	//Audio
 	audio_ = Audio::GetInstance();
-	soundData1_ = audio_->SoundLoadWave("project/gamedata/resources/CraftsmansForge.wav");
-	soundData2_ = audio_->SoundLoadWave("project/gamedata/resources/metal.wav");
+	soundData1_ = audio_->SoundLoad("project/gamedata/resources/CraftsmansForge.wav");
+	soundData2_ = audio_->SoundLoad("project/gamedata/resources/metal.wav");
 	//音声再生
 	audio_->SoundPlayWave(soundData1_, 0.1f, true);
 

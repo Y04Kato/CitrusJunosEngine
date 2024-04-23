@@ -61,8 +61,8 @@ private:
 	std::unique_ptr<Model> enemyModel_;
 
 	std::unique_ptr <CreateSprite> sprite_[5];
-	Transform spriteTransform_;
-	Transform SpriteuvTransform_;
+	EulerTransform spriteTransform_;
+	EulerTransform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
 
 	uint32_t background_;
