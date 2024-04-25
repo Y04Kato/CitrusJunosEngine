@@ -19,6 +19,16 @@
 #include <SYS/SYS_Types.h>
 
 class DEP_MicroNode;
+namespace SOP_LevelEditorEnums
+{
+    enum class Testdialog
+    {
+        TEST1 = 0,
+        TEST2,
+        TEST3
+    };
+}
+
 
 class  SOP_LevelEditorParms  : public SOP_NodeParms
 {
@@ -28,6 +38,10 @@ public:
     SOP_LevelEditorParms()
     {
         myTestparameter = 0;
+        myTestvecotr2 = UT_Vector2D(1,0.3);
+        myTestvector3 = UT_Vector3D(0,0,0);
+        myTestcheckbox = false;
+        myTestdialog = 0;
 
     }
 
@@ -41,6 +55,10 @@ public:
     bool operator==(const SOP_LevelEditorParms &src) const
     {
         if (myTestparameter != src.myTestparameter) return false;
+        if (myTestvecotr2 != src.myTestvecotr2) return false;
+        if (myTestvector3 != src.myTestvector3) return false;
+        if (myTestcheckbox != src.myTestcheckbox) return false;
+        if (myTestdialog != src.myTestdialog) return false;
 
         return true;
     }
@@ -48,6 +66,7 @@ public:
     {
         return !operator==(src);
     }
+    using Testdialog = SOP_LevelEditorEnums::Testdialog;
 
 
 
@@ -55,7 +74,19 @@ public:
     {
         myTestparameter = 0;
         if (true)
-            graph->evalOpParm(myTestparameter, nodeidx, "testParameter", time, 0);
+            graph->evalOpParm(myTestparameter, nodeidx, "TestParameter", time, 0);
+        myTestvecotr2 = UT_Vector2D(1,0.3);
+        if (true)
+            graph->evalOpParm(myTestvecotr2, nodeidx, "TestVecotr2", time, 0);
+        myTestvector3 = UT_Vector3D(0,0,0);
+        if (true)
+            graph->evalOpParm(myTestvector3, nodeidx, "TestVector3", time, 0);
+        myTestcheckbox = false;
+        if (true)
+            graph->evalOpParm(myTestcheckbox, nodeidx, "TestCheckBox", time, 0);
+        myTestdialog = 0;
+        if (true)
+            graph->evalOpParm(myTestdialog, nodeidx, "TestDialog", time, 0);
 
     }
 
@@ -84,6 +115,18 @@ public:
         {
             case 0:
                 coerceValue(value, myTestparameter);
+                break;
+            case 1:
+                coerceValue(value, myTestvecotr2);
+                break;
+            case 2:
+                coerceValue(value, myTestvector3);
+                break;
+            case 3:
+                coerceValue(value, myTestcheckbox);
+                break;
+            case 4:
+                coerceValue(value, myTestdialog);
                 break;
 
         }
@@ -135,6 +178,18 @@ public:
             case 0:
                 coerceValue(myTestparameter, clampMinValue(2,  ( value ) ));
                 break;
+            case 1:
+                coerceValue(myTestvecotr2, ( ( value ) ));
+                break;
+            case 2:
+                coerceValue(myTestvector3, ( ( value ) ));
+                break;
+            case 3:
+                coerceValue(myTestcheckbox, ( ( value ) ));
+                break;
+            case 4:
+                coerceValue(myTestdialog, clampMinValue(0,  clampMaxValue(2,  value ) ));
+                break;
 
         }
     }
@@ -165,7 +220,7 @@ public:
     exint getNestNumParms(TempIndex idx) const override
     {
         if (idx.size() == 0)
-            return 1;
+            return 5;
         switch (idx[0])
         {
 
@@ -181,7 +236,15 @@ public:
         switch (fieldnum[0])
         {
             case 0:
-                return "testParameter";
+                return "TestParameter";
+            case 1:
+                return "TestVecotr2";
+            case 2:
+                return "TestVector3";
+            case 3:
+                return "TestCheckBox";
+            case 4:
+                return "TestDialog";
 
         }
         return 0;
@@ -194,6 +257,14 @@ public:
         switch (fieldnum[0])
         {
             case 0:
+                return PARM_INTEGER;
+            case 1:
+                return PARM_VECTOR2;
+            case 2:
+                return PARM_VECTOR3;
+            case 3:
+                return PARM_INTEGER;
+            case 4:
                 return PARM_INTEGER;
 
         }
@@ -310,6 +381,10 @@ public:
         int32           v = version();
         UTwrite(os, &v);
         saveData(os, myTestparameter);
+        saveData(os, myTestvecotr2);
+        saveData(os, myTestvector3);
+        saveData(os, myTestcheckbox);
+        saveData(os, myTestdialog);
 
     }
 
@@ -323,6 +398,10 @@ public:
             return false;
         }
         loadData(is, myTestparameter);
+        loadData(is, myTestvecotr2);
+        loadData(is, myTestvector3);
+        loadData(is, myTestcheckbox);
+        loadData(is, myTestdialog);
 
         return true;
     }
@@ -334,11 +413,55 @@ public:
         SOP_Node *thissop = cookparms.getNode();
         if (!thissop) return getTestparameter();
         int64 result;
-        OP_Utils::evalOpParm(result, thissop, "testParameter", cookparms.getCookTime(), 0);
+        OP_Utils::evalOpParm(result, thissop, "TestParameter", cookparms.getCookTime(), 0);
         return result;
+    }
+    UT_Vector2D getTestvecotr2() const { return myTestvecotr2; }
+    void setTestvecotr2(UT_Vector2D val) { myTestvecotr2 = val; }
+    UT_Vector2D opTestvecotr2(const SOP_NodeVerb::CookParms &cookparms) const
+    { 
+        SOP_Node *thissop = cookparms.getNode();
+        if (!thissop) return getTestvecotr2();
+        UT_Vector2D result;
+        OP_Utils::evalOpParm(result, thissop, "TestVecotr2", cookparms.getCookTime(), 0);
+        return result;
+    }
+    UT_Vector3D getTestvector3() const { return myTestvector3; }
+    void setTestvector3(UT_Vector3D val) { myTestvector3 = val; }
+    UT_Vector3D opTestvector3(const SOP_NodeVerb::CookParms &cookparms) const
+    { 
+        SOP_Node *thissop = cookparms.getNode();
+        if (!thissop) return getTestvector3();
+        UT_Vector3D result;
+        OP_Utils::evalOpParm(result, thissop, "TestVector3", cookparms.getCookTime(), 0);
+        return result;
+    }
+    bool getTestcheckbox() const { return myTestcheckbox; }
+    void setTestcheckbox(bool val) { myTestcheckbox = val; }
+    bool opTestcheckbox(const SOP_NodeVerb::CookParms &cookparms) const
+    { 
+        SOP_Node *thissop = cookparms.getNode();
+        if (!thissop) return getTestcheckbox();
+        bool result;
+        OP_Utils::evalOpParm(result, thissop, "TestCheckBox", cookparms.getCookTime(), 0);
+        return result;
+    }
+    Testdialog getTestdialog() const { return Testdialog(myTestdialog); }
+    void setTestdialog(Testdialog val) { myTestdialog = int64(val); }
+    Testdialog opTestdialog(const SOP_NodeVerb::CookParms &cookparms) const
+    { 
+        SOP_Node *thissop = cookparms.getNode();
+        if (!thissop) return getTestdialog();
+        int64 result;
+        OP_Utils::evalOpParm(result, thissop, "TestDialog", cookparms.getCookTime(), 0);
+        return Testdialog(result);
     }
 
 private:
     int64 myTestparameter;
+    UT_Vector2D myTestvecotr2;
+    UT_Vector3D myTestvector3;
+    bool myTestcheckbox;
+    int64 myTestdialog;
 
 };
