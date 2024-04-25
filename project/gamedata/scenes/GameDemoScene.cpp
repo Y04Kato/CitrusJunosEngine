@@ -114,7 +114,7 @@ void GameDemoScene::Initialize() {
 	soundData1_ = audio_->SoundLoad("project/gamedata/resources/kamui.mp3");
 	soundData2_ = audio_->SoundLoad("project/gamedata/resources/system.mp3");
 	//音声再生
-	audio_->SoundPlayWave(soundData1_, 0.1f, true);
+	//audio_->SoundPlayWave(soundData1_, 0.1f, true);
 
 	// デバッグカメラの初期化
 	debugCamera_ = DebugCamera::GetInstance();

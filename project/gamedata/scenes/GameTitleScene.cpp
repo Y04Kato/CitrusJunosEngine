@@ -55,9 +55,16 @@ void GameTitleScene::Initialize() {
 
 	player_ = std::make_unique<Player>();
 	playerModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/player", "player.obj"));
-	playerModel_->SetDirectionalLightFlag(true, 2);
+	playerModel_->SetDirectionalLightFlag(true, 3);
 	player_->Initialize(playerModel_.get());
-	player_->SetWorldTransform(Vector3{ 0.0f,0.0f,0.0f });
+
+	stage_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/GarageMain", "GarageMain.obj"));
+	stage_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/GarageDoor", "GarageDoor.gltf"));
+	stage_[0]->SetDirectionalLightFlag(true, 3);
+	stage_[1]->SetDirectionalLightFlag(true, 3);
+	for (int i = 0; i < 3; i++) {
+		world_[i].Initialize();
+	}
 
 	// デバッグカメラの初期化
 	debugCamera_ = DebugCamera::GetInstance();
@@ -100,7 +107,7 @@ void GameTitleScene::Update() {
 
 	if (count == 0) {
 		player_->SetWorldTransform(Vector3{ 0.0f,0.0f,0.0f });
-		debugCamera_->SetCamera(Vector3{ 0.0f,11.0f,-8.0f }, Vector3{ 0.8f,0.0f,0.0f });
+		//debugCamera_->SetCamera(Vector3{ 0.0f,11.0f,-8.0f }, Vector3{ 0.8f,0.0f,0.0f });
 		fadeAlpha_ -= 4;
 		if (fadeAlpha_ <= 0) {
 			fadeAlpha_ = 0;
@@ -118,7 +125,7 @@ void GameTitleScene::Update() {
 		if (fadeAlpha_ >= 256) {
 			count = 0;
 			fadeAlpha_ = 256;
-			sceneNo = GAME_SCENE;
+			sceneNo = DEMO_SCENE;
 		}
 	}
 
@@ -131,7 +138,7 @@ void GameTitleScene::Update() {
 void GameTitleScene::Draw() {
 #pragma region 背景スプライト描画
 	CJEngine_->PreDraw2D();
-	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+	//sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 
 #pragma endregion
 
@@ -139,6 +146,8 @@ void GameTitleScene::Draw() {
 	CJEngine_->PreDraw3D();
 
 	player_->Draw(viewProjection_);
+	stage_[0]->Draw(world_[0], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
+	stage_[1]->Draw(world_[1], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
 #pragma endregion
 
 #pragma region 前景スプライト描画

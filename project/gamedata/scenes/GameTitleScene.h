@@ -52,9 +52,12 @@ private:
 	Audio* audio_;
 	SoundData soundData1_;
 
+	WorldTransform world_[3];
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Model> playerModel_;
 	ViewProjection viewProjection_;
+
+	std::unique_ptr<Model> stage_[2];
 
 	DebugCamera* debugCamera_;
 };
