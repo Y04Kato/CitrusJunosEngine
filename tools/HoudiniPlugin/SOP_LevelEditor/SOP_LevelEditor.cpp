@@ -37,8 +37,8 @@ void newSopOperator(OP_OperatorTable* table) {
 static const char* theDsFile = R"THEDSFILE({
     name        parameters
     parm {
-        name    "testParameter"      // 内部パラメータ名
-        label   "testParameter" // インターフェース表示名
+        name    "TestParameter"      // 内部パラメータ名
+        label   "TestParameter" // インターフェース表示名
         type    integer
         default { "0" }     // パラメータのデフォルト値
         range   { 2! 50 }   // インターフェース上での値の最低値と最大値
@@ -46,6 +46,37 @@ static const char* theDsFile = R"THEDSFILE({
                             // スライダーの最大値が50だが、手動で更に高く設定可能
         export  all         // パラメータをツールボックスに表示
                             // ノードの状態がビューポートに表示される
+    }
+    parm {
+        name    "TestVecotr2"
+        label   "TestVector2"
+        type    vector2     // Vector2で管理
+        size    2           // 要素2つをVector2に入れる
+        default { "1" "0.3" }
+    }
+    parm {
+        name    "TestVector3"
+        label   "TestVector3"
+        type    vector     // Vector3で管理
+        size    3           // 要素3つをVector3に入れる
+        default { "0" "0" "0" }
+    }
+    parm {
+        name    "TestCheckBox"
+        label   "TestCheckBox"
+        type    toggle  // チェックボックス
+        default { "0" } // 0なのでFalseを初期値に
+    }
+    parm {
+        name    "TestDialog"
+        label   "TestDialog"
+        type    ordinal     // ダイアログで管理
+        default { "0" }     // 0番目の項目を初期値にする
+        menu    {
+            "Test1"    "Test1"
+            "Test2"    "Test2"
+            "Test3"    "Test3"
+        }     // 内部パラメータ名とインターフェース表示名
     }
 }
 )THEDSFILE";

@@ -21,18 +21,18 @@ public:
 	void Initialize(const ModelData modeldata, const uint32_t texture);
 
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material);
-	
+
 	void Finalize();
 
 	ModelData modelData_;
-	
+
 	/// <summary>
 	/// ライティングを行うかどうか＆ライティングの種類
 	/// 1:HalfLambert
 	/// 2:PhongReflection
 	/// 2:BlinnPhongReflection
 	/// </summary>
-	void SetDirectionalLightFlag(bool isDirectionalLight,int lightNum);
+	void SetDirectionalLightFlag(bool isDirectionalLight, int lightNum);
 
 	ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
 	Animation LoadAnimationFile(const std::string& directoryPath, const std::string& filename);
@@ -41,13 +41,15 @@ public:
 
 	Skeleton CreateSkeleton(const Node& rootNode);
 	int32_t CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
-	void Update(Skeleton& skeleton , SkinCluster& skinCluster);
+	void Update(Skeleton& skeleton, SkinCluster& skinCluster);
 	void ApplyAnimation(Skeleton& skeleton, const Animation& animation, float animationTime);
+	void SetAnimationTime(float animationTime);
+	float GetAnimationMaxTime() { return animation_.duration; }
 
 	SkinCluster CreateSkinCluster();
 
 	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
-	static Model* CreateModelFromObj(const ModelData modeldata,const uint32_t texture);
+	static Model* CreateModelFromObj(const ModelData modeldata, const uint32_t texture);
 
 	/// <summary>
 	/// VATに必要なテクスチャのロード(テクスチャの名前は固定、モデルファイルと同じディレクトリを参照)
@@ -56,7 +58,7 @@ public:
 	/// </summary>
 	void LoadVATData(const std::string& directoryPath, const VATData& vatdata);
 
-	void SetAnimationTime(float animTime);
+	void SetVATTime(float animTime) { vatData_.VATTime = animTime; };
 
 private:
 	DirectXCommon* dxCommon_;
@@ -83,13 +85,14 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource_;
 
 	int lightNum_;
-	
+
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
 	CameraForGPU* cameraData_ = nullptr;
 
 	bool isLoadTexCoord_ = false;//TexCoordがモデルに設定されているか
 
 	bool isKeyframeAnim_ = false;//KeyframeAnimationかどうか
+	bool isManualAnimTime_ = false;//AnimationTimeを手動でやっているか否か
 	float animationTime_ = 0.0f;
 	Animation animation_;
 

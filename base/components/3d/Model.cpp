@@ -53,8 +53,13 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	*pointLight_ = pointLights_->GetPointLight();
 
 	if (isKeyframeAnim_) {//KeyframeAnimationの場合
-		animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
-		animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
+		if (isManualAnimTime_) {
+
+		}
+		else {
+			animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+			animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
+		}
 
 		//ApplyAnimation(skeleton_, animation_, animationTime_);
 		//Update(skeleton_, skinCluster_);
@@ -367,6 +372,11 @@ void Model::ApplyAnimation(Skeleton& skeleton, const Animation& animation, float
 	}
 }
 
+void Model::SetAnimationTime(float animationTime) {
+	animationTime_ = animationTime / ImGui::GetIO().Framerate;
+	isManualAnimTime_ = true;
+}
+
 SkinCluster Model::CreateSkinCluster() {
 	SkinCluster skinCluster;
 	//Palettr用のリソース確保
@@ -501,8 +511,4 @@ void Model::LoadVATData(const std::string& directoryPath, const VATData& vatdata
 	vatData_.VatPositionTexSize = vatdata.VatPositionTexSize;
 	vatData_.VatNormalTexSize = vatdata.VatNormalTexSize;
 	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
-}
-
-void Model::SetAnimationTime(float animTime) {
-	vatData_.VATTime = animTime;
 }
