@@ -7,7 +7,7 @@ DirectionalLights* DirectionalLights::GetInstance() {
 }
 
 void DirectionalLights::Initialize() {
-	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},1.0f };
+	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.2f };
 }
 
 void DirectionalLights::Update() {

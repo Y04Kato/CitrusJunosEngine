@@ -27,6 +27,7 @@ public:
 	void IsFallStart();
 
 	void SetWorldTransform(const Vector3 translation);
+	void SetScale(const Vector3 scale) { worldTransform_.scale_ = scale; }
 
 	void SetObjectPos(const WorldTransform& worldtransform);
 

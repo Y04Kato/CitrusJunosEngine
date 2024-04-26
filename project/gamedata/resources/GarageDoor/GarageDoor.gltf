@@ -15,22 +15,12 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"\u5186\u67f1.002",
+			"name":"door",
 			"rotation":[
+				0.7071068286895752,
 				0,
 				0,
-				-0.3826834559440613,
-				0.9238795638084412
-			],
-			"scale":[
-				0.4999999701976776,
-				7.999999523162842,
-				0.5
-			],
-			"translation":[
-				0,
-				12,
-				150
+				0.7071068286895752
 			]
 		}
 	],
@@ -50,9 +40,16 @@
 						"node":0,
 						"path":"rotation"
 					}
+				},
+				{
+					"sampler":2,
+					"target":{
+						"node":0,
+						"path":"scale"
+					}
 				}
 			],
-			"name":"\u5186\u67f1.002Action",
+			"name":"doorAction",
 			"samplers":[
 				{
 					"input":4,
@@ -63,6 +60,11 @@
 					"input":4,
 					"interpolation":"LINEAR",
 					"output":6
+				},
+				{
+					"input":7,
+					"interpolation":"STEP",
+					"output":8
 				}
 			]
 		}
@@ -70,7 +72,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.002",
+			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -82,7 +84,7 @@
 	],
 	"meshes":[
 		{
-			"name":"\u5186\u67f1.005",
+			"name":"door.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -105,37 +107,37 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"tex2",
-			"uri":"tex2.png"
+			"name":"tex",
+			"uri":"tex.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":768,
+			"count":845,
 			"max":[
-				24.000001907348633,
-				1.5000001192092896,
-				22.097209930419922
+				12.000000953674316,
+				12,
+				8.536392211914062
 			],
 			"min":[
-				-24.000001907348633,
-				-1.5000001192092896,
-				-2.0000038146972656
+				-12.000000953674316,
+				-12.000000953674316,
+				-3.51220703125
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":768,
+			"count":845,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":768,
+			"count":845,
 			"type":"VEC2"
 		},
 		{
@@ -147,67 +149,95 @@
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":181,
+			"count":180,
 			"max":[
 				7.5
 			],
 			"min":[
-				0
+				0.041666666666666664
 			],
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":5,
 			"componentType":5126,
-			"count":181,
+			"count":180,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":6,
 			"componentType":5126,
-			"count":181,
+			"count":180,
 			"type":"VEC4"
+		},
+		{
+			"bufferView":7,
+			"componentType":5126,
+			"count":2,
+			"max":[
+				7.5
+			],
+			"min":[
+				0.041666666666666664
+			],
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":8,
+			"componentType":5126,
+			"count":2,
+			"type":"VEC3"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":9216,
+			"byteLength":10140,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":9216,
-			"byteOffset":9216,
+			"byteLength":10140,
+			"byteOffset":10140,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":6144,
-			"byteOffset":18432,
+			"byteLength":6760,
+			"byteOffset":20280,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2976,
-			"byteOffset":24576,
+			"byteOffset":27040,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":724,
-			"byteOffset":27552
+			"byteLength":720,
+			"byteOffset":30016
 		},
 		{
 			"buffer":0,
-			"byteLength":2172,
-			"byteOffset":28276
+			"byteLength":2160,
+			"byteOffset":30736
 		},
 		{
 			"buffer":0,
-			"byteLength":2896,
-			"byteOffset":30448
+			"byteLength":2880,
+			"byteOffset":32896
+		},
+		{
+			"buffer":0,
+			"byteLength":8,
+			"byteOffset":35776
+		},
+		{
+			"buffer":0,
+			"byteLength":24,
+			"byteOffset":35784
 		}
 	],
 	"samplers":[
@@ -218,7 +248,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":33344,
+			"byteLength":35808,
 			"uri":"GarageDoor.bin"
 		}
 	]

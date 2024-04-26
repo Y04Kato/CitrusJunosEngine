@@ -58,6 +58,18 @@ private:
 	ViewProjection viewProjection_;
 
 	std::unique_ptr<Model> stage_[2];
+	float testTimer_ = 1.0f;
 
 	DebugCamera* debugCamera_;
+
+	std::unique_ptr<CreateParticle> particle_;
+	Emitter testEmitter_{};
+	AccelerationField accelerationField;
+	uint32_t particleResourceNum_;
+
+	DirectionalLights* directionalLights_;
+	DirectionalLight directionalLight_;
+
+	PointLights* pointLights_;
+	PointLight pointLight_;
 };
