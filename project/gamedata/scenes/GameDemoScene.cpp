@@ -178,6 +178,8 @@ void GameDemoScene::Update() {
 		worldTransformModel_[i].UpdateMatrix();
 	}
 
+	model_[1]->SetAnimationTime(testTimer_);
+
 	worldTransformModelVAT_.UpdateMatrix();
 
 	for (Obj& obj : objects_) {
@@ -371,7 +373,7 @@ void GameDemoScene::Update() {
 				ImGui::DragFloat3("Rotate", worldTransformModelVAT_.rotation_.num, 0.05f);
 				ImGui::DragFloat3("Scale", worldTransformModelVAT_.scale_.num, 0.05f);
 				ImGui::DragFloat("AnimTime", &vatData_.VATTime, 1.0f, 0.0f, vatData_.MaxVATTime);
-				modelVAT_->SetAnimationTime(vatData_.VATTime);
+				modelVAT_->SetVATTime(vatData_.VATTime);
 				ImGui::TreePop();
 			}
 		}
@@ -467,6 +469,7 @@ void GameDemoScene::Update() {
 		ImGui::TreePop();
 	}
 
+	ImGui::DragFloat("TestTimer", &testTimer_, 1.0f, 0.0f, model_[1]->GetAnimationMaxTime() * 60.0f);
 	ImGui::Text("%f", ImGui::GetIO().Framerate);
 
 	ImGui::InputText("BlockName", objName_, sizeof(objName_));
