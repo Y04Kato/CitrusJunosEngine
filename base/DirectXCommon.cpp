@@ -18,10 +18,10 @@ void DirectXCommon::Initialization(const wchar_t* title, int32_t backBufferWidth
 	WinApp::GetInstance()->CreateWindowView(title, backBufferWidth_, backBufferHeight_);
 
 	//DXGIデバイス初期化
-	InitializeDXGIDevice();
+	CreateDXGIDevice();
 
 	//コマンド関連初期化
-	InitializeCommand();
+	CreateCommand();
 
 	//スワップチェーンの生成
 	CreateSwapChain();
@@ -35,13 +35,17 @@ void DirectXCommon::Initialization(const wchar_t* title, int32_t backBufferWidth
 	//深度設定
 	CreateDepthStensil();
 
+	CreateViewport();
+
+	CreateScissor();
+
 	//テキスト関係
 	InitializeTextFactory();
 	CreateTextRenderTargets();
 	CreateTextVertex();
 }
 
-void DirectXCommon::InitializeDXGIDevice() {
+void DirectXCommon::CreateDXGIDevice() {
 	//DXGIファクトリーの生成
 	dxgiFactory_ = nullptr;
 	hr_ = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory_));
@@ -123,7 +127,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 #endif // _DEBUG
 }
 
-void DirectXCommon::InitializeCommand() {
+void DirectXCommon::CreateCommand() {
 	commandQueue_ = nullptr;
 	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
 	hr_ = device_->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue_));
@@ -158,7 +162,7 @@ void DirectXCommon::CreateSwapChain() {
 	assert(SUCCEEDED(hr_));
 
 	//RTV用ディスクリプタヒープの生成
-	rtvDescriptorHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	rtvDescriptorHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 3, false);
 
 	//SwapChainからResourceを引っ張ってくる
 	swapChainResources_[0] = { nullptr };
@@ -192,18 +196,18 @@ void DirectXCommon::CreateFinalRenderTargets() {
 	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;//出力結果をSRGBに変換して書き込む
 	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;//2Dテクスチャとして書き込む
 	//ディスクリプタの先頭を取得する
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	rtvStartHandle_ = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+
+	//RTVのサイズを取得
+	descriptorSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	//まず一つ目を作る。一つ目は最初のところに作る。作る場所をこちらで指定してあげる必要がある
-	rtvHandles_[renderRTVIndex_] = rtvStartHandle;
+	rtvHandles_[0] = rtvStartHandle_;
 	device_->CreateRenderTargetView(swapChainResources_[0].Get(), &rtvDesc_, rtvHandles_[0]);
-	renderRTVIndex_++;
 
-	//2つ目のディスクリプタハンドルを得る（自力で）
-	rtvHandles_[renderRTVIndex_].ptr = rtvHandles_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	//2つ目を作る
+	//2つ目のディスクリプタハンドルを手動で得て、作成する
+	rtvHandles_[1].ptr = rtvHandles_[0].ptr + descriptorSizeRTV_;
 	device_->CreateRenderTargetView(swapChainResources_[1].Get(), &rtvDesc_, rtvHandles_[1]);
-	renderRTVIndex_++;
 }
 
 void DirectXCommon::CreateFence() {
@@ -216,6 +220,22 @@ void DirectXCommon::CreateFence() {
 	//Fenceのsignalを待つためのイベントを作成する
 	fenceEvent_ = CreateEvent(NULL, false, false, NULL);
 	assert(fenceEvent_ != nullptr);
+}
+
+void DirectXCommon::CreateViewport(){
+	viewport_.Width = (float)WinApp::kClientWidth;
+	viewport_.Height = (float)WinApp::kClientHeight;
+	viewport_.TopLeftX = 0;
+	viewport_.TopLeftY = 0;
+	viewport_.MinDepth = 0.0f;
+	viewport_.MaxDepth = 1.0f;
+}
+
+void DirectXCommon::CreateScissor(){
+	scissorRect_.left = 0;
+	scissorRect_.right = WinApp::kClientWidth;
+	scissorRect_.top = 0;
+	scissorRect_.bottom = WinApp::kClientHeight;
 }
 
 void DirectXCommon::PreDraw() {
@@ -242,10 +262,8 @@ void DirectXCommon::PreDraw() {
 	//描画用のDescriptorHeapの設定
 	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_.Get() };
 	commandList_->SetDescriptorHeaps(1, descriptorHeaps);
-
-	dsvhandle_ = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
-	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, &dsvhandle_);
-	commandList_->ClearDepthStencilView(dsvhandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	commandList_->RSSetViewports(1, &viewport_);
+	commandList_->RSSetScissorRects(1, &scissorRect_);
 }
 
 void DirectXCommon::PostDraw() {
@@ -284,15 +302,6 @@ void DirectXCommon::PostDraw() {
 	assert(SUCCEEDED(hr_));
 	hr_ = commandList_->Reset(commandAllocator_.Get(), nullptr);
 	assert(SUCCEEDED(hr_));
-}
-
-void DirectXCommon::ClearRenderTarget() {
-	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
-	//描画先のRTVを設定する
-	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, nullptr);
-	//指定した色で画面全体をクリアする
-	float clearcolor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色
-	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearcolor, 0, nullptr);
 }
 
 Microsoft::WRL::ComPtr <ID3D12Resource> DirectXCommon::CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes) {

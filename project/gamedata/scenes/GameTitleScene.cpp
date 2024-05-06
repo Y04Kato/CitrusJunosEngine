@@ -16,11 +16,6 @@ void GameTitleScene::Update(){
 		sceneNo = DEMO_SCENE;
 	}
 
-	ImGui::Begin("debug");
-	ImGui::Text("GameTitleScene");
-	ImGui::Text("DemoScene:N key or A button");
-	ImGui::End();
-
 	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
 		return;
 	}
@@ -32,22 +27,22 @@ void GameTitleScene::Update(){
 
 void GameTitleScene::Draw(){
 #pragma region 背景スプライト描画
-	CJEngine_->PreDraw2D();
+	CJEngine_->renderer_->Draw(PipelineType::Standerd2D);
 
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画
-	CJEngine_->PreDraw3D();
+	CJEngine_->renderer_->Draw(PipelineType::Standerd3D);
 
 #pragma endregion
 
 #pragma region パーティクル描画
-	CJEngine_->PreDrawParticle();
+	CJEngine_->renderer_->Draw(PipelineType::Particle);
 
 #pragma endregion
 
 #pragma region 前景スプライト描画
-	CJEngine_->PreDraw2D();
+	CJEngine_->renderer_->Draw(PipelineType::Standerd2D);
 
 #pragma endregion
 }

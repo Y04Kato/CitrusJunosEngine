@@ -1,5 +1,5 @@
 #pragma once
-#include "components/manager/Iscene.h"
+#include "Iscene.h"
 
 class GameClearScene :public Iscene {
 public:

@@ -1,7 +1,6 @@
 #pragma once
 #include "DirectXCommon.h"
 #include <DirectXTex/DirectXTex.h>
-#include "DirectXTex/d3dx12.h"
 #include <wrl.h>
 #include <array>
 

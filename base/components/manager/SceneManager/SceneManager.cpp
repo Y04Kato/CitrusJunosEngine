@@ -52,6 +52,10 @@ void SceneManager::Initialize() {
 
 	//タイトルシーンから開始
 	Iscene::sceneNo = TITLE_SCENE;
+
+	postEffect_ = new PostEffect();
+	postEffect_->Initialize();
+	postEffect_->ALLCreate();
 }
 
 
@@ -61,8 +65,8 @@ void SceneManager::Update() {
 		if (WinApp::GetInstance()->Procesmessage()) {
 			break;
 		}
+		postEffect_->PreDraw();
 
-		CJEngine_->BeginFrame();
 		imGuiManager_->Begin();
 		input_->Update();
 		GlobalVariables::GetInstance()->Update();
@@ -72,6 +76,16 @@ void SceneManager::Update() {
 		scene_[Iscene::sceneNo]->Draw();
 		imGuiManager_->End();
 		imGuiManager_->Draw();
+
+		CJEngine_->BeginFrame();
+		postEffect_->PreCopy();
+
+		CJEngine_->renderer_->Draw(PipelineType::PostProcess);
+
+		postEffect_->Draw();
+
+		postEffect_->PostCopy();
+
 		CJEngine_->EndFrame();
 
 		//// ESCキーが押されたらループを抜ける

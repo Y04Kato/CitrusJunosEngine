@@ -534,7 +534,7 @@ void GameDemoScene::Update() {
 
 void GameDemoScene::Draw() {
 #pragma region 背景スプライト描画
-	CJEngine_->PreDraw2D();
+	CJEngine_->renderer_->Draw(PipelineType::Standerd2D);
 
 	for (int i = 0; i < 2; i++) {
 		if (isSpriteDraw_[i]) {//Sprite描画
@@ -545,7 +545,7 @@ void GameDemoScene::Draw() {
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画
-	CJEngine_->PreDraw3D();
+	CJEngine_->renderer_->Draw(PipelineType::Standerd3D);
 
 	if (isLineDraw_) {//Line描画
 		line_->Draw(worldTransformLine_[0], worldTransformLine_[1], viewProjection_, lineMaterial_);
@@ -577,7 +577,7 @@ void GameDemoScene::Draw() {
 #pragma endregion
 
 #pragma region VATモデル描画
-	CJEngine_->PreDrawVAT();
+	CJEngine_->renderer_->Draw(PipelineType::VertexAnimationTexture);
 	if (isVATDraw_) {//VATModel描画
 		modelVAT_->Draw(worldTransformModelVAT_, viewProjection_, modelMaterialVAT_);
 	}
@@ -585,18 +585,13 @@ void GameDemoScene::Draw() {
 #pragma endregion
 
 #pragma region パーティクル描画
-	CJEngine_->PreDrawParticle();
+	CJEngine_->renderer_->Draw(PipelineType::Particle);
 
 	for (int i = 0; i < 2; i++) {
 		if (isParticleDraw_[i]) {//Particle描画
 			particle_[i]->Draw(viewProjection_);
 		}
 	}
-
-#pragma endregion
-
-#pragma region 前景スプライト描画
-	CJEngine_->PreDraw2D();
 
 #pragma endregion
 }

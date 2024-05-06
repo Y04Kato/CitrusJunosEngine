@@ -1,4 +1,4 @@
-#include "components/manager/SceneManager.h"
+#include "SceneManager.h"
 
 int Iscene::sceneNo;
 

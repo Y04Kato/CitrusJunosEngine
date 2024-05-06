@@ -1,10 +1,10 @@
 #pragma once
-#include "components/manager/Iscene.h"
+#include "Iscene.h"
 #include "components/audio/Audio.h"
 #include "components/input/Input.h"
 #include "components/3d/WorldTransform.h"
 #include "components/3d/ViewProjection.h"
-#include "components/manager/TextureManager.h"
+#include "TextureManager.h"
 #include "components/2d/CreateTriangle.h"
 #include "components/2d/CreateSprite.h"
 #include "components/2d/CreateParticle.h"
