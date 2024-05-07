@@ -59,17 +59,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\math;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\manager\SceneManager;$(ProjectDir)base\components\manager\TextureManager;$(ProjectDir)base\components\pipelineState;$(ProjectDir)base\components\math;$(ProjectDir)base\components\shaderCompiler;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\math;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\manager\SceneManager;$(ProjectDir)base\components\manager\TextureManager;$(ProjectDir)base\components\pipelineState;$(ProjectDir)base\components\math;$(ProjectDir)base\components\shaderCompiler;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">
-    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\math;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\manager\SceneManager;$(ProjectDir)base\components\manager\TextureManager;$(ProjectDir)base\components\pipelineState;$(ProjectDir)base\components\math;$(ProjectDir)base\components\shaderCompiler;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -154,8 +154,18 @@
     <ClCompile Include="base\components\3d\WorldTransform.cpp" />
     <ClCompile Include="base\components\audio\Audio.cpp" />
     <ClCompile Include="base\components\manager\ImGuiManager\ImGuiManager.cpp" />
-    <ClCompile Include="base\components\manager\TextureManager.cpp" />
+    <ClCompile Include="base\components\manager\PSOManager\PSOManager.cpp" />
+    <ClCompile Include="base\components\manager\RTVManager\RTVManager.cpp" />
+    <ClCompile Include="base\components\manager\SRVManager\SRVManager.cpp" />
+    <ClCompile Include="base\components\manager\TextureManager\TextureManager.cpp" />
+    <ClCompile Include="base\components\pipelineState\Particle\Particle.cpp" />
+    <ClCompile Include="base\components\pipelineState\PostProcess\PostProcess.cpp" />
+    <ClCompile Include="base\components\pipelineState\VAT\VAT.cpp" />
+    <ClCompile Include="base\components\pipelineState\Standard2D\Standard2D.cpp" />
+    <ClCompile Include="base\components\pipelineState\Standard3D\Standard3D.cpp" />
     <ClCompile Include="base\components\postEffect\PostEffect.cpp" />
+    <ClCompile Include="base\components\renderer\Renderer.cpp" />
+    <ClCompile Include="base\components\shaderCompiler\ShaderCompiler.cpp" />
     <ClCompile Include="base\components\utilities\convertString\ConvertString.cpp" />
     <ClCompile Include="base\components\utilities\directionalLight\DirectionalLight.cpp" />
     <ClCompile Include="base\components\utilities\followCamera\FollowCamera.cpp" />
@@ -187,11 +197,27 @@
     <ClCompile Include="project\gamedata\scenes\GameDemoScene.cpp" />
     <ClCompile Include="project\gamedata\scenes\GamePlayScene.cpp" />
     <ClCompile Include="project\gamedata\scenes\GameTitleScene.cpp" />
-    <ClCompile Include="base\components\manager\SceneManager.cpp" />
+    <ClCompile Include="base\components\manager\SceneManager\SceneManager.cpp" />
     <ClCompile Include="base\components\utilities\collisionManager\CollisionManager.cpp" />
     <ClCompile Include="base\components\utilities\globalVariables\GlobalVariables.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="project\gamedata\resources\shaders\CopyImage.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\CopyImage.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="project\gamedata\resources\shaders\Object2d.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -266,9 +292,21 @@
     <ClInclude Include="base\components\3d\WorldTransform.h" />
     <ClInclude Include="base\components\audio\Audio.h" />
     <ClInclude Include="base\components\manager\ImGuiManager\ImGuiManager.h" />
-    <ClInclude Include="base\components\manager\TextureManager.h" />
+    <ClInclude Include="base\components\manager\PSOManager\PSOManager.h" />
+    <ClInclude Include="base\components\manager\RTVManager\RTVManager.h" />
+    <ClInclude Include="base\components\manager\SRVManager\SRVManager.h" />
+    <ClInclude Include="base\components\manager\TextureManager\TextureManager.h" />
     <ClInclude Include="base\components\math\Structure.h" />
+    <ClInclude Include="base\components\pipelineState\IPipeLineStateObject.h" />
+    <ClInclude Include="base\components\pipelineState\Particle\Particle.h" />
+    <ClInclude Include="base\components\pipelineState\PipeLineList.h" />
+    <ClInclude Include="base\components\pipelineState\PostProcess\PostProcess.h" />
+    <ClInclude Include="base\components\pipelineState\VAT\VAT.h" />
+    <ClInclude Include="base\components\pipelineState\Standard2D\Standard2D.h" />
+    <ClInclude Include="base\components\pipelineState\Standard3D\Standard3D.h" />
     <ClInclude Include="base\components\postEffect\PostEffect.h" />
+    <ClInclude Include="base\components\renderer\Renderer.h" />
+    <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h" />
     <ClInclude Include="base\components\utilities\convertString\ConvertString.h" />
     <ClInclude Include="base\components\utilities\directionalLight\DirectionalLight.h" />
     <ClInclude Include="base\components\utilities\followCamera\FollowCamera.h" />
@@ -306,8 +344,8 @@
     <ClInclude Include="project\gamedata\scenes\GameDemoScene.h" />
     <ClInclude Include="project\gamedata\scenes\GamePlayScene.h" />
     <ClInclude Include="project\gamedata\scenes\GameTitleScene.h" />
-    <ClInclude Include="base\components\manager\Iscene.h" />
-    <ClInclude Include="base\components\manager\SceneManager.h" />
+    <ClInclude Include="base\components\manager\SceneManager\Iscene.h" />
+    <ClInclude Include="base\components\manager\SceneManager\SceneManager.h" />
     <ClInclude Include="base\components\utilities\collisionManager\Collider.h" />
     <ClInclude Include="base\components\utilities\collisionManager\CollisionConfig.h" />
     <ClInclude Include="base\components\utilities\collisionManager\CollisionManager.h" />
@@ -323,6 +361,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="project\gamedata\resources\shaders\CopyImage.hlsli" />
     <None Include="project\gamedata\resources\shaders\Object2d.hlsli" />
     <None Include="project\gamedata\resources\shaders\Object3d.hlsli" />
     <None Include="project\gamedata\resources\shaders\Particle.hlsli" />

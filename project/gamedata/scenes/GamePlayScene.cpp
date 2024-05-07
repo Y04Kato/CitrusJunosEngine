@@ -256,13 +256,15 @@ void GamePlayScene::Update() {
 
 void GamePlayScene::Draw() {
 #pragma region 背景スプライト描画
-	CJEngine_->PreDraw2D();
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
+
 	CJEngine_->PreDraw3D();
 
 	player_->Draw(viewProjection_);
@@ -273,14 +275,14 @@ void GamePlayScene::Draw() {
 #pragma endregion
 
 #pragma region パーティクル描画
-	CJEngine_->PreDrawParticle();
+	CJEngine_->renderer_->Draw(PipelineType::Particle);
 
 	particle_->Draw(viewProjection_);
 
 #pragma endregion
 
 #pragma region 前景スプライト描画
-	CJEngine_->PreDraw2D();
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 	if (player_->GetMoveMode() == 0) {
 		sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);

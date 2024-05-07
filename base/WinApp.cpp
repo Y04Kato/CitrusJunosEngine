@@ -21,7 +21,7 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-void WinApp::CreateWindowView(const wchar_t* title, int32_t clientWidth, int32_t clientheight) {
+void WinApp::CreateWindowView(const wchar_t* title, int32_t clientWidth, int32_t clientHeight) {
 	//ウィンドウプロシージャ
 	wc_.lpfnWndProc = WindowProc;
 	//クラス名
@@ -37,7 +37,7 @@ void WinApp::CreateWindowView(const wchar_t* title, int32_t clientWidth, int32_t
 	RegisterClass(&wc_);
 
 	//ウィンドウサイズの構造体にクライアント領域を入れる
-	RECT wrc = { 0,0,kClientWidth,kClientHeight };
+	RECT wrc = { 0,0,clientWidth,clientHeight };
 
 	//クライアント領域を元に実際のサイズにwrcを変更してもらう
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);

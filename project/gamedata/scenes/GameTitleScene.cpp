@@ -182,13 +182,14 @@ void GameTitleScene::Update() {
 
 void GameTitleScene::Draw() {
 #pragma region 背景スプライト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 	CJEngine_->PreDraw2D();
 	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画
-	CJEngine_->PreDraw3D();
+	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
 
 	player_->Draw(viewProjection_);
 	stage_[0]->Draw(world_[0], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
@@ -196,7 +197,7 @@ void GameTitleScene::Draw() {
 #pragma endregion
 
 #pragma region パーティクル描画
-	CJEngine_->PreDrawParticle();
+	CJEngine_->renderer_->Draw(PipelineType::Particle);
 
 	particle_->Draw(viewProjection_);
 
@@ -214,6 +215,7 @@ void GameTitleScene::Draw() {
 		}
 	}
 	sprite_[4]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlpha_ / 256.0f });
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 #pragma endregion
 }

@@ -8,6 +8,7 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "ImGuiManager.h"
+#include "postEffect/PostEffect.h"
 
 //sceneInclude
 #include "GameTitleScene.h"
@@ -39,4 +40,6 @@ private:
 	ImGuiManager* imGuiManager_ = nullptr;
 
 	std::unique_ptr<Iscene>scene_[SCENE_MAX];
+
+	PostEffect* postEffect_ = nullptr;
 };
