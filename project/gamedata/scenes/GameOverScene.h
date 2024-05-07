@@ -1,8 +1,8 @@
 #pragma once
-#include "components/manager/Iscene.h"
+#include "Iscene.h"
 #include "CJEngine.h"
 #include "components/input/Input.h"
-#include "components/manager/TextureManager.h"
+#include "TextureManager.h"
 #include "components/2d/CreateSprite.h"
 #include "components/audio/Audio.h"
 

@@ -265,8 +265,6 @@ void GamePlayScene::Draw() {
 #pragma region 3Dオブジェクト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
 
-	CJEngine_->PreDraw3D();
-
 	player_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
 	for (Enemy* enemy : enemys_) {

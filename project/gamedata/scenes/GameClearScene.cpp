@@ -95,13 +95,13 @@ void GameClearScene::Update() {
 
 void GameClearScene::Draw() {
 #pragma region 背景スプライト描画
-	CJEngine_->PreDraw2D();
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 
 #pragma endregion
 
 #pragma region 前景スプライト描画
-	CJEngine_->PreDraw2D();
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 	if (pageChange_ == false) {
 		sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 1.0f,1.0f,1.0f,spriteAlpha_ / 256.0f });
 		if (count == 0) {
