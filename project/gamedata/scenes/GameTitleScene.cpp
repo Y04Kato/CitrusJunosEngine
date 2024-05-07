@@ -110,15 +110,15 @@ void GameTitleScene::Update() {
 		}
 	}
 
-	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.2f };
-	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,4.6f,0.0f},0.2f ,10.0f,1.0f };
-	directionalLights_->SetTarget(directionalLight_);
-	pointLights_->SetTarget(pointLight_);
-
 	player_->UpdateView();
 	player_->SetViewProjection(&viewProjection_);
 	particle_->Update();
 	particle_->SetTranslate(player_->GetWorldTransform().translation_);
+
+	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.2f };
+	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{player_->GetWorldTransform().translation_.num[0],4.6f,player_->GetWorldTransform().translation_.num[2]},0.2f ,10.0f,1.0f };
+	directionalLights_->SetTarget(directionalLight_);
+	pointLights_->SetTarget(pointLight_);
 
 	if (pageChange_ == true) {
 		count++;
@@ -139,8 +139,8 @@ void GameTitleScene::Update() {
 	}
 
 	if (count == 0) {
-		player_->SetWorldTransform(Vector3{ 0.0f,0.0f,0.0f });
 		debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
+		player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
 		fadeAlpha_ -= 4;
 		if (fadeAlpha_ <= 0) {
 			fadeAlpha_ = 0;
@@ -156,11 +156,12 @@ void GameTitleScene::Update() {
 	if (count == 2) {
 		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,20.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ += 4;
-		player_->SetVelocity({ 0.0f,0.0f,5.0f });
+		player_->SetVelocity({ 0.0f,0.0f,2.0f });
 		if (fadeAlpha_ >= 256) {
 			count = 0;
 			fadeAlpha_ = 256;
 			testTimer_ = 1.0f;
+			player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
 			sceneNo = GAME_SCENE;
 		}
 	}

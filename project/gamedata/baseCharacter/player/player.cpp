@@ -63,6 +63,15 @@ void Player::UpdateView() {
 	worldTransform_.rotation_.num[1] += 1.0f;
 
 	worldTransform_.UpdateMatrix();
+
+	if (isHit == true) {
+		hitCount++;
+	}
+
+	if (hitCount >= 20) {
+		hitCount = 0;
+		isHit = false;
+	}
 }
 
 void Player::Draw(const ViewProjection& viewProjection) {
