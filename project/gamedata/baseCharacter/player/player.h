@@ -47,6 +47,8 @@ public:
 
 	int GetMoveMode() { return moveMode; }
 
+	bool GetIsHit() { return isHit; }
+
 private:
 	Input* input_ = nullptr;
 

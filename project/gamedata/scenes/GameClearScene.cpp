@@ -113,7 +113,7 @@ void GameClearScene::Draw() {
 }
 
 void GameClearScene::DrawPostEffect() {
-	
+	CJEngine_->renderer_->Draw(PipelineType::PostProcess);
 }
 
 void GameClearScene::Finalize() {

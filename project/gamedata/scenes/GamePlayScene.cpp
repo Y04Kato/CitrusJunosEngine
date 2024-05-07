@@ -298,7 +298,12 @@ void GamePlayScene::Draw() {
 }
 
 void GamePlayScene::DrawPostEffect() {
-	CJEngine_->renderer_->Draw(PipelineType::PostProcess);
+	if (player_->GetIsHit() == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Grayscale);
+	}
+	else {
+		CJEngine_->renderer_->Draw(PipelineType::PostProcess);
+	}
 }
 
 void GamePlayScene::Finalize() {
