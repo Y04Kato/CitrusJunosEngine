@@ -3,10 +3,11 @@
 
 void TextureManager::Initialize(){
 	dxCommon_ = DirectXCommon::GetInstance();
+	SRVManager_ = SRVManager::GetInstance();
 	descriptorSizeDSV = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	descriptorSizeRTV = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	descriptorSizeSRV = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureIndex_ = -1;
+	textureIndex_ = SRVManager_->SRVValue;
 	uint32_t textureIndex = Load("project/gamedata/resources/White2x2.png");
 }
 
@@ -17,6 +18,7 @@ TextureManager* TextureManager::GetInstance(){
 
 uint32_t TextureManager::Load(const std::string& filePath){
 	textureIndex_++;
+	SRVManager_->SRVValue = textureIndex_;
 	LoadTexture(filePath, textureIndex_);
 	return textureIndex_;
 }

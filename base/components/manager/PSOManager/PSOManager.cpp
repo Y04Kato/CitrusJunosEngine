@@ -26,9 +26,9 @@ void PSOManager::Initialize(){
 
 
 	//パイプラインを追加する
-	AddPipeline(standard3D->GetPSO(), PipelineType::Standerd3D);
-	AddPipeline(standard2D->GetPSO(), PipelineType::Standerd3D);
-	AddPipeline(particle->GetPSO(), PipelineType::Standerd3D);
-	AddPipeline(vat->GetPSO(), PipelineType::Standerd3D);
-	AddPipeline(postProcess->GetPSO(), PipelineType::Standerd3D);
+	AddPipeline(standard3D->GetPSO(), PipelineType::Standard3D);
+	AddPipeline(standard2D->GetPSO(), PipelineType::Standard2D);
+	AddPipeline(particle->GetPSO(), PipelineType::Particle);
+	AddPipeline(vat->GetPSO(), PipelineType::VertexAnimationTexture);
+	AddPipeline(postProcess->GetPSO(), PipelineType::PostProcess);
 }

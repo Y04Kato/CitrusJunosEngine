@@ -44,12 +44,12 @@ void GamePlayScene::Update() {
 
 void GamePlayScene::Draw() {
 #pragma region 背景スプライト描画
-	CJEngine_->renderer_->Draw(PipelineType::Standerd2D);
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画
-	CJEngine_->renderer_->Draw(PipelineType::Standerd3D);
+	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
 
 #pragma endregion
 
@@ -59,7 +59,7 @@ void GamePlayScene::Draw() {
 #pragma endregion
 
 #pragma region 前景スプライト描画
-	CJEngine_->renderer_->Draw(PipelineType::Standerd2D);
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 #pragma endregion
 }

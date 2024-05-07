@@ -1,5 +1,6 @@
 #pragma once
 #include "DirectXCommon.h"
+#include "SRVManager/SRVManager.h"
 #include <DirectXTex/DirectXTex.h>
 #include <wrl.h>
 #include <array>
@@ -31,6 +32,8 @@ public:
 
 private:
 	DirectXCommon* dxCommon_;
+	SRVManager* SRVManager_ = nullptr;
+
 	Microsoft::WRL::ComPtr<ID3D12Resource>intermediateResource_[maxtex];
 	Microsoft::WRL::ComPtr<ID3D12Resource>textureResource_[maxtex];
 	uint32_t descriptorSizeSRV;

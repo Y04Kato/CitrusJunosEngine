@@ -1,8 +1,8 @@
 #pragma once
 
 enum class PipelineType {
-	Standerd3D,
-	Standerd2D,
+	Standard3D,
+	Standard2D,
 	Particle,
 	VertexAnimationTexture,
 	PostProcess,
