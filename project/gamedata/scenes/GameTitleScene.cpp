@@ -75,7 +75,7 @@ void GameTitleScene::Initialize() {
 
 	particle_ = std::make_unique <CreateParticle>();
 	particle_->Initialize(100, testEmitter_, accelerationField, particleResourceNum_);
-	particle_->SetColor({ 0.2f,0.2f,0.2f,1.0f });
+	particle_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
 	stage_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/GarageMain", "GarageMain.obj"));
 	stage_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/GarageDoor", "GarageDoor.gltf"));

@@ -74,7 +74,7 @@ private:
 
 	bool gameStart = true;
 
-	Vector4 test = { 0.2f,0.2f,0.2f,1.0f };
+	Vector4 test = { 1.0f,1.0f,1.0f,1.0f };
 
 	float fadeAlpha_ = 256.0f;
 	bool isfadeIn = false;
