@@ -533,16 +533,16 @@ void GameDemoScene::Update() {
 }
 
 void GameDemoScene::Draw() {
-#pragma region 背景スプライト描画
-	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
-
-	for (int i = 0; i < 2; i++) {
-		if (isSpriteDraw_[i]) {//Sprite描画
-			sprite_[i]->Draw(spriteTransform_[i], SpriteuvTransform_[i], spriteMaterial_[i]);
-		}
-	}
-
-#pragma endregion
+//#pragma region 背景スプライト描画
+//	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
+//
+//	for (int i = 0; i < 2; i++) {
+//		if (isSpriteDraw_[i]) {//Sprite描画
+//			sprite_[i]->Draw(spriteTransform_[i], SpriteuvTransform_[i], spriteMaterial_[i]);
+//		}
+//	}
+//
+//#pragma endregion
 
 #pragma region 3Dオブジェクト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
@@ -590,6 +590,17 @@ void GameDemoScene::Draw() {
 	for (int i = 0; i < 2; i++) {
 		if (isParticleDraw_[i]) {//Particle描画
 			particle_[i]->Draw(viewProjection_);
+		}
+	}
+
+#pragma endregion
+
+#pragma region 背景スプライト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
+
+	for (int i = 0; i < 2; i++) {
+		if (isSpriteDraw_[i]) {//Sprite描画
+			sprite_[i]->Draw(spriteTransform_[i], SpriteuvTransform_[i], spriteMaterial_[i]);
 		}
 	}
 
