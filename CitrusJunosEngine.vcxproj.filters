@@ -330,6 +330,7 @@
     <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.VS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\CopyImage.VS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\CopyImage.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\Grayscale.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\DirectXCommon.h">

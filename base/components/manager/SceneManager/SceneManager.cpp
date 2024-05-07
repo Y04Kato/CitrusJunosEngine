@@ -76,7 +76,6 @@ void SceneManager::Update() {
 		scene_[Iscene::sceneNo]->Update();
 		scene_[Iscene::sceneNo]->Draw();
 		imGuiManager_->End();
-		imGuiManager_->Draw();
 
 		CJEngine_->BeginFrame();
 		postEffect_->PreCopy();
@@ -84,6 +83,8 @@ void SceneManager::Update() {
 		CJEngine_->renderer_->Draw(PipelineType::PostProcess);
 
 		postEffect_->Draw();
+
+		imGuiManager_->Draw();
 
 		postEffect_->PostCopy();
 
