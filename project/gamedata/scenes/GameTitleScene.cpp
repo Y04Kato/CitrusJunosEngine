@@ -220,6 +220,10 @@ void GameTitleScene::Draw() {
 #pragma endregion
 }
 
+void GameTitleScene::DrawPostEffect() {
+	CJEngine_->renderer_->Draw(PipelineType::PostProcess);
+}
+
 void GameTitleScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 }

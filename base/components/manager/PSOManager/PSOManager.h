@@ -5,6 +5,7 @@
 #include "pipelineState/Particle/Particle.h"
 #include "pipelineState/VAT/VAT.h"
 #include "pipelineState/PostProcess/PostProcess.h"
+#include "pipelineState/Grayscale/Grayscale.h"
 
 #include <map>
 

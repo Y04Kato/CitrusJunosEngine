@@ -112,6 +112,10 @@ void GameClearScene::Draw() {
 #pragma endregion
 }
 
+void GameClearScene::DrawPostEffect() {
+	
+}
+
 void GameClearScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 }

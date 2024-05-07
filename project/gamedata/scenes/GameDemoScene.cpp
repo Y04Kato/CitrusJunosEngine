@@ -607,6 +607,10 @@ void GameDemoScene::Draw() {
 #pragma endregion
 }
 
+void GameDemoScene::DrawPostEffect() {
+	CJEngine_->renderer_->Draw(PipelineType::Grayscale);
+}
+
 void GameDemoScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 	audio_->SoundUnload(&soundData2_);

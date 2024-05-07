@@ -15,6 +15,7 @@ void PSOManager::Initialize(){
 	std::unique_ptr<ParticlePSO> particle = std::make_unique<ParticlePSO>();
 	std::unique_ptr<VAT> vat = std::make_unique<VAT>();
 	std::unique_ptr<PostProcess> postProcess = std::make_unique<PostProcess>();
+	std::unique_ptr<Grayscale> grayscale = std::make_unique<Grayscale>();
 
 
 	//Initializeの宣言
@@ -23,6 +24,7 @@ void PSOManager::Initialize(){
 	particle->Initialize();
 	vat->Initialize();
 	postProcess->Initialize();
+	grayscale->Initialize();
 
 
 	//パイプラインを追加する
@@ -31,4 +33,5 @@ void PSOManager::Initialize(){
 	AddPipeline(particle->GetPSO(), PipelineType::Particle);
 	AddPipeline(vat->GetPSO(), PipelineType::VertexAnimationTexture);
 	AddPipeline(postProcess->GetPSO(), PipelineType::PostProcess);
+	AddPipeline(grayscale->GetPSO(), PipelineType::Grayscale);
 }
