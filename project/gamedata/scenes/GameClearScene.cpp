@@ -12,6 +12,10 @@ void GameClearScene::Draw() {
 
 }
 
+void GameClearScene::DrawPostEffect() {
+	
+}
+
 void GameClearScene::Finalize() {
 
 }

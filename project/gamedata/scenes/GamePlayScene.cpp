@@ -64,6 +64,10 @@ void GamePlayScene::Draw() {
 #pragma endregion
 }
 
+void GamePlayScene::DrawPostEffect() {
+	CJEngine_->renderer_->Draw(PipelineType::PostProcess);
+}
+
 void GamePlayScene::Finalize() {
 
 }

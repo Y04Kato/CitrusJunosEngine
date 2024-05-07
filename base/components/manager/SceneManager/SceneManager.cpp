@@ -79,7 +79,7 @@ void SceneManager::Update() {
 		CJEngine_->BeginFrame();
 		postEffect_->PreCopy();
 
-		CJEngine_->renderer_->Draw(PipelineType::PostProcess);
+		scene_[Iscene::sceneNo]->DrawPostEffect();
 
 		postEffect_->Draw();
 

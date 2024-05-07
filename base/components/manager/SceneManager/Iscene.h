@@ -17,6 +17,8 @@ public:
 
 	virtual void Draw() = 0;
 
+	virtual void DrawPostEffect() = 0;
+
 	virtual void Finalize() = 0;
 
 	static int sceneNo;

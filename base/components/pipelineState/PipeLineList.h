@@ -6,4 +6,5 @@ enum class PipelineType {
 	Particle,
 	VertexAnimationTexture,
 	PostProcess,
+	Grayscale,
 };
