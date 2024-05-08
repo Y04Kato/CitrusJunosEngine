@@ -100,6 +100,9 @@ private:
 	bool isLineDraw_;
 	bool isVATDraw_;
 
+	bool isGrayScaleDraw_;
+	bool isVignetteDraw_;
+
 	//ステージエディター擬き、名前をtest0~始め、それを記録する
 	struct Obj {
 		Model model;
