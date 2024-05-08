@@ -469,7 +469,26 @@ void GameDemoScene::Update() {
 		ImGui::TreePop();
 	}
 
-	ImGui::DragFloat("TestTimer", &testTimer_, 1.0f, 0.0f, model_[1]->GetAnimationMaxTime() * 60.0f);
+	if (ImGui::TreeNode("PostEffect")) {//PostEffect
+		if (ImGui::Button("DrawGrayScale")) {
+			if (isGrayScaleDraw_ == false) {
+				isGrayScaleDraw_ = true;
+			}
+			else {
+				isGrayScaleDraw_ = false;
+			}
+		}
+		if (ImGui::Button("DrawVignette")) {
+			if (isVignetteDraw_ == false) {
+				isVignetteDraw_ = true;
+			}
+			else {
+				isVignetteDraw_ = false;
+			}
+		}
+		ImGui::TreePop();
+	}
+
 	ImGui::Text("%f", ImGui::GetIO().Framerate);
 
 	ImGui::InputText("BlockName", objName_, sizeof(objName_));
@@ -533,16 +552,10 @@ void GameDemoScene::Update() {
 }
 
 void GameDemoScene::Draw() {
-//#pragma region 背景スプライト描画
-//	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
-//
-//	for (int i = 0; i < 2; i++) {
-//		if (isSpriteDraw_[i]) {//Sprite描画
-//			sprite_[i]->Draw(spriteTransform_[i], SpriteuvTransform_[i], spriteMaterial_[i]);
-//		}
-//	}
-//
-//#pragma endregion
+#pragma region 背景スプライト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
+
+#pragma endregion
 
 #pragma region 3Dオブジェクト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
@@ -595,7 +608,7 @@ void GameDemoScene::Draw() {
 
 #pragma endregion
 
-#pragma region 背景スプライト描画
+#pragma region 前景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 	for (int i = 0; i < 2; i++) {
@@ -608,7 +621,13 @@ void GameDemoScene::Draw() {
 }
 
 void GameDemoScene::DrawPostEffect() {
-	CJEngine_->renderer_->Draw(PipelineType::Grayscale);
+	CJEngine_->renderer_->Draw(PipelineType::PostProcess);
+	if (isGrayScaleDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Grayscale);
+	}
+	if (isVignetteDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Vignette);
+	}
 }
 
 void GameDemoScene::Finalize() {

@@ -164,6 +164,7 @@
     <ClCompile Include="base\components\pipelineState\VAT\VAT.cpp" />
     <ClCompile Include="base\components\pipelineState\Standard2D\Standard2D.cpp" />
     <ClCompile Include="base\components\pipelineState\Standard3D\Standard3D.cpp" />
+    <ClCompile Include="base\components\pipelineState\Vignette\Vignette.cpp" />
     <ClCompile Include="base\components\postEffect\PostEffect.cpp" />
     <ClCompile Include="base\components\renderer\Renderer.cpp" />
     <ClCompile Include="base\components\shaderCompiler\ShaderCompiler.cpp" />
@@ -293,6 +294,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Vertex</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\Vignette.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\components\2d\CreateParticle.h" />
@@ -314,6 +323,7 @@
     <ClInclude Include="base\components\pipelineState\VAT\VAT.h" />
     <ClInclude Include="base\components\pipelineState\Standard2D\Standard2D.h" />
     <ClInclude Include="base\components\pipelineState\Standard3D\Standard3D.h" />
+    <ClInclude Include="base\components\pipelineState\Vignette\Vignette.h" />
     <ClInclude Include="base\components\postEffect\PostEffect.h" />
     <ClInclude Include="base\components\renderer\Renderer.h" />
     <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h" />
