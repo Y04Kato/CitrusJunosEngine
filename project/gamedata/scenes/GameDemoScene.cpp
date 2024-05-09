@@ -563,8 +563,8 @@ void GameDemoScene::Draw() {
 	if (isLineDraw_) {//Line描画
 		line_->Draw(worldTransformLine_[0], worldTransformLine_[1], viewProjection_, lineMaterial_);
 
-		linePoint_[0]->Draw(worldTransformLine_[0], viewProjection_, lineMaterial_, 0);
-		linePoint_[1]->Draw(worldTransformLine_[1], viewProjection_, lineMaterial_, 0);
+		linePoint_[0]->Draw(worldTransformLine_[0], viewProjection_, lineMaterial_, textureManager_->white);
+		linePoint_[1]->Draw(worldTransformLine_[1], viewProjection_, lineMaterial_, textureManager_->white);
 	}
 
 	for (int i = 0; i < 2; i++) {

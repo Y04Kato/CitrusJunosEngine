@@ -30,6 +30,8 @@ public:
 	uint32_t GetDescriptorSizeRTV() { return descriptorSizeRTV; }
 	uint32_t GetDescriptorSizeDSV() { return descriptorSizeDSV; }
 
+	uint32_t white;
+
 private:
 	DirectXCommon* dxCommon_;
 	SRVManager* SRVManager_ = nullptr;
