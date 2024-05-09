@@ -3,6 +3,7 @@
 #include "pipelineState/Standard3D/Standard3D.h"
 #include "pipelineState/Standard2D/Standard2D.h"
 #include "pipelineState/Particle/Particle.h"
+#include "pipelineState/Skinning/Skinning.h"
 #include "pipelineState/VAT/VAT.h"
 #include "pipelineState/PostProcess/PostProcess.h"
 #include "pipelineState/Grayscale/Grayscale.h"

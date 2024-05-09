@@ -1,4 +1,4 @@
-#include "Object3D.hlsli"
+#include "SkinningObject3d.hlsli"
 
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);

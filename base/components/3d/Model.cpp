@@ -10,7 +10,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	modelData_ = LoadModelFile(directoryPath, filename);
 	animation_ = LoadAnimationFile(directoryPath, filename);
 	skeleton_ = CreateSkeleton(modelData_.rootNode);
-	//skinCluster_ = CreateSkinCluster();
+	skinCluster_ = CreateSkinCluster();
 	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
 
 	CreateVartexData();
@@ -52,41 +52,41 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
 	*pointLight_ = pointLights_->GetPointLight();
 
-	if (isKeyframeAnim_) {//KeyframeAnimationの場合
-		if (isManualAnimTime_) {
+	//if (isKeyframeAnim_) {//KeyframeAnimationの場合
+	//	if (isManualAnimTime_) {
 
-		}
-		else {
-			animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
-			animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
-		}
+	//	}
+	//	else {
+	//		animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+	//		animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
+	//	}
 
-		//ApplyAnimation(skeleton_, animation_, animationTime_);
-		//Update(skeleton_, skinCluster_);
+	//	NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
+	//	Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
+	//	Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
+	//	Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
+	//	Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
 
-		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
-		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
-		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
-		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
-		Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
+	//	world_ = worldTransform;
+	//	world_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
+	//	world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	//}
+	//else {
+	//	world_ = worldTransform;
+	//	world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
+	//	world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	//}
 
-		world_ = worldTransform;
-		world_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
-		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
-	}
-	else {
-		world_ = worldTransform;
-		world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
-		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
-	}
+	ApplyAnimation(skeleton_, animation_, animationTime_);
+	Update(skeleton_, skinCluster_);
 
-	/*D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
+	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
 	vertexBufferView_,
 	skinCluster_.influenveBufferView
-	};*/
+	};
 
-	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1,&vertexBufferView_);
-	//dxCommon_->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
+	//dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1,&vertexBufferView_);
+	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	//形状を設定。PS0にせっていしているものとはまた別
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

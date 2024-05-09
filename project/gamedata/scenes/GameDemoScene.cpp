@@ -577,14 +577,22 @@ void GameDemoScene::Draw() {
 		}
 	}
 
-	for (int i = 0; i < 3; i++) {
-		if (isModelDraw_[i]) {//Model描画
-			model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
-		}
-	}
+	//for (int i = 0; i < 3; i++) {
+	//	if (isModelDraw_[i]) {//Model描画
+	//		model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
+	//	}
+	//}
 
 	for (Obj& obj : objects_) {
 		obj.model.Draw(obj.world, viewProjection_, obj.material);
+	}
+
+#pragma endregion
+
+#pragma region Skinningモデル描画
+	CJEngine_->renderer_->Draw(PipelineType::Skinning);
+	if (isModelDraw_[0]) {//Model描画
+		model_[0]->Draw(worldTransformModel_[0], viewProjection_, modelMaterial_[0]);
 	}
 
 #pragma endregion
