@@ -52,31 +52,32 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
 	*pointLight_ = pointLights_->GetPointLight();
 
-	//if (isKeyframeAnim_) {//KeyframeAnimationの場合
-	//	if (isManualAnimTime_) {
+	if (isKeyframeAnim_) {//KeyframeAnimationの場合
+		if (isManualAnimTime_) {
 
-	//	}
-	//	else {
-	//		animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
-	//		animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
-	//	}
+		}
+		else {
+			animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+			animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
+		}
 
-	//	NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
-	//	Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
-	//	Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
-	//	Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
-	//	Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
+		//NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
+		//Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
+		//Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
+		//Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
+		//Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
 
-	//	world_ = worldTransform;
-	//	world_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
-	//	world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
-	//}
-	//else {
-	//	world_ = worldTransform;
-	//	world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
-	//	world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
-	//}
+		//world_ = worldTransform;
+		//world_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
+		//world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	}
+	else {
+		world_ = worldTransform;
+		world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
+		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	}
 
+	world_ = worldTransform;
 	ApplyAnimation(skeleton_, animation_, animationTime_);
 	Update(skeleton_, skinCluster_);
 
@@ -106,6 +107,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 
 	}
 
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, skinCluster_.paletteSrvHandle.second);
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texture_));
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
 
@@ -404,7 +406,7 @@ SkinCluster Model::CreateSkinCluster() {
 	//influence用のリソースを確保、頂点ごとにinfluence情報を追加できるようにする
 	skinCluster.influenceResource = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexInfluence) * modelData_.vertices.size());
 	VertexInfluence* mappedInfluence = nullptr;
-	skinCluster.influenceResource->Map(0, nullptr, reinterpret_cast<void**>(mappedInfluence));
+	skinCluster.influenceResource->Map(0, nullptr, reinterpret_cast<void**>(&mappedInfluence));
 	std::memset(mappedInfluence, 0, sizeof(VertexInfluence) * modelData_.vertices.size());//weightを0にしておく
 	skinCluster.mappedInfluence = { mappedInfluence,modelData_.vertices.size() };
 

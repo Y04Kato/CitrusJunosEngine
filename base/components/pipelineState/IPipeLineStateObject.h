@@ -50,7 +50,7 @@ protected:
 	ID3DBlob* signatureBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
 
-	std::array<D3D12_INPUT_ELEMENT_DESC, 5> inputElementDescs5{};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs5[5] = {};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs3[3] = {};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs2[2] = {};
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};

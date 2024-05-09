@@ -22,11 +22,6 @@ void Skinning::CreateRootSignature() {
 	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
 	rootParameters[4].Descriptor.ShaderRegister = 1;//レジスタ番号を1にバインド
 
-	//MatrixPalette
-	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;//SRVを使う
-	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
-	rootParameters[7].Descriptor.ShaderRegister = 0;//レジスタ番号を0にバインド
-
 	D3D12_DESCRIPTOR_RANGE descriptoraRange[1] = {};
 	descriptoraRange[0].BaseShaderRegister = 0;//0から始まる
 	descriptoraRange[0].NumDescriptors = 1;//数は1つ
@@ -37,6 +32,11 @@ void Skinning::CreateRootSignature() {
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixcelShaderを使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+	//MatrixPalette
+	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
+	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
+	rootParameters[7].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
+	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
 
 	//MaterialResource
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
@@ -115,8 +115,8 @@ void Skinning::CreateInputLayOut() {
 	inputElementDescs5[4].InputSlot = 1;//1番目のslotのVBVと伝える
 	inputElementDescs5[4].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
-	inputLayoutDesc.pInputElementDescs = inputElementDescs3;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs3);
+	inputLayoutDesc.pInputElementDescs = inputElementDescs5;
+	inputLayoutDesc.NumElements = _countof(inputElementDescs5);
 }
 
 void Skinning::CreateBlendState() {

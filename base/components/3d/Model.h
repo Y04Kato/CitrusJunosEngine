@@ -4,7 +4,7 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "TextureManager.h"
-#include <string>
+#include <string.h>
 #include <fstream>
 #include <sstream>
 #include "DirectionalLight.h"
