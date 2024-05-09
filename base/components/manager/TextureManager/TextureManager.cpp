@@ -8,7 +8,7 @@ void TextureManager::Initialize(){
 	descriptorSizeRTV = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	descriptorSizeSRV = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	textureIndex_ = SRVManager_->SRVValue;
-	uint32_t textureIndex = Load("project/gamedata/resources/White2x2.png");
+	white = Load("project/gamedata/resources/White2x2.png");
 }
 
 TextureManager* TextureManager::GetInstance(){
