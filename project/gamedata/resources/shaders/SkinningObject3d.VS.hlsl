@@ -5,8 +5,7 @@ ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
 
 StructuredBuffer<Well> gMatrixPalette : register(t0);
 
-Skinned Skinning(VertexShaderInput input)
-{
+Skinned Skinning(VertexShaderInput input){
     Skinned skinned;
 	//位置の変換
     skinned.position = mul(input.position, gMatrixPalette[input.index.x].skeletonSpaceMatrix) * input.weight.x;
@@ -24,8 +23,7 @@ Skinned Skinning(VertexShaderInput input)
     return skinned;
 }
 
-VertexShaderOutput main(VertexShaderInput input)
-{
+VertexShaderOutput main(VertexShaderInput input){
     VertexShaderOutput output;
 	
     Skinned skinned = Skinning(input);

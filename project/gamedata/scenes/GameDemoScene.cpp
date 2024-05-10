@@ -591,8 +591,10 @@ void GameDemoScene::Draw() {
 
 #pragma region Skinningモデル描画
 	CJEngine_->renderer_->Draw(PipelineType::Skinning);
-	if (isModelDraw_[0]) {//Model描画
-		model_[0]->Draw(worldTransformModel_[0], viewProjection_, modelMaterial_[0]);
+	for (int i = 0; i < 3; i++) {
+		if (isModelDraw_[i]) {//Model描画
+			model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
+		}
 	}
 
 #pragma endregion

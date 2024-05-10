@@ -87,7 +87,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 
 	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
 	vertexBufferView_,
-	skinCluster_.influenveBufferView
+	skinCluster_.influenceBufferView
 	};
 
 	//dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1,&vertexBufferView_);
@@ -111,7 +111,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 
 	}
 
-	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, skinCluster_.paletteSrvHandle.second);
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, skinCluster_.paletteSrvHandle.GPU);
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texture_));
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
 
@@ -351,7 +351,7 @@ void Model::Update(Skeleton& skeleton, SkinCluster& skinCluster) {
 	for (Joint& joint : skeleton.joints) {
 		joint.localMatrix = MakeQuatAffineMatrix(joint.transform.scale, MakeRotateMatrix(joint.transform.rotate), joint.transform.translate);
 		if (joint.parent) {//親が居れば親の行列を掛ける
-			joint.skeletonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeletonSpaceMatrix;
+			joint.skeletonSpaceMatrix = Multiply(joint.localMatrix, skeleton.joints[*joint.parent].skeletonSpaceMatrix);
 		}
 		else {//親が居ないのでLocalMatrixとSkeletonSpaceMatrixは一致する
 			joint.skeletonSpaceMatrix = joint.localMatrix;
@@ -360,8 +360,8 @@ void Model::Update(Skeleton& skeleton, SkinCluster& skinCluster) {
 
 	for (size_t jointIndex = 0; jointIndex < skeleton.joints.size(); ++jointIndex) {
 		assert(jointIndex < skinCluster.inverseBindPoseMatrices.size());
-		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix = skinCluster.inverseBindPoseMatrices[jointIndex] * skeleton.joints[jointIndex].skeletonSpaceMatrix;
-		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix = Transpose(Inverse(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix));
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix = Multiply(skinCluster.inverseBindPoseMatrices[jointIndex], skeleton.joints[jointIndex].skeletonSpaceMatrix);
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix = Transpose((Inverse(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix)));
 	}
 }
 
@@ -391,20 +391,20 @@ SkinCluster Model::CreateSkinCluster() {
 	skinCluster.paletteResource->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
 
 	skinCluster.mappedPalette = { mappedPalette,skeleton_.joints.size() };//spanを使ってアクセス可にする
-	skinCluster.paletteSrvHandle.first = textureManager_->GetCPUDescriptorHandle(dxCommon_->GetSrvDescriptiorHeap(), dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), srvManager_->SRVValue);
-	skinCluster.paletteSrvHandle.second = textureManager_->GetGPUDescriptorHandle(dxCommon_->GetSrvDescriptiorHeap(), dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), srvManager_->SRVValue);
-	srvManager_->SRVValue += 1;
+	skinCluster.paletteSrvHandle = srvManager_->GetDescriptorHandle();
+	skinCluster.paletteSrvHandle.CPU.ptr += dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	skinCluster.paletteSrvHandle.GPU.ptr += dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	//Paletter用のsrv作成、structuredBufferでアクセス可にする
-	D3D12_SHADER_RESOURCE_VIEW_DESC paletterSrvDesc{};
-	paletterSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	paletterSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	paletterSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	paletterSrvDesc.Buffer.FirstElement = 0;
-	paletterSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	paletterSrvDesc.Buffer.NumElements = UINT(skeleton_.joints.size());
-	paletterSrvDesc.Buffer.StructureByteStride = sizeof(WellForGPU);
-	dxCommon_->GetDevice()->CreateShaderResourceView(skinCluster.paletteResource.Get(), &paletterSrvDesc, skinCluster.paletteSrvHandle.first);
+	D3D12_SHADER_RESOURCE_VIEW_DESC paletteSrvDesc{};
+	paletteSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	paletteSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	paletteSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	paletteSrvDesc.Buffer.FirstElement = 0;
+	paletteSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	paletteSrvDesc.Buffer.NumElements = UINT(skeleton_.joints.size());
+	paletteSrvDesc.Buffer.StructureByteStride = sizeof(WellForGPU);
+	dxCommon_->GetDevice()->CreateShaderResourceView(skinCluster.paletteResource.Get(), &paletteSrvDesc, skinCluster.paletteSrvHandle.CPU);
 
 	//influence用のリソースを確保、頂点ごとにinfluence情報を追加できるようにする
 	skinCluster.influenceResource = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexInfluence) * modelData_.vertices.size());
@@ -414,9 +414,9 @@ SkinCluster Model::CreateSkinCluster() {
 	skinCluster.mappedInfluence = { mappedInfluence,modelData_.vertices.size() };
 
 	//influence用のVBVを作成
-	skinCluster.influenveBufferView.BufferLocation = skinCluster.influenceResource->GetGPUVirtualAddress();
-	skinCluster.influenveBufferView.SizeInBytes = UINT(sizeof(VertexInfluence) * modelData_.vertices.size());
-	skinCluster.influenveBufferView.StrideInBytes = sizeof(VertexInfluence);
+	skinCluster.influenceBufferView.BufferLocation = skinCluster.influenceResource->GetGPUVirtualAddress();
+	skinCluster.influenceBufferView.SizeInBytes = UINT(sizeof(VertexInfluence) * modelData_.vertices.size());
+	skinCluster.influenceBufferView.StrideInBytes = sizeof(VertexInfluence);
 
 	//InverseBindPoseMatrixを書く方擦る場所を用意して単位行列で埋める
 	skinCluster.inverseBindPoseMatrices.resize(skeleton_.joints.size());

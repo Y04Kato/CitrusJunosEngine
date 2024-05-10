@@ -98,16 +98,19 @@ void Skinning::CreateInputLayOut() {
 	inputElementDescs5[0].SemanticName = "POSITION";
 	inputElementDescs5[0].SemanticIndex = 0;
 	inputElementDescs5[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescs5[0].InputSlot = 0;//0番目のslotのVBVと伝える
 	inputElementDescs5[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	//UV座標レイアウト
 	inputElementDescs5[1].SemanticName = "TEXCOORD";
 	inputElementDescs5[1].SemanticIndex = 0;
 	inputElementDescs5[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDescs5[1].InputSlot = 0;//0番目のslotのVBVと伝える
 	inputElementDescs5[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	//法線レイアウト
 	inputElementDescs5[2].SemanticName = "NORMAL";
 	inputElementDescs5[2].SemanticIndex = 0;
 	inputElementDescs5[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs5[2].InputSlot = 0;//0番目のslotのVBVと伝える
 	inputElementDescs5[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	//ウェイト
 	inputElementDescs5[3].SemanticName = "WEIGHT";
