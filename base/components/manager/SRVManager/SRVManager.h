@@ -12,9 +12,11 @@ public:
 	static SRVManager* GetInstance();
 
 	DESCRIPTERHANDLE GetDescriptorHandle();
+	
+	uint32_t GetSRVValue();
+
 	uint32_t descriptorSizeSRV;
 
-	uint32_t SRVValue = 1;
 private:
 	SRVManager() {
 		descriptorSizeSRV = DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -25,4 +27,6 @@ private:
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle();
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle();
+
+	uint32_t SRVValue = 1;
 };
