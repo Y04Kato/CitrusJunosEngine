@@ -4,18 +4,20 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	dxCommon_ = DirectXCommon::GetInstance();
 	CJEngine_ = CitrusJunosEngine::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
+	srvManager_ = SRVManager::GetInstance();
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
 
 	modelData_ = LoadModelFile(directoryPath, filename);
 	animation_ = LoadAnimationFile(directoryPath, filename);
 	skeleton_ = CreateSkeleton(modelData_.rootNode);
-	skinCluster_ = CreateSkinCluster();
 	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
 
 	CreateVartexData();
 	SetColor();
 	CreateLight();
+
+	skinCluster_ = CreateSkinCluster();
 }
 
 void Model::Initialize(const ModelData modeldata, const uint32_t texture) {
@@ -387,12 +389,11 @@ SkinCluster Model::CreateSkinCluster() {
 	skinCluster.paletteResource = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(WellForGPU) * skeleton_.joints.size());
 	WellForGPU* mappedPalette = nullptr;
 	skinCluster.paletteResource->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
+
 	skinCluster.mappedPalette = { mappedPalette,skeleton_.joints.size() };//spanを使ってアクセス可にする
-	uint32_t index = textureManager_->GetTextureIndex();
-	index++;
-	skinCluster.paletteSrvHandle.first = textureManager_->GetCPUDescriptorHandle(dxCommon_->GetSrvDescriptiorHeap(), dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), index);
-	skinCluster.paletteSrvHandle.second = textureManager_->GetGPUDescriptorHandle(dxCommon_->GetSrvDescriptiorHeap(), dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), index);
-	textureManager_->SetTextureIndex(index);
+	skinCluster.paletteSrvHandle.first = textureManager_->GetCPUDescriptorHandle(dxCommon_->GetSrvDescriptiorHeap(), dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), srvManager_->SRVValue);
+	skinCluster.paletteSrvHandle.second = textureManager_->GetGPUDescriptorHandle(dxCommon_->GetSrvDescriptiorHeap(), dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), srvManager_->SRVValue);
+	srvManager_->SRVValue += 1;
 
 	//Paletter用のsrv作成、structuredBufferでアクセス可にする
 	D3D12_SHADER_RESOURCE_VIEW_DESC paletterSrvDesc{};

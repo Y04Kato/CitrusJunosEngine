@@ -10,6 +10,7 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include <wrl.h>
+#include "SRVManager/SRVManager.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -64,6 +65,7 @@ private:
 	DirectXCommon* dxCommon_;
 	CitrusJunosEngine* CJEngine_;
 	TextureManager* textureManager_;
+	SRVManager* srvManager_;
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource_;
