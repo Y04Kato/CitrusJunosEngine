@@ -204,6 +204,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				MakeRotateMatrix({ rotate.x,-rotate.y,-rotate.z,rotate.w }),
 				{ -translate.x,translate.y,translate.z }
 			);
+			jointWeightData.inverseBindPoseMatrix = Inverse(bindPoseMatrix);
 
 			//Weight情報を解析
 			for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
