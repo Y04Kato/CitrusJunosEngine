@@ -32,11 +32,18 @@ void Skinning::CreateRootSignature() {
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixcelShaderを使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+	
+	//StructuredBuffer用で使う
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForStructured[1] = {};
+	descriptorRangeForStructured[0].BaseShaderRegister = 0;//0から始まる
+	descriptorRangeForStructured[0].NumDescriptors = 1;//数は1つ
+	descriptorRangeForStructured[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptorRangeForStructured[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 	//MatrixPalette
 	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
 	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
-	rootParameters[7].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
-	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+	rootParameters[7].DescriptorTable.pDescriptorRanges = descriptorRangeForStructured;//tableの中身の配列を指定
+	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForStructured);//Tableで利用する数
 
 	//MaterialResource
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う

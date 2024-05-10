@@ -52,31 +52,33 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
 	*pointLight_ = pointLights_->GetPointLight();
 
-	if (isKeyframeAnim_) {//KeyframeAnimationの場合
-		if (isManualAnimTime_) {
+	//if (isKeyframeAnim_) {//KeyframeAnimationの場合
+	//	if (isManualAnimTime_) {
 
-		}
-		else {
-			animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
-			animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
-		}
+	//	}
+	//	else {
+	//		animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+	//		animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
+	//	}
 
-		//NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
-		//Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
-		//Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
-		//Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
-		//Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
+	//	//NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
+	//	//Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
+	//	//Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
+	//	//Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
+	//	//Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
 
-		//world_ = worldTransform;
-		//world_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
-		//world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
-	}
-	else {
-		world_ = worldTransform;
-		world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
-		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
-	}
+	//	//world_ = worldTransform;
+	//	//world_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
+	//	//world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	//}
+	//else {
+	//	world_ = worldTransform;
+	//	world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
+	//	world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	//}
 
+	animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+	animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
 	world_ = worldTransform;
 	ApplyAnimation(skeleton_, animation_, animationTime_);
 	Update(skeleton_, skinCluster_);
