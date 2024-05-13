@@ -149,8 +149,10 @@ struct ModelData {
 	std::vector<uint32_t> indices;
 	std::map<std::string, JointWeightData> skinClusterData;
 	MaterialData material;
-	int textureIndex;
+	uint32_t textureIndex;
 	Node rootNode;
+	std::string directoryPath;
+	std::string filename;
 };
 
 struct AABB {

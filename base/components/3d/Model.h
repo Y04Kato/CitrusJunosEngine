@@ -20,8 +20,12 @@ class Model {
 public:
 	void Initialize(const std::string& directoryPath, const std::string& filename);
 	void Initialize(const ModelData modeldata, const uint32_t texture);
-
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material);
+
+	void SkinningInitialize(const std::string& directoryPath, const std::string& filename);
+	void SkinningInitialize(const ModelData modeldata,const uint32_t texture);
+	void SkinningDraw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material);
+
 
 	void Finalize();
 
@@ -49,8 +53,11 @@ public:
 
 	SkinCluster CreateSkinCluster();
 
-	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
-	static Model* CreateModelFromObj(const ModelData modeldata, const uint32_t texture);
+	static Model* CreateModel(const std::string& directoryPath, const std::string& filename);
+	static Model* CreateModel(const ModelData modeldata, const uint32_t texture);
+
+	static Model* CreateSkinningModel(const std::string& directoryPath, const std::string& filename);
+	static Model* CreateSkinningModel(const ModelData modeldata, const uint32_t texture);
 
 	/// <summary>
 	/// VATに必要なテクスチャのロード(テクスチャの名前は固定、モデルファイルと同じディレクトリを参照)
@@ -74,8 +81,6 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12Resource> wvpResource_;
 	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource_;
 	Material* material_;
-
-	uint32_t texture_;
 
 	DirectionalLights* directionalLights_;
 	DirectionalLight* directionalLight_;

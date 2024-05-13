@@ -86,9 +86,9 @@ void GameDemoScene::Initialize() {
 	}
 
 	//objモデル
-	model_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/human", "walk.gltf"));
-	model_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/AnimatedCube", "AnimatedCube.gltf"));
-	model_[2].reset(Model::CreateModelFromObj("project/gamedata/resources/terrain", "terrain.obj"));
+	model_[0].reset(Model::CreateSkinningModel("project/gamedata/resources/human", "walk.gltf"));
+	model_[1].reset(Model::CreateModel("project/gamedata/resources/AnimatedCube", "AnimatedCube.gltf"));
+	model_[2].reset(Model::CreateModel("project/gamedata/resources/terrain", "terrain.obj"));
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].Initialize();
 		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
@@ -96,7 +96,7 @@ void GameDemoScene::Initialize() {
 	}
 
 	//VAT
-	modelVAT_.reset(Model::CreateModelFromObj("project/gamedata/resources/vatSphere", "vatSphere.gltf"));
+	modelVAT_.reset(Model::CreateModel("project/gamedata/resources/vatSphere", "vatSphere.gltf"));
 	worldTransformModelVAT_.Initialize();
 	modelMaterialVAT_ = { 1.0f,1.0f,1.0f,1.0f };
 	vatData_.VATTime = 0.0f;
@@ -177,8 +177,6 @@ void GameDemoScene::Update() {
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].UpdateMatrix();
 	}
-
-	model_[1]->SetAnimationTime(testTimer_);
 
 	worldTransformModelVAT_.UpdateMatrix();
 
@@ -577,11 +575,12 @@ void GameDemoScene::Draw() {
 		}
 	}
 
-	//for (int i = 0; i < 3; i++) {
-	//	if (isModelDraw_[i]) {//Model描画
-	//		model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
-	//	}
-	//}
+	if (isModelDraw_[1]) {//Model描画
+		model_[1]->Draw(worldTransformModel_[1], viewProjection_, modelMaterial_[1]);
+	}
+	if (isModelDraw_[2]) {//Model描画
+		model_[2]->Draw(worldTransformModel_[2], viewProjection_, modelMaterial_[2]);
+	}
 
 	for (Obj& obj : objects_) {
 		obj.model.Draw(obj.world, viewProjection_, obj.material);
@@ -591,10 +590,8 @@ void GameDemoScene::Draw() {
 
 #pragma region Skinningモデル描画
 	CJEngine_->renderer_->Draw(PipelineType::Skinning);
-	for (int i = 0; i < 3; i++) {
-		if (isModelDraw_[i]) {//Model描画
-			model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
-		}
+	if (isModelDraw_[0]) {//Model描画
+		model_[0]->SkinningDraw(worldTransformModel_[0], viewProjection_, modelMaterial_[0]);
 	}
 
 #pragma endregion

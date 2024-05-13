@@ -10,14 +10,11 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 
 	modelData_ = LoadModelFile(directoryPath, filename);
 	animation_ = LoadAnimationFile(directoryPath, filename);
-	skeleton_ = CreateSkeleton(modelData_.rootNode);
-	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
+	modelData_.textureIndex = textureManager_->Load(modelData_.material.textureFilePath);
 
 	CreateVartexData();
 	SetColor();
 	CreateLight();
-
-	skinCluster_ = CreateSkinCluster();
 }
 
 void Model::Initialize(const ModelData modeldata, const uint32_t texture) {
@@ -28,11 +25,51 @@ void Model::Initialize(const ModelData modeldata, const uint32_t texture) {
 	pointLights_ = PointLights::GetInstance();
 
 	modelData_ = modeldata;
-	texture_ = texture;
+	modelData_.textureIndex = texture;
 
 	CreateVartexData();
 	SetColor();
 	CreateLight();
+}
+
+void Model::SkinningInitialize(const std::string& directoryPath, const std::string& filename) {
+	dxCommon_ = DirectXCommon::GetInstance();
+	CJEngine_ = CitrusJunosEngine::GetInstance();
+	textureManager_ = TextureManager::GetInstance();
+	srvManager_ = SRVManager::GetInstance();
+	directionalLights_ = DirectionalLights::GetInstance();
+	pointLights_ = PointLights::GetInstance();
+
+	modelData_ = LoadModelFile(directoryPath, filename);
+	animation_ = LoadAnimationFile(directoryPath, filename);
+	skeleton_ = CreateSkeleton(modelData_.rootNode);
+	modelData_.textureIndex = textureManager_->Load(modelData_.material.textureFilePath);
+
+	CreateVartexData();
+	SetColor();
+	CreateLight();
+
+	skinCluster_ = CreateSkinCluster();
+}
+
+void Model::SkinningInitialize(const ModelData modeldata, const uint32_t texture) {
+	dxCommon_ = DirectXCommon::GetInstance();
+	CJEngine_ = CitrusJunosEngine::GetInstance();
+	textureManager_ = TextureManager::GetInstance();
+	srvManager_ = SRVManager::GetInstance();
+	directionalLights_ = DirectionalLights::GetInstance();
+	pointLights_ = PointLights::GetInstance();
+
+	modelData_ = modeldata;
+	modelData_.textureIndex = texture;
+	animation_ = LoadAnimationFile(modeldata.directoryPath,modeldata.filename);
+	skeleton_ = CreateSkeleton(modelData_.rootNode);
+
+	CreateVartexData();
+	SetColor();
+	CreateLight();
+
+	skinCluster_ = CreateSkinCluster();
 }
 
 void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material) {
@@ -54,44 +91,32 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
 	*pointLight_ = pointLights_->GetPointLight();
 
-	//if (isKeyframeAnim_) {//KeyframeAnimationの場合
-	//	if (isManualAnimTime_) {
+	if (isKeyframeAnim_) {//KeyframeAnimationの場合
+		if (isManualAnimTime_) {
 
-	//	}
-	//	else {
-	//		animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
-	//		animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
-	//	}
+		}
+		else {
+			animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+			animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
+		}
 
-	//	//NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
-	//	//Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
-	//	//Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
-	//	//Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
-	//	//Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
+		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
+		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
+		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
+		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
+		Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
 
-	//	//world_ = worldTransform;
-	//	//world_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
-	//	//world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
-	//}
-	//else {
-	//	world_ = worldTransform;
-	//	world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
-	//	world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
-	//}
+		world_ = worldTransform;
+		world_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
+		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	}
+	else {
+		world_ = worldTransform;
+		world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
+		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+	}
 
-	animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
-	animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
-	world_ = worldTransform;
-	ApplyAnimation(skeleton_, animation_, animationTime_);
-	Update(skeleton_, skinCluster_);
-
-	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
-	vertexBufferView_,
-	skinCluster_.influenceBufferView
-	};
-
-	//dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1,&vertexBufferView_);
-	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
+	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1,&vertexBufferView_);
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	//形状を設定。PS0にせっていしているものとはまた別
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -111,7 +136,53 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 
 	}
 
-	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texture_));
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(modelData_.textureIndex));
+	dxCommon_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
+
+}
+
+void Model::SkinningDraw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material) {
+	EulerTransform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
+
+	Matrix4x4 uvtransformMtrix = MakeScaleMatrix(uvTransform.scale);
+	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.num[2]));
+	uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
+
+	if (isDirectionalLight_ == false) {
+		*material_ = { material,0 };
+	}
+	else {
+		*material_ = { material,lightNum_ };
+	}
+
+	material_->uvTransform = uvtransformMtrix;
+	material_->shininess = 100.0f;
+	*directionalLight_ = directionalLights_->GetDirectionalLight();
+	*pointLight_ = pointLights_->GetPointLight();
+
+	animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+	animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
+	world_ = worldTransform;
+	ApplyAnimation(skeleton_, animation_, animationTime_);
+	Update(skeleton_, skinCluster_);
+
+	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
+	vertexBufferView_,
+	skinCluster_.influenceBufferView
+	};
+
+	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
+	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
+	//形状を設定。PS0にせっていしているものとはまた別
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, world_.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
+
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(modelData_.textureIndex));
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, skinCluster_.paletteSrvHandle.GPU);
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
 
@@ -121,20 +192,34 @@ void Model::Finalize() {
 
 }
 
-Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::string& filename) {
+Model* Model::CreateModel(const std::string& directoryPath, const std::string& filename) {
 	Model* model = new Model();
 	model->Initialize(directoryPath, filename);
 	return model;
 }
 
-Model* Model::CreateModelFromObj(const ModelData modeldata, const uint32_t texture) {
+Model* Model::CreateModel(const ModelData modeldata, const uint32_t texture) {
 	Model* model = new Model();
 	model->Initialize(modeldata, texture);
 	return model;
 }
 
+Model* Model::CreateSkinningModel(const std::string& directoryPath, const std::string& filename) {
+	Model* model = new Model();
+	model->SkinningInitialize(directoryPath, filename);
+	return model;
+}
+Model* Model::CreateSkinningModel(const ModelData modeldata, const uint32_t texture) {
+	Model* model = new Model();
+	model->SkinningInitialize(modeldata, texture);
+	return model;
+}
+
 ModelData Model::LoadModelFile(const std::string& directoryPath, const std::string& filename) {
 	ModelData modelData;//構築するModelData
+
+	modelData.directoryPath = directoryPath;
+	modelData.filename = filename;
 
 	Assimp::Importer importer;
 
