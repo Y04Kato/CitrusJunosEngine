@@ -1,17 +1,17 @@
-#include "Standard3D.h"
+#include "Skinning.h"
 
-void Standard3D::ShaderCompile() {
-	vertexShaderBlob = ShaderCompiler::GetInstance()->CompileShader(L"project/gamedata/resources/shaders/Object3D.VS.hlsl", L"vs_6_0");
+void Skinning::ShaderCompile() {
+	vertexShaderBlob = ShaderCompiler::GetInstance()->CompileShader(L"project/gamedata/resources/shaders/SkinningObject3d.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
-	pixelShaderBlob = ShaderCompiler::GetInstance()->CompileShader(L"project/gamedata/resources/shaders/Object3D.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob = ShaderCompiler::GetInstance()->CompileShader(L"project/gamedata/resources/shaders/SkinningObject3d.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 }
 
-void Standard3D::CreateRootSignature() {
+void Skinning::CreateRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	//RootParameter作成、複数設定可能な為、配列に
-	D3D12_ROOT_PARAMETER rootParameters[7] = {};
+	D3D12_ROOT_PARAMETER rootParameters[8] = {};
 	//Worldtransform
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderを使う
@@ -22,8 +22,20 @@ void Standard3D::CreateRootSignature() {
 	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
 	rootParameters[4].Descriptor.ShaderRegister = 1;//レジスタ番号を1にバインド
 
+	//StructuredBuffer用で使う
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForStructured[1] = {};
+	descriptorRangeForStructured[0].BaseShaderRegister = 0;//0から始まる
+	descriptorRangeForStructured[0].NumDescriptors = 1;//数は1つ
+	descriptorRangeForStructured[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptorRangeForStructured[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+	//MatrixPalette
+	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
+	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
+	rootParameters[7].DescriptorTable.pDescriptorRanges = descriptorRangeForStructured;//tableの中身の配列を指定
+	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForStructured);//Tableで利用する数
+
 	D3D12_DESCRIPTOR_RANGE descriptoraRange[1] = {};
-	descriptoraRange[0].BaseShaderRegister = 0;//0から始まる
+	descriptoraRange[0].BaseShaderRegister = 1;//0から始まる
 	descriptoraRange[0].NumDescriptors = 1;//数は1つ
 	descriptoraRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
 	descriptoraRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
@@ -81,28 +93,43 @@ void Standard3D::CreateRootSignature() {
 	assert(SUCCEEDED(hr));
 }
 
-void Standard3D::CreateInputLayOut() {
+void Skinning::CreateInputLayOut() {
 	//頂点レイアウト
-	inputElementDescs3[0].SemanticName = "POSITION";
-	inputElementDescs3[0].SemanticIndex = 0;
-	inputElementDescs3[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	inputElementDescs3[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDescs5[0].SemanticName = "POSITION";
+	inputElementDescs5[0].SemanticIndex = 0;
+	inputElementDescs5[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescs5[0].InputSlot = 0;//0番目のslotのVBVと伝える
+	inputElementDescs5[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	//UV座標レイアウト
-	inputElementDescs3[1].SemanticName = "TEXCOORD";
-	inputElementDescs3[1].SemanticIndex = 0;
-	inputElementDescs3[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs3[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDescs5[1].SemanticName = "TEXCOORD";
+	inputElementDescs5[1].SemanticIndex = 0;
+	inputElementDescs5[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDescs5[1].InputSlot = 0;//0番目のslotのVBVと伝える
+	inputElementDescs5[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	//法線レイアウト
-	inputElementDescs3[2].SemanticName = "NORMAL";
-	inputElementDescs3[2].SemanticIndex = 0;
-	inputElementDescs3[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs3[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDescs5[2].SemanticName = "NORMAL";
+	inputElementDescs5[2].SemanticIndex = 0;
+	inputElementDescs5[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs5[2].InputSlot = 0;//0番目のslotのVBVと伝える
+	inputElementDescs5[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	//ウェイト
+	inputElementDescs5[3].SemanticName = "WEIGHT";
+	inputElementDescs5[3].SemanticIndex = 0;
+	inputElementDescs5[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescs5[3].InputSlot = 1;//1番目のslotのVBVと伝える
+	inputElementDescs5[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	//インデックス
+	inputElementDescs5[4].SemanticName = "INDEX";
+	inputElementDescs5[4].SemanticIndex = 0;
+	inputElementDescs5[4].Format = DXGI_FORMAT_R32G32B32A32_SINT;
+	inputElementDescs5[4].InputSlot = 1;//1番目のslotのVBVと伝える
+	inputElementDescs5[4].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
-	inputLayoutDesc.pInputElementDescs = inputElementDescs3;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs3);
+	inputLayoutDesc.pInputElementDescs = inputElementDescs5;
+	inputLayoutDesc.NumElements = _countof(inputElementDescs5);
 }
 
-void Standard3D::CreateBlendState() {
+void Skinning::CreateBlendState() {
 	//すべての色要素を書き込む
 	//何もなし
 	blendDesc[kBlendModeNone].RenderTarget[0].RenderTargetWriteMask =
@@ -159,14 +186,14 @@ void Standard3D::CreateBlendState() {
 	blendDesc[kBlendModeScreen].RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 }
 
-void Standard3D::CreateRasterizarState() {
+void Skinning::CreateRasterizarState() {
 	//全部表示
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	//三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }
 
-void Standard3D::CreatePipelineStateObject() {
+void Skinning::CreatePipelineStateObject() {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = PipelineStateObject_.rootSignature.Get();//RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;//Inputlayout
@@ -181,7 +208,7 @@ void Standard3D::CreatePipelineStateObject() {
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	//利用するトポロジ（形状）のタイプ。三角形
-	graphicsPipelineStateDesc.PrimitiveTopologyType = 
+	graphicsPipelineStateDesc.PrimitiveTopologyType =
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	//どのように画面に色を打ち込むのかの設定（気にしなく良い）
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;

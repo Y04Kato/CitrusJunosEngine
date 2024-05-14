@@ -13,6 +13,10 @@ DESCRIPTERHANDLE SRVManager::GetDescriptorHandle(){
 	return result;
 }
 
+uint32_t SRVManager::GetSRVValue() {
+	return SRVValue++;
+}
+
 D3D12_CPU_DESCRIPTOR_HANDLE SRVManager::GetCPUDescriptorHandle(){
 	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = DirectXCommon::GetInstance()->GetSrvDescriptiorHeap()->GetCPUDescriptorHandleForHeapStart();
 	handleCPU.ptr += (descriptorSizeSRV * SRVValue);

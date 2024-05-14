@@ -311,6 +311,9 @@
     <ClCompile Include="base\components\pipelineState\Vignette\Vignette.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\pipelineState\Skinning\Skinning.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -338,6 +341,7 @@
     <FxCompile Include="project\gamedata\resources\shaders\CopyImage.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\Grayscale.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\Vignette.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\DirectXCommon.h">
@@ -531,6 +535,9 @@
     <ClInclude Include="base\components\pipelineState\Vignette\Vignette.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Skinning\Skinning.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -549,6 +556,7 @@
     </None>
     <None Include="project\gamedata\resources\shaders\VAT.hlsli" />
     <None Include="project\gamedata\resources\shaders\CopyImage.hlsli" />
+    <None Include="project\gamedata\resources\shaders\SkinningObject3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CitrusJunosEngine.rc">

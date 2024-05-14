@@ -13,7 +13,7 @@
 #include <d3d12.h>
 #pragma comment(lib,"d3d12.lib")
 #include <wrl.h>
-
+#include "SRVManager/SRVManager.h"
 
 struct EulerTransform {
 	Vector3 scale;
@@ -133,11 +133,11 @@ struct WellForGPU {
 struct SkinCluster {
 	std::vector<Matrix4x4> inverseBindPoseMatrices;
 	Microsoft::WRL::ComPtr <ID3D12Resource> influenceResource;
-	D3D12_VERTEX_BUFFER_VIEW influenveBufferView;
+	D3D12_VERTEX_BUFFER_VIEW influenceBufferView;
 	std::span<VertexInfluence> mappedInfluence;
 	Microsoft::WRL::ComPtr <ID3D12Resource> paletteResource;
 	std::span<WellForGPU> mappedPalette;
-	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> paletteSrvHandle;
+	DESCRIPTERHANDLE paletteSrvHandle;
 };
 
 struct MaterialData {
@@ -149,8 +149,10 @@ struct ModelData {
 	std::vector<uint32_t> indices;
 	std::map<std::string, JointWeightData> skinClusterData;
 	MaterialData material;
-	int textureIndex;
+	uint32_t textureIndex;
 	Node rootNode;
+	std::string directoryPath;
+	std::string filename;
 };
 
 struct AABB {

@@ -161,6 +161,7 @@
     <ClCompile Include="base\components\pipelineState\Grayscale\Grayscale.cpp" />
     <ClCompile Include="base\components\pipelineState\Particle\Particle.cpp" />
     <ClCompile Include="base\components\pipelineState\PostProcess\PostProcess.cpp" />
+    <ClCompile Include="base\components\pipelineState\Skinning\Skinning.cpp" />
     <ClCompile Include="base\components\pipelineState\VAT\VAT.cpp" />
     <ClCompile Include="base\components\pipelineState\Standard2D\Standard2D.cpp" />
     <ClCompile Include="base\components\pipelineState\Standard3D\Standard3D.cpp" />
@@ -276,6 +277,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
@@ -320,6 +329,7 @@
     <ClInclude Include="base\components\pipelineState\Particle\Particle.h" />
     <ClInclude Include="base\components\pipelineState\PipeLineList.h" />
     <ClInclude Include="base\components\pipelineState\PostProcess\PostProcess.h" />
+    <ClInclude Include="base\components\pipelineState\Skinning\Skinning.h" />
     <ClInclude Include="base\components\pipelineState\VAT\VAT.h" />
     <ClInclude Include="base\components\pipelineState\Standard2D\Standard2D.h" />
     <ClInclude Include="base\components\pipelineState\Standard3D\Standard3D.h" />
@@ -385,6 +395,7 @@
     <None Include="project\gamedata\resources\shaders\Object2d.hlsli" />
     <None Include="project\gamedata\resources\shaders\Object3d.hlsli" />
     <None Include="project\gamedata\resources\shaders\Particle.hlsli" />
+    <None Include="project\gamedata\resources\shaders\SkinningObject3d.hlsli" />
     <None Include="project\gamedata\resources\shaders\VAT.hlsli" />
   </ItemGroup>
   <ItemGroup>

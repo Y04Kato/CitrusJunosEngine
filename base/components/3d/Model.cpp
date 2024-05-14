@@ -4,14 +4,13 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	dxCommon_ = DirectXCommon::GetInstance();
 	CJEngine_ = CitrusJunosEngine::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
+	srvManager_ = SRVManager::GetInstance();
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
 
 	modelData_ = LoadModelFile(directoryPath, filename);
 	animation_ = LoadAnimationFile(directoryPath, filename);
-	skeleton_ = CreateSkeleton(modelData_.rootNode);
-	//skinCluster_ = CreateSkinCluster();
-	texture_ = textureManager_->Load(modelData_.material.textureFilePath);
+	modelData_.textureIndex = textureManager_->Load(modelData_.material.textureFilePath);
 
 	CreateVartexData();
 	SetColor();
@@ -26,11 +25,51 @@ void Model::Initialize(const ModelData modeldata, const uint32_t texture) {
 	pointLights_ = PointLights::GetInstance();
 
 	modelData_ = modeldata;
-	texture_ = texture;
+	modelData_.textureIndex = texture;
 
 	CreateVartexData();
 	SetColor();
 	CreateLight();
+}
+
+void Model::SkinningInitialize(const std::string& directoryPath, const std::string& filename) {
+	dxCommon_ = DirectXCommon::GetInstance();
+	CJEngine_ = CitrusJunosEngine::GetInstance();
+	textureManager_ = TextureManager::GetInstance();
+	srvManager_ = SRVManager::GetInstance();
+	directionalLights_ = DirectionalLights::GetInstance();
+	pointLights_ = PointLights::GetInstance();
+
+	modelData_ = LoadModelFile(directoryPath, filename);
+	animation_ = LoadAnimationFile(directoryPath, filename);
+	skeleton_ = CreateSkeleton(modelData_.rootNode);
+	modelData_.textureIndex = textureManager_->Load(modelData_.material.textureFilePath);
+
+	CreateVartexData();
+	SetColor();
+	CreateLight();
+
+	skinCluster_ = CreateSkinCluster();
+}
+
+void Model::SkinningInitialize(const ModelData modeldata, const uint32_t texture) {
+	dxCommon_ = DirectXCommon::GetInstance();
+	CJEngine_ = CitrusJunosEngine::GetInstance();
+	textureManager_ = TextureManager::GetInstance();
+	srvManager_ = SRVManager::GetInstance();
+	directionalLights_ = DirectionalLights::GetInstance();
+	pointLights_ = PointLights::GetInstance();
+
+	modelData_ = modeldata;
+	modelData_.textureIndex = texture;
+	animation_ = LoadAnimationFile(modeldata.directoryPath,modeldata.filename);
+	skeleton_ = CreateSkeleton(modelData_.rootNode);
+
+	CreateVartexData();
+	SetColor();
+	CreateLight();
+
+	skinCluster_ = CreateSkinCluster();
 }
 
 void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material) {
@@ -61,9 +100,6 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 			animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
 		}
 
-		//ApplyAnimation(skeleton_, animation_, animationTime_);
-		//Update(skeleton_, skinCluster_);
-
 		NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[modelData_.rootNode.name];//rootNodeのAnimationを取得
 		Vector3 translate = CalculateValue(rootNodeAnimation.translate.keyframes, animationTime_);
 		Quaternion rotate = CalculateValue(rootNodeAnimation.rotate.keyframes, animationTime_);
@@ -80,13 +116,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
 	}
 
-	/*D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
-	vertexBufferView_,
-	skinCluster_.influenveBufferView
-	};*/
-
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1,&vertexBufferView_);
-	//dxCommon_->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	//形状を設定。PS0にせっていしているものとはまた別
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -106,7 +136,54 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 
 	}
 
-	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texture_));
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(modelData_.textureIndex));
+	dxCommon_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
+
+}
+
+void Model::SkinningDraw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material) {
+	EulerTransform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
+
+	Matrix4x4 uvtransformMtrix = MakeScaleMatrix(uvTransform.scale);
+	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.num[2]));
+	uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
+
+	if (isDirectionalLight_ == false) {
+		*material_ = { material,0 };
+	}
+	else {
+		*material_ = { material,lightNum_ };
+	}
+
+	material_->uvTransform = uvtransformMtrix;
+	material_->shininess = 100.0f;
+	*directionalLight_ = directionalLights_->GetDirectionalLight();
+	*pointLight_ = pointLights_->GetPointLight();
+
+	animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+	animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
+	world_ = worldTransform;
+	ApplyAnimation(skeleton_, animation_, animationTime_);
+	Update(skeleton_, skinCluster_);
+
+	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
+	vertexBufferView_,
+	skinCluster_.influenceBufferView
+	};
+
+	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
+	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
+	//形状を設定。PS0にせっていしているものとはまた別
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, world_.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
+
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(modelData_.textureIndex));
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, skinCluster_.paletteSrvHandle.GPU);
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
 
 }
@@ -115,20 +192,34 @@ void Model::Finalize() {
 
 }
 
-Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::string& filename) {
+Model* Model::CreateModel(const std::string& directoryPath, const std::string& filename) {
 	Model* model = new Model();
 	model->Initialize(directoryPath, filename);
 	return model;
 }
 
-Model* Model::CreateModelFromObj(const ModelData modeldata, const uint32_t texture) {
+Model* Model::CreateModel(const ModelData modeldata, const uint32_t texture) {
 	Model* model = new Model();
 	model->Initialize(modeldata, texture);
 	return model;
 }
 
+Model* Model::CreateSkinningModel(const std::string& directoryPath, const std::string& filename) {
+	Model* model = new Model();
+	model->SkinningInitialize(directoryPath, filename);
+	return model;
+}
+Model* Model::CreateSkinningModel(const ModelData modeldata, const uint32_t texture) {
+	Model* model = new Model();
+	model->SkinningInitialize(modeldata, texture);
+	return model;
+}
+
 ModelData Model::LoadModelFile(const std::string& directoryPath, const std::string& filename) {
 	ModelData modelData;//構築するModelData
+
+	modelData.directoryPath = directoryPath;
+	modelData.filename = filename;
 
 	Assimp::Importer importer;
 
@@ -198,6 +289,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				MakeRotateMatrix({ rotate.x,-rotate.y,-rotate.z,rotate.w }),
 				{ -translate.x,translate.y,translate.z }
 			);
+			jointWeightData.inverseBindPoseMatrix = Inverse(bindPoseMatrix);
 
 			//Weight情報を解析
 			for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
@@ -345,7 +437,7 @@ void Model::Update(Skeleton& skeleton, SkinCluster& skinCluster) {
 	for (Joint& joint : skeleton.joints) {
 		joint.localMatrix = MakeQuatAffineMatrix(joint.transform.scale, MakeRotateMatrix(joint.transform.rotate), joint.transform.translate);
 		if (joint.parent) {//親が居れば親の行列を掛ける
-			joint.skeletonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeletonSpaceMatrix;
+			joint.skeletonSpaceMatrix = Multiply(joint.localMatrix, skeleton.joints[*joint.parent].skeletonSpaceMatrix);
 		}
 		else {//親が居ないのでLocalMatrixとSkeletonSpaceMatrixは一致する
 			joint.skeletonSpaceMatrix = joint.localMatrix;
@@ -354,8 +446,8 @@ void Model::Update(Skeleton& skeleton, SkinCluster& skinCluster) {
 
 	for (size_t jointIndex = 0; jointIndex < skeleton.joints.size(); ++jointIndex) {
 		assert(jointIndex < skinCluster.inverseBindPoseMatrices.size());
-		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix = skinCluster.inverseBindPoseMatrices[jointIndex] * skeleton.joints[jointIndex].skeletonSpaceMatrix;
-		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix = Transpose(Inverse(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix));
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix = Multiply(skinCluster.inverseBindPoseMatrices[jointIndex], skeleton.joints[jointIndex].skeletonSpaceMatrix);
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix = Transpose((Inverse(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix)));
 	}
 }
 
@@ -383,35 +475,34 @@ SkinCluster Model::CreateSkinCluster() {
 	skinCluster.paletteResource = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(WellForGPU) * skeleton_.joints.size());
 	WellForGPU* mappedPalette = nullptr;
 	skinCluster.paletteResource->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
+
 	skinCluster.mappedPalette = { mappedPalette,skeleton_.joints.size() };//spanを使ってアクセス可にする
-	uint32_t index = textureManager_->GetTextureIndex();
-	index++;
-	skinCluster.paletteSrvHandle.first = textureManager_->GetCPUDescriptorHandle(dxCommon_->GetSrvDescriptiorHeap(), dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), index);
-	skinCluster.paletteSrvHandle.second = textureManager_->GetGPUDescriptorHandle(dxCommon_->GetSrvDescriptiorHeap(), dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), index);
-	textureManager_->SetTextureIndex(index);
+	skinCluster.paletteSrvHandle = srvManager_->GetDescriptorHandle();
+	skinCluster.paletteSrvHandle.CPU.ptr += dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	skinCluster.paletteSrvHandle.GPU.ptr += dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	//Paletter用のsrv作成、structuredBufferでアクセス可にする
-	D3D12_SHADER_RESOURCE_VIEW_DESC paletterSrvDesc{};
-	paletterSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	paletterSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	paletterSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	paletterSrvDesc.Buffer.FirstElement = 0;
-	paletterSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	paletterSrvDesc.Buffer.NumElements = UINT(skeleton_.joints.size());
-	paletterSrvDesc.Buffer.StructureByteStride = sizeof(WellForGPU);
-	dxCommon_->GetDevice()->CreateShaderResourceView(skinCluster.paletteResource.Get(), &paletterSrvDesc, skinCluster.paletteSrvHandle.first);
+	D3D12_SHADER_RESOURCE_VIEW_DESC paletteSrvDesc{};
+	paletteSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	paletteSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	paletteSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	paletteSrvDesc.Buffer.FirstElement = 0;
+	paletteSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	paletteSrvDesc.Buffer.NumElements = UINT(skeleton_.joints.size());
+	paletteSrvDesc.Buffer.StructureByteStride = sizeof(WellForGPU);
+	dxCommon_->GetDevice()->CreateShaderResourceView(skinCluster.paletteResource.Get(), &paletteSrvDesc, skinCluster.paletteSrvHandle.CPU);
 
 	//influence用のリソースを確保、頂点ごとにinfluence情報を追加できるようにする
 	skinCluster.influenceResource = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexInfluence) * modelData_.vertices.size());
 	VertexInfluence* mappedInfluence = nullptr;
-	skinCluster.influenceResource->Map(0, nullptr, reinterpret_cast<void**>(mappedInfluence));
+	skinCluster.influenceResource->Map(0, nullptr, reinterpret_cast<void**>(&mappedInfluence));
 	std::memset(mappedInfluence, 0, sizeof(VertexInfluence) * modelData_.vertices.size());//weightを0にしておく
 	skinCluster.mappedInfluence = { mappedInfluence,modelData_.vertices.size() };
 
 	//influence用のVBVを作成
-	skinCluster.influenveBufferView.BufferLocation = skinCluster.influenceResource->GetGPUVirtualAddress();
-	skinCluster.influenveBufferView.SizeInBytes = UINT(sizeof(VertexInfluence) * modelData_.vertices.size());
-	skinCluster.influenveBufferView.StrideInBytes = sizeof(VertexInfluence);
+	skinCluster.influenceBufferView.BufferLocation = skinCluster.influenceResource->GetGPUVirtualAddress();
+	skinCluster.influenceBufferView.SizeInBytes = UINT(sizeof(VertexInfluence) * modelData_.vertices.size());
+	skinCluster.influenceBufferView.StrideInBytes = sizeof(VertexInfluence);
 
 	//InverseBindPoseMatrixを書く方擦る場所を用意して単位行列で埋める
 	skinCluster.inverseBindPoseMatrices.resize(skeleton_.joints.size());

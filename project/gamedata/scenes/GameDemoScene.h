@@ -68,7 +68,6 @@ private:
 	std::unique_ptr<Model> model_[3];
 	WorldTransform worldTransformModel_[3];
 	Vector4 modelMaterial_[3];
-	float testTimer_ = 0.0f;
 
 	std::unique_ptr<Model> modelVAT_;
 	WorldTransform worldTransformModelVAT_;
