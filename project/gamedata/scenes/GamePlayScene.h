@@ -53,6 +53,9 @@ private:
 	std::unique_ptr<Model> groundModel_;
 	OBB Obb_;
 
+	std::unique_ptr<Model> flagModel_[4];
+	WorldTransform world_[4];
+
 	std::unique_ptr<CreateParticle> particle_;
 	Emitter testEmitter_{};
 	AccelerationField accelerationField;

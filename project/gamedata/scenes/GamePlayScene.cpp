@@ -33,6 +33,18 @@ void GamePlayScene::Initialize() {
 	groundModel_->SetDirectionalLightFlag(true, 3);
 	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
 
+	for (int i = 0; i < 4; i++) {
+		flagModel_[i].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
+		flagModel_[i]->SetDirectionalLightFlag(true, 3);
+		world_[i].Initialize();
+		world_[i].scale_ = { 1.5f,1.5f,1.5f };
+		world_[i].rotation_.num[1] = 30.0f;
+	}
+	world_[0].translation_ = { -30.0f,0.0f,25.0f };
+	world_[1].translation_ = { -30.0f,0.0f,-35.0f };
+	world_[2].translation_ = { 30.0f,0.0f,25.0f };
+	world_[3].translation_ = { 30.0f,0.0f,-35.0f };
+
 	background_ = textureManager_->Load("project/gamedata/resources/paper.png");
 	move1_ = textureManager_->Load("project/gamedata/resources/move1.png");
 	move2_ = textureManager_->Load("project/gamedata/resources/move2.png");
@@ -177,6 +189,9 @@ void GamePlayScene::Update() {
 	ApplyGlobalVariables();
 
 	player_->Update();
+	for (int i = 0; i < 4; i++) {
+		world_[i].UpdateMatrix();
+	}
 	directionalLights_->SetTarget(directionalLight_);
 	pointLight_.position.num[0] = player_->GetWorldTransform().GetWorldPos().num[0];
 	pointLight_.position.num[2] = player_->GetWorldTransform().GetWorldPos().num[2];
@@ -270,6 +285,14 @@ void GamePlayScene::Draw() {
 	for (Enemy* enemy : enemys_) {
 		enemy->Draw(viewProjection_);
 	}
+#pragma endregion
+
+#pragma region 3DSkinningオブジェクト描画
+	CJEngine_->renderer_->Draw(PipelineType::Skinning);
+	for (int i = 0; i < 4; i++) {
+		flagModel_[i]->SkinningDraw(world_[i], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
+	}
+
 #pragma endregion
 
 #pragma region パーティクル描画
