@@ -3,6 +3,7 @@
 void CreateParticle::Initialize(int kNumInstance, Emitter emitter, AccelerationField accelerationField, uint32_t textureIndex) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
+	srvManager_ = SRVManager::GetInstance();
 
 	modelData_.vertices.push_back({ .position = { 1.0f,1.0f,0.0f,1.0f },.texcoord = {0.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//左上
 	modelData_.vertices.push_back({ .position = {-1.0f,1.0f,0.0f,1.0f}, .texcoord = {1.0f,0.0f},.normal = {0.0f,0.0f,1.0f} });//右上
@@ -133,10 +134,8 @@ void CreateParticle::SettingDictionalLight() {
 }
 
 uint32_t CreateParticle::LoadBuffer(int kNumInstance) {
-	uint32_t index = textureManager_->GetTextureIndex();
-	index++;
+	uint32_t index = srvManager_->GetSRVValue();
 	LoadBuffer(index, kNumInstance);
-	textureManager_->SetTextureIndex(index);
 	return index;
 }
 

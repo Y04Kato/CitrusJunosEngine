@@ -7,6 +7,7 @@
 #include "DirectionalLight.h"
 #include <wrl.h>
 #include <random>
+#include "SRVManager/SRVManager.h"
 
 class CreateParticle {
 public:
@@ -50,6 +51,7 @@ private:
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager_ = nullptr;
+	SRVManager* srvManager_;
 
 	ModelData modelData_;
 
