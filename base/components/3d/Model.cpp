@@ -96,7 +96,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 
 		}
 		else {
-			animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+			animationTime_ += 1.0f / 60.0f;//時間を進める
 			animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
 		}
 
@@ -160,7 +160,7 @@ void Model::SkinningDraw(const WorldTransform& worldTransform, const ViewProject
 	*directionalLight_ = directionalLights_->GetDirectionalLight();
 	*pointLight_ = pointLights_->GetPointLight();
 
-	animationTime_ += 1.0f / ImGui::GetIO().Framerate;//時間を進める
+	animationTime_ += 1.0f / 60.0f;//時間を進める
 	animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
 	world_ = worldTransform;
 	ApplyAnimation(skeleton_, animation_, animationTime_);
@@ -358,7 +358,7 @@ Animation Model::LoadAnimationFile(const std::string& directoryPath, const std::
 				aiVectorKey& keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
 				KeyframeVector3 keyframe;
 				keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);//秒に変換
-				keyframe.value = { -keyAssimp.mValue.x,keyAssimp.mValue.y,keyAssimp.mValue.z };//右手➡左手
+				keyframe.value = { keyAssimp.mValue.x,keyAssimp.mValue.y,keyAssimp.mValue.z };//右手➡左手
 				nodeAnimation.scale.keyframes.push_back(keyframe);
 			}
 		}
@@ -465,7 +465,7 @@ void Model::ApplyAnimation(Skeleton& skeleton, const Animation& animation, float
 }
 
 void Model::SetAnimationTime(float animationTime) {
-	animationTime_ = animationTime / ImGui::GetIO().Framerate;
+	animationTime_ = animationTime / 60.0f;
 	isManualAnimTime_ = true;
 }
 
