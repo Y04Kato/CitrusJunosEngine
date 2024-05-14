@@ -24,12 +24,12 @@ void GamePlayScene::Initialize() {
 	viewProjection_.Initialize();
 
 	player_ = std::make_unique<Player>();
-	playerModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/player", "player.obj"));
+	playerModel_.reset(Model::CreateModel("project/gamedata/resources/player", "player.obj"));
 	playerModel_->SetDirectionalLightFlag(true, 3);
 	player_->Initialize(playerModel_.get());
 
 	ground_ = std::make_unique<Ground>();
-	groundModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/floor", "Floor.obj"));
+	groundModel_.reset(Model::CreateModel("project/gamedata/resources/floor", "Floor.obj"));
 	groundModel_->SetDirectionalLightFlag(true, 3);
 	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
 
@@ -90,7 +90,7 @@ void GamePlayScene::Initialize() {
 	particle_->SetColor(test);
 
 
-	enemyModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/enemy", "enemy.obj"));
+	enemyModel_.reset(Model::CreateModel("project/gamedata/resources/enemy", "enemy.obj"));
 	enemyModel_->SetDirectionalLightFlag(true, 2);
 
 	//CollisionManager
@@ -302,7 +302,7 @@ void GamePlayScene::DrawPostEffect() {
 		CJEngine_->renderer_->Draw(PipelineType::Grayscale);
 	}
 	else {
-		CJEngine_->renderer_->Draw(PipelineType::PostProcess);
+		CJEngine_->renderer_->Draw(PipelineType::Vignette);
 	}
 }
 

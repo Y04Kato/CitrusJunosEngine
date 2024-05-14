@@ -54,7 +54,7 @@ void GameTitleScene::Initialize() {
 	count = 0;
 
 	player_ = std::make_unique<Player>();
-	playerModel_.reset(Model::CreateModelFromObj("project/gamedata/resources/player", "player.obj"));
+	playerModel_.reset(Model::CreateModel("project/gamedata/resources/player", "player.obj"));
 	playerModel_->SetDirectionalLightFlag(true, 3);
 	player_->Initialize(playerModel_.get());
 	player_->SetScale(Vector3{ 5.0f,5.0f,5.0f });
@@ -77,8 +77,8 @@ void GameTitleScene::Initialize() {
 	particle_->Initialize(100, testEmitter_, accelerationField, particleResourceNum_);
 	particle_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	stage_[0].reset(Model::CreateModelFromObj("project/gamedata/resources/GarageMain", "GarageMain.obj"));
-	stage_[1].reset(Model::CreateModelFromObj("project/gamedata/resources/GarageDoor", "GarageDoor.gltf"));
+	stage_[0].reset(Model::CreateModel("project/gamedata/resources/GarageMain", "GarageMain.obj"));
+	stage_[1].reset(Model::CreateModel("project/gamedata/resources/GarageDoor", "GarageDoor.gltf"));
 	stage_[0]->SetDirectionalLightFlag(true, 3);
 	stage_[1]->SetDirectionalLightFlag(true, 3);
 	stage_[1]->SetAnimationTime(testTimer_);
@@ -221,7 +221,7 @@ void GameTitleScene::Draw() {
 }
 
 void GameTitleScene::DrawPostEffect() {
-	CJEngine_->renderer_->Draw(PipelineType::PostProcess);
+	CJEngine_->renderer_->Draw(PipelineType::Vignette);
 }
 
 void GameTitleScene::Finalize() {
