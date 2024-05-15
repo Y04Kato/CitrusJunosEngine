@@ -8,6 +8,7 @@
 #include "pipelineState/PostProcess/PostProcess.h"
 #include "pipelineState/Grayscale/Grayscale.h"
 #include "pipelineState/Vignette/Vignette.h"
+#include "pipelineState/Smoothing/Smoothing.h"
 
 #include <map>
 

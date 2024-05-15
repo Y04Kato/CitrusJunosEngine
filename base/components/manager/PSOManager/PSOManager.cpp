@@ -18,6 +18,7 @@ void PSOManager::Initialize(){
 	std::unique_ptr<PostProcess> postProcess = std::make_unique<PostProcess>();
 	std::unique_ptr<Grayscale> grayscale = std::make_unique<Grayscale>();
 	std::unique_ptr<Vignette> vignette = std::make_unique<Vignette>();
+	std::unique_ptr<Smoothing> smoothing = std::make_unique<Smoothing>();
 
 
 	//Initializeの宣言
@@ -29,6 +30,7 @@ void PSOManager::Initialize(){
 	postProcess->Initialize();
 	grayscale->Initialize();
 	vignette->Initialize();
+	smoothing->Initialize();
 
 
 	//パイプラインを追加する
@@ -40,4 +42,5 @@ void PSOManager::Initialize(){
 	AddPipeline(postProcess->GetPSO(), PipelineType::PostProcess);
 	AddPipeline(grayscale->GetPSO(), PipelineType::Grayscale);
 	AddPipeline(vignette->GetPSO(), PipelineType::Vignette);
+	AddPipeline(smoothing->GetPSO(), PipelineType::Smoothing);
 }

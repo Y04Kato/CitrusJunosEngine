@@ -484,6 +484,14 @@ void GameDemoScene::Update() {
 				isVignetteDraw_ = false;
 			}
 		}
+		if (ImGui::Button("DrawSmoothing")) {
+			if (isSmoothingDraw_ == false) {
+				isSmoothingDraw_ = true;
+			}
+			else {
+				isSmoothingDraw_ = false;
+			}
+		}
 		ImGui::TreePop();
 	}
 
@@ -634,6 +642,9 @@ void GameDemoScene::DrawPostEffect() {
 	}
 	if (isVignetteDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::Vignette);
+	}
+	if (isSmoothingDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Smoothing);
 	}
 }
 
