@@ -9,6 +9,7 @@
 #include "pipelineState/Grayscale/Grayscale.h"
 #include "pipelineState/Vignette/Vignette.h"
 #include "pipelineState/Smoothing/Smoothing.h"
+#include "pipelineState/Gaussian/Gaussian.h"
 
 #include <map>
 

@@ -158,6 +158,7 @@
     <ClCompile Include="base\components\manager\RTVManager\RTVManager.cpp" />
     <ClCompile Include="base\components\manager\SRVManager\SRVManager.cpp" />
     <ClCompile Include="base\components\manager\TextureManager\TextureManager.cpp" />
+    <ClCompile Include="base\components\pipelineState\Gaussian\Gaussian.cpp" />
     <ClCompile Include="base\components\pipelineState\Grayscale\Grayscale.cpp" />
     <ClCompile Include="base\components\pipelineState\Particle\Particle.cpp" />
     <ClCompile Include="base\components\pipelineState\PostProcess\PostProcess.cpp" />
@@ -221,6 +222,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\GaussianFilter.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -333,6 +342,7 @@
     <ClInclude Include="base\components\manager\RTVManager\RTVManager.h" />
     <ClInclude Include="base\components\manager\SRVManager\SRVManager.h" />
     <ClInclude Include="base\components\manager\TextureManager\TextureManager.h" />
+    <ClInclude Include="base\components\pipelineState\Gaussian\Gaussian.h" />
     <ClInclude Include="base\components\pipelineState\Grayscale\Grayscale.h" />
     <ClInclude Include="base\components\math\Structure.h" />
     <ClInclude Include="base\components\pipelineState\IPipeLineStateObject.h" />

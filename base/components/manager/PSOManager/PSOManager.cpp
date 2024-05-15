@@ -19,6 +19,7 @@ void PSOManager::Initialize(){
 	std::unique_ptr<Grayscale> grayscale = std::make_unique<Grayscale>();
 	std::unique_ptr<Vignette> vignette = std::make_unique<Vignette>();
 	std::unique_ptr<Smoothing> smoothing = std::make_unique<Smoothing>();
+	std::unique_ptr<Gaussian> gaussian = std::make_unique<Gaussian>();
 
 
 	//Initializeの宣言
@@ -31,6 +32,7 @@ void PSOManager::Initialize(){
 	grayscale->Initialize();
 	vignette->Initialize();
 	smoothing->Initialize();
+	gaussian->Initialize();
 
 
 	//パイプラインを追加する
@@ -43,4 +45,5 @@ void PSOManager::Initialize(){
 	AddPipeline(grayscale->GetPSO(), PipelineType::Grayscale);
 	AddPipeline(vignette->GetPSO(), PipelineType::Vignette);
 	AddPipeline(smoothing->GetPSO(), PipelineType::Smoothing);
+	AddPipeline(gaussian->GetPSO(), PipelineType::Gaussian);
 }

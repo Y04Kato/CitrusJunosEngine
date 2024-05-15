@@ -492,6 +492,14 @@ void GameDemoScene::Update() {
 				isSmoothingDraw_ = false;
 			}
 		}
+		if (ImGui::Button("DrawGaussian")) {
+			if (isGaussianDraw_ == false) {
+				isGaussianDraw_ = true;
+			}
+			else {
+				isGaussianDraw_ = false;
+			}
+		}
 		ImGui::TreePop();
 	}
 
@@ -645,6 +653,9 @@ void GameDemoScene::DrawPostEffect() {
 	}
 	if (isSmoothingDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::Smoothing);
+	}
+	if (isGaussianDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Gaussian);
 	}
 }
 

@@ -10,4 +10,5 @@ enum class PipelineType {
 	Grayscale,
 	Vignette,
 	Smoothing,
+	Gaussian,
 };
