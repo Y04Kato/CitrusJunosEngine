@@ -11,4 +11,5 @@ enum class PipelineType {
 	Vignette,
 	Smoothing,
 	Gaussian,
+	Outline,
 };

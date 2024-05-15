@@ -500,6 +500,14 @@ void GameDemoScene::Update() {
 				isGaussianDraw_ = false;
 			}
 		}
+		if (ImGui::Button("DrawOutline")) {
+			if (isOutlineDraw_ == false) {
+				isOutlineDraw_ = true;
+			}
+			else {
+				isOutlineDraw_ = false;
+			}
+		}
 		ImGui::TreePop();
 	}
 
@@ -656,6 +664,9 @@ void GameDemoScene::DrawPostEffect() {
 	}
 	if (isGaussianDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::Gaussian);
+	}
+	if (isOutlineDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Outline);
 	}
 }
 
