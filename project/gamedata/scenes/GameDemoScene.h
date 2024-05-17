@@ -22,6 +22,7 @@ public:
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;
+	void DrawPostEffect() override;
 	void Finalize() override;
 
 	void ApplyGlobalVariables();
@@ -97,6 +98,12 @@ private:
 	bool isParticleDraw_[2];
 	bool isLineDraw_;
 	bool isVATDraw_;
+
+	bool isGrayScaleDraw_;
+	bool isVignetteDraw_;
+	bool isSmoothingDraw_;
+	bool isGaussianDraw_;
+	bool isOutlineDraw_;
 
 	//ステージエディター擬き、名前をtest0~始め、それを記録する
 	struct Obj {

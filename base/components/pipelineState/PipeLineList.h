@@ -7,4 +7,9 @@ enum class PipelineType {
 	Skinning,
 	VertexAnimationTexture,
 	PostProcess,
+	Grayscale,
+	Vignette,
+	Smoothing,
+	Gaussian,
+	Outline,
 };

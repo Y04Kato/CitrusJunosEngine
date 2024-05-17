@@ -30,10 +30,6 @@ void SceneManager::Initialize() {
 	pointLight_ = PointLights::GetInstance();
 	pointLight_->Initialize();
 
-	//PostEffect
-	postEffectList_ = PostEffectLists::GetInstance();
-	postEffectList_->Initialize();
-
 	//TextureManager
 	textureManager_ = TextureManager::GetInstance();
 	textureManager_->Initialize();
@@ -76,7 +72,6 @@ void SceneManager::Update() {
 		GlobalVariables::GetInstance()->Update();
 		directionalLight_->Update();
 		pointLight_->Update();
-		postEffectList_->Update();
 		scene_[Iscene::sceneNo]->Update();
 		scene_[Iscene::sceneNo]->Draw();
 		imGuiManager_->End();
@@ -84,7 +79,8 @@ void SceneManager::Update() {
 		CJEngine_->BeginFrame();
 		postEffect_->PreCopy();
 
-		CJEngine_->renderer_->Draw(PipelineType::PostProcess);
+		scene_[Iscene::sceneNo]->DrawPostEffect();
+
 		postEffect_->Draw();
 
 		imGuiManager_->Draw();

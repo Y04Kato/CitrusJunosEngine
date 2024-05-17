@@ -1,13 +1,13 @@
-#include "PostProcess.h"
+#include "Grayscale.h"
 
-void PostProcess::ShaderCompile() {
+void Grayscale::ShaderCompile() {
 	vertexShaderBlob = ShaderCompiler::GetInstance()->CompileShader(L"project/gamedata/resources/shaders/CopyImage.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
-	pixelShaderBlob = ShaderCompiler::GetInstance()->CompileShader(L"project/gamedata/resources/shaders/CopyImage.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob = ShaderCompiler::GetInstance()->CompileShader(L"project/gamedata/resources/shaders/Grayscale.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 }
 
-void PostProcess::CreateRootSignature() {
+void Grayscale::CreateRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	D3D12_ROOT_PARAMETER rootParameters[1] = {};
@@ -51,12 +51,12 @@ void PostProcess::CreateRootSignature() {
 	assert(SUCCEEDED(hr));
 }
 
-void PostProcess::CreateInputLayOut() {
+void Grayscale::CreateInputLayOut() {
 	inputLayoutDesc.pInputElementDescs = nullptr;
 	inputLayoutDesc.NumElements = 0;
 }
 
-void PostProcess::CreateBlendState() {
+void Grayscale::CreateBlendState() {
 	//すべての色要素を書き込む
 	//何もなし
 	blendDesc[kBlendModeNone].RenderTarget[0].RenderTargetWriteMask =
@@ -113,14 +113,14 @@ void PostProcess::CreateBlendState() {
 	blendDesc[kBlendModeScreen].RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 }
 
-void PostProcess::CreateRasterizarState(){
+void Grayscale::CreateRasterizarState(){
 	//裏面（時計回り）を表示しない
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	//三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }
 
-void PostProcess::CreatePipelineStateObject(){
+void Grayscale::CreatePipelineStateObject(){
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = PipelineStateObject_.rootSignature.Get();//RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;//Inputlayout

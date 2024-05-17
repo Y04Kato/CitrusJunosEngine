@@ -2,7 +2,6 @@
 #include "DirectXCommon.h"
 #include "Vector.h"
 #include "SRVManager/SRVManager.h"
-#include "PostEffectList.h"
 
 #include <DirectXTex/DirectXTex.h>
 
@@ -49,8 +48,4 @@ private:
 	D3D12_RECT scissorRect{};
 	D3D12_RESOURCE_BARRIER barrier{};
 
-	//ListFlags
-	PostEffectList* postEffectList_;
-	PostEffectLists* postEffectLists_ = nullptr;
-	Microsoft::WRL::ComPtr <ID3D12Resource> postEffectListResource_ = nullptr;
 };
