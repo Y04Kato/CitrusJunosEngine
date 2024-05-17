@@ -158,18 +158,14 @@
     <ClCompile Include="base\components\manager\RTVManager\RTVManager.cpp" />
     <ClCompile Include="base\components\manager\SRVManager\SRVManager.cpp" />
     <ClCompile Include="base\components\manager\TextureManager\TextureManager.cpp" />
-    <ClCompile Include="base\components\pipelineState\Gaussian\Gaussian.cpp" />
-    <ClCompile Include="base\components\pipelineState\Grayscale\Grayscale.cpp" />
-    <ClCompile Include="base\components\pipelineState\Outline\Outline.cpp" />
     <ClCompile Include="base\components\pipelineState\Particle\Particle.cpp" />
     <ClCompile Include="base\components\pipelineState\PostProcess\PostProcess.cpp" />
     <ClCompile Include="base\components\pipelineState\Skinning\Skinning.cpp" />
-    <ClCompile Include="base\components\pipelineState\Smoothing\Smoothing.cpp" />
     <ClCompile Include="base\components\pipelineState\VAT\VAT.cpp" />
     <ClCompile Include="base\components\pipelineState\Standard2D\Standard2D.cpp" />
     <ClCompile Include="base\components\pipelineState\Standard3D\Standard3D.cpp" />
-    <ClCompile Include="base\components\pipelineState\Vignette\Vignette.cpp" />
     <ClCompile Include="base\components\postEffect\PostEffect.cpp" />
+    <ClCompile Include="base\components\postEffect\PostEffectList.cpp" />
     <ClCompile Include="base\components\renderer\Renderer.cpp" />
     <ClCompile Include="base\components\shaderCompiler\ShaderCompiler.cpp" />
     <ClCompile Include="base\components\utilities\convertString\ConvertString.cpp" />
@@ -203,14 +199,6 @@
     <ClCompile Include="base\components\utilities\globalVariables\GlobalVariables.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="project\gamedata\resources\shaders\BoxFilter.PS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
     <FxCompile Include="project\gamedata\resources\shaders\CopyImage.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -226,30 +214,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="project\gamedata\resources\shaders\DepthBasedOutline.PS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="project\gamedata\resources\shaders\GaussianFilter.PS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="project\gamedata\resources\shaders\Grayscale.PS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="project\gamedata\resources\shaders\Object2d.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -331,14 +295,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="project\gamedata\resources\shaders\Vignette.PS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\components\2d\CreateParticle.h" />
@@ -351,20 +307,16 @@
     <ClInclude Include="base\components\manager\RTVManager\RTVManager.h" />
     <ClInclude Include="base\components\manager\SRVManager\SRVManager.h" />
     <ClInclude Include="base\components\manager\TextureManager\TextureManager.h" />
-    <ClInclude Include="base\components\pipelineState\Gaussian\Gaussian.h" />
-    <ClInclude Include="base\components\pipelineState\Grayscale\Grayscale.h" />
     <ClInclude Include="base\components\math\Structure.h" />
     <ClInclude Include="base\components\pipelineState\IPipeLineStateObject.h" />
-    <ClInclude Include="base\components\pipelineState\Outline\Outline.h" />
     <ClInclude Include="base\components\pipelineState\Particle\Particle.h" />
     <ClInclude Include="base\components\pipelineState\PipeLineList.h" />
+    <ClInclude Include="base\components\postEffect\PostEffectList.h" />
     <ClInclude Include="base\components\pipelineState\PostProcess\PostProcess.h" />
     <ClInclude Include="base\components\pipelineState\Skinning\Skinning.h" />
-    <ClInclude Include="base\components\pipelineState\Smoothing\Smoothing.h" />
     <ClInclude Include="base\components\pipelineState\VAT\VAT.h" />
     <ClInclude Include="base\components\pipelineState\Standard2D\Standard2D.h" />
     <ClInclude Include="base\components\pipelineState\Standard3D\Standard3D.h" />
-    <ClInclude Include="base\components\pipelineState\Vignette\Vignette.h" />
     <ClInclude Include="base\components\postEffect\PostEffect.h" />
     <ClInclude Include="base\components\renderer\Renderer.h" />
     <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h" />

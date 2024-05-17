@@ -9,6 +9,7 @@
 #include "PointLight.h"
 #include "ImGuiManager.h"
 #include "postEffect/PostEffect.h"
+#include "postEffect/PostEffectList.h"
 
 //sceneInclude
 #include "GameTitleScene.h"
@@ -35,6 +36,8 @@ private:
 
 	DirectionalLights* directionalLight_ = nullptr;
 	PointLights* pointLight_ = nullptr;
+	
+	PostEffectLists* postEffectList_ = nullptr;
 
 	ImGuiManager* imGuiManager_ = nullptr;
 

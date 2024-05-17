@@ -3,13 +3,21 @@
 void PostEffect::Initialize(){
 	dxCommon_ = DirectXCommon::GetInstance();
 	SRVManager_ = SRVManager::GetInstance();
+	postEffectLists_ = PostEffectLists::GetInstance();
 
+	//PointLight
+	postEffectListResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(PostEffectList));
+	postEffectListResource_->Map(0, NULL, reinterpret_cast<void**>(&postEffectList_));
 }
 
 void PostEffect::Draw(){
+	*postEffectList_ = postEffectLists_->GetPostEffectList();
+
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//テクスチャ
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(0, SRVhandle.GPU);
+	//ListFlags
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, postEffectListResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 

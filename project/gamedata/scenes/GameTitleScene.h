@@ -8,7 +8,6 @@ public:
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;
-	void DrawPostEffect() override;
 	void Finalize() override;
 
 private:
