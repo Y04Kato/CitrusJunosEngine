@@ -297,6 +297,15 @@
     <ClCompile Include="base\components\pipelineState\Skinning\Skinning.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\pipelineState\Smoothing\Smoothing.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\Gaussian\Gaussian.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\Outline\Outline.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -325,6 +334,9 @@
     <FxCompile Include="project\gamedata\resources\shaders\Grayscale.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\Vignette.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\BoxFilter.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\GaussianFilter.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\DepthBasedOutline.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\DirectXCommon.h">
@@ -502,6 +514,15 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="base\components\pipelineState\Skinning\Skinning.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Smoothing\Smoothing.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Gaussian\Gaussian.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Outline\Outline.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

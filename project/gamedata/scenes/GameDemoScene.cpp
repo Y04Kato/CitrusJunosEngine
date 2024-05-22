@@ -484,6 +484,30 @@ void GameDemoScene::Update() {
 				isVignetteDraw_ = false;
 			}
 		}
+		if (ImGui::Button("DrawSmoothing")) {
+			if (isSmoothingDraw_ == false) {
+				isSmoothingDraw_ = true;
+			}
+			else {
+				isSmoothingDraw_ = false;
+			}
+		}
+		if (ImGui::Button("DrawGaussian")) {
+			if (isGaussianDraw_ == false) {
+				isGaussianDraw_ = true;
+			}
+			else {
+				isGaussianDraw_ = false;
+			}
+		}
+		if (ImGui::Button("DrawOutline")) {
+			if (isOutlineDraw_ == false) {
+				isOutlineDraw_ = true;
+			}
+			else {
+				isOutlineDraw_ = false;
+			}
+		}
 		ImGui::TreePop();
 	}
 
@@ -634,6 +658,15 @@ void GameDemoScene::DrawPostEffect() {
 	}
 	if (isVignetteDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::Vignette);
+	}
+	if (isSmoothingDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Smoothing);
+	}
+	if (isGaussianDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Gaussian);
+	}
+	if (isOutlineDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Outline);
 	}
 }
 
