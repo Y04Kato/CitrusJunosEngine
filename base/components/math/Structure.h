@@ -166,6 +166,11 @@ struct OBB {
 	Vector3 size;
 };
 
+struct Segment {
+	Vector3 origin;
+	Vector3 diff;
+};
+
 struct StructSphere {
 	Vector3 center;
 	float radius;
