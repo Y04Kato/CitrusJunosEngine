@@ -1,3 +1,4 @@
+
 #include "FollowCamera.h"
 #include "GlobalVariables.h"
 
@@ -42,7 +43,7 @@ void FollowCamera::Update() {
 		}
 	}
 
-	viewprojection_.rotation_.num[1] = LerpShortAngle(viewprojection_.rotation_.num[1], destinationAngleY_, 0.2f);
+	viewprojection_.rotation_ = target_->rotation_;
 
 	viewprojection_.UpdateViewMatrix();
 	viewprojection_.TransferMatrix();

@@ -22,7 +22,7 @@ float Contangent(float b, float a) {
 }
 
 float Distance(const Vector3& v1, const Vector3& v2) {
-	return sqrt((v2.num[0] - v1.num[0]) * (v2.num[0] - v1.num[0])+ (v2.num[1] - v1.num[1]) * (v2.num[1] - v1.num[1])+ (v2.num[2] - v1.num[2]) * (v2.num[2] - v1.num[2]));
+	return sqrt((v2.num[0] - v1.num[0]) * (v2.num[0] - v1.num[0]) + (v2.num[1] - v1.num[1]) * (v2.num[1] - v1.num[1]) + (v2.num[2] - v1.num[2]) * (v2.num[2] - v1.num[2]));
 }
 
 float Lerp(float a, float b, float t) {
@@ -380,7 +380,7 @@ Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframe, float
 		if (keyframe[index].time <= time && time <= keyframe[nextIndex].time) {
 			//範囲内の補完
 			float t = (time - keyframe[index].time) / (keyframe[nextIndex].time - keyframe[index].time);
-			return Slerp(t,keyframe[index].value, keyframe[nextIndex].value);
+			return Slerp(t, keyframe[index].value, keyframe[nextIndex].value);
 		}
 	}
 
@@ -809,6 +809,16 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 	return result;
 }
 
+Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
+	Matrix4x4 result = {
+	width / 2,0,0,0,
+	0,-(height / 2),0,0,
+	0,0,maxDepth - minDepth,0,
+	left + (width / 2),top + (height / 2),minDepth,1
+	};
+	return result;
+}
+
 Matrix4x4& SetTranslate(Matrix4x4& m, const Vector3& v) {
 	m.m[3][0] = v.num[0], m.m[3][1] = v.num[1], m.m[3][2] = v.num[2];
 	return m;
@@ -871,6 +881,24 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 	}
 
 	return MakeRotateAxisAngle(Normalize(axis), dot, Length(cross));
+}
+
+Matrix4x4 GetRotateOBB(const OBB& obb) {
+	Matrix4x4 rotateMatrix;
+	rotateMatrix = MakeIdentity4x4();
+	rotateMatrix.m[0][0] = obb.orientation[0].num[0];
+	rotateMatrix.m[0][1] = obb.orientation[0].num[1];
+	rotateMatrix.m[0][2] = obb.orientation[0].num[2];
+
+	rotateMatrix.m[1][0] = obb.orientation[1].num[0];
+	rotateMatrix.m[1][1] = obb.orientation[1].num[1];
+	rotateMatrix.m[1][2] = obb.orientation[1].num[2];
+
+	rotateMatrix.m[2][0] = obb.orientation[2].num[0];
+	rotateMatrix.m[2][1] = obb.orientation[2].num[1];
+	rotateMatrix.m[2][2] = obb.orientation[2].num[2];
+
+	return rotateMatrix;
 }
 
 #pragma endregion
@@ -999,7 +1027,7 @@ Matrix4x4 MakeRotateMatrix(const Quaternion& quat) {
 }
 
 Vector3 RotateVector(const Quaternion& q, const Vector3& v) {
-	Quaternion result = {v.num[0],v.num[1],v.num[2],0};
+	Quaternion result = { v.num[0],v.num[1],v.num[2],0 };
 
 	result = Multiply(q, Multiply(result, Conjugate(q)));
 	return { result.x,result.y,result.z };
@@ -1145,6 +1173,33 @@ bool IsCollision(const AABB& aabb1, const AABB& aabb2) {
 	}
 }
 
+bool IsCollision(const AABB& aabb, const Segment& segment) {
+	float tXmin = (aabb.min.num[0] - segment.origin.num[0]) / segment.diff.num[0];
+	float tXmax = (aabb.max.num[0] - segment.origin.num[0]) / segment.diff.num[0];
+	float tYmin = (aabb.min.num[1] - segment.origin.num[1]) / segment.diff.num[1];
+	float tYmax = (aabb.max.num[1] - segment.origin.num[1]) / segment.diff.num[1];
+	float tZmin = (aabb.min.num[2] - segment.origin.num[2]) / segment.diff.num[2];
+	float tZmax = (aabb.max.num[2] - segment.origin.num[2]) / segment.diff.num[2];
+
+	float tNearX = min(tXmin, tXmax);
+	float tNearY = min(tYmin, tYmax);
+	float tNearZ = min(tZmin, tZmax);
+
+	float tFarX = max(tXmin, tXmax);
+	float tFarY = max(tYmin, tYmax);
+	float tFarZ = max(tZmin, tZmax);
+
+	float tmin = max(max(tNearX, tNearY), tNearZ);
+	float tmax = min(min(tFarX, tFarY), tFarZ);
+
+	if (tmin <= tmax) {
+		if (tmin <= 1.0f && tmax >= 0.0f) {
+			return true;
+		}
+	}
+	return false;
+}
+
 bool IsCollision(const OBB& obb, const StructSphere& sphere) {
 	Matrix4x4 obbWorldInverse = MakeInverseMatrix(MakeRotateMatrixFromOrientations(obb.orientation), obb.center);
 	Vector3 centerInOBBLocalSpace = sphere.center * obbWorldInverse;
@@ -1152,4 +1207,14 @@ bool IsCollision(const OBB& obb, const StructSphere& sphere) {
 	StructSphere sphereObbLocal{ centerInOBBLocalSpace, sphere.radius };
 
 	return IsCollision(aabbOBBLocal, sphereObbLocal);
+}
+
+bool IsCollision(const OBB& obb, const Segment& segment) {
+	AABB localAABB{ -1.0f * obb.size,obb.size };
+	Matrix4x4 worldInverse = Inverse(GetRotateOBB(obb) * MakeTranslateMatrix(obb.center));
+	auto localLine = segment;
+	localLine.origin = segment.origin * worldInverse;
+	Vector3 localLineEnd = (segment.origin + segment.diff) * worldInverse;
+	localLine.diff = localLineEnd - localLine.origin;
+	return IsCollision(localAABB, localLine);
 }

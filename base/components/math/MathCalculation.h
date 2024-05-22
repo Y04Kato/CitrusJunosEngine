@@ -65,6 +65,7 @@ Vector3 Division(float scalar, const Vector3& v);
 //TransformNormal
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
+//World→Screen
 Vector3 TransformN(const Vector3& v, const Matrix4x4& m);
 
 Vector3 Normalize(const Vector3& v);
@@ -162,6 +163,9 @@ Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRadio, float nearClip
 //正射影行列
 Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
 
+//ビューポート変換行列
+Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
+
 Matrix4x4& SetTranslate(Matrix4x4& m, const Vector3& v);
 
 Matrix4x4 MakeInverseMatrix(const Matrix4x4& rotate, const Vector3& translate);
@@ -174,6 +178,8 @@ Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, const float cos, const float 
 
 Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 
+Matrix4x4 GetRotateOBB(const OBB& obb);
+
 #pragma endregion
 
 #pragma region Quaternion
@@ -181,7 +187,7 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 Quaternion operator+(const Quaternion& q1, const Quaternion& q2);
 Quaternion operator-(const Quaternion& q1, const Quaternion& q2);
 Quaternion operator*(const float t, const Quaternion& q);
-Quaternion operator/(const Quaternion& q,const float t);
+Quaternion operator/(const Quaternion& q, const float t);
 
 Vector4 MakeQuaternion(Vector3 axis, float radian);
 
@@ -228,6 +234,8 @@ Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e);
 
 bool IsCollision(const AABB& aabb, const StructSphere& sphere);
 bool IsCollision(const AABB& aabb, const Vector3& point);
+bool IsCollision(const AABB& aabb, const Segment& segment);
 bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 
 bool IsCollision(const OBB& obb, const StructSphere& sphere);
+bool IsCollision(const OBB& obb, const Segment& segment);
