@@ -175,6 +175,7 @@
     <ClCompile Include="base\components\utilities\convertString\ConvertString.cpp" />
     <ClCompile Include="base\components\utilities\directionalLight\DirectionalLight.cpp" />
     <ClCompile Include="base\components\utilities\followCamera\FollowCamera.cpp" />
+    <ClCompile Include="base\components\utilities\levelDataLoader\LevelDataLoader.cpp" />
     <ClCompile Include="base\components\utilities\pointLight\PointLight.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\components\2d\CreateTriangle.cpp" />
@@ -371,6 +372,7 @@
     <ClInclude Include="base\components\utilities\convertString\ConvertString.h" />
     <ClInclude Include="base\components\utilities\directionalLight\DirectionalLight.h" />
     <ClInclude Include="base\components\utilities\followCamera\FollowCamera.h" />
+    <ClInclude Include="base\components\utilities\levelDataLoader\LevelDataLoader.h" />
     <ClInclude Include="base\components\utilities\pointLight\PointLight.h" />
     <ClInclude Include="base\DirectXCommon.h" />
     <ClInclude Include="base\components\2d\CreateTriangle.h" />

@@ -53,7 +53,7 @@ void GameDemoScene::Initialize() {
 		testEmitter_[i].frequency = 0.5f;//0.5秒ごとに発生
 		testEmitter_[i].frequencyTime = 0.0f;//発生頻度の時刻
 
-		accelerationField_[i].acceleration = { 15.0f,0.0f,0.0f };
+		accelerationField_[i].acceleration = { 0.0f,0.0f,-100.0f };
 		accelerationField_[i].area.min = { -1.0f,-1.0f,-1.0f };
 		accelerationField_[i].area.max = { 1.0f,1.0f,1.0f };
 

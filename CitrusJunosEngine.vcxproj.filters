@@ -306,6 +306,9 @@
     <ClCompile Include="base\components\pipelineState\Outline\Outline.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\utilities\levelDataLoader\LevelDataLoader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -523,6 +526,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="base\components\pipelineState\Outline\Outline.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\utilities\levelDataLoader\LevelDataLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
