@@ -35,6 +35,7 @@ public:
 	//Getter&Setter
 	Microsoft::WRL::ComPtr<ID3D12Device> GetDevice() { return device_; }
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return commandList_; }
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandListThread() { return commandListThread_; }
 
 	WinApp* GetWin() { return WinApp::GetInstance(); }
 	HRESULT GetHr() { return  hr_; }
@@ -75,9 +76,11 @@ private:
 
 	//コマンドアロケータの生成
 	Microsoft::WRL::ComPtr <ID3D12CommandAllocator> commandAllocator_;
+	Microsoft::WRL::ComPtr <ID3D12CommandAllocator> commandAllocatorThread_;
 
 	//コマンドリストを生成する
 	Microsoft::WRL::ComPtr <ID3D12GraphicsCommandList> commandList_;
+	Microsoft::WRL::ComPtr <ID3D12GraphicsCommandList> commandListThread_;
 
 	//スワップチェーン
 	Microsoft::WRL::ComPtr <IDXGISwapChain4> swapChain_;

@@ -144,6 +144,17 @@ void DirectXCommon::CreateCommand() {
 	hr_ = device_->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator_.Get(), nullptr, IID_PPV_ARGS(&commandList_));
 	//コマンドリスト生成失敗の為、起動しない
 	assert(SUCCEEDED(hr_));
+
+	//コマンドアロケータの生成
+	commandAllocatorThread_ = nullptr;
+	hr_ = device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocatorThread_));
+	assert(SUCCEEDED(hr_));
+
+	//コマンドリストを生成する
+	commandListThread_ = nullptr;
+	hr_ = device_->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocatorThread_.Get(), nullptr, IID_PPV_ARGS(&commandListThread_));
+	//コマンドリスト生成失敗の為、起動しない
+	assert(SUCCEEDED(hr_));
 }
 
 void DirectXCommon::CreateSwapChain() {
