@@ -2,22 +2,12 @@
 #include "Input.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "LevelData.h"
 
 #include <string.h>
 #include <fstream>
 #include <sstream>
 #include <json.hpp>
-
-struct obejcts {
-	Vector3 Translate;
-	Vector3 Rotate;
-	Vector3 Scale;
-};
-
-struct LevelData {
-	std::string name;
-	std::vector<obejcts> obejcts;
-};
 
 class LevelDataLoader {
 public:
@@ -25,11 +15,25 @@ public:
 
 	void Initialize(const std::string& directoryPath, const std::string& filename);
 
-	void Update();
+	LevelData* GetLevelData() { return levelData_; }
 
 	LevelDataLoader(const LevelDataLoader& obj) = delete;
 	LevelDataLoader& operator=(const LevelDataLoader& obj) = delete;
 private:
 	LevelDataLoader() = default;
 	~LevelDataLoader() = default;
+
+	LevelData* levelData_;
+
+	//JSONファイルのロードとデータの確認
+	static bool FileLoad(const std::string fullpath, nlohmann::json& deserialized);
+
+	//親ノードのロード
+	static LevelData* SearchObjects(nlohmann::json& deserialized);
+
+	//子ノードのロード
+	static void SearchChildren(LevelData* levelData, nlohmann::json& parent);
+
+	//Transformのロード
+	static EulerTransform TransformLoad(nlohmann::json& object);
 };

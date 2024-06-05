@@ -372,6 +372,7 @@
     <ClInclude Include="base\components\utilities\convertString\ConvertString.h" />
     <ClInclude Include="base\components\utilities\directionalLight\DirectionalLight.h" />
     <ClInclude Include="base\components\utilities\followCamera\FollowCamera.h" />
+    <ClInclude Include="base\components\utilities\levelDataLoader\LevelData.h" />
     <ClInclude Include="base\components\utilities\levelDataLoader\LevelDataLoader.h" />
     <ClInclude Include="base\components\utilities\pointLight\PointLight.h" />
     <ClInclude Include="base\DirectXCommon.h" />

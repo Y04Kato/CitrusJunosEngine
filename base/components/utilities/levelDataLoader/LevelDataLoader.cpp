@@ -7,8 +7,20 @@ LevelDataLoader* LevelDataLoader::GetInstance() {
 }
 
 void LevelDataLoader::Initialize(const std::string& directoryPath, const std::string& filename) {
-	//連結してフルパスを得る
+	//ファイルパス連結
 	const std::string fullpath = directoryPath + "/" + filename;
+
+	//JSON文字列から冷凍したデータ
+	nlohmann::json deserialized;
+
+	//JSONデータが正しい物か確認
+	assert(FileLoad(fullpath, deserialized));
+
+	//データのロード
+	levelData_ = SearchObjects(deserialized);
+}
+
+bool LevelDataLoader::FileLoad(const std::string fullpath, nlohmann::json& deserialized){
 	//ファイルストリーム
 	std::ifstream file;
 
@@ -19,8 +31,6 @@ void LevelDataLoader::Initialize(const std::string& directoryPath, const std::st
 		assert(0);
 	}
 
-	//JSON文字列から冷凍したデータ
-	nlohmann::json deserialized;
 	//解凍
 	file >> deserialized;
 
@@ -29,34 +39,107 @@ void LevelDataLoader::Initialize(const std::string& directoryPath, const std::st
 	assert(deserialized.contains("name"));
 	assert(deserialized["name"].is_string());
 
-	//"Nname"を文字列として取得
-	std::string name =
-		deserialized["name"].get<std::string>();
+	//"name"を文字列として取得
+	std::string name = deserialized["name"].get<std::string>();
 	//正しいレベルデータファイルかチェック
 	assert(name.compare("scene") == 0);
 
+	//成功
+	return true;
+}
+
+LevelData* LevelDataLoader::SearchObjects(nlohmann::json& deserialized){
 	//レベルデータ格納用インスタンスを生成
 	LevelData* levelData = new LevelData();
 
 	//全オブジェクトを走査
 	for (nlohmann::json& object : deserialized["objects"]) {
-		assert(object.contains("type"));
+		assert(object.contains("Type"));
 		//種別を取得
-		std::string type = object["type"].get<std::string>();
+		std::string type = object["Type"].get<std::string>();
 
-		//MESH
-		if (type.compare("MESH") == 0) {
+		//geoノード
+		if (type.compare("geo") == 0) {
 			//要素追加
-			levelData->obejcts.emplace_back(LevelData::);
+			levelData->objectsData_.emplace_back(LevelData::MeshData{});
 			//今追加した要素の参照を得る
-			
+			LevelData::MeshData& objectData = std::get<LevelData::MeshData>(levelData->objectsData_.back());
+
+			//オブジェクト名
+			objectData.name = object["Name"];
+
 			if (object.contains("file_name")) {
 				//ファイル名
+				objectData.flieName = object["file_name"];
 			}
+
+			//トランスフォーム
+			objectData.transform = TransformLoad(object);
+		}
+
+		//子ノード
+		if (object.contains("Children")) {
+			SearchChildren(levelData, object);
 		}
 	}
+
+	return levelData;
 }
 
-void LevelDataLoader::Update() {
-	
+void LevelDataLoader::SearchChildren(LevelData* levelData, nlohmann::json& parent){
+	//全オブジェクトを走査
+	for (nlohmann::json& object : parent["Children"]) {
+		assert(object.contains("Type"));
+		//種別を取得
+		std::string type = object["Type"].get<std::string>();
+
+		//box
+		if (type.compare("box") == 0) {
+			//要素追加
+			levelData->objectsData_.emplace_back(LevelData::MeshData{});
+			//今追加した要素の参照を得る
+			LevelData::MeshData& objectData = std::get<LevelData::MeshData>(levelData->objectsData_.back());
+
+			//オブジェクト名
+			objectData.name = object["Name"];
+
+			if (object.contains("file_name")) {
+				//ファイル名
+				objectData.flieName = object["file_name"];
+			}
+
+			//トランスフォーム
+			objectData.transform = TransformLoad(object);
+		}
+
+		//子ノード
+		if (object.contains("Children")) {
+			SearchChildren(levelData, object);
+		}
+	}
+
+}
+
+EulerTransform LevelDataLoader::TransformLoad(nlohmann::json& object){
+	EulerTransform result{};
+
+	// トランスフォームのパラメータ読み込み
+	nlohmann::json& transform = object["transform"];
+
+	// 平行移動
+	result.translate.num[0] = static_cast<float>(transform["translation"][0]);
+	result.translate.num[1] = static_cast<float>(transform["translation"][2]);
+	result.translate.num[2] = static_cast<float>(transform["translation"][1]);
+
+	// 回転角
+	result.rotate.num[0] = static_cast<float>(transform["rotation"][0]);
+	result.rotate.num[1] = static_cast<float>(transform["rotation"][2]);
+	result.rotate.num[2] = static_cast<float>(transform["rotation"][1]);
+
+	// スケーリング
+	result.scale.num[0] = static_cast<float>(transform["scaling"][0]);
+	result.scale.num[1] = static_cast<float>(transform["scaling"][2]);
+	result.scale.num[2] = static_cast<float>(transform["scaling"][1]);
+
+	return result;
 }
