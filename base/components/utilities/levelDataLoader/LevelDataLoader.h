@@ -16,7 +16,7 @@ struct obejcts {
 
 struct LevelData {
 	std::string name;
-	obejcts obejcts;
+	std::vector<obejcts> obejcts;
 };
 
 class LevelDataLoader {

@@ -26,12 +26,12 @@ void LevelDataLoader::Initialize(const std::string& directoryPath, const std::st
 
 	//正しいレベルデータファイルかチェック
 	assert(deserialized.is_object());
-	assert(deserialized.contains("NodeName"));
-	assert(deserialized["NodeName"].is_string());
+	assert(deserialized.contains("name"));
+	assert(deserialized["name"].is_string());
 
-	//"NodeName"を文字列として取得
+	//"Nname"を文字列として取得
 	std::string name =
-		deserialized["NodeName"].get<std::string>();
+		deserialized["name"].get<std::string>();
 	//正しいレベルデータファイルかチェック
 	assert(name.compare("scene") == 0);
 
@@ -40,9 +40,20 @@ void LevelDataLoader::Initialize(const std::string& directoryPath, const std::st
 
 	//全オブジェクトを走査
 	for (nlohmann::json& object : deserialized["objects"]) {
-		//assert(object.contains("type"));
-		////種別を取得
-		//std::string type = object["type"].get<std::string>();
+		assert(object.contains("type"));
+		//種別を取得
+		std::string type = object["type"].get<std::string>();
+
+		//MESH
+		if (type.compare("MESH") == 0) {
+			//要素追加
+			levelData->obejcts.emplace_back(LevelData::);
+			//今追加した要素の参照を得る
+			
+			if (object.contains("file_name")) {
+				//ファイル名
+			}
+		}
 	}
 }
 
