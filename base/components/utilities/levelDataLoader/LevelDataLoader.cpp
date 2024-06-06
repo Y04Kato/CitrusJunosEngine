@@ -103,8 +103,8 @@ void LevelDataLoader::SearchChildren(LevelData* levelData, nlohmann::json& paren
 			//オブジェクト名
 			objectData.name = object["Name"];
 
+			//ファイル名
 			if (object.contains("file_name")) {
-				//ファイル名
 				objectData.flieName = object["file_name"];
 			}
 
@@ -124,22 +124,22 @@ EulerTransform LevelDataLoader::TransformLoad(nlohmann::json& object){
 	EulerTransform result{};
 
 	// トランスフォームのパラメータ読み込み
-	nlohmann::json& transform = object["transform"];
+	nlohmann::json& transform = object["Transform"];
 
 	// 平行移動
-	result.translate.num[0] = static_cast<float>(transform["translation"][0]);
-	result.translate.num[1] = static_cast<float>(transform["translation"][2]);
-	result.translate.num[2] = static_cast<float>(transform["translation"][1]);
+	result.translate.num[0] = static_cast<float>(transform["Translate"][0]);
+	result.translate.num[1] = static_cast<float>(transform["Translate"][2]);
+	result.translate.num[2] = static_cast<float>(transform["Translate"][1]);
 
 	// 回転角
-	result.rotate.num[0] = static_cast<float>(transform["rotation"][0]);
-	result.rotate.num[1] = static_cast<float>(transform["rotation"][2]);
-	result.rotate.num[2] = static_cast<float>(transform["rotation"][1]);
+	result.rotate.num[0] = static_cast<float>(transform["Rotate"][0]);
+	result.rotate.num[1] = static_cast<float>(transform["Rotate"][2]);
+	result.rotate.num[2] = static_cast<float>(transform["Rotate"][1]);
 
 	// スケーリング
-	result.scale.num[0] = static_cast<float>(transform["scaling"][0]);
-	result.scale.num[1] = static_cast<float>(transform["scaling"][2]);
-	result.scale.num[2] = static_cast<float>(transform["scaling"][1]);
+	result.scale.num[0] = static_cast<float>(transform["Scale"][0]);
+	result.scale.num[1] = static_cast<float>(transform["Scale"][2]);
+	result.scale.num[2] = static_cast<float>(transform["Scale"][1]);
 
 	return result;
 }

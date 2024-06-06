@@ -1,0 +1,114 @@
+{
+    "name": "scene",
+    "objects": [
+        {
+            "Type": "geo",
+            "Name": "box_object1",
+            "Transform": {
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "Children": [
+                {
+                    "Type": "box",
+                    "Name": "box1",
+                    "Transform": {
+                        "Translate": [
+                            1.0,
+                            0.5,
+                            1.0
+                        ],
+                        "Rotate": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                {
+                    "Type": "box",
+                    "Name": "box2",
+                    "Transform": {
+                        "Translate": [
+                            -1.0,
+                            0.5,
+                            -1.0
+                        ],
+                        "Rotate": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "Type": "geo",
+            "Name": "box_object2",
+            "Transform": {
+                "Translate": [
+                    0.0,
+                    0.5,
+                    0.0
+                ],
+                "Rotate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "Children": [
+                {
+                    "Type": "box",
+                    "Name": "box1",
+                    "Transform": {
+                        "Translate": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Rotate": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

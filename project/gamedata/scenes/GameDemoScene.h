@@ -14,6 +14,7 @@
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
+#include "levelDataLoader/LevelDataLoader.h"
 
 #include "components/utilities/globalVariables/GlobalVariables.h"
 
@@ -87,7 +88,7 @@ private:
 
 	DebugCamera* debugCamera_;
 
-	CollisionManager* collisionManager_;
+	LevelDataLoader* levelDataLoader_;
 
 	int texture_[2];
 

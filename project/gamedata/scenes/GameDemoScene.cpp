@@ -122,8 +122,8 @@ void GameDemoScene::Initialize() {
 
 	viewProjection_.Initialize();
 
-	//CollisionManager
-	collisionManager_ = CollisionManager::GetInstance();
+	levelDataLoader_ = LevelDataLoader::GetInstance();
+	levelDataLoader_->Initialize("project/gamedata/levelEditor","Transform.json");
 
 	//
 	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
@@ -146,9 +146,6 @@ void GameDemoScene::Update() {
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 	ApplyGlobalVariables();
-
-	collisionManager_->ClearColliders();
-	collisionManager_->CheckAllCollision();
 
 	debugCamera_->Update();
 
