@@ -123,7 +123,7 @@ void GameDemoScene::Initialize() {
 	viewProjection_.Initialize();
 
 	levelDataLoader_ = LevelDataLoader::GetInstance();
-	levelDataLoader_->Initialize("project/gamedata/levelEditor","Transform.json");
+	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
 
 	//
 	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
@@ -178,6 +178,10 @@ void GameDemoScene::Update() {
 	worldTransformModelVAT_.UpdateMatrix();
 
 	for (Obj& obj : objects_) {
+		obj.world.UpdateMatrix();
+	}
+
+	for (Obj& obj : levelEditorObjects_) {
 		obj.world.UpdateMatrix();
 	}
 
@@ -543,6 +547,14 @@ void GameDemoScene::Update() {
 		}
 	}
 
+	if (ImGui::Button("LevelEditorLoadScene")) {
+		LevelSetObject();
+	}
+
+	for (Obj& obj : levelEditorObjects_) {
+		ImGui::Text(obj.name.c_str());
+	}
+
 	ImGui::End();
 
 	for (int i = 0; i < 2; i++) {
@@ -604,6 +616,10 @@ void GameDemoScene::Draw() {
 	}
 
 	for (Obj& obj : objects_) {
+		obj.model.Draw(obj.world, viewProjection_, obj.material);
+	}
+
+	for (Obj& obj : levelEditorObjects_) {
 		obj.model.Draw(obj.world, viewProjection_, obj.material);
 	}
 
@@ -701,4 +717,23 @@ void GameDemoScene::SetObject(EulerTransform trans, const std::string& name) {
 
 	obj.name = name;
 	objects_.push_back(obj);
+}
+
+void GameDemoScene::LevelSetObject() {
+	//レベルデータからオブジェクトを生成　配置
+	for (auto& objectData : levelDataLoader_->GetLevelData()->objectsData_) {
+		Obj obj;
+		obj.model.Initialize(ObjModelData_, ObjTexture_);
+		obj.model.SetDirectionalLightFlag(true, 3);
+
+		obj.world.Initialize();
+		obj.world.translation_ = objectData.transform.translate;
+		obj.world.rotation_ = objectData.transform.rotate;
+		obj.world.scale_ = objectData.transform.scale;
+
+		obj.material = { 1.0f,1.0f,1.0f,1.0f };
+
+		obj.name = objectData.name;
+		levelEditorObjects_.push_back(obj);
+	}
 }

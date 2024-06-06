@@ -1,7 +1,6 @@
 {
     "GameDemoScene": {
-        "ObjCount": 2,
-        "test0": "test0",
+        "ObjCount": 0,
         "test0Scale": [
             1.0,
             1.0,
@@ -12,7 +11,6 @@
             0.0,
             0.0
         ],
-        "test1": "test1",
         "test1Scale": [
             1.0,
             1.0,

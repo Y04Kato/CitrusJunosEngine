@@ -63,7 +63,7 @@ LevelData* LevelDataLoader::SearchObjects(nlohmann::json& deserialized){
 			//要素追加
 			levelData->objectsData_.emplace_back(LevelData::MeshData{});
 			//今追加した要素の参照を得る
-			LevelData::MeshData& objectData = std::get<LevelData::MeshData>(levelData->objectsData_.back());
+			LevelData::MeshData& objectData = levelData->objectsData_.back();
 
 			//オブジェクト名
 			objectData.name = object["Name"];
@@ -98,7 +98,7 @@ void LevelDataLoader::SearchChildren(LevelData* levelData, nlohmann::json& paren
 			//要素追加
 			levelData->objectsData_.emplace_back(LevelData::MeshData{});
 			//今追加した要素の参照を得る
-			LevelData::MeshData& objectData = std::get<LevelData::MeshData>(levelData->objectsData_.back());
+			LevelData::MeshData& objectData = levelData->objectsData_.back();
 
 			//オブジェクト名
 			objectData.name = object["Name"];
@@ -128,18 +128,18 @@ EulerTransform LevelDataLoader::TransformLoad(nlohmann::json& object){
 
 	// 平行移動
 	result.translate.num[0] = static_cast<float>(transform["Translate"][0]);
-	result.translate.num[1] = static_cast<float>(transform["Translate"][2]);
-	result.translate.num[2] = static_cast<float>(transform["Translate"][1]);
+	result.translate.num[1] = static_cast<float>(transform["Translate"][1]);
+	result.translate.num[2] = static_cast<float>(transform["Translate"][2]);
 
 	// 回転角
 	result.rotate.num[0] = static_cast<float>(transform["Rotate"][0]);
-	result.rotate.num[1] = static_cast<float>(transform["Rotate"][2]);
-	result.rotate.num[2] = static_cast<float>(transform["Rotate"][1]);
+	result.rotate.num[1] = static_cast<float>(transform["Rotate"][1]);
+	result.rotate.num[2] = static_cast<float>(transform["Rotate"][2]);
 
 	// スケーリング
 	result.scale.num[0] = static_cast<float>(transform["Scale"][0]);
-	result.scale.num[1] = static_cast<float>(transform["Scale"][2]);
-	result.scale.num[2] = static_cast<float>(transform["Scale"][1]);
+	result.scale.num[1] = static_cast<float>(transform["Scale"][1]);
+	result.scale.num[2] = static_cast<float>(transform["Scale"][2]);
 
 	return result;
 }

@@ -29,6 +29,7 @@ public:
 	void ApplyGlobalVariables();
 
 	void SetObject(EulerTransform trans, const std::string& name);
+	void LevelSetObject();
 
 private:
 	CitrusJunosEngine* CJEngine_;
@@ -88,8 +89,6 @@ private:
 
 	DebugCamera* debugCamera_;
 
-	LevelDataLoader* levelDataLoader_;
-
 	int texture_[2];
 
 	bool isTriangleDraw_[2];
@@ -122,5 +121,9 @@ private:
 	std::string objNameHolder_[objCountMax_];
 
 	const char* groupName = "GameDemoScene";
+
+	//LevelEditor
+	LevelDataLoader* levelDataLoader_;
+	std::list<Obj> levelEditorObjects_;
 };
 
