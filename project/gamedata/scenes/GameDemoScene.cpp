@@ -96,13 +96,13 @@ void GameDemoScene::Initialize() {
 	}
 
 	//VAT
-	modelVAT_.reset(Model::CreateModel("project/gamedata/resources/vatSphere", "vatSphere.gltf"));
+	modelVAT_.reset(Model::CreateModel("project/gamedata/resources/vatSphere", "VAT_mesh.fbx"));
 	worldTransformModelVAT_.Initialize();
 	modelMaterialVAT_ = { 1.0f,1.0f,1.0f,1.0f };
-	vatData_.VATTime = 0.0f;
-	vatData_.MaxVATTime = 240.0f;
-	vatData_.VatPositionTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
-	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
+	vatData_.VATTime = 1.0f;
+	vatData_.MaxVATTime = 120.0f;
+	vatData_.VatPositionTexSize = { 1.0f / 25.0f,1.0f / 120.0f ,25.0f,120.0f };
+	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 120.0f ,25.0f,120.0f };
 	modelVAT_->LoadVATData("project/gamedata/resources/vatSphere", vatData_);
 	modelVAT_->SetDirectionalLightFlag(true, 3);
 
