@@ -33,7 +33,7 @@ void CreateParticle::Initialize(int kNumInstance, Emitter emitter, AccelerationF
 	materialData_->enableLighting = false;
 	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
 	materialData_->uvTransform = MakeIdentity4x4();
-	
+
 	emitter_ = emitter;
 	accelerationField_ = accelerationField;
 }
@@ -166,20 +166,53 @@ Particle CreateParticle::MakeNewParticle(std::mt19937& randomEngine, const Euler
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
+	std::uniform_real_distribution<float> distRotate(0.0f, 360.0f);
 
 	Particle particles;
-	particles.transform.scale = { 1.0f,1.0f,1.0f };
-	particles.transform.rotate = { 0.0f,0.0f,0.0f };
+	particles.transform.scale = transform.scale;
+	if (transform.rotate.num[0] == -1.0f) {
+		if (transform.rotate.num[1] == -1.0f) {
+			if (transform.rotate.num[2] == -1.0f) {
+				Vector3 randomRotate = { distRotate(randomEngine),distRotate(randomEngine),distRotate(randomEngine) };
+				particles.transform.rotate = randomRotate;
+			}
+			else {
+				particles.transform.rotate = transform.rotate;
+			}
+		}
+		else {
+			particles.transform.rotate = transform.rotate;
+		}
+	}
+	else {
+		particles.transform.rotate = transform.rotate;
+	}
 	Vector3 randomTranslate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
-	particles.transform.translate = transform.translate + randomTranslate;
-	particles.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
+	particles.transform.translate = transform.translate + randomTranslate / 3.0f;
+	if (isVelocity_ == false) {
+		particles.velocity = { 0.0f,0.0f,0.0f };
+	}
+	else {
+		if (velocityBoost_ == 0.0f) {
+			particles.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
+		}
+		else {
+			particles.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
+			particles.velocity = particles.velocity * velocityBoost_;
+		}
+	}
 	if (isColor_) {
 		particles.color = color_;
 	}
 	else {
 		particles.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
 	}
-	particles.lifeTime = distTime(randomEngine);
+	if (isLifeTimer) {
+		particles.lifeTime = distTime(randomEngine) / lifeTime_;
+	}
+	else {
+		particles.lifeTime = distTime(randomEngine);
+	}
 	particles.currentTime = 0;
 
 	return particles;
@@ -191,4 +224,12 @@ std::list<Particle> CreateParticle::Emission(const Emitter& emitter, std::mt1993
 		particles_.push_back(MakeNewParticle(randomEngine, emitter.transform));
 	}
 	return particles;
+}
+
+void CreateParticle::OccursOnlyOnce(int occursNum) {
+	std::mt19937 randomEngine(seedGenerator());
+	int backCount = emitter_.count;
+	emitter_.count = occursNum;
+	Emission(emitter_, randomEngine);
+	emitter_.count = backCount;
 }

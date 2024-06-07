@@ -7,7 +7,7 @@ DebugCamera* DebugCamera::GetInstance() {
 
 void DebugCamera::initialize() {
 	viewProjection_.Initialize();
-	viewProjection_.translation_ = { 0,0,-30 };
+	viewProjection_.translation_ = { 0,00,-30 };
 	viewProjection_.rotation_ = { 0,0,0 };
 
 	input_ = Input::GetInstance();
@@ -15,9 +15,36 @@ void DebugCamera::initialize() {
 
 void DebugCamera::Update() {
 #ifdef _DEBUG
+	//if (input_->PressKey(DIK_W)) {
+	//	viewProjection_.rotation_.num[0] -= 0.02f;
+	//}
+	//if (input_->PressKey(DIK_S)) {
+	//	viewProjection_.rotation_.num[0] += 0.02f;
+	//}
+	//if (input_->PressKey(DIK_D)) {
+	//	viewProjection_.rotation_.num[1] += 0.02f;
+	//}
+	//if (input_->PressKey(DIK_A)) {
+	//	viewProjection_.rotation_.num[1] -= 0.02f;
+	//}
+
+	//if (input_->PressKey(DIK_UP)) {
+	//	viewProjection_.translation_.num[1] += 2.0f;
+	//}
+	//if (input_->PressKey(DIK_DOWN)) {
+	//	viewProjection_.translation_.num[1] -= 2.0f;
+	//}
+	//if (input_->PressKey(DIK_RIGHT)) {
+	//	viewProjection_.translation_.num[0] += 2.0f;
+	//}
+	//if (input_->PressKey(DIK_LEFT)) {
+	//	viewProjection_.translation_.num[0] -= 2.0f;
+	//}
+
+	//viewProjection_.translation_.num[2] = input_->GetMousePosition().Scroll / 40.0f;
 
 	ImGui::Begin("DebugCamera");
-	ImGui::DragFloat3("rotation", viewProjection_.rotation_.num,0.1f);
+	ImGui::DragFloat3("rotation", viewProjection_.rotation_.num, 0.1f);
 	ImGui::DragFloat3("translation", viewProjection_.translation_.num, 0.1f);
 	ImGui::End();
 #endif

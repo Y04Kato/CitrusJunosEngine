@@ -9,4 +9,7 @@ enum class PipelineType {
 	PostProcess,
 	Grayscale,
 	Vignette,
+	Smoothing,
+	Gaussian,
+	Outline,
 };

@@ -53,7 +53,7 @@ void GameDemoScene::Initialize() {
 		testEmitter_[i].frequency = 0.5f;//0.5秒ごとに発生
 		testEmitter_[i].frequencyTime = 0.0f;//発生頻度の時刻
 
-		accelerationField_[i].acceleration = { 15.0f,0.0f,0.0f };
+		accelerationField_[i].acceleration = { 0.0f,0.0f,-100.0f };
 		accelerationField_[i].area.min = { -1.0f,-1.0f,-1.0f };
 		accelerationField_[i].area.max = { 1.0f,1.0f,1.0f };
 
@@ -86,7 +86,7 @@ void GameDemoScene::Initialize() {
 	}
 
 	//objモデル
-	model_[0].reset(Model::CreateSkinningModel("project/gamedata/resources/human", "walk.gltf"));
+	model_[0].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
 	model_[1].reset(Model::CreateModel("project/gamedata/resources/AnimatedCube", "AnimatedCube.gltf"));
 	model_[2].reset(Model::CreateModel("project/gamedata/resources/terrain", "terrain.obj"));
 	for (int i = 0; i < 3; i++) {
@@ -122,8 +122,8 @@ void GameDemoScene::Initialize() {
 
 	viewProjection_.Initialize();
 
-	//CollisionManager
-	collisionManager_ = CollisionManager::GetInstance();
+	levelDataLoader_ = LevelDataLoader::GetInstance();
+	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
 
 	//
 	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
@@ -146,9 +146,6 @@ void GameDemoScene::Update() {
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 	ApplyGlobalVariables();
-
-	collisionManager_->ClearColliders();
-	collisionManager_->CheckAllCollision();
 
 	debugCamera_->Update();
 
@@ -181,6 +178,10 @@ void GameDemoScene::Update() {
 	worldTransformModelVAT_.UpdateMatrix();
 
 	for (Obj& obj : objects_) {
+		obj.world.UpdateMatrix();
+	}
+
+	for (Obj& obj : levelEditorObjects_) {
 		obj.world.UpdateMatrix();
 	}
 
@@ -484,6 +485,30 @@ void GameDemoScene::Update() {
 				isVignetteDraw_ = false;
 			}
 		}
+		if (ImGui::Button("DrawSmoothing")) {
+			if (isSmoothingDraw_ == false) {
+				isSmoothingDraw_ = true;
+			}
+			else {
+				isSmoothingDraw_ = false;
+			}
+		}
+		if (ImGui::Button("DrawGaussian")) {
+			if (isGaussianDraw_ == false) {
+				isGaussianDraw_ = true;
+			}
+			else {
+				isGaussianDraw_ = false;
+			}
+		}
+		if (ImGui::Button("DrawOutline")) {
+			if (isOutlineDraw_ == false) {
+				isOutlineDraw_ = true;
+			}
+			else {
+				isOutlineDraw_ = false;
+			}
+		}
 		ImGui::TreePop();
 	}
 
@@ -520,6 +545,14 @@ void GameDemoScene::Update() {
 		for (int i = 0; i < objCount_; i++) {
 			SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
 		}
+	}
+
+	if (ImGui::Button("LevelEditorLoadScene")) {
+		LevelSetObject();
+	}
+
+	for (Obj& obj : levelEditorObjects_) {
+		ImGui::Text(obj.name.c_str());
 	}
 
 	ImGui::End();
@@ -586,6 +619,10 @@ void GameDemoScene::Draw() {
 		obj.model.Draw(obj.world, viewProjection_, obj.material);
 	}
 
+	for (Obj& obj : levelEditorObjects_) {
+		obj.model.Draw(obj.world, viewProjection_, obj.material);
+	}
+
 #pragma endregion
 
 #pragma region Skinningモデル描画
@@ -635,6 +672,15 @@ void GameDemoScene::DrawPostEffect() {
 	if (isVignetteDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::Vignette);
 	}
+	if (isSmoothingDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Smoothing);
+	}
+	if (isGaussianDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Gaussian);
+	}
+	if (isOutlineDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Outline);
+	}
 }
 
 void GameDemoScene::Finalize() {
@@ -671,4 +717,23 @@ void GameDemoScene::SetObject(EulerTransform trans, const std::string& name) {
 
 	obj.name = name;
 	objects_.push_back(obj);
+}
+
+void GameDemoScene::LevelSetObject() {
+	//レベルデータからオブジェクトを生成　配置
+	for (auto& objectData : levelDataLoader_->GetLevelData()->objectsData_) {
+		Obj obj;
+		obj.model.Initialize(ObjModelData_, ObjTexture_);
+		obj.model.SetDirectionalLightFlag(true, 3);
+
+		obj.world.Initialize();
+		obj.world.translation_ = objectData.transform.translate;
+		obj.world.rotation_ = objectData.transform.rotate;
+		obj.world.scale_ = objectData.transform.scale;
+
+		obj.material = { 1.0f,1.0f,1.0f,1.0f };
+
+		obj.name = objectData.name;
+		levelEditorObjects_.push_back(obj);
+	}
 }

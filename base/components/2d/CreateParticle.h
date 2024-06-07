@@ -11,24 +11,26 @@
 
 class CreateParticle {
 public:
-	void Initialize(int kNumInstance,Emitter emitter,AccelerationField accelerationField, uint32_t textureIndex);
+	void Initialize(int kNumInstance, Emitter emitter, AccelerationField accelerationField, uint32_t textureIndex);
 	void Update();
 	void Finalize();
 	void Draw(const ViewProjection& viewProjection);
 
-	Particle MakeNewParticle(std::mt19937& randomEngine,const EulerTransform transform);
+	Particle MakeNewParticle(std::mt19937& randomEngine, const EulerTransform transform);
 	std::list<Particle> Emission(const Emitter& emitter, std::mt19937& randomEngine);
 
 	void SetEmitter(const Emitter& emitter) {
-		emitter_.count = emitter.count; 
+		emitter_.count = emitter.count;
 		emitter_.frequency = emitter.frequency;
 		emitter_.transform = emitter.transform;
 	};
 	void SetAccelerationField(const AccelerationField& accelerationField) { accelerationField_ = accelerationField; };
 	void SetisBillBoard(const bool isBillBoard) { isBillBoard_ = isBillBoard; };
 	void SetisColor(const bool isColor) { isColor_ = isColor; };
-
+	//Velocityをランダムにするか否かFalseでOFF、True+1以上ならランダムな値に値を掛ける
+	void SetisVelocity(const bool isVelocity, const float boost) { isVelocity_ = isVelocity; velocityBoost_ = boost; };
 	void SetTranslate(Vector3 transform) { emitter_.transform.translate = transform; }
+	void SetFrequency(float frequency) { emitter_.frequency = frequency; }
 
 	//パーティクルの色をランダムから指定した色に変更出来る
 	void SetColor(Vector4 color) {
@@ -36,7 +38,15 @@ public:
 		isColor_ = true;
 	}
 
+	//パーティクル生きてる時間を変更出来る
+	void SetLifeTime(float lifeTime) {
+		lifeTime_ = lifeTime;
+		isLifeTimer = true;
+	}
+
 	int GetkNumMaxInstance() { return kNumMaxInstance_; }
+
+	void OccursOnlyOnce(int occursNum);
 
 private:
 	void SettingVertex();
@@ -88,5 +98,11 @@ private:
 
 	Vector4 color_;
 	bool isColor_ = false;
-};
 
+	Vector3 velocity_;
+	bool isVelocity_ = false;
+	float velocityBoost_ = 0.0f;
+
+	float lifeTime_ = 0.0f;
+	bool isLifeTimer = false;
+};

@@ -14,6 +14,7 @@
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
+#include "levelDataLoader/LevelDataLoader.h"
 
 #include "components/utilities/globalVariables/GlobalVariables.h"
 
@@ -28,6 +29,7 @@ public:
 	void ApplyGlobalVariables();
 
 	void SetObject(EulerTransform trans, const std::string& name);
+	void LevelSetObject();
 
 private:
 	CitrusJunosEngine* CJEngine_;
@@ -87,8 +89,6 @@ private:
 
 	DebugCamera* debugCamera_;
 
-	CollisionManager* collisionManager_;
-
 	int texture_[2];
 
 	bool isTriangleDraw_[2];
@@ -101,6 +101,9 @@ private:
 
 	bool isGrayScaleDraw_;
 	bool isVignetteDraw_;
+	bool isSmoothingDraw_;
+	bool isGaussianDraw_;
+	bool isOutlineDraw_;
 
 	//ステージエディター擬き、名前をtest0~始め、それを記録する
 	struct Obj {
@@ -118,5 +121,9 @@ private:
 	std::string objNameHolder_[objCountMax_];
 
 	const char* groupName = "GameDemoScene";
+
+	//LevelEditor
+	LevelDataLoader* levelDataLoader_;
+	std::list<Obj> levelEditorObjects_;
 };
 

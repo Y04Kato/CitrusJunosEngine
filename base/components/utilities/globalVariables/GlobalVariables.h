@@ -15,6 +15,7 @@ public:
 	void SetValue(const std::string& groupName, const std::string& key, int32_t value);
 	void SetValue(const std::string& groupName, const std::string& key, float value);
 	void SetValue(const std::string& groupName, const std::string& key, Vector3& value);
+	void SetValue(const std::string& groupName, const std::string& key, Vector4& value);
 	void SetValue(const std::string& groupName, const std::string& key, std::string value);
 
 	void SaveFile(const std::string& groupName);
@@ -24,6 +25,7 @@ public:
 	void AddItem(const std::string& groupName, const std::string& key, int32_t value);
 	void AddItem(const std::string& groupName, const std::string& key, float value);
 	void AddItem(const std::string& groupName, const std::string& key, Vector3 value);
+	void AddItem(const std::string& groupName, const std::string& key, Vector4 value);
 	void AddItem(const std::string& groupName, const std::string& key, std::string value);
 
 	void RemoveItem(const std::string& groupName, const std::string& key);
@@ -31,6 +33,7 @@ public:
 	int32_t GetIntValue(const std::string& groupName, const std::string& key);
 	float GetFloatValue(const std::string& groupName, const std::string& key);
 	Vector3 GetVector3Value(const std::string& groupName, const std::string& key);
+	Vector4 GetVector4Value(const std::string& groupName, const std::string& key);
 	std::string GetStringValue(const std::string& groupName, const std::string& key);
 
 private:
@@ -41,7 +44,7 @@ private:
 
 public:
 	struct Item {
-		std::variant<int32_t, float, Vector3 , std::string> value;
+		std::variant<int32_t, float, Vector3, Vector4, std::string> value;
 	};
 
 	struct Group {
