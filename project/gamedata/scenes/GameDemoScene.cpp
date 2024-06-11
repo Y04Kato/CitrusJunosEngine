@@ -642,12 +642,17 @@ void GameDemoScene::Draw() {
 #pragma region 前景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
+#pragma endregion
+}
+
+void GameDemoScene::DrawUI() {
+#pragma region 前景スプライト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 	for (int i = 0; i < 2; i++) {
 		if (isSpriteDraw_[i]) {//Sprite描画
 			sprite_[i]->Draw(spriteTransform_[i], SpriteuvTransform_[i], spriteMaterial_[i]);
 		}
 	}
-
 #pragma endregion
 }
 

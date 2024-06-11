@@ -52,6 +52,13 @@ void GameTitleScene::Draw(){
 #pragma endregion
 }
 
+void GameTitleScene::DrawUI() {
+#pragma region 前景スプライト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
+
+#pragma endregion
+}
+
 void GameTitleScene::DrawPostEffect() {
 	CJEngine_->renderer_->Draw(PipelineType::PostProcess);
 }

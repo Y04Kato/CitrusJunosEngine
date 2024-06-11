@@ -12,6 +12,10 @@ void GameClearScene::Draw() {
 
 }
 
+void GameClearScene::DrawUI() {
+
+}
+
 void GameClearScene::DrawPostEffect() {
 	
 }
