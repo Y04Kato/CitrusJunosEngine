@@ -301,6 +301,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 
 	//materialの解析(現在はマルチマテリアル非対応)
 	if (isLoadTexCoord_ == true) {//モデルにテクスチャがテクスチャが設定されている場合
+		modelData.material.textureFilePath = "project/gamedata/resources/null.png";
 		for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
 			aiMaterial* material = scene->mMaterials[materialIndex];
 
@@ -312,7 +313,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
 			}
 			else {
-				modelData.material.textureFilePath = "project/gamedata/resources/null.png";
+				
 			}
 		}
 	}
