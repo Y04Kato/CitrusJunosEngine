@@ -178,8 +178,6 @@ Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, const float cos, const float 
 
 Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 
-Matrix4x4 GetRotateOBB(const OBB& obb);
-
 #pragma endregion
 
 #pragma region Quaternion
@@ -239,3 +237,5 @@ bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 
 bool IsCollision(const OBB& obb, const StructSphere& sphere);
 bool IsCollision(const OBB& obb, const Segment& segment);
+
+bool IsCollision(const StructSphere& sphere1, const StructSphere& sphere2);

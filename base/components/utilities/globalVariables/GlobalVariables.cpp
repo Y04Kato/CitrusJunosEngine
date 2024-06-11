@@ -27,6 +27,12 @@ void GlobalVariables::Update() {
 		if (!ImGui::BeginMenu(groupName.c_str()))
 			continue;
 
+		if (ImGui::Button("Save")) {
+			SaveFile(groupName);
+			std::string message = std::format("{}.json saved", groupName);
+			MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+		}
+
 		for (std::map<std::string, Item>::iterator itItem = group.items.begin();
 			itItem != group.items.end(); ++itItem) {
 			const std::string& itemName = itItem->first;
@@ -44,15 +50,13 @@ void GlobalVariables::Update() {
 				Vector3* ptr = std::get_if<Vector3>(&item.value);
 				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr));
 			}
+			else if (std::holds_alternative<Vector4>(item.value)) {
+				Vector4* ptr = std::get_if<Vector4>(&item.value);
+				ImGui::ColorEdit4(itemName.c_str(), reinterpret_cast<float*>(ptr), 0);
+			}
 			else if (std::holds_alternative<std::string>(item.value)) {
 				std::string* ptr = std::get_if<std::string>(&item.value);
 			}
-		}
-
-		if (ImGui::Button("Save")) {
-			SaveFile(groupName);
-			std::string message = std::format("{}.json saved", groupName);
-			MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
 		}
 
 		ImGui::EndMenu();
@@ -89,7 +93,16 @@ void GlobalVariables::SetValue(
 }
 
 void GlobalVariables::SetValue(
-	const std::string& groupName, const std::string& key, std::string value){
+	const std::string& groupName, const std::string& key, Vector4& value) {
+	Group& group = datas_[groupName];
+	Item newItems{};
+
+	newItems.value = value;
+	group.items[key] = newItems;
+}
+
+void GlobalVariables::SetValue(
+	const std::string& groupName, const std::string& key, std::string value) {
 	Group& group = datas_[groupName];
 	Item newItems{};
 
@@ -124,6 +137,10 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 		if (std::holds_alternative<Vector3>(item.value)) {
 			Vector3 value = std::get<Vector3>(item.value);
 			root[groupName][itemName] = json::array({ value.num[0], value.num[1], value.num[2] });
+		}
+		else if (std::holds_alternative<Vector4>(item.value)) {
+			Vector4 value = std::get<Vector4>(item.value);
+			root[groupName][itemName] = json::array({ value.num[0], value.num[1], value.num[2], value.num[3] });
 		}
 	}
 
@@ -184,6 +201,10 @@ void GlobalVariables::LoadFile(const std::string& groupName) {
 			Vector3 value = { itItem->at(0), itItem->at(1), itItem->at(2) };
 			SetValue(groupName, itemName, value);
 		}
+		else if (itItem->is_array() && itItem->size() == 4) {
+			Vector4 value = { itItem->at(0), itItem->at(1), itItem->at(2) ,itItem->at(3) };
+			SetValue(groupName, itemName, value);
+		}
 	}
 }
 
@@ -232,6 +253,14 @@ void GlobalVariables::AddItem(const std::string& groupName, const std::string& k
 	}
 }
 
+void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, Vector4 value) {
+	Group& group = datas_[groupName];
+
+	if (group.items.find(key) == group.items.end()) {
+		SetValue(groupName, key, value);
+	}
+}
+
 void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, std::string value) {
 	Group& group = datas_[groupName];
 
@@ -265,6 +294,15 @@ Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std
 	assert(group.items.find(key) != group.items.end());
 
 	return std::get<Vector3>(group.items[key].value);
+}
+
+Vector4 GlobalVariables::GetVector4Value(const std::string& groupName, const std::string& key) {
+	assert(datas_.find(groupName) != datas_.end());
+
+	Group& group = datas_[groupName];
+	assert(group.items.find(key) != group.items.end());
+
+	return std::get<Vector4>(group.items[key].value);
 }
 
 std::string GlobalVariables::GetStringValue(const std::string& groupName, const std::string& key) {

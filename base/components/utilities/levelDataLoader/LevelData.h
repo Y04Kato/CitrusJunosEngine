@@ -13,7 +13,7 @@ public:
 		EulerTransform transform;
 	};
 
-	using ObjectData = std::variant<MeshData>;
+	using ObjectData = MeshData;
 
 public:
 

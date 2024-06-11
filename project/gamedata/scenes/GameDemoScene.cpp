@@ -96,13 +96,13 @@ void GameDemoScene::Initialize() {
 	}
 
 	//VAT
-	modelVAT_.reset(Model::CreateModel("project/gamedata/resources/vatSphere", "vatSphere.gltf"));
+	modelVAT_.reset(Model::CreateModel("project/gamedata/resources/vatSphere", "VAT_mesh.fbx"));
 	worldTransformModelVAT_.Initialize();
 	modelMaterialVAT_ = { 1.0f,1.0f,1.0f,1.0f };
-	vatData_.VATTime = 0.0f;
-	vatData_.MaxVATTime = 240.0f;
-	vatData_.VatPositionTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
-	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
+	vatData_.VATTime = 1.0f;
+	vatData_.MaxVATTime = 120.0f;
+	vatData_.VatPositionTexSize = { 1.0f / 25.0f,1.0f / 120.0f ,25.0f,120.0f };
+	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 120.0f ,25.0f,120.0f };
 	modelVAT_->LoadVATData("project/gamedata/resources/vatSphere", vatData_);
 	modelVAT_->SetDirectionalLightFlag(true, 3);
 
@@ -122,8 +122,8 @@ void GameDemoScene::Initialize() {
 
 	viewProjection_.Initialize();
 
-	//CollisionManager
-	collisionManager_ = CollisionManager::GetInstance();
+	levelDataLoader_ = LevelDataLoader::GetInstance();
+	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
 
 	//
 	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
@@ -146,9 +146,6 @@ void GameDemoScene::Update() {
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 	ApplyGlobalVariables();
-
-	collisionManager_->ClearColliders();
-	collisionManager_->CheckAllCollision();
 
 	debugCamera_->Update();
 
@@ -181,6 +178,10 @@ void GameDemoScene::Update() {
 	worldTransformModelVAT_.UpdateMatrix();
 
 	for (Obj& obj : objects_) {
+		obj.world.UpdateMatrix();
+	}
+
+	for (Obj& obj : levelEditorObjects_) {
 		obj.world.UpdateMatrix();
 	}
 
@@ -546,6 +547,14 @@ void GameDemoScene::Update() {
 		}
 	}
 
+	if (ImGui::Button("LevelEditorLoadScene")) {
+		LevelSetObject();
+	}
+
+	for (Obj& obj : levelEditorObjects_) {
+		ImGui::Text(obj.name.c_str());
+	}
+
 	ImGui::End();
 
 	for (int i = 0; i < 2; i++) {
@@ -607,6 +616,10 @@ void GameDemoScene::Draw() {
 	}
 
 	for (Obj& obj : objects_) {
+		obj.model.Draw(obj.world, viewProjection_, obj.material);
+	}
+
+	for (Obj& obj : levelEditorObjects_) {
 		obj.model.Draw(obj.world, viewProjection_, obj.material);
 	}
 
@@ -709,4 +722,23 @@ void GameDemoScene::SetObject(EulerTransform trans, const std::string& name) {
 
 	obj.name = name;
 	objects_.push_back(obj);
+}
+
+void GameDemoScene::LevelSetObject() {
+	//レベルデータからオブジェクトを生成　配置
+	for (auto& objectData : levelDataLoader_->GetLevelData()->objectsData_) {
+		Obj obj;
+		obj.model.Initialize(ObjModelData_, ObjTexture_);
+		obj.model.SetDirectionalLightFlag(true, 3);
+
+		obj.world.Initialize();
+		obj.world.translation_ = objectData.transform.translate;
+		obj.world.rotation_ = objectData.transform.rotate;
+		obj.world.scale_ = objectData.transform.scale;
+
+		obj.material = { 1.0f,1.0f,1.0f,1.0f };
+
+		obj.name = objectData.name;
+		levelEditorObjects_.push_back(obj);
+	}
 }

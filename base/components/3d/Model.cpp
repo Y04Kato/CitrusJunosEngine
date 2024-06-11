@@ -129,6 +129,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 
 	if (isVAT_ == true) {//VATモデルである場合
 		ImGui::Text("%d", (int)vatData_.VATTime);
+		ImGui::Text("%f %f %f %f", vatData_.VatPositionTexSize.num[0], vatData_.VatPositionTexSize.num[1], vatData_.VatPositionTexSize.num[2], vatData_.VatPositionTexSize.num[3]);
 
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(vatPosTex_));
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatRotTex_));
@@ -309,6 +310,9 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				aiString textureFilePath;
 				material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 				modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
+			}
+			else {
+				modelData.material.textureFilePath = "project/gamedata/resources/null.png";
 			}
 		}
 	}
@@ -588,8 +592,8 @@ void Model::SetDirectionalLightFlag(bool isDirectionalLight, int lightNum) {
 void Model::LoadVATData(const std::string& directoryPath, const VATData& vatdata) {
 	isVAT_ = true;
 
-	std::string vatPos = directoryPath + "/VATpos.png";
-	std::string vatRot = directoryPath + "/VATrot.png";
+	std::string vatPos = directoryPath + "/VAT_pos.png";
+	std::string vatRot = directoryPath + "/VAT_rot.png";
 
 	vatPosTex_ = textureManager_->Load(vatPos);
 	vatRotTex_ = textureManager_->Load(vatRot);
@@ -601,5 +605,4 @@ void Model::LoadVATData(const std::string& directoryPath, const VATData& vatdata
 	vatData_.MaxVATTime = vatdata.MaxVATTime;
 	vatData_.VatPositionTexSize = vatdata.VatPositionTexSize;
 	vatData_.VatNormalTexSize = vatdata.VatNormalTexSize;
-	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 240.0f ,25.0f,240.0f };
 }
