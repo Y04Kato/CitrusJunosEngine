@@ -228,7 +228,7 @@ void GameTitleScene::DrawUI() {
 }
 
 void GameTitleScene::DrawPostEffect() {
-	CJEngine_->renderer_->Draw(PipelineType::Vignette);
+	CJEngine_->renderer_->Draw(PipelineType::Gaussian);
 }
 
 void GameTitleScene::Finalize() {

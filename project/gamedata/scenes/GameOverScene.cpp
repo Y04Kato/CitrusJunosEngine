@@ -112,6 +112,10 @@ void GameOverScene::Draw() {
 #pragma endregion
 }
 
+void GameOverScene::DrawUI() {
+
+}
+
 void GameOverScene::DrawPostEffect() {
 	CJEngine_->renderer_->Draw(PipelineType::Grayscale);
 }

@@ -328,12 +328,7 @@ void GamePlayScene::DrawUI() {
 }
 
 void GamePlayScene::DrawPostEffect() {
-	if (player_->GetIsHit() == true) {
-		CJEngine_->renderer_->Draw(PipelineType::Grayscale);
-	}
-	else {
-		CJEngine_->renderer_->Draw(PipelineType::Vignette);
-	}
+	CJEngine_->renderer_->Draw(PipelineType::Vignette);
 }
 
 void GamePlayScene::Finalize() {
