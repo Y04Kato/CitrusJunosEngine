@@ -74,6 +74,7 @@ void SceneManager::Update() {
 		pointLight_->Update();
 		scene_[Iscene::sceneNo]->Update();
 		scene_[Iscene::sceneNo]->Draw();
+		scene_[Iscene::sceneNo]->DrawUI();
 		imGuiManager_->End();
 
 		CJEngine_->BeginFrame();
