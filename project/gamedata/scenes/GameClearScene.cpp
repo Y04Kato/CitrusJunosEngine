@@ -112,6 +112,10 @@ void GameClearScene::Draw() {
 #pragma endregion
 }
 
+void GameClearScene::DrawUI() {
+
+}
+
 void GameClearScene::DrawPostEffect() {
 	CJEngine_->renderer_->Draw(PipelineType::PostProcess);
 }

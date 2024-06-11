@@ -320,6 +320,13 @@ void GamePlayScene::Draw() {
 #pragma endregion
 }
 
+void GamePlayScene::DrawUI() {
+#pragma region 前景スプライト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
+
+#pragma endregion
+}
+
 void GamePlayScene::DrawPostEffect() {
 	if (player_->GetIsHit() == true) {
 		CJEngine_->renderer_->Draw(PipelineType::Grayscale);
