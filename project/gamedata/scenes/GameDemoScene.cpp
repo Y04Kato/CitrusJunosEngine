@@ -139,6 +139,8 @@ void GameDemoScene::Initialize() {
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
 
 	globalVariables->AddItem(groupName, "ObjCount", objCount_);
+
+	dwite_->Init();
 }
 
 void GameDemoScene::Update() {
@@ -666,6 +668,9 @@ void GameDemoScene::DrawUI() {
 			sprite_[i]->Draw(spriteTransform_[i], SpriteuvTransform_[i], spriteMaterial_[i]);
 		}
 	}
+
+	dwite_->Draw();
+
 #pragma endregion
 }
 
@@ -693,6 +698,8 @@ void GameDemoScene::Finalize() {
 	audio_->SoundUnload(&soundData2_);
 
 	objects_.clear();
+
+	dwite_->Uninit();
 }
 
 void GameDemoScene::ApplyGlobalVariables() {

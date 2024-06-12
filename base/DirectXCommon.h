@@ -45,6 +45,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetSrvDescriptiorHeap() { return srvDescriptorHeap_; }
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetDsvDescriptiorHeap() { return dsvDescriptorHeap_; }
 
+	Microsoft::WRL::ComPtr <IDXGISwapChain4> GetSwapChain() { return swapChain_; }
 	DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc()const { return swapChainDesc_; }
 
 	//Create
