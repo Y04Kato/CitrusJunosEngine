@@ -96,7 +96,7 @@ void GameDemoScene::Initialize() {
 	}
 
 	//VAT
-	modelVAT_.reset(Model::CreateModel("project/gamedata/resources/vatSphere", "VAT_mesh.fbx"));
+	modelVAT_.reset(Model::CreateModel("project/gamedata/resources/simpleSkin", "simpleSkin.gltf"));
 	worldTransformModelVAT_.Initialize();
 	modelMaterialVAT_ = { 1.0f,1.0f,1.0f,1.0f };
 	vatData_.VATTime = 1.0f;

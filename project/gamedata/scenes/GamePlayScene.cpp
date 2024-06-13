@@ -33,7 +33,7 @@ void GamePlayScene::Initialize() {
 	groundModel_->SetDirectionalLightFlag(true, 3);
 	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 5; i++) {
 		flagModel_[i].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
 		flagModel_[i]->SetDirectionalLightFlag(true, 3);
 		world_[i].Initialize();
@@ -188,8 +188,11 @@ void GamePlayScene::Update() {
 
 	ApplyGlobalVariables();
 
+	player_->SetViewProjection(&viewProjection_);
 	player_->Update();
-	for (int i = 0; i < 4; i++) {
+	world_[4].translation_ = player_->GetWorldTransform().translation_;
+	world_[4].rotation_.num[1] = player_->GetVelocity().num[0] + player_->GetVelocity().num[2];
+	for (int i = 0; i < 5; i++) {
 		world_[i].UpdateMatrix();
 	}
 	directionalLights_->SetTarget(directionalLight_);
@@ -227,12 +230,11 @@ void GamePlayScene::Update() {
 		}
 	}
 
-	player_->SetViewProjection(&viewProjection_);
-
 	particle_->Update();
 	particle_->SetTranslate(player_->GetWorldTransform().translation_);
 	ImGui::Begin("Particle");
 	ImGui::ColorEdit4("Color", test.num, 0);
+	ImGui::DragFloat3("Rotate", world_[4].rotation_.num, 0.1f);
 	ImGui::End();
 	particle_->SetColor(test);
 
@@ -289,7 +291,7 @@ void GamePlayScene::Draw() {
 
 #pragma region 3DSkinningオブジェクト描画
 	CJEngine_->renderer_->Draw(PipelineType::Skinning);
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 5; i++) {
 		flagModel_[i]->SkinningDraw(world_[i], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
 	}
 
@@ -305,6 +307,13 @@ void GamePlayScene::Draw() {
 #pragma region 前景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
+#pragma endregion
+}
+
+void GamePlayScene::DrawUI() {
+#pragma region 前景スプライト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
+
 	if (player_->GetMoveMode() == 0) {
 		sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 	}
@@ -316,13 +325,6 @@ void GamePlayScene::Draw() {
 	}
 
 	sprite_[4]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlpha_ / 256.0f });
-
-#pragma endregion
-}
-
-void GamePlayScene::DrawUI() {
-#pragma region 前景スプライト描画
-	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 #pragma endregion
 }

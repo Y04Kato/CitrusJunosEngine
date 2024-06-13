@@ -55,6 +55,7 @@ private:
 	float moveSpeed_ = 0.5f;
 
 	Vector3 velocity_ = {};
+	Vector3 velocityC_ = {};
 
 	WorldTransform objectPos_;
 
