@@ -140,7 +140,7 @@ void GameDemoScene::Initialize() {
 
 	globalVariables->AddItem(groupName, "ObjCount", objCount_);
 
-	dwite_->Init();
+	//dwite_->Init();
 }
 
 void GameDemoScene::Update() {
@@ -669,7 +669,7 @@ void GameDemoScene::DrawUI() {
 		}
 	}
 
-	dwite_->Draw();
+	//dwite_->Draw();
 
 #pragma endregion
 }
@@ -699,7 +699,7 @@ void GameDemoScene::Finalize() {
 
 	objects_.clear();
 
-	dwite_->Uninit();
+	//dwite_->Uninit();
 }
 
 void GameDemoScene::ApplyGlobalVariables() {

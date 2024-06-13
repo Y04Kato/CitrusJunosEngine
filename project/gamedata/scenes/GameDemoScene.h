@@ -129,6 +129,6 @@ private:
 	LevelDataLoader* levelDataLoader_;
 	std::list<Obj> levelEditorObjects_;
 
-	DirectWriteSample* dwite_;
+	//DirectWriteSample* dwite_;
 };
 
