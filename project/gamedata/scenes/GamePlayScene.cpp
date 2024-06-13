@@ -36,6 +36,8 @@ void GamePlayScene::Initialize() {
 	for (int i = 0; i < 5; i++) {
 		flagModel_[i].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
 		flagModel_[i]->SetDirectionalLightFlag(true, 3);
+	}
+	for (int i = 0; i < 4; i++) {
 		world_[i].Initialize();
 		world_[i].scale_ = { 1.5f,1.5f,1.5f };
 		world_[i].rotation_.num[1] = 30.0f;

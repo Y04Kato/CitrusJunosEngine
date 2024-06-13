@@ -45,6 +45,8 @@ public:
 
 	Vector3 GetVelocity() { return velocity_; }
 
+	Quaternion GetRotateQuaternion() {return quaternion_;}
+
 	int GetMoveMode() { return moveMode; }
 
 	bool GetIsHit() { return isHit; }
@@ -56,6 +58,7 @@ private:
 
 	Vector3 velocity_ = {};
 	Vector3 velocityC_ = {};
+	Vector3 rotateVelocity_ = {};
 
 	WorldTransform objectPos_;
 

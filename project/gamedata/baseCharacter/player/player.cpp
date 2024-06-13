@@ -12,7 +12,7 @@ void Player::Initialize(Model* model) {
 
 	worldTransform_.translation_ = { 0.0f,0.1f,0.0f };
 
-	quaternion_ = MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f },0.0f);
+	quaternion_ = MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, 0.0f);
 	quaternion_ = Normalize(quaternion_);
 
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributePlayer);
@@ -156,40 +156,31 @@ void Player::Move() {
 			velocity_.num[2] = Multiply(kCharacterSpeed, Normalize(velocity_)).num[2];
 
 		}
-		/*Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-			velocity_.num[0] = TransformNormal(velocityC_, rotateMatrix).num[0];
-			velocity_.num[2] = TransformNormal(velocityC_, rotateMatrix).num[2];
-			velocity_.num[0] = Multiply(kCharacterSpeed, Normalize(velocity_)).num[0];
-			velocity_.num[2] = Multiply(kCharacterSpeed, Normalize(velocity_)).num[2];*/
+		preQuaternion_ = quaternion_;
 
-			//worldTransform_.translation_ = Add(velocity_, worldTransform_.translation_);
-			/*preQuaternion_ = quaternion_;
+		Vector3 newPos = Subtruct(Add(worldTransform_.translation_, velocity_), worldTransform_.translation_);
+		Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, MakeRotateMatrix(quaternion_));;
 
-			Vector3 newPos = Subtruct(Add(worldTransform_.translation_, velocity_), worldTransform_.translation_);
-			Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, MakeRotateMatrix(quaternion_));;
+		Direction = TransformNormal({ 1.0f,0.0f,0.0f }, MakeRotateMatrix(quaternion_));
 
+		Direction = Normalize(Direction);
+		Vector3 newDirection = Normalize(newPos);
+		float cosin = Dot(Direction, newDirection);
 
-			Direction = TransformNormal({ 1.0f,0.0f,0.0f }, MakeRotateMatrix(quaternion_));
+		Quaternion newquaternion_;
+		newquaternion_ = MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, cosin);
 
-			Direction = Normalize(Direction);
-			Vector3 newDirection = Normalize(newPos);
-			float cosin = Dot(Direction, newDirection);
+		quaternion_ = Normalize(quaternion_);
+		newquaternion_ = Normalize(newquaternion_);
 
-			Quaternion newquaternion_;
-			newquaternion_ = MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f },cosin);
+		quaternion_ = Multiply(quaternion_, newquaternion_);
+		if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
+			cosin = -1.0f;
+			quaternion_ = Multiply(quaternion_, MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, cosin));
+		}
 
-			quaternion_ = Normalize(quaternion_);
-			newquaternion_ = Normalize(newquaternion_);
-
-			quaternion_ = Multiply(quaternion_, newquaternion_);
-			if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
-				cosin = -1.0f;
-				quaternion_ = Multiply(quaternion_, MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f },cosin));
-			}
-
-			preMove_ = velocity_;*/
+		preMove_ = velocity_;
 	}
-	//worldTransform_.quaternion_ = Slerp(0.3f, worldTransform_.quaternion_, quaternion_);
 
 	const float kGravityAcceleration = 0.01f;
 
@@ -227,7 +218,7 @@ void Player::IsFallStart() {
 
 void Player::SetWorldTransform(const Vector3 translation) {
 	worldTransform_.translation_ = translation;
-	velocity_ = {0.0f,0.0f,0.0f};
+	velocity_ = { 0.0f,0.0f,0.0f };
 	velocity_.num[1] = 0.001f;
 	gameOver = false;
 }
