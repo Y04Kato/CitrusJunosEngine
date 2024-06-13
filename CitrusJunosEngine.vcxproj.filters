@@ -309,6 +309,12 @@
     <ClCompile Include="base\components\utilities\levelDataLoader\LevelDataLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\utilities\DirectWrite\DirectWriteCustomFont.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\utilities\DirectWrite\DirectWriteSample.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -532,6 +538,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="base\components\utilities\levelDataLoader\LevelData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\utilities\DirectWrite\DirectWriteCustomFont.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\utilities\DirectWrite\DirectWriteSample.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
