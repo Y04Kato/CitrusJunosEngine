@@ -36,8 +36,6 @@ void GamePlayScene::Initialize() {
 	for (int i = 0; i < 5; i++) {
 		flagModel_[i].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
 		flagModel_[i]->SetDirectionalLightFlag(true, 3);
-	}
-	for (int i = 0; i < 4; i++) {
 		world_[i].Initialize();
 		world_[i].scale_ = { 1.5f,1.5f,1.5f };
 		world_[i].rotation_.num[1] = 30.0f;
@@ -107,9 +105,6 @@ void GamePlayScene::Initialize() {
 	enemyModel_.reset(Model::CreateModel("project/gamedata/resources/enemy", "enemy.obj"));
 	enemyModel_->SetDirectionalLightFlag(true, 2);
 
-	//CollisionManager
-	collisionManager_ = CollisionManager::GetInstance();
-
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 
@@ -154,7 +149,7 @@ void GamePlayScene::Update() {
 		}
 	}
 	else if (isfadeIn == true && gameclear == true) {
-		debugCamera_->MovingCamera(player_->GetWorldTransform().translation_, Vector3{0.8f,0.0f,0.0f}, 0.05f);
+		debugCamera_->MovingCamera(player_->GetWorldTransform().translation_, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ += 4;
 		if (fadeAlpha_ >= 256) {
 			gameStart = true;
@@ -173,7 +168,7 @@ void GamePlayScene::Update() {
 				enemy->SetisDead();
 			}
 			enemys_.remove_if([&](Enemy* enemy) {
-				if (enemy->isDead()) {
+				if (enemy->GetisDead()) {
 					delete enemy;
 					enemyDethCount--;
 					return true;
@@ -193,7 +188,6 @@ void GamePlayScene::Update() {
 	player_->SetViewProjection(&viewProjection_);
 	player_->Update();
 	world_[4].translation_ = player_->GetWorldTransform().translation_;
-	world_[4].rotation_.num[1] = player_->GetVelocity().num[0] + player_->GetVelocity().num[2];
 	for (int i = 0; i < 5; i++) {
 		world_[i].UpdateMatrix();
 	}
@@ -212,22 +206,22 @@ void GamePlayScene::Update() {
 	Obb_.size = ground_->GetWorldTransform().scale_;
 
 	if (IsCollision(Obb_, player_->GetStructSphere())) {
-		player_->isHit_ = true;
+		player_->isHitOnFloor = true;
 		player_->SetObjectPos(ground_->GetWorldTransform());
 	}
 	else {
-		player_->isHit_ = false;
+		player_->isHitOnFloor = false;
 	}
 
 	for (Enemy* enemy : enemys_) {
 		if (IsCollision(Obb_, enemy->GetStructSphere())) {
-			enemy->isHit_ = true;
+			enemy->isHitOnFloor = true;
 			enemy->SetObjectPos(ground_->GetWorldTransform());
 		}
 		else {
-			enemy->isHit_ = false;
+			enemy->isHitOnFloor = false;
 		}
-		if (enemy->isDead() == true) {
+		if (enemy->GetisDead() == true) {
 
 		}
 	}
@@ -236,12 +230,13 @@ void GamePlayScene::Update() {
 	particle_->SetTranslate(player_->GetWorldTransform().translation_);
 	ImGui::Begin("Particle");
 	ImGui::ColorEdit4("Color", test.num, 0);
+	ImGui::DragFloat3("Translate", world_[4].translation_.num, 0.1f);
 	ImGui::DragFloat3("Rotate", world_[4].rotation_.num, 0.1f);
 	ImGui::End();
 	particle_->SetColor(test);
 
 	enemys_.remove_if([&](Enemy* enemy) {
-		if (enemy->isDead()) {
+		if (enemy->GetisDead()) {
 			delete enemy;
 			enemyDethCount--;
 			return true;
@@ -249,21 +244,43 @@ void GamePlayScene::Update() {
 		return false;
 		});
 
-	collisionManager_->ClearColliders();
-	collisionManager_->AddCollider(player_.get());
+	StructSphere pSphere;
+	pSphere = player_->GetStructSphere();
+
 	for (Enemy* enemy : enemys_) {
-		collisionManager_->AddCollider(enemy);
-		if (enemy->isCollision_ == true) {
-			if (enemy->isHit == false) {
+		StructSphere eSphere;
+		eSphere = enemy->GetStructSphere();
+		if (IsCollision(pSphere,eSphere)) {
+			if (enemy->isHitPlayer == false) {
 				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), 0.8f, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
 				player_->SetVelocity(pair.first);
 				enemy->SetVelocity(pair.second);
+				world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
 				audio_->SoundPlayWave(soundData2_, 0.1f, false);
 			}
-			enemy->isCollision_ = false;
 		}
 	}
-	collisionManager_->CheckAllCollision();
+
+	for (Enemy* enemy : enemys_) {
+		StructSphere eSphere1;
+		eSphere1 = enemy->GetStructSphere();
+		for (Enemy* enemy2 : enemys_) {
+			StructSphere eSphere2;
+			if (enemy != enemy2) {
+				eSphere2 = enemy2->GetStructSphere();
+			}
+			if (IsCollision(eSphere1, eSphere2)) {
+				if (enemy->isHitEnemy == false) {
+					if (enemy2->isHitEnemy == false) {
+						std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy->GetVelocity(), 1.0f, enemy2->GetVelocity(), 0.8f, Normalize(enemy->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
+						enemy->SetVelocity(pair.first);
+						enemy2->SetVelocity(pair.second);
+						audio_->SoundPlayWave(soundData2_, 0.1f, false);
+					}
+				}
+			}
+		}
+	}
 
 	debugCamera_->Update();
 
@@ -271,6 +288,65 @@ void GamePlayScene::Update() {
 	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 	viewProjection_.UpdateMatrix();
 
+	if (input_->TriggerKey(DIK_W)) {
+		world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
+		if (std::isnan(world_[4].rotation_.num[1])) {
+			if (player_->GetVelocity().num[0] >= 0) {
+				world_[4].rotation_.num[1] = 1.571f;
+			}
+			else {
+				world_[4].rotation_.num[1] = -1.571f;
+			}
+		}
+	}
+	if (input_->TriggerKey(DIK_A)) {
+		world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
+		if (std::isnan(world_[4].rotation_.num[1])) {
+			if (player_->GetVelocity().num[0] >= 0) {
+				world_[4].rotation_.num[1] = 1.571f;
+			}
+			else {
+				world_[4].rotation_.num[1] = -1.571f;
+			}
+		}
+	}
+	if (input_->TriggerKey(DIK_S)) {
+		world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
+		if (std::isnan(world_[4].rotation_.num[1])) {
+			if (player_->GetVelocity().num[0] >= 0) {
+				world_[4].rotation_.num[1] = 1.571f;
+			}
+			else {
+				world_[4].rotation_.num[1] = -1.571f;
+			}
+		}
+	}
+	if (input_->TriggerKey(DIK_D)) {
+		world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
+		if (std::isnan(world_[4].rotation_.num[1])) {
+			if (player_->GetVelocity().num[0] >= 0) {
+				world_[4].rotation_.num[1] = 1.571f;
+			}
+			else {
+				world_[4].rotation_.num[1] = -1.571f;
+			}
+		}
+	}
+
+	XINPUT_STATE joyState;
+	Input::GetInstance()->GetJoystickState(0, joyState);
+
+	if (input_->PushAButton(joyState)) {
+		world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
+		if (std::isnan(world_[4].rotation_.num[1])) {
+			if (player_->GetVelocity().num[0] >= 0) {
+				world_[4].rotation_.num[1] = 1.571f;
+			}
+			else {
+				world_[4].rotation_.num[1] = -1.571f;
+			}
+		}
+	}
 }
 
 void GamePlayScene::Draw() {
@@ -294,7 +370,7 @@ void GamePlayScene::Draw() {
 #pragma region 3DSkinningオブジェクト描画
 	CJEngine_->renderer_->Draw(PipelineType::Skinning);
 	for (int i = 0; i < 5; i++) {
-		flagModel_[i]->SkinningDraw(world_[i], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
+		flagModel_[i]->SkinningDraw(world_[i], viewProjection_, Vector4{ 1.0f,1.0f,1.0f,1.0f });
 	}
 
 #pragma endregion

@@ -8,7 +8,7 @@
 #include "Collider.h"
 #include "CollisionConfig.h"
 
-class Player : public BaseCharacter, public Collider {
+class Player : public BaseCharacter {
 public:
 	void Initialize(Model* model) override;
 
@@ -20,36 +20,31 @@ public:
 
 	void Move();
 
-	WorldTransform GetWorldTransform()override { return worldTransform_; }
-
-	void OnCollision() override;
+	WorldTransform GetWorldTransform() { return worldTransform_; }
+	void SetWorldTransform(const Vector3 translation);
 
 	void IsFallStart();
 
-	void SetWorldTransform(const Vector3 translation);
 	void SetScale(const Vector3 scale) { worldTransform_.scale_ = scale; }
 
 	void SetObjectPos(const WorldTransform& worldtransform);
 
-	bool isHit_;
+	bool isHitOnFloor;
 
 	bool isGameover() { return gameOver; }
 
 	StructSphere GetStructSphere() { return structSphere_; }
 
-	void SetViewProjection(const ViewProjection* viewProjection) {
-		viewProjection_ = viewProjection;
-	}
-
-	void SetVelocity(const Vector3 velocity);
+	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	Vector3 GetVelocity() { return velocity_; }
+	void SetVelocity(const Vector3 velocity);
 
-	Quaternion GetRotateQuaternion() {return quaternion_;}
+	Quaternion GetRotateQuaternion() { return quaternion_; }
 
-	int GetMoveMode() { return moveMode; }
+	int GetMoveMode() { return moveMode_; }
 
-	bool GetIsHit() { return isHit; }
+	bool GetIsHitEnemy() { return isHitEnemy_; }
 
 private:
 	Input* input_ = nullptr;
@@ -73,8 +68,8 @@ private:
 	const ViewProjection* viewProjection_ = nullptr;
 
 	//0~2で弱~強
-	int moveMode = 0;
+	int moveMode_ = 0;
 
-	int hitCount = 0;
-	bool isHit = false;
+	int hitTimer_ = 0;
+	bool isHitEnemy_ = false;
 };

@@ -14,10 +14,6 @@ void Player::Initialize(Model* model) {
 
 	quaternion_ = MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, 0.0f);
 	quaternion_ = Normalize(quaternion_);
-
-	SetCollisionAttribute(CollisionConfig::kCollisionAttributePlayer);
-	SetCollisionMask(~CollisionConfig::kCollisionAttributePlayer);
-	SetRadius(1.4f);
 }
 
 void Player::Update() {
@@ -29,19 +25,19 @@ void Player::Update() {
 	structSphere_.center = worldTransform_.GetWorldPos();
 	structSphere_.radius = 1.5f;
 
-	if (isHit == true) {
-		hitCount++;
+	if (isHitEnemy_ == true) {
+		hitTimer_++;
 	}
 
-	if (hitCount >= 20) {
-		hitCount = 0;
-		isHit = false;
+	if (hitTimer_ >= 20) {
+		hitTimer_ = 0;
+		isHitEnemy_ = false;
 	}
 
 	if (worldTransform_.translation_.num[1] < -10.0f) {
 		gameOver = true;
 	}
-	if (!isHit_ || worldTransform_.GetWorldPos().num[1] < 0.0f) {
+	if (!isHitOnFloor || worldTransform_.GetWorldPos().num[1] < 0.0f) {
 		IsFallStart();
 	}
 	else {
@@ -67,13 +63,13 @@ void Player::UpdateView() {
 
 	worldTransform_.UpdateMatrix();
 
-	if (isHit == true) {
-		hitCount++;
+	if (isHitEnemy_ == true) {
+		hitTimer_++;
 	}
 
-	if (hitCount >= 20) {
-		hitCount = 0;
-		isHit = false;
+	if (hitTimer_ >= 20) {
+		hitTimer_ = 0;
+		isHitEnemy_ = false;
 	}
 }
 
@@ -91,62 +87,77 @@ void Player::Draw(const ViewProjection& viewProjection) {
 
 void Player::Move() {
 	if (input_->TriggerKey(DIK_W)) {
-		if (moveMode == 0) {
+		if (moveMode_ == 0) {
 			velocity_.num[2] = 0.5f;
 		}
-		if (moveMode == 1) {
+		if (moveMode_ == 1) {
 			velocity_.num[2] = 0.7f;
 		}
-		if (moveMode == 2) {
+		if (moveMode_ == 2) {
 			velocity_.num[2] = 0.9f;
 		}
 	}
 	if (input_->TriggerKey(DIK_S)) {
-		if (moveMode == 0) {
+		if (moveMode_ == 0) {
 			velocity_.num[2] = -0.5f;
 		}
-		if (moveMode == 1) {
+		if (moveMode_ == 1) {
 			velocity_.num[2] = -0.7f;
 		}
-		if (moveMode == 2) {
+		if (moveMode_ == 2) {
 			velocity_.num[2] = -0.9f;
 		}
 	}
 	if (input_->TriggerKey(DIK_A)) {
-		if (moveMode == 0) {
+		if (moveMode_ == 0) {
 			velocity_.num[0] = -0.5f;
 		}
-		if (moveMode == 1) {
+		if (moveMode_ == 1) {
 			velocity_.num[0] = -0.7f;
 		}
-		if (moveMode == 2) {
+		if (moveMode_ == 2) {
 			velocity_.num[0] = -0.9f;
 		}
 	}
 	if (input_->TriggerKey(DIK_D)) {
-		if (moveMode == 0) {
+		if (moveMode_ == 0) {
 			velocity_.num[0] = 0.5f;
 		}
-		if (moveMode == 1) {
+		if (moveMode_ == 1) {
 			velocity_.num[0] = 0.7f;
 		}
-		if (moveMode == 2) {
+		if (moveMode_ == 2) {
 			velocity_.num[0] = 0.9f;
 		}
 	}
 
 	if (input_->TriggerKey(DIK_SPACE)) {
-		moveMode++;
-		if (moveMode >= 3) {
-			moveMode = 0;
+		moveMode_++;
+		if (moveMode_ >= 3) {
+			moveMode_ = 0;
 		}
 	}
 
 	XINPUT_STATE joystate;
 
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-		const float kCharacterSpeed = 0.5f;
-		if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+		if (input_->PushXButton(joystate)) {
+			moveMode_++;
+			if (moveMode_ >= 3) {
+				moveMode_ = 0;
+			}
+		}
+		float kCharacterSpeed;
+		if (moveMode_ == 0) {
+			kCharacterSpeed = 0.5f;
+		}
+		if (moveMode_ == 1) {
+			kCharacterSpeed = 0.7f;
+		}
+		if (moveMode_ == 2) {
+			kCharacterSpeed = 0.9f;
+		}
+		if (input_->PushAButton(joystate)) {
 			velocityC_ = { (float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
 
 			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
@@ -156,6 +167,32 @@ void Player::Move() {
 			velocity_.num[2] = Multiply(kCharacterSpeed, Normalize(velocity_)).num[2];
 
 		}
+		preQuaternion_ = quaternion_;
+
+		Vector3 newPos = Subtruct(Add(worldTransform_.translation_, velocity_), worldTransform_.translation_);
+		Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, MakeRotateMatrix(quaternion_));;
+
+		Direction = TransformNormal({ 1.0f,0.0f,0.0f }, MakeRotateMatrix(quaternion_));
+
+		Direction = Normalize(Direction);
+		Vector3 newDirection = Normalize(newPos);
+		float cosin = Dot(Direction, newDirection);
+
+		Quaternion newquaternion_;
+		newquaternion_ = MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, cosin);
+
+		quaternion_ = Normalize(quaternion_);
+		newquaternion_ = Normalize(newquaternion_);
+
+		quaternion_ = Multiply(quaternion_, newquaternion_);
+		if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
+			cosin = -1.0f;
+			quaternion_ = Multiply(quaternion_, MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, cosin));
+		}
+
+		preMove_ = velocity_;
+	}
+	else {
 		preQuaternion_ = quaternion_;
 
 		Vector3 newPos = Subtruct(Add(worldTransform_.translation_, velocity_), worldTransform_.translation_);
@@ -205,10 +242,6 @@ void Player::Move() {
 	}
 }
 
-void Player::OnCollision() {
-
-}
-
 void Player::IsFallStart() {
 	worldTransform_.translation_.num[1] += velocity_.num[1] / 2;
 	const float kGravityAcceleration = 0.05f;
@@ -228,8 +261,8 @@ void Player::SetObjectPos(const WorldTransform& worldtransform) {
 }
 
 void Player::SetVelocity(const Vector3 velocity) {
-	if (isHit == false) {
+	if (isHitEnemy_ == false) {
 		velocity_ = velocity;
-		isHit = true;
+		isHitEnemy_ = true;
 	}
 }

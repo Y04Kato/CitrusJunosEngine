@@ -9,10 +9,6 @@ void Enemy::Initialize(Model* model) {
 	BaseCharacter::Initialize(model);
 
 	input_ = Input::GetInstance();
-
-	SetCollisionAttribute(CollisionConfig::kCollisionAttributeEnemy);
-	SetCollisionMask(~CollisionConfig::kCollisionAttributeEnemy);
-	SetRadius(1.4f);
 }
 
 void Enemy::Update() {
@@ -24,19 +20,28 @@ void Enemy::Update() {
 	structSphere_.center = worldTransform_.GetWorldPos();
 	structSphere_.radius = 1.5f;
 
-	if (isHit == true) {
-		hitCount++;
+	if (isHitPlayer == true) {
+		hitPlayerTimer_++;
 	}
 
-	if (hitCount >= 10) {
-		hitCount = 0;
-		isHit = false;
+	if (hitPlayerTimer_ >= 10) {
+		hitPlayerTimer_ = 0;
+		isHitPlayer = false;
+	}
+
+	if (isHitEnemy == true) {
+		hitEnemyTimer_++;
+	}
+
+	if (hitEnemyTimer_ >= 15) {
+		hitEnemyTimer_ = 0;
+		isHitEnemy = false;
 	}
 
 	if (worldTransform_.translation_.num[1] < -10.0f) {
-		dead_ = true;
+		isDead_ = true;
 	}
-	if (!isHit_ || worldTransform_.GetWorldPos().num[1] < 0.0f) {
+	if (!isHitOnFloor || worldTransform_.GetWorldPos().num[1] < 0.0f) {
 		IsFallStart();
 	}
 	else {
@@ -56,21 +61,8 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 }
 
 void Enemy::Move() {
-	moveCount++;
-	/*if (test == false) {
-		if (moveCount == 0) {
-			velocity_.num[0] = 0.1f;
-		}
-		if (moveCount == 120) {
-			velocity_.num[0] = -0.1f;
-		}
-		if (moveCount == 240) {
-			moveCount = -1;
-		}
-	}*/
-
 	const float kGravityAcceleration = 0.01f;
-	if (test == true) {
+	if (isGravityAccelerationCalc == true) {
 		if (velocity_.num[0] >= 0.01f) {
 			velocity_.num[0] -= kGravityAcceleration;
 		}
@@ -93,10 +85,6 @@ void Enemy::Move() {
 	}
 }
 
-void Enemy::OnCollision() {
-	isCollision_ = true;
-}
-
 void Enemy::IsFallStart() {
 	worldTransform_.translation_.num[1] += velocity_.num[1] / 2;
 	const float kGravityAcceleration = 0.05f;
@@ -107,7 +95,7 @@ void Enemy::IsFallStart() {
 void Enemy::SetWorldTransform(const Vector3 translation) {
 	worldTransform_.translation_ = translation;
 	velocity_.num[1] = 0.001f;
-	dead_ = false;
+	isDead_ = false;
 }
 
 void Enemy::SetObjectPos(const WorldTransform& worldtransform) {
@@ -115,13 +103,14 @@ void Enemy::SetObjectPos(const WorldTransform& worldtransform) {
 }
 
 void Enemy::SetVelocity(const Vector3 velocity) {
-	if (isHit == false) {
+	if (isHitPlayer == false) {
 		velocity_ = velocity;
-		isHit = true;
-		test = true;
+		isHitPlayer = true;
+		isGravityAccelerationCalc = true;
 	}
-}
-
-void Enemy::SetisDead() {
-	dead_ = true;
+	if (isHitEnemy == false) {
+		velocity_ = velocity;
+		isHitEnemy = true;
+		isGravityAccelerationCalc = true;
+	}
 }

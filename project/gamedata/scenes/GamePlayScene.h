@@ -45,8 +45,6 @@ private:
 
 	DebugCamera* debugCamera_;
 
-	CollisionManager* collisionManager_;
-
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Model> playerModel_;
 

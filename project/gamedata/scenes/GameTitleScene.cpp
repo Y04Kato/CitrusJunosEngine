@@ -110,6 +110,18 @@ void GameTitleScene::Update() {
 		}
 	}
 
+	XINPUT_STATE joyState;
+	Input::GetInstance()->GetJoystickState(0, joyState);
+	if (input_->PushAButton(joyState) && count < 2) {
+		if (pageChange_ == false) {
+			pageChange_ = true;
+			audio_->SoundPlayWave(soundData1_, 0.5f, false);
+		}
+		else {
+
+		}
+	}
+
 	player_->UpdateView();
 	player_->SetViewProjection(&viewProjection_);
 	particle_->Update();

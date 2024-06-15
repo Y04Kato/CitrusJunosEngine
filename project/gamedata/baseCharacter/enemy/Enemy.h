@@ -8,7 +8,7 @@
 #include "Collider.h"
 #include "CollisionConfig.h"
 
-class Enemy : public BaseCharacter, public Collider {
+class Enemy : public BaseCharacter {
 public:
 	void Initialize(Model* model) override;
 
@@ -18,47 +18,35 @@ public:
 
 	void Move();
 
-	WorldTransform GetWorldTransform()override { return worldTransform_; }
-
-	void OnCollision() override;
+	WorldTransform GetWorldTransform() { return worldTransform_; }
+	void SetWorldTransform(const Vector3 translation);
 
 	void IsFallStart();
 
-	void SetWorldTransform(const Vector3 translation);
-
 	void SetObjectPos(const WorldTransform& worldtransform);
 
-	bool isHit_;
+	bool isHitOnFloor = false;
+	bool isHitPlayer = false;
+	bool isHitEnemy = false;
 
-	bool isHit = false;
-
-	bool isCollision_;
-
-	bool isDead() { return dead_; }
-
-	void SetisDead();
+	bool GetisDead() { return isDead_; }
+	void SetisDead() { isDead_ = true; }
 
 	StructSphere GetStructSphere() { return structSphere_; }
 
-	void SetVelocity(const Vector3 velocity);
-
 	Vector3 GetVelocity() { return velocity_; }
+	void SetVelocity(const Vector3 velocity);
 
 private:
 	Input* input_ = nullptr;
-
-	float moveSpeed_ = 0.5f;
 
 	Vector3 velocity_ = {};
 
 	WorldTransform objectPos_;
 
-	bool dead_ = false;
+	bool isDead_ = false;
 
 	StructSphere structSphere_;
-
-	//WSAD順
-	bool isMove_[4] = { false,false,false,false };
 
 	Quaternion quaternion_;
 	Vector3 preMove_;
@@ -66,9 +54,8 @@ private:
 
 	const ViewProjection* viewProjection_ = nullptr;
 
-	int hitCount = 0;
+	int hitPlayerTimer_ = 0;
+	int hitEnemyTimer_ = 0;
 
-	int moveCount = 0;
-
-	bool test = false;
+	bool isGravityAccelerationCalc = false;
 };
