@@ -11,9 +11,6 @@ void Player::Initialize(Model* model) {
 	input_ = Input::GetInstance();
 
 	worldTransform_.translation_ = { 0.0f,0.1f,0.0f };
-
-	quaternion_ = MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, 0.0f);
-	quaternion_ = Normalize(quaternion_);
 }
 
 void Player::Update() {
@@ -167,56 +164,9 @@ void Player::Move() {
 			velocity_.num[2] = Multiply(kCharacterSpeed, Normalize(velocity_)).num[2];
 
 		}
-		preQuaternion_ = quaternion_;
-
-		Vector3 newPos = Subtruct(Add(worldTransform_.translation_, velocity_), worldTransform_.translation_);
-		Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, MakeRotateMatrix(quaternion_));;
-
-		Direction = TransformNormal({ 1.0f,0.0f,0.0f }, MakeRotateMatrix(quaternion_));
-
-		Direction = Normalize(Direction);
-		Vector3 newDirection = Normalize(newPos);
-		float cosin = Dot(Direction, newDirection);
-
-		Quaternion newquaternion_;
-		newquaternion_ = MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, cosin);
-
-		quaternion_ = Normalize(quaternion_);
-		newquaternion_ = Normalize(newquaternion_);
-
-		quaternion_ = Multiply(quaternion_, newquaternion_);
-		if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
-			cosin = -1.0f;
-			quaternion_ = Multiply(quaternion_, MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, cosin));
-		}
-
-		preMove_ = velocity_;
 	}
 	else {
-		preQuaternion_ = quaternion_;
 
-		Vector3 newPos = Subtruct(Add(worldTransform_.translation_, velocity_), worldTransform_.translation_);
-		Vector3 Direction = TransformNormal({ 1.0f,0.0f,0.0f }, MakeRotateMatrix(quaternion_));;
-
-		Direction = TransformNormal({ 1.0f,0.0f,0.0f }, MakeRotateMatrix(quaternion_));
-
-		Direction = Normalize(Direction);
-		Vector3 newDirection = Normalize(newPos);
-		float cosin = Dot(Direction, newDirection);
-
-		Quaternion newquaternion_;
-		newquaternion_ = MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, cosin);
-
-		quaternion_ = Normalize(quaternion_);
-		newquaternion_ = Normalize(newquaternion_);
-
-		quaternion_ = Multiply(quaternion_, newquaternion_);
-		if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(velocity_, preMove_)) {
-			cosin = -1.0f;
-			quaternion_ = Multiply(quaternion_, MakeRotateAxisAngleQuaternion({ 0.0f,1.0f,0.0f }, cosin));
-		}
-
-		preMove_ = velocity_;
 	}
 
 	const float kGravityAcceleration = 0.01f;

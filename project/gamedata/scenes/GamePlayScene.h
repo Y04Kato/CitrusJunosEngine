@@ -54,6 +54,7 @@ private:
 
 	std::unique_ptr<Model> flagModel_[5];
 	WorldTransform world_[5];
+	float rotate_ = 30.0f;
 
 	std::unique_ptr<CreateParticle> particle_;
 	Emitter testEmitter_{};

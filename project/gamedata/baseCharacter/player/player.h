@@ -40,8 +40,6 @@ public:
 	Vector3 GetVelocity() { return velocity_; }
 	void SetVelocity(const Vector3 velocity);
 
-	Quaternion GetRotateQuaternion() { return quaternion_; }
-
 	int GetMoveMode() { return moveMode_; }
 
 	bool GetIsHitEnemy() { return isHitEnemy_; }
@@ -53,17 +51,12 @@ private:
 
 	Vector3 velocity_ = {};
 	Vector3 velocityC_ = {};
-	Vector3 rotateVelocity_ = {};
 
 	WorldTransform objectPos_;
 
 	bool gameOver = false;
 
 	StructSphere structSphere_;
-
-	Quaternion quaternion_;
-	Vector3 preMove_;
-	Quaternion preQuaternion_;
 
 	const ViewProjection* viewProjection_ = nullptr;
 

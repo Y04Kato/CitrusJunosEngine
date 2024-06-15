@@ -255,7 +255,7 @@ void GamePlayScene::Update() {
 				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), 0.8f, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
 				player_->SetVelocity(pair.first);
 				enemy->SetVelocity(pair.second);
-				world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
+				rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 				audio_->SoundPlayWave(soundData2_, 0.1f, false);
 			}
 		}
@@ -289,64 +289,26 @@ void GamePlayScene::Update() {
 	viewProjection_.UpdateMatrix();
 
 	if (input_->TriggerKey(DIK_W)) {
-		world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
-		if (std::isnan(world_[4].rotation_.num[1])) {
-			if (player_->GetVelocity().num[0] >= 0) {
-				world_[4].rotation_.num[1] = 1.571f;
-			}
-			else {
-				world_[4].rotation_.num[1] = -1.571f;
-			}
-		}
+		rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 	}
 	if (input_->TriggerKey(DIK_A)) {
-		world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
-		if (std::isnan(world_[4].rotation_.num[1])) {
-			if (player_->GetVelocity().num[0] >= 0) {
-				world_[4].rotation_.num[1] = 1.571f;
-			}
-			else {
-				world_[4].rotation_.num[1] = -1.571f;
-			}
-		}
+		rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 	}
 	if (input_->TriggerKey(DIK_S)) {
-		world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
-		if (std::isnan(world_[4].rotation_.num[1])) {
-			if (player_->GetVelocity().num[0] >= 0) {
-				world_[4].rotation_.num[1] = 1.571f;
-			}
-			else {
-				world_[4].rotation_.num[1] = -1.571f;
-			}
-		}
+		rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 	}
 	if (input_->TriggerKey(DIK_D)) {
-		world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
-		if (std::isnan(world_[4].rotation_.num[1])) {
-			if (player_->GetVelocity().num[0] >= 0) {
-				world_[4].rotation_.num[1] = 1.571f;
-			}
-			else {
-				world_[4].rotation_.num[1] = -1.571f;
-			}
-		}
+		rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 	}
 
 	XINPUT_STATE joyState;
 	Input::GetInstance()->GetJoystickState(0, joyState);
 
 	if (input_->PushAButton(joyState)) {
-		world_[4].rotation_ = -QuaternionToEulerAngles(player_->GetRotateQuaternion());
-		if (std::isnan(world_[4].rotation_.num[1])) {
-			if (player_->GetVelocity().num[0] >= 0) {
-				world_[4].rotation_.num[1] = 1.571f;
-			}
-			else {
-				world_[4].rotation_.num[1] = -1.571f;
-			}
-		}
+		rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 	}
+
+	world_[4].rotation_.num[1] = LerpShortAngle(world_[4].rotation_.num[1], -rotate_, 0.3f);
 }
 
 void GamePlayScene::Draw() {
