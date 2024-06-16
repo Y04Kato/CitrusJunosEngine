@@ -44,6 +44,8 @@ public:
 
 	bool GetIsHitEnemy() { return isHitEnemy_; }
 
+	bool GetIsMoveFlag() { return moveFlag_; }
+
 private:
 	Input* input_ = nullptr;
 
@@ -65,4 +67,7 @@ private:
 
 	int hitTimer_ = 0;
 	bool isHitEnemy_ = false;
+
+	bool moveFlag_ = true;
+	int moveCount_ = 0;
 };

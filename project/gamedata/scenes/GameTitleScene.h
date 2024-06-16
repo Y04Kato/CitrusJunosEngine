@@ -62,6 +62,9 @@ private:
 	std::unique_ptr<Model> stage_[2];
 	float testTimer_ = 1.0f;
 
+	int cTimer_ = 0;
+	bool cFlag = true;
+
 	DebugCamera* debugCamera_;
 
 	std::unique_ptr<CreateParticle> particle_;

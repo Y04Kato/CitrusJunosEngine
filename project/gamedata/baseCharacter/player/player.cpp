@@ -31,6 +31,14 @@ void Player::Update() {
 		isHitEnemy_ = false;
 	}
 
+	if (moveFlag_ == false) {
+		moveCount_++;
+	}
+	if (moveCount_ >= 60) {
+		moveFlag_ = true;
+		moveCount_ = 0;
+	}
+
 	if (worldTransform_.translation_.num[1] < -10.0f) {
 		gameOver = true;
 	}
@@ -83,90 +91,100 @@ void Player::Draw(const ViewProjection& viewProjection) {
 }
 
 void Player::Move() {
-	if (input_->TriggerKey(DIK_W)) {
-		if (moveMode_ == 0) {
-			velocity_.num[2] = 0.5f;
+	if (moveFlag_ == true) {
+		if (input_->TriggerKey(DIK_W)) {
+			moveFlag_ = false;
+			if (moveMode_ == 0) {
+				velocity_.num[2] = 0.5f;
+			}
+			if (moveMode_ == 1) {
+				velocity_.num[2] = 0.7f;
+			}
+			if (moveMode_ == 2) {
+				velocity_.num[2] = 0.9f;
+			}
 		}
-		if (moveMode_ == 1) {
-			velocity_.num[2] = 0.7f;
+		if (input_->TriggerKey(DIK_S)) {
+			moveFlag_ = false;
+			if (moveMode_ == 0) {
+				velocity_.num[2] = -0.5f;
+			}
+			if (moveMode_ == 1) {
+				velocity_.num[2] = -0.7f;
+			}
+			if (moveMode_ == 2) {
+				velocity_.num[2] = -0.9f;
+			}
 		}
-		if (moveMode_ == 2) {
-			velocity_.num[2] = 0.9f;
+		if (input_->TriggerKey(DIK_A)) {
+			moveFlag_ = false;
+			if (moveMode_ == 0) {
+				velocity_.num[0] = -0.5f;
+			}
+			if (moveMode_ == 1) {
+				velocity_.num[0] = -0.7f;
+			}
+			if (moveMode_ == 2) {
+				velocity_.num[0] = -0.9f;
+			}
 		}
-	}
-	if (input_->TriggerKey(DIK_S)) {
-		if (moveMode_ == 0) {
-			velocity_.num[2] = -0.5f;
+		if (input_->TriggerKey(DIK_D)) {
+			moveFlag_ = false;
+			if (moveMode_ == 0) {
+				velocity_.num[0] = 0.5f;
+			}
+			if (moveMode_ == 1) {
+				velocity_.num[0] = 0.7f;
+			}
+			if (moveMode_ == 2) {
+				velocity_.num[0] = 0.9f;
+			}
 		}
-		if (moveMode_ == 1) {
-			velocity_.num[2] = -0.7f;
-		}
-		if (moveMode_ == 2) {
-			velocity_.num[2] = -0.9f;
-		}
-	}
-	if (input_->TriggerKey(DIK_A)) {
-		if (moveMode_ == 0) {
-			velocity_.num[0] = -0.5f;
-		}
-		if (moveMode_ == 1) {
-			velocity_.num[0] = -0.7f;
-		}
-		if (moveMode_ == 2) {
-			velocity_.num[0] = -0.9f;
-		}
-	}
-	if (input_->TriggerKey(DIK_D)) {
-		if (moveMode_ == 0) {
-			velocity_.num[0] = 0.5f;
-		}
-		if (moveMode_ == 1) {
-			velocity_.num[0] = 0.7f;
-		}
-		if (moveMode_ == 2) {
-			velocity_.num[0] = 0.9f;
-		}
-	}
-
-	if (input_->TriggerKey(DIK_SPACE)) {
-		moveMode_++;
-		if (moveMode_ >= 3) {
-			moveMode_ = 0;
-		}
-	}
-
-	XINPUT_STATE joystate;
-
-	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-		if (input_->PushXButton(joystate)) {
+		if (input_->TriggerKey(DIK_SPACE)) {
+			moveFlag_ = false;
 			moveMode_++;
 			if (moveMode_ >= 3) {
 				moveMode_ = 0;
 			}
 		}
-		float kCharacterSpeed;
-		if (moveMode_ == 0) {
-			kCharacterSpeed = 0.5f;
-		}
-		if (moveMode_ == 1) {
-			kCharacterSpeed = 0.7f;
-		}
-		if (moveMode_ == 2) {
-			kCharacterSpeed = 0.9f;
-		}
-		if (input_->PushAButton(joystate)) {
-			velocityC_ = { (float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
-
-			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-			velocity_.num[0] = TransformNormal(velocityC_, rotateMatrix).num[0];
-			velocity_.num[2] = TransformNormal(velocityC_, rotateMatrix).num[2];
-			velocity_.num[0] = Multiply(kCharacterSpeed, Normalize(velocity_)).num[0];
-			velocity_.num[2] = Multiply(kCharacterSpeed, Normalize(velocity_)).num[2];
-
-		}
 	}
-	else {
 
+	XINPUT_STATE joystate;
+
+	if (moveFlag_ == true) {
+		if (Input::GetInstance()->GetJoystickState(0, joystate)) {
+			if (input_->PushXButton(joystate)) {
+				moveFlag_ = false;
+				moveMode_++;
+				if (moveMode_ >= 3) {
+					moveMode_ = 0;
+				}
+			}
+			float kCharacterSpeed;
+			if (moveMode_ == 0) {
+				kCharacterSpeed = 0.5f;
+			}
+			if (moveMode_ == 1) {
+				kCharacterSpeed = 0.7f;
+			}
+			if (moveMode_ == 2) {
+				kCharacterSpeed = 0.9f;
+			}
+			if (input_->PushAButton(joystate)) {
+				moveFlag_ = false;
+				velocityC_ = { (float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
+
+				Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+				velocity_.num[0] = TransformNormal(velocityC_, rotateMatrix).num[0];
+				velocity_.num[2] = TransformNormal(velocityC_, rotateMatrix).num[2];
+				velocity_.num[0] = Multiply(kCharacterSpeed, Normalize(velocity_)).num[0];
+				velocity_.num[2] = Multiply(kCharacterSpeed, Normalize(velocity_)).num[2];
+
+			}
+		}
+		else {
+
+		}
 	}
 
 	const float kGravityAcceleration = 0.01f;

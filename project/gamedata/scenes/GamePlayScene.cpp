@@ -288,24 +288,26 @@ void GamePlayScene::Update() {
 	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 	viewProjection_.UpdateMatrix();
 
-	if (input_->TriggerKey(DIK_W)) {
-		rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-	}
-	if (input_->TriggerKey(DIK_A)) {
-		rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-	}
-	if (input_->TriggerKey(DIK_S)) {
-		rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-	}
-	if (input_->TriggerKey(DIK_D)) {
-		rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-	}
+	if (player_->GetIsMoveFlag() == false) {
+		if (input_->TriggerKey(DIK_W)) {
+			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+		}
+		if (input_->TriggerKey(DIK_A)) {
+			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+		}
+		if (input_->TriggerKey(DIK_S)) {
+			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+		}
+		if (input_->TriggerKey(DIK_D)) {
+			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+		}
 
-	XINPUT_STATE joyState;
-	Input::GetInstance()->GetJoystickState(0, joyState);
+		XINPUT_STATE joyState;
+		Input::GetInstance()->GetJoystickState(0, joyState);
 
-	if (input_->PushAButton(joyState)) {
-		rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+		if (input_->PushAButton(joyState)) {
+			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+		}
 	}
 
 	world_[4].rotation_.num[1] = LerpShortAngle(world_[4].rotation_.num[1], -rotate_, 0.3f);
