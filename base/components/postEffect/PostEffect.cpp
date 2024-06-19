@@ -110,7 +110,7 @@ ComPtr<ID3D12Resource> PostEffect::CreateRenderTextureResource(ComPtr<ID3D12Devi
 void PostEffect::CreateRTV(){
 	//RTVを作る
 	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };//分かりやすく赤
-	renderTextureResource = CreateRenderTextureResource(dxCommon_->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
+	renderTextureResource = CreateRenderTextureResource(dxCommon_->GetDevice(), WinApp::GetInstance()->GetClientWidth(), WinApp::GetInstance()->GetClientHeight(), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
@@ -134,7 +134,7 @@ void PostEffect::CreateSRV(){
 
 void PostEffect::CreateDepth(){
 	//DSVDescriptorHeap
-	depthStencilResource = dxCommon_->CreateDepthStenciltextureResource(dxCommon_->GetDevice(),WinApp::kClientWidth, WinApp::kClientHeight);
+	depthStencilResource = dxCommon_->CreateDepthStenciltextureResource(dxCommon_->GetDevice(), WinApp::GetInstance()->GetClientWidth(), WinApp::GetInstance()->GetClientHeight());
 	//DSV用のヒープでディスクリプタの数は1　DSVはShader内で触るものではないのでShaderVisibleはfalse
 	dsvDescriptorHeap = dxCommon_->CreateDescriptorHeap(dxCommon_->GetDevice(),D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 	//DSVの設定
@@ -146,8 +146,8 @@ void PostEffect::CreateDepth(){
 }
 
 void PostEffect::CreateViewport(){
-	viewport.Width = (float)WinApp::kClientWidth;
-	viewport.Height = (float)WinApp::kClientHeight;
+	viewport.Width = (float)WinApp::GetInstance()->GetClientWidth();
+	viewport.Height = (float)WinApp::GetInstance()->GetClientHeight();
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.MinDepth = 0.0f;
@@ -156,7 +156,7 @@ void PostEffect::CreateViewport(){
 
 void PostEffect::CreateScissor(){
 	scissorRect.left = 0;
-	scissorRect.right = WinApp::kClientWidth;
+	scissorRect.right = WinApp::WinApp::GetInstance()->GetClientWidth();
 	scissorRect.top = 0;
-	scissorRect.bottom = WinApp::kClientHeight;
+	scissorRect.bottom = WinApp::GetInstance()->GetClientHeight();
 }

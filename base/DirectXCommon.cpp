@@ -149,8 +149,8 @@ void DirectXCommon::CreateCommand() {
 void DirectXCommon::CreateSwapChain() {
 	//スワップチェーン
 	swapChain_ = nullptr;
-	swapChainDesc_.Width = WinApp::kClientWidth;//画面の幅
-	swapChainDesc_.Height = WinApp::kClientHeight;//画面の高さ
+	swapChainDesc_.Width = WinApp::GetInstance()->GetClientWidth();//画面の幅
+	swapChainDesc_.Height = WinApp::GetInstance()->GetClientHeight();//画面の高さ
 	swapChainDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//色の形式
 	swapChainDesc_.SampleDesc.Count = 1;//マルチサンプルしない
 	swapChainDesc_.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;//描画のターゲットとして利用
@@ -223,8 +223,8 @@ void DirectXCommon::CreateFence() {
 }
 
 void DirectXCommon::CreateViewport(){
-	viewport_.Width = (float)WinApp::kClientWidth;
-	viewport_.Height = (float)WinApp::kClientHeight;
+	viewport_.Width = (float)WinApp::GetInstance()->GetClientWidth();
+	viewport_.Height = (float)WinApp::GetInstance()->GetClientHeight();
 	viewport_.TopLeftX = 0;
 	viewport_.TopLeftY = 0;
 	viewport_.MinDepth = 0.0f;
@@ -233,9 +233,9 @@ void DirectXCommon::CreateViewport(){
 
 void DirectXCommon::CreateScissor(){
 	scissorRect_.left = 0;
-	scissorRect_.right = WinApp::kClientWidth;
+	scissorRect_.right = WinApp::GetInstance()->GetClientWidth();
 	scissorRect_.top = 0;
-	scissorRect_.bottom = WinApp::kClientHeight;
+	scissorRect_.bottom = WinApp::GetInstance()->GetClientHeight();
 }
 
 void DirectXCommon::PreDraw() {
@@ -367,7 +367,7 @@ Microsoft::WRL::ComPtr <ID3D12Resource> DirectXCommon::CreateDepthStenciltexture
 }
 
 void DirectXCommon::CreateDepthStensil() {
-	depthStencilResource_ = CreateDepthStenciltextureResource(device_, WinApp::kClientWidth, WinApp::kClientHeight);
+	depthStencilResource_ = CreateDepthStenciltextureResource(device_, WinApp::GetInstance()->GetClientWidth(), WinApp::GetInstance()->GetClientHeight());
 	dsvDescriptorHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvdesc{};

@@ -25,7 +25,7 @@ class DirectXCommon {
 public:
 	static DirectXCommon* GetInstance();
 
-	void Initialization(const wchar_t* title, int32_t backBufferWidth = WinApp::kClientWidth, int32_t backBufferHeight = WinApp::kClientHeight);
+	void Initialization(const wchar_t* title, int32_t backBufferWidth = WinApp::GetInstance()->GetClientWidth(), int32_t backBufferHeight = WinApp::GetInstance()->GetClientHeight());
 
 	void PreDraw();
 	void PostDraw();

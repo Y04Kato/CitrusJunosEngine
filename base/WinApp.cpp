@@ -39,6 +39,9 @@ void WinApp::CreateWindowView(const wchar_t* title, int32_t clientWidth, int32_t
 	//ウィンドウサイズの構造体にクライアント領域を入れる
 	RECT wrc = { 0,0,clientWidth,clientHeight };
 
+	clientWidth_ = clientWidth;
+	clientHeight_ = clientHeight;
+
 	//クライアント領域を元に実際のサイズにwrcを変更してもらう
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 

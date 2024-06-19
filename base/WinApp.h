@@ -20,10 +20,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 class WinApp {
 public:
-	//クライアント領域サイズ
-	static const int32_t kClientWidth = 1280;
-	static const int32_t kClientHeight = 720;
-
 	bool Procesmessage();
 	void Finalize();
 
@@ -36,6 +32,9 @@ public:
 	LPCSTR GetName() { return (LPCSTR)wc_.lpszClassName; }
 
 	void CreateWindowView(const wchar_t* title, int32_t clientWidth, int32_t clientHeight);
+
+	int32_t GetClientWidth() { return clientWidth_; }
+	int32_t GetClientHeight() { return clientHeight_; }
 
 	/// <summary>
 	/// desable copy constructor
@@ -54,6 +53,10 @@ public:
 
 private:
 	UINT windowStyle_;
+
+	//クライアント領域サイズ
+	int32_t clientWidth_ = 1280;
+	int32_t clientHeight_ = 720;
 
 	Microsoft::WRL::ComPtr <ID3D12Debug1> debugController_;
 
