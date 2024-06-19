@@ -107,6 +107,7 @@ private:
 	bool isSmoothingDraw_;
 	bool isGaussianDraw_;
 	bool isOutlineDraw_;
+	bool isRadialBlurDraw_;
 
 	//ステージエディター擬き、名前をtest0~始め、それを記録する
 	struct Obj {

@@ -511,6 +511,14 @@ void GameDemoScene::Update() {
 				isOutlineDraw_ = false;
 			}
 		}
+		if (ImGui::Button("DrawRadialBlur")) {
+			if (isRadialBlurDraw_ == false) {
+				isRadialBlurDraw_ = true;
+			}
+			else {
+				isRadialBlurDraw_ = false;
+			}
+		}
 		ImGui::TreePop();
 	}
 
@@ -690,6 +698,9 @@ void GameDemoScene::DrawPostEffect() {
 	}
 	if (isOutlineDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::Outline);
+	}
+	if (isRadialBlurDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::RadialBlur);
 	}
 }
 

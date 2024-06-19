@@ -12,4 +12,5 @@ enum class PipelineType {
 	Smoothing,
 	Gaussian,
 	Outline,
+	RadialBlur,
 };

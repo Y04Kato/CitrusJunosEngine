@@ -11,6 +11,7 @@
 #include "pipelineState/Smoothing/Smoothing.h"
 #include "pipelineState/Gaussian/Gaussian.h"
 #include "pipelineState/Outline/Outline.h"
+#include "pipelineState/RadialBlur/RadialBlur.h"
 
 #include <map>
 
