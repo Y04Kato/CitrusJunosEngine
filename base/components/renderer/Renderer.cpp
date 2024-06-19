@@ -7,9 +7,10 @@ void Renderer::Initialize(){
 
 }
 
-void Renderer::Draw(PipelineType Type){
+void Renderer::Draw(PipelineType type){
+	nowPipeLineType_ = type;
 	//RootSignatureを設定。PS0とは別途設定が必要
-	commandList->SetGraphicsRootSignature(PSOManager_->GetRootSignature(Type).Get());
+	commandList->SetGraphicsRootSignature(PSOManager_->GetRootSignature(type).Get());
 	//PS0を設定
-	commandList->SetPipelineState(PSOManager_->GetPipelineState(Type).Get());
+	commandList->SetPipelineState(PSOManager_->GetPipelineState(type).Get());
 }

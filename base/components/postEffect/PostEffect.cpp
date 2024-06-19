@@ -1,6 +1,7 @@
 #include "PostEffect.h"
 
 void PostEffect::Initialize(){
+	CJEngine_ = CitrusJunosEngine::GetInstance();
 	dxCommon_ = DirectXCommon::GetInstance();
 	SRVManager_ = SRVManager::GetInstance();
 
@@ -10,6 +11,12 @@ void PostEffect::Draw(){
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//テクスチャ
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(0, SRVhandle.GPU);
+
+	//Outlineの時のみ使用
+	if (CJEngine_->renderer_->GetNowPipeLineType() == PipelineType::Outline) {
+
+	}
+
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
