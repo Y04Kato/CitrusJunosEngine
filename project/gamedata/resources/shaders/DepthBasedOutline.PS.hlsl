@@ -1,7 +1,10 @@
 #include "CopyImage.hlsli"
 
 Texture2D<float32_t4> gTexture : register(t0);
+//Texture2D<float32_t4> gDepthTexture : register(t1);
+
 SamplerState gSampler : register(s0);
+//SamplerState gSamplerPoint : register(s1);
 
 static const float32_t2 kIndex3x3[3][3] = {
 	{{-1.0f,-1.0f},{0.0f,-1.0f},{1.0f,-1.0f}},
@@ -46,18 +49,26 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		for (int32_t y = 0; y < 3; ++y) {
 			//TexCoordの算出
 			float32_t2 texcoord = input.texcoord + kIndex3x3[x][y] * uvStepSize;
-			//色に1/9掛けて足す
+			//色に1/9掛けて足す(輝度ベース)
 			float32_t3 fetchColor = gTexture.Sample(gSampler, texcoord).rgb;
 			float32_t luminance = Luminance(fetchColor);
 			
 			difference.x += luminance * kPrewittHorizontalKernel[x][y];
 			difference.y += luminance * kPrewittVerticalKernel[x][y];
+
+			//深度ベース
+			//float32_t ndcDepth = gDepthTexture.Sample(gSamplerPoint, texcoord);
+			//NDC->View P^{-1}においてxとyはzwに影響を与えないので何でも良い
+			//gMaterial.projectionInverseはCBufferを使って渡す
+			//float32_t4 viewSpace = mul(float32_t4(0.0f, 0.0f, ndcDepth, 1.0f), gMaterial.projectionInverse);
+			//float32_t viewZ = viewSpace.z * rcp(viewSpace.w);//同次座標系からデカルト座標系へ
 		}
 	}
 
 	//変化の長さをウェイトとして合成
 	float32_t weight = length(difference);
-	weight = saturate(weight * 6.0f);//適当に6倍
+	weight = saturate(weight * 6.0f);//適当に6倍(輝度ベース)
+	//weight = saturate(weight);//特に倍率なし(深度ベース)
 
 	output.color.rgb = (1.0f - weight) * gTexture.Sample(gSampler, input.texcoord).rgb;
 
