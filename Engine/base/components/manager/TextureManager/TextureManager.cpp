@@ -29,7 +29,7 @@ const D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUHandle(uint32_t textureH
 
 //テクスチャデータを読み込む
 DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath){
-	//テクスチャファイルを読んでうろグラムで扱えるようにする
+	//テクスチャファイルを読んでプログラムで扱えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
