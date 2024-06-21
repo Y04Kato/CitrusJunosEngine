@@ -16,8 +16,6 @@
 #include "components/utilities/collisionManager/CollisionConfig.h"
 #include "levelDataLoader/LevelDataLoader.h"
 
-#include "utilities/DirectWrite/DirectWriteSample.h"
-
 #include "components/utilities/globalVariables/GlobalVariables.h"
 
 class GameDemoScene :public Iscene {
@@ -129,7 +127,5 @@ private:
 	//LevelEditor
 	LevelDataLoader* levelDataLoader_;
 	std::list<Obj> levelEditorObjects_;
-
-	//DirectWriteSample* dwite_;
 };
 

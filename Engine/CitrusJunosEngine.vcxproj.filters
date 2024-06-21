@@ -252,9 +252,6 @@
     <ClCompile Include="project\gamedata\scenes\GameDemoScene.cpp">
       <Filter>ソース ファイル\project\gamedata\scenes</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\3d\CreateLine.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="base\components\postEffect\PostEffect.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -309,14 +306,11 @@
     <ClCompile Include="base\components\utilities\levelDataLoader\LevelDataLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\utilities\DirectWrite\DirectWriteCustomFont.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\utilities\DirectWrite\DirectWriteSample.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="base\components\pipelineState\RadialBlur\RadialBlur.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\3d\CreateLine.cpp">
+      <Filter>ソース ファイル\base\components\3d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -542,12 +536,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="base\components\utilities\levelDataLoader\LevelData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\utilities\DirectWrite\DirectWriteCustomFont.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\utilities\DirectWrite\DirectWriteSample.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="base\components\pipelineState\RadialBlur\RadialBlur.h">
