@@ -35,7 +35,7 @@ void CreateSphere::Draw(const WorldTransform& worldTransform, const ViewProjecti
 
 	//VBVを設定
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferViewSphere_);
+	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 
 	//形状を設定。PS0に設定しているものとはまた別。同じものを設定する
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -71,18 +71,18 @@ void CreateSphere::SettingVertex() {
 
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
-	indexResourceSphere_ = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(uint32_t) * vertexCount_);
+	indexResource_ = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(uint32_t) * vertexCount_);
 
-	indexBufferViewSphere_.BufferLocation = indexResourceSphere_->GetGPUVirtualAddress();
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
-	indexBufferViewSphere_.SizeInBytes = sizeof(uint32_t) * vertexCount_;
+	indexBufferView_.SizeInBytes = sizeof(uint32_t) * vertexCount_;
 
-	indexBufferViewSphere_.Format = DXGI_FORMAT_R32_UINT;
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
-	indexResourceSphere_->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSphere_));
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
 	for (uint32_t i = 0; i < vertexCount_; i++) {
-		indexDataSphere_[i] = i;
+		indexData_[i] = i;
 	}
 
 	//経度分割一つ分の角度

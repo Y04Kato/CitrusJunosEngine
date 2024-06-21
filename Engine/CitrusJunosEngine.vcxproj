@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClCompile Include="base\components\2d\CreateParticle.cpp" />
     <ClCompile Include="base\components\3d\CreateLine.cpp" />
+    <ClCompile Include="base\components\3d\CreateSkyBox.cpp" />
     <ClCompile Include="base\components\3d\ViewProjection.cpp" />
     <ClCompile Include="base\components\3d\WorldTransform.cpp" />
     <ClCompile Include="base\components\audio\Audio.cpp" />
@@ -353,6 +354,7 @@
   <ItemGroup>
     <ClInclude Include="base\components\2d\CreateParticle.h" />
     <ClInclude Include="base\components\3d\CreateLine.h" />
+    <ClInclude Include="base\components\3d\CreateSkyBox.h" />
     <ClInclude Include="base\components\3d\ViewProjection.h" />
     <ClInclude Include="base\components\3d\WorldTransform.h" />
     <ClInclude Include="base\components\audio\Audio.h" />

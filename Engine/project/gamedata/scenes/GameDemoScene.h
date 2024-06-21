@@ -10,6 +10,7 @@
 #include "components/2d/CreateParticle.h"
 #include "components/3d/CreateLine.h"
 #include "components/3d/CreateSphere.h"
+#include "components/3d/CreateSkyBox.h"
 #include "components/3d/Model.h"
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
@@ -68,6 +69,10 @@ private:
 	WorldTransform worldTransformSphere_[2];
 	Vector4 sphereMaterial_[2];
 
+	std::unique_ptr <CreateSkyBox> skyBox_;
+	WorldTransform worldTransformSkyBox_;
+	Vector4 skyBoxMaterial_;
+
 	std::unique_ptr<Model> model_[3];
 	WorldTransform worldTransformModel_[3];
 	Vector4 modelMaterial_[3];
@@ -98,6 +103,7 @@ private:
 	bool isModelDraw_[3];
 	bool isParticleDraw_[2];
 	bool isLineDraw_;
+	bool isSkyBoxDraw_;
 	bool isVATDraw_;
 
 	bool isGrayScaleDraw_;

@@ -9,11 +9,11 @@
 
 class CitrusJunosEngine;
 
-class CreateLine {
+class CreateSkyBox {
 public:
 	void Initialize();
 
-	void Draw(const WorldTransform& worldTransform1, const WorldTransform& worldTransform2, const ViewProjection& viewProjection, const Vector4& material);
+	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material, uint32_t textureIndex);
 
 	void Finalize();
 
@@ -24,9 +24,6 @@ public:
 	/// 2:BlinnPhongReflection
 	/// </summary>
 	void SetDirectionalLightFlag(bool isDirectionalLight, int lightNum);
-
-	//ラインの太さ
-	void SetLineThickness(float thickness) { size_ = thickness; };
 
 private:
 	void SettingVertex();
@@ -61,9 +58,6 @@ private:
 	uint32_t* indexData_;
 
 	int lightNum_;
-
-	WorldTransform world_;
-	float size_ = 0.1f;
 
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
 	CameraForGPU* cameraData_ = nullptr;

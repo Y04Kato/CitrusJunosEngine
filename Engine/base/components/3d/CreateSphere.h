@@ -55,9 +55,9 @@ private:
 	PointLight* pointLight_;
 	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource_;
 
-	Microsoft::WRL::ComPtr <ID3D12Resource> indexResourceSphere_;
-	D3D12_INDEX_BUFFER_VIEW indexBufferViewSphere_{};
-	uint32_t* indexDataSphere_;
+	Microsoft::WRL::ComPtr <ID3D12Resource> indexResource_;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
+	uint32_t* indexData_;
 
 	int lightNum_;
 

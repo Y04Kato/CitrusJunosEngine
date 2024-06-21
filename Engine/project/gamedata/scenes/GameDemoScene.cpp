@@ -85,6 +85,12 @@ void GameDemoScene::Initialize() {
 		texture_[i] = uvResourceNum_;
 	}
 
+	skyBox_ = std::make_unique <CreateSkyBox>();
+	skyBox_->Initialize();
+	worldTransformSkyBox_.Initialize();
+	skyBoxMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	skyBox_->SetDirectionalLightFlag(true, 3);
+
 	//objモデル
 	model_[0].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
 	model_[1].reset(Model::CreateModel("project/gamedata/resources/AnimatedCube", "AnimatedCube.gltf"));
@@ -175,6 +181,7 @@ void GameDemoScene::Update() {
 		worldTransformModel_[i].UpdateMatrix();
 	}
 
+	worldTransformSkyBox_.UpdateMatrix();
 	worldTransformModelVAT_.UpdateMatrix();
 
 	for (Obj& obj : objects_) {
@@ -398,6 +405,25 @@ void GameDemoScene::Update() {
 		}
 		ImGui::TreePop();
 	}
+	if (ImGui::TreeNode("SkyBox")) {//SkyBox
+		if (ImGui::Button("DrawSkyBox")) {
+			if (isSkyBoxDraw_ == false) {
+				isSkyBoxDraw_ = true;
+			}
+			else {
+				isSkyBoxDraw_ = false;
+			}
+		}
+		if (isSkyBoxDraw_ == true) {
+			if (ImGui::TreeNode("SkyBox")) {
+				ImGui::DragFloat3("Translate", worldTransformSkyBox_.translation_.num, 0.05f);
+				ImGui::DragFloat3("Rotate", worldTransformSkyBox_.rotation_.num, 0.05f);
+				ImGui::DragFloat3("Scale", worldTransformSkyBox_.scale_.num, 0.05f);
+				ImGui::TreePop();
+			}
+		}
+		ImGui::TreePop();
+	}
 	if (ImGui::TreeNode("Particle")) {//パーティクル
 		if (ImGui::Button("DrawParticle1")) {
 			if (isParticleDraw_[0] == false) {
@@ -598,6 +624,10 @@ void GameDemoScene::Draw() {
 
 #pragma region 3Dオブジェクト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
+
+	if (isSkyBoxDraw_) {//SkyBox描画
+		skyBox_->Draw(worldTransformSkyBox_, viewProjection_, skyBoxMaterial_,uvResourceNum_);
+	}
 
 	if (isLineDraw_) {//Line描画
 		line_->Draw(worldTransformLine_[0], worldTransformLine_[1], viewProjection_, lineMaterial_);
