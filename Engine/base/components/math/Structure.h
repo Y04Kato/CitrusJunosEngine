@@ -176,6 +176,15 @@ struct StructSphere {
 	float radius;
 };
 
+#pragma region PostEffect
+struct MaskData {
+	float maskThreshold;
+	Vector3 maskColor;
+	Vector3 edgeColor;
+};
+
+#pragma endregion
+
 #pragma region Particle
 struct Particle {
 	EulerTransform transform;

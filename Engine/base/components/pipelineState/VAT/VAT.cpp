@@ -13,23 +13,23 @@ void VAT::CreateRootSignature() {
 	//RootParameter作成、複数設定可能な為、配列に
 	D3D12_ROOT_PARAMETER rootParameters[10] = {};
 
-	D3D12_DESCRIPTOR_RANGE descriptoraRange[1] = {};
-	descriptoraRange[0].BaseShaderRegister = 0;//0から始まる
-	descriptoraRange[0].NumDescriptors = 1;//数は1つ
-	descriptoraRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptoraRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
+	descriptorRange[0].NumDescriptors = 1;//数は1つ
+	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
-	D3D12_DESCRIPTOR_RANGE descriptoraRange2[1] = {};
-	descriptoraRange2[0].BaseShaderRegister = 1;//1から始まる
-	descriptoraRange2[0].NumDescriptors = 1;//数は1つ
-	descriptoraRange2[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptoraRange2[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+	D3D12_DESCRIPTOR_RANGE descriptorRange2[1] = {};
+	descriptorRange2[0].BaseShaderRegister = 1;//1から始まる
+	descriptorRange2[0].NumDescriptors = 1;//数は1つ
+	descriptorRange2[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptorRange2[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
-	D3D12_DESCRIPTOR_RANGE descriptoraRange3[1] = {};
-	descriptoraRange3[0].BaseShaderRegister = 2;//2から始まる
-	descriptoraRange3[0].NumDescriptors = 1;//数は1つ
-	descriptoraRange3[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptoraRange3[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+	D3D12_DESCRIPTOR_RANGE descriptorRange3[1] = {};
+	descriptorRange3[0].BaseShaderRegister = 2;//2から始まる
+	descriptorRange3[0].NumDescriptors = 1;//数は1つ
+	descriptorRange3[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptorRange3[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
 	//VertexShader
 	//Worldtransform
@@ -50,21 +50,21 @@ void VAT::CreateRootSignature() {
 	//VATPosTex
 	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
 	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
-	rootParameters[7].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
-	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+	rootParameters[7].DescriptorTable.pDescriptorRanges = descriptorRange;//tableの中身の配列を指定
+	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
 
 	//VATRotTex
 	rootParameters[8].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
 	rootParameters[8].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//vertexShaderで使う
-	rootParameters[8].DescriptorTable.pDescriptorRanges = descriptoraRange2;//tableの中身の配列を指定
-	rootParameters[8].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange2);//Tableで利用する数
+	rootParameters[8].DescriptorTable.pDescriptorRanges = descriptorRange2;//tableの中身の配列を指定
+	rootParameters[8].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange2);//Tableで利用する数
 
 	//PixelShader
 	//Texture
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixcelShaderを使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptoraRange3;//tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange3);//Tableで利用する数
+	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange3;//tableの中身の配列を指定
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange3);//Tableで利用する数
 
 	//MaterialResource
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う

@@ -16,6 +16,7 @@
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
 #include "levelDataLoader/LevelDataLoader.h"
+#include "postEffect/PostEffect.h"
 
 #include "components/utilities/globalVariables/GlobalVariables.h"
 
@@ -95,6 +96,13 @@ private:
 
 	DebugCamera* debugCamera_;
 
+
+	PostEffect* postEffect_;
+	//MaskTexture用Data
+	uint32_t noiseTexture_[2];
+	int maskTextureNum_;
+	MaskData maskData_;
+
 	int texture_[2];
 
 	bool isTriangleDraw_[2];
@@ -112,6 +120,7 @@ private:
 	bool isGaussianDraw_;
 	bool isOutlineDraw_;
 	bool isRadialBlurDraw_;
+	bool isMaskDraw_;
 
 	//ステージエディター擬き、名前をtest0~始め、それを記録する
 	struct Obj {

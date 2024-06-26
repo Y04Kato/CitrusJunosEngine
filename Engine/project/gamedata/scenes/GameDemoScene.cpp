@@ -109,7 +109,7 @@ void GameDemoScene::Initialize() {
 	vatData_.MaxVATTime = 120.0f;
 	vatData_.VatPositionTexSize = { 1.0f / 25.0f,1.0f / 120.0f ,25.0f,120.0f };
 	vatData_.VatNormalTexSize = { 1.0f / 25.0f,1.0f / 120.0f ,25.0f,120.0f };
-	modelVAT_->LoadVATData("project/gamedata/resources/vatSphere", vatData_);
+	modelVAT_->LoadVATData("project/gamedata/resources/vatSphere", &vatData_);
 	modelVAT_->SetDirectionalLightFlag(true, 3);
 
 	//Input
@@ -127,6 +127,14 @@ void GameDemoScene::Initialize() {
 	debugCamera_->initialize();
 
 	viewProjection_.Initialize();
+
+	postEffect_ = PostEffect::GetInstance();
+	noiseTexture_[0] = textureManager_->Load("project/gamedata/resources/noise0.png");
+	noiseTexture_[1] = textureManager_->Load("project/gamedata/resources/noise1.png");
+	maskData_.maskThreshold = 1.0f;
+	maskData_.maskColor = { 0.0f,1.0f,0.0f };
+	maskData_.edgeColor = { 1.0f,0.4f,0.3f };
+	postEffect_->SetMaskTexture(noiseTexture_[0]);
 
 	levelDataLoader_ = LevelDataLoader::GetInstance();
 	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
@@ -192,25 +200,14 @@ void GameDemoScene::Update() {
 		obj.world.UpdateMatrix();
 	}
 
+	postEffect_->SetMaskTexture(noiseTexture_[maskTextureNum_]);
+	postEffect_->SetMaskData(maskData_);
+
 	ImGui::Begin("debug");
 	ImGui::Text("GameDemoScene");
 	if (ImGui::TreeNode("Triangle")) {//三角形
-		if (ImGui::Button("DrawTriangle1")) {
-			if (isTriangleDraw_[0] == false) {
-				isTriangleDraw_[0] = true;
-			}
-			else {
-				isTriangleDraw_[0] = false;
-			}
-		}
-		if (ImGui::Button("DrawTriangle2")) {
-			if (isTriangleDraw_[1] == false) {
-				isTriangleDraw_[1] = true;
-			}
-			else {
-				isTriangleDraw_[1] = false;
-			}
-		}
+		ImGui::Checkbox("DrawTriangle1", &isTriangleDraw_[0]);
+		ImGui::Checkbox("DrawTriangle2", &isTriangleDraw_[1]);
 		if (isTriangleDraw_[0] == true) {
 			if (ImGui::TreeNode("Triangle1")) {
 				ImGui::DragFloat3("Translate", worldTransformTriangle_[0].translation_.num, 0.05f);
@@ -232,22 +229,8 @@ void GameDemoScene::Update() {
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Sphere")) {//球体
-		if (ImGui::Button("DrawSphere1")) {
-			if (isSphereDraw_[0] == false) {
-				isSphereDraw_[0] = true;
-			}
-			else {
-				isSphereDraw_[0] = false;
-			}
-		}
-		if (ImGui::Button("DrawSphere2")) {
-			if (isSphereDraw_[1] == false) {
-				isSphereDraw_[1] = true;
-			}
-			else {
-				isSphereDraw_[1] = false;
-			}
-		}
+		ImGui::Checkbox("DrawSphere1", &isSphereDraw_[0]);
+		ImGui::Checkbox("DrawSphere2", &isSphereDraw_[1]);
 		if (isSphereDraw_[0] == true) {
 			if (ImGui::TreeNode("Sphere1")) {
 				ImGui::DragFloat3("Translate", worldTransformSphere_[0].translation_.num, 0.05f);
@@ -271,22 +254,8 @@ void GameDemoScene::Update() {
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Sprite")) {//スプライト
-		if (ImGui::Button("DrawSprite1")) {
-			if (isSpriteDraw_[0] == false) {
-				isSpriteDraw_[0] = true;
-			}
-			else {
-				isSpriteDraw_[0] = false;
-			}
-		}
-		if (ImGui::Button("DrawSprite2")) {
-			if (isSpriteDraw_[1] == false) {
-				isSpriteDraw_[1] = true;
-			}
-			else {
-				isSpriteDraw_[1] = false;
-			}
-		}
+		ImGui::Checkbox("DrawSprite1", &isSpriteDraw_[0]);
+		ImGui::Checkbox("DrawSprite2", &isSpriteDraw_[1]);
 		if (isSpriteDraw_[0] == true) {
 			if (ImGui::TreeNode("Sprite1")) {
 				ImGui::DragFloat2("Translate", spriteTransform_[0].translate.num, 0.05f);
@@ -314,30 +283,9 @@ void GameDemoScene::Update() {
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Model")) {//objモデル
-		if (ImGui::Button("DrawModel1")) {
-			if (isModelDraw_[0] == false) {
-				isModelDraw_[0] = true;
-			}
-			else {
-				isModelDraw_[0] = false;
-			}
-		}
-		if (ImGui::Button("DrawModel2")) {
-			if (isModelDraw_[1] == false) {
-				isModelDraw_[1] = true;
-			}
-			else {
-				isModelDraw_[1] = false;
-			}
-		}
-		if (ImGui::Button("DrawModel3")) {
-			if (isModelDraw_[2] == false) {
-				isModelDraw_[2] = true;
-			}
-			else {
-				isModelDraw_[2] = false;
-			}
-		}
+		ImGui::Checkbox("DrawModel1", &isModelDraw_[0]);
+		ImGui::Checkbox("DrawModel2", &isModelDraw_[1]);
+		ImGui::Checkbox("DrawModel3", &isModelDraw_[2]);
 		if (isModelDraw_[0] == true) {
 			if (ImGui::TreeNode("Model1")) {
 				ImGui::DragFloat3("Translate", worldTransformModel_[0].translation_.num, 0.05f);
@@ -365,14 +313,7 @@ void GameDemoScene::Update() {
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("VAT")) {//vatモデル
-		if (ImGui::Button("DrawModelVAT")) {
-			if (isVATDraw_ == false) {
-				isVATDraw_ = true;
-			}
-			else {
-				isVATDraw_ = false;
-			}
-		}
+		ImGui::Checkbox("DrawVAT", &isVATDraw_);
 		if (isVATDraw_ == true) {
 			if (ImGui::TreeNode("ModelVAT")) {
 				ImGui::DragFloat3("Translate", worldTransformModelVAT_.translation_.num, 0.05f);
@@ -386,14 +327,7 @@ void GameDemoScene::Update() {
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Line")) {//ライン
-		if (ImGui::Button("DrawLine")) {
-			if (isLineDraw_ == false) {
-				isLineDraw_ = true;
-			}
-			else {
-				isLineDraw_ = false;
-			}
-		}
+		ImGui::Checkbox("DrawLine", &isLineDraw_);
 		if (isLineDraw_ == true) {
 			if (ImGui::TreeNode("Line")) {
 				ImGui::DragFloat3("Point1", worldTransformLine_[0].translation_.num, 0.05f);
@@ -406,14 +340,7 @@ void GameDemoScene::Update() {
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("SkyBox")) {//SkyBox
-		if (ImGui::Button("DrawSkyBox")) {
-			if (isSkyBoxDraw_ == false) {
-				isSkyBoxDraw_ = true;
-			}
-			else {
-				isSkyBoxDraw_ = false;
-			}
-		}
+		ImGui::Checkbox("DrawSkyBox", &isSkyBoxDraw_);
 		if (isSkyBoxDraw_ == true) {
 			if (ImGui::TreeNode("SkyBox")) {
 				ImGui::DragFloat3("Translate", worldTransformSkyBox_.translation_.num, 0.05f);
@@ -425,22 +352,9 @@ void GameDemoScene::Update() {
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Particle")) {//パーティクル
-		if (ImGui::Button("DrawParticle1")) {
-			if (isParticleDraw_[0] == false) {
-				isParticleDraw_[0] = true;
-			}
-			else {
-				isParticleDraw_[0] = false;
-			}
-		}
-		if (ImGui::Button("DrawParticle2")) {
-			if (isParticleDraw_[1] == false) {
-				isParticleDraw_[1] = true;
-			}
-			else {
-				isParticleDraw_[1] = false;
-			}
-		}
+		ImGui::Checkbox("DrawParticle1", &isParticleDraw_[0]);
+		ImGui::Checkbox("DrawParticle2", &isParticleDraw_[1]);
+
 		if (isParticleDraw_[0] == true) {
 			if (ImGui::TreeNode("Particle1")) {
 				int amount = testEmitter_[0].count;
@@ -495,52 +409,20 @@ void GameDemoScene::Update() {
 	}
 
 	if (ImGui::TreeNode("PostEffect")) {//PostEffect
-		if (ImGui::Button("DrawGrayScale")) {
-			if (isGrayScaleDraw_ == false) {
-				isGrayScaleDraw_ = true;
-			}
-			else {
-				isGrayScaleDraw_ = false;
-			}
-		}
-		if (ImGui::Button("DrawVignette")) {
-			if (isVignetteDraw_ == false) {
-				isVignetteDraw_ = true;
-			}
-			else {
-				isVignetteDraw_ = false;
-			}
-		}
-		if (ImGui::Button("DrawSmoothing")) {
-			if (isSmoothingDraw_ == false) {
-				isSmoothingDraw_ = true;
-			}
-			else {
-				isSmoothingDraw_ = false;
-			}
-		}
-		if (ImGui::Button("DrawGaussian")) {
-			if (isGaussianDraw_ == false) {
-				isGaussianDraw_ = true;
-			}
-			else {
-				isGaussianDraw_ = false;
-			}
-		}
-		if (ImGui::Button("DrawOutline")) {
-			if (isOutlineDraw_ == false) {
-				isOutlineDraw_ = true;
-			}
-			else {
-				isOutlineDraw_ = false;
-			}
-		}
-		if (ImGui::Button("DrawRadialBlur")) {
-			if (isRadialBlurDraw_ == false) {
-				isRadialBlurDraw_ = true;
-			}
-			else {
-				isRadialBlurDraw_ = false;
+		ImGui::Checkbox("DrawGrayScale", &isGrayScaleDraw_);
+		ImGui::Checkbox("DrawVignette", &isVignetteDraw_);
+		ImGui::Checkbox("DrawSmoothing", &isSmoothingDraw_);
+		ImGui::Checkbox("DrawGaussian", &isGaussianDraw_);
+		ImGui::Checkbox("DrawOutline", &isOutlineDraw_);
+		ImGui::Checkbox("DrawRadialBlur", &isRadialBlurDraw_);
+		ImGui::Checkbox("DrawMaskTexture", &isMaskDraw_);
+		if (isMaskDraw_ == true) {
+			if (ImGui::TreeNode("MaskTextureData")) {
+				ImGui::DragFloat("MaskThreshold", &maskData_.maskThreshold, 0.05f, 0.0f, 1.0f);
+				ImGui::DragFloat3("MaskColor", &maskData_.maskColor.num[0], 0.1f, 0.0f, 1.0f);
+				ImGui::DragFloat3("EdgeColor", &maskData_.edgeColor.num[0], 0.1f, 0.0f, 1.0f);
+				ImGui::DragInt("MaskTexture", &maskTextureNum_, 1.0f, 0, 1);
+				ImGui::TreePop();
 			}
 		}
 		ImGui::TreePop();
@@ -727,6 +609,9 @@ void GameDemoScene::DrawPostEffect() {
 	}
 	if (isRadialBlurDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::RadialBlur);
+	}
+	if (isMaskDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::MaskTexture);
 	}
 }
 

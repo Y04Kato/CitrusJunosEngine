@@ -128,8 +128,8 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
 	if (isVAT_ == true) {//VATモデルである場合
-		ImGui::Text("%d", (int)vatData_.VATTime);
-		ImGui::Text("%f %f %f %f", vatData_.VatPositionTexSize.num[0], vatData_.VatPositionTexSize.num[1], vatData_.VatPositionTexSize.num[2], vatData_.VatPositionTexSize.num[3]);
+		ImGui::Text("%d", (int)vatData_->VATTime);
+		ImGui::Text("%f %f %f %f", vatData_->VatPositionTexSize.num[0], vatData_->VatPositionTexSize.num[1], vatData_->VatPositionTexSize.num[2], vatData_->VatPositionTexSize.num[3]);
 
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(vatPosTex_));
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatRotTex_));
@@ -590,7 +590,7 @@ void Model::SetDirectionalLightFlag(bool isDirectionalLight, int lightNum) {
 	lightNum_ = lightNum;
 }
 
-void Model::LoadVATData(const std::string& directoryPath, const VATData& vatdata) {
+void Model::LoadVATData(const std::string& directoryPath, const VATData* vatdata) {
 	isVAT_ = true;
 
 	std::string vatPos = directoryPath + "/VAT_pos.png";
@@ -602,8 +602,8 @@ void Model::LoadVATData(const std::string& directoryPath, const VATData& vatdata
 	vatResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(VATData));
 	vatResource_->Map(0, NULL, reinterpret_cast<void**>(&vatData_));
 
-	vatData_.VATTime = vatdata.VATTime;
-	vatData_.MaxVATTime = vatdata.MaxVATTime;
-	vatData_.VatPositionTexSize = vatdata.VatPositionTexSize;
-	vatData_.VatNormalTexSize = vatdata.VatNormalTexSize;
+	vatData_->VATTime = vatdata->VATTime;
+	vatData_->MaxVATTime = vatdata->MaxVATTime;
+	vatData_->VatPositionTexSize = vatdata->VatPositionTexSize;
+	vatData_->VatNormalTexSize = vatdata->VatNormalTexSize;
 }

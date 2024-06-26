@@ -22,6 +22,7 @@ void PSOManager::Initialize(){
 	std::unique_ptr<Gaussian> gaussian = std::make_unique<Gaussian>();
 	std::unique_ptr<Outline> outline = std::make_unique<Outline>();
 	std::unique_ptr<RadialBlur> radialBlur = std::make_unique<RadialBlur>();
+	std::unique_ptr<MaskTexture> maskTexture = std::make_unique<MaskTexture>();
 
 
 	//Initializeの宣言
@@ -37,6 +38,7 @@ void PSOManager::Initialize(){
 	gaussian->Initialize();
 	outline->Initialize();
 	radialBlur->Initialize();
+	maskTexture->Initialize();
 
 
 	//パイプラインを追加する
@@ -52,4 +54,5 @@ void PSOManager::Initialize(){
 	AddPipeline(gaussian->GetPSO(), PipelineType::Gaussian);
 	AddPipeline(outline->GetPSO(), PipelineType::Outline);
 	AddPipeline(radialBlur->GetPSO(), PipelineType::RadialBlur);
+	AddPipeline(maskTexture->GetPSO(), PipelineType::MaskTexture);
 }

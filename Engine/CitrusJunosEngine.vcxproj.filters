@@ -315,6 +315,9 @@
     <ClCompile Include="base\components\3d\CreateSkyBox.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\pipelineState\MaskTexture\MaskTexture.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -347,6 +350,7 @@
     <FxCompile Include="project\gamedata\resources\shaders\GaussianFilter.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\DepthBasedOutline.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\RadialBlur.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\MaskTexture.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\DirectXCommon.h">
@@ -545,6 +549,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="base\components\3d\CreateSkyBox.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\MaskTexture\MaskTexture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

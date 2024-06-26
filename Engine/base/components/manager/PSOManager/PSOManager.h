@@ -12,6 +12,7 @@
 #include "pipelineState/Gaussian/Gaussian.h"
 #include "pipelineState/Outline/Outline.h"
 #include "pipelineState/RadialBlur/RadialBlur.h"
+#include "pipelineState/MaskTexture/MaskTexture.h"
 
 #include <map>
 
