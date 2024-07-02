@@ -100,6 +100,7 @@ void GameDemoScene::Initialize() {
 	skyBox_ = std::make_unique <CreateSkyBox>();
 	skyBox_->Initialize();
 	worldTransformSkyBox_.Initialize();
+	worldTransformSkyBox_.scale_ = { 1000.0f,1000.0f,1000.0f };
 	skyBoxMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	skyBox_->SetDirectionalLightFlag(true, 3);
 
