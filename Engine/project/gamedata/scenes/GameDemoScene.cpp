@@ -13,6 +13,8 @@ void GameDemoScene::Initialize() {
 	kaedeResourceNum_ = textureManager_->Load("project/gamedata/resources/kaede.png");
 
 	cjEngineResourceNum_ = textureManager_->Load("project/gamedata/resources/CitrusJunosEngine.png");
+	
+	ddsResourceNum_ = textureManager_->Load("project/gamedata/resources/rostock_laage_airport_4k.dds");
 
 	//三角形
 	for (int i = 0; i < 2; i++) {
@@ -85,12 +87,6 @@ void GameDemoScene::Initialize() {
 		texture_[i] = uvResourceNum_;
 	}
 
-	skyBox_ = std::make_unique <CreateSkyBox>();
-	skyBox_->Initialize();
-	worldTransformSkyBox_.Initialize();
-	skyBoxMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-	skyBox_->SetDirectionalLightFlag(true, 3);
-
 	//objモデル
 	model_[0].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
 	model_[1].reset(Model::CreateModel("project/gamedata/resources/AnimatedCube", "AnimatedCube.gltf"));
@@ -100,6 +96,12 @@ void GameDemoScene::Initialize() {
 		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
 		model_[i]->SetDirectionalLightFlag(true, 3);
 	}
+
+	skyBox_ = std::make_unique <CreateSkyBox>();
+	skyBox_->Initialize();
+	worldTransformSkyBox_.Initialize();
+	skyBoxMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	skyBox_->SetDirectionalLightFlag(true, 3);
 
 	//VAT
 	modelVAT_.reset(Model::CreateModel("project/gamedata/resources/vatSphere", "VAT_mesh.fbx"));
@@ -504,12 +506,16 @@ void GameDemoScene::Draw() {
 
 #pragma endregion
 
-#pragma region 3Dオブジェクト描画
-	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
+#pragma region SkyBox描画
+	CJEngine_->renderer_->Draw(PipelineType::SkyBox);
 
 	if (isSkyBoxDraw_) {//SkyBox描画
-		skyBox_->Draw(worldTransformSkyBox_, viewProjection_, skyBoxMaterial_,uvResourceNum_);
+		skyBox_->Draw(worldTransformSkyBox_, viewProjection_, skyBoxMaterial_, ddsResourceNum_);
 	}
+#pragma endregion
+
+#pragma region 3Dオブジェクト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
 
 	if (isLineDraw_) {//Line描画
 		line_->Draw(worldTransformLine_[0], worldTransformLine_[1], viewProjection_, lineMaterial_);

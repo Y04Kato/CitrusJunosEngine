@@ -5,6 +5,7 @@ enum class PipelineType {
 	Standard2D,
 	Particle,
 	Skinning,
+	SkyBox,
 	VertexAnimationTexture,
 	PostProcess,
 	Grayscale,

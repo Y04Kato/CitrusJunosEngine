@@ -14,43 +14,6 @@ void CreateSkyBox::Initialize() {
 }
 
 void CreateSkyBox::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material, uint32_t textureIndex) {
-	//右面
-	vertexData_[0].position = { 1.0f,1.0f,1.0f,1.0f };
-	vertexData_[1].position = { 1.0f,1.0f,-1.0f,1.0f };
-	vertexData_[2].position = { 1.0f,-1.0f,1.0f,1.0f };
-	vertexData_[3].position = { 1.0f,-1.0f,-1.0f,1.0f };
-	//左面
-	vertexData_[4].position = { -1.0f,1.0f,-1.0f,1.0f };
-	vertexData_[5].position = { -1.0f,1.0f,1.0f,1.0f };
-	vertexData_[6].position = { -1.0f,-1.0f,-1.0f,1.0f };
-	vertexData_[7].position = { -1.0f,-1.0f,1.0f,1.0f };
-	//前面
-	vertexData_[8].position = { -1.0f,1.0f,1.0f,1.0f };
-	vertexData_[9].position = { 1.0f,1.0f,1.0f,1.0f };
-	vertexData_[10].position = { -1.0f,-1.0f,1.0f,1.0f };
-	vertexData_[11].position = { 1.0f,-1.0f,1.0f,1.0f };
-
-	//背面
-	vertexData_[12].position = { 1.0f,1.0f,-1.0f,1.0f };
-	vertexData_[13].position = { -1.0f,1.0f,-1.0f,1.0f };
-	vertexData_[14].position = { 1.0f,-1.0f,-1.0f,1.0f };
-	vertexData_[15].position = { -1.0f,-1.0f,-1.0f,1.0f };
-	//上面
-	vertexData_[16].position = { -1.0f,1.0f,1.0f,1.0f };
-	vertexData_[17].position = { 1.0f,1.0f,1.0f,1.0f };
-	vertexData_[18].position = { -1.0f,1.0f,-1.0f,1.0f };
-	vertexData_[19].position = { 1.0f,1.0f,-1.0f,1.0f };
-	//下面
-	vertexData_[20].position = { -1.0f,-1.0f,1.0f,1.0f };
-	vertexData_[21].position = { 1.0f,-1.0f,1.0f,1.0f };
-	vertexData_[22].position = { -1.0f,-1.0f,-1.0f,1.0f };
-	vertexData_[23].position = { 1.0f,-1.0f,-1.0f,1.0f };
-
-	for (uint32_t i = 0; i < vertexCount_; ++i) {
-		vertexData_[i].texcoord = { 0.0f,0.0f };
-		vertexData_[i].normal = { 0.0f,0.0f,1.0f };
-	}
-
 	EulerTransform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 	Matrix4x4 uvtransformMtrix = MakeScaleMatrix(uvTransform.scale);
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.num[2]));
@@ -83,7 +46,7 @@ void CreateSkyBox::Draw(const WorldTransform& worldTransform, const ViewProjecti
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 
 	//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]のこと
-	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(textureManager_->white));
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(textureIndex));
 
 	//描画
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(vertexCount_, 1, 0, 0, 0);
@@ -114,8 +77,40 @@ void CreateSkyBox::SettingVertex() {
 
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
-	for (uint32_t i = 0; i < vertexCount_; i++) {
-		indexData_[i] = i;
+	//Boxに必要な8頂点を定義
+	const float halfSize = 1.0f;
+	VertexData vertices[8] = {
+		{{halfSize, halfSize, halfSize, 1.0f}, {0.0f, 1.0f}}, //0
+		{{-halfSize, halfSize, halfSize, 1.0f}, {1.0f, 1.0f}}, //1
+		{{-halfSize, -halfSize, halfSize, 1.0f}, {1.0f, 0.0f}}, //2
+		{{halfSize, -halfSize, halfSize, 1.0f}, {0.0f, 0.0f}}, //3
+		{{halfSize, halfSize, -halfSize, 1.0f}, {0.0f, 1.0f}}, //4
+		{{-halfSize, halfSize, -halfSize, 1.0f}, {1.0f, 1.0f}}, //5
+		{{-halfSize, -halfSize, -halfSize, 1.0f}, {1.0f, 0.0f}}, //6
+		{{halfSize, -halfSize, -halfSize, 1.0f}, {0.0f, 0.0f}} //7
+	};
+
+	//36個のindexを定義
+	uint32_t indices[36] = {
+		0, 1, 2, 2, 3, 0, //前面
+		4, 5, 6, 6, 7, 4, //背面
+		0, 1, 5, 5, 4, 0, //下面
+		2, 3, 7, 7, 6, 2, //上面
+		0, 3, 7, 7, 4, 0, //左側面
+		1, 2, 6, 6, 5, 1  //右側面
+	};
+
+	//vertexDataをコピー
+	for (uint32_t i = 0; i < 8; ++i) {
+		vertexData_[i] = vertices[i];
+		vertexData_[i].normal.num[0] = vertices[i].position.num[0];
+		vertexData_[i].normal.num[1] = vertices[i].position.num[1];
+		vertexData_[i].normal.num[2] = vertices[i].position.num[2];
+	}
+
+	//indexDataをコピー
+	for (uint32_t i = 0; i < 36; ++i) {
+		indexData_[i] = indices[i];
 	}
 }
 
