@@ -22,15 +22,6 @@ void Player::Update() {
 	structSphere_.center = worldTransform_.GetWorldPos();
 	structSphere_.radius = 1.5f;
 
-	if (isHitEnemy_ == true) {
-		hitTimer_++;
-	}
-
-	if (hitTimer_ >= 20) {
-		hitTimer_ = 0;
-		isHitEnemy_ = false;
-	}
-
 	if (moveFlag_ == false) {
 		moveCount_++;
 	}
@@ -67,15 +58,6 @@ void Player::UpdateView() {
 	worldTransform_.rotation_.num[1] += 1.0f;
 
 	worldTransform_.UpdateMatrix();
-
-	if (isHitEnemy_ == true) {
-		hitTimer_++;
-	}
-
-	if (hitTimer_ >= 20) {
-		hitTimer_ = 0;
-		isHitEnemy_ = false;
-	}
 }
 
 void Player::Draw(const ViewProjection& viewProjection) {
@@ -229,8 +211,5 @@ void Player::SetObjectPos(const WorldTransform& worldtransform) {
 }
 
 void Player::SetVelocity(const Vector3 velocity) {
-	if (isHitEnemy_ == false) {
-		velocity_ = velocity;
-		isHitEnemy_ = true;
-	}
+	velocity_ = velocity;
 }

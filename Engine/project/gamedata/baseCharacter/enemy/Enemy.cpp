@@ -20,24 +20,6 @@ void Enemy::Update() {
 	structSphere_.center = worldTransform_.GetWorldPos();
 	structSphere_.radius = 1.5f;
 
-	if (isHitPlayer == true) {
-		hitPlayerTimer_++;
-	}
-
-	if (hitPlayerTimer_ >= 10) {
-		hitPlayerTimer_ = 0;
-		isHitPlayer = false;
-	}
-
-	if (isHitEnemy == true) {
-		hitEnemyTimer_++;
-	}
-
-	if (hitEnemyTimer_ >= 15) {
-		hitEnemyTimer_ = 0;
-		isHitEnemy = false;
-	}
-
 	if (worldTransform_.translation_.num[1] < -10.0f) {
 		isDead_ = true;
 	}
@@ -103,14 +85,6 @@ void Enemy::SetObjectPos(const WorldTransform& worldtransform) {
 }
 
 void Enemy::SetVelocity(const Vector3 velocity) {
-	if (isHitPlayer == false) {
-		velocity_ = velocity;
-		isHitPlayer = true;
-		isGravityAccelerationCalc = true;
-	}
-	if (isHitEnemy == false) {
-		velocity_ = velocity;
-		isHitEnemy = true;
-		isGravityAccelerationCalc = true;
-	}
+	//velocity_ = velocity;
+	isGravityAccelerationCalc = true;
 }

@@ -116,11 +116,13 @@ void GamePlayScene::Initialize() {
 
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
+
+	gameStart = true;
 }
 
 void GamePlayScene::Update() {
 	if (gameStart == true) {
-		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
+		player_->SetWorldTransform(Vector3{ 20.0f,0.2f,0.0f });
 		player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
 		directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.5f };
 		pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
@@ -251,13 +253,19 @@ void GamePlayScene::Update() {
 		StructSphere eSphere;
 		eSphere = enemy->GetStructSphere();
 		if (IsCollision(pSphere,eSphere)) {
-			if (enemy->isHitPlayer == false) {
-				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), 0.8f, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
-				player_->SetVelocity(pair.first);
-				enemy->SetVelocity(pair.second);
-				rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-				audio_->SoundPlayWave(soundData2_, 0.1f, false);
-			}
+			Vector3 test = pSphere.center - eSphere.center * 0.5;
+			test += eSphere.center;
+			pSphere.center = test + Normalize(pSphere.center - test) * pSphere.radius * 1.1f;
+			player_->SetWorldTransform(pSphere.center);
+
+			eSphere.center = test + Normalize(eSphere.center - test) * eSphere.radius * 1.1f;
+			enemy->SetWorldTransform(eSphere.center);
+
+			std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), 0.8f, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
+			player_->SetVelocity(pair.first);
+			enemy->SetVelocity(pair.second);
+			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+			audio_->SoundPlayWave(soundData2_, 0.1f, false);
 		}
 	}
 
@@ -270,14 +278,10 @@ void GamePlayScene::Update() {
 				eSphere2 = enemy2->GetStructSphere();
 			}
 			if (IsCollision(eSphere1, eSphere2)) {
-				if (enemy->isHitEnemy == false) {
-					if (enemy2->isHitEnemy == false) {
-						std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy->GetVelocity(), 1.0f, enemy2->GetVelocity(), 0.8f, Normalize(enemy->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
-						enemy->SetVelocity(pair.first);
-						enemy2->SetVelocity(pair.second);
-						audio_->SoundPlayWave(soundData2_, 0.1f, false);
-					}
-				}
+				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy->GetVelocity(), 1.0f, enemy2->GetVelocity(), 0.8f, Normalize(enemy->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
+				enemy->SetVelocity(pair.first);
+				enemy2->SetVelocity(pair.second);
+				audio_->SoundPlayWave(soundData2_, 0.1f, false);
 			}
 		}
 	}

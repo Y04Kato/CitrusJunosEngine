@@ -26,8 +26,6 @@ public:
 	void SetObjectPos(const WorldTransform& worldtransform);
 
 	bool isHitOnFloor = false;
-	bool isHitPlayer = false;
-	bool isHitEnemy = false;
 
 	bool GetisDead() { return isDead_; }
 	void SetisDead() { isDead_ = true; }
@@ -53,9 +51,6 @@ private:
 	Quaternion preQuaternion_;
 
 	const ViewProjection* viewProjection_ = nullptr;
-
-	int hitPlayerTimer_ = 0;
-	int hitEnemyTimer_ = 0;
 
 	bool isGravityAccelerationCalc = false;
 };

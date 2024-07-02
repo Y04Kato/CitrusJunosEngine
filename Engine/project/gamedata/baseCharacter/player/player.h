@@ -42,8 +42,6 @@ public:
 
 	int GetMoveMode() { return moveMode_; }
 
-	bool GetIsHitEnemy() { return isHitEnemy_; }
-
 	bool GetIsMoveFlag() { return moveFlag_; }
 
 private:
@@ -64,9 +62,6 @@ private:
 
 	//0~2で弱~強
 	int moveMode_ = 0;
-
-	int hitTimer_ = 0;
-	bool isHitEnemy_ = false;
 
 	bool moveFlag_ = true;
 	int moveCount_ = 0;
