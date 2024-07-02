@@ -86,7 +86,7 @@ void CreateLine::Draw(const WorldTransform& worldTransform1, const WorldTransfor
 
 	//VBVを設定
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferViewLine_);
+	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 
 	//形状を設定。PS0に設定しているものとはまた別。同じものを設定する
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -121,18 +121,18 @@ void CreateLine::SettingVertex() {
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
-	indexResourceLine_ = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(uint32_t) * vertexCount_);
+	indexResource_ = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(uint32_t) * vertexCount_);
 
-	indexBufferViewLine_.BufferLocation = indexResourceLine_->GetGPUVirtualAddress();
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
-	indexBufferViewLine_.SizeInBytes = sizeof(uint32_t) * vertexCount_;
+	indexBufferView_.SizeInBytes = sizeof(uint32_t) * vertexCount_;
 
-	indexBufferViewLine_.Format = DXGI_FORMAT_R32_UINT;
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
-	indexResourceLine_->Map(0, nullptr, reinterpret_cast<void**>(&indexDataLine_));
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 
 	for (uint32_t i = 0; i < vertexCount_; i++) {
-		indexDataLine_[i] = i;
+		indexData_[i] = i;
 	}
 }
 

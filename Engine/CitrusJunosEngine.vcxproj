@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClCompile Include="base\components\2d\CreateParticle.cpp" />
     <ClCompile Include="base\components\3d\CreateLine.cpp" />
+    <ClCompile Include="base\components\3d\CreateSkyBox.cpp" />
     <ClCompile Include="base\components\3d\ViewProjection.cpp" />
     <ClCompile Include="base\components\3d\WorldTransform.cpp" />
     <ClCompile Include="base\components\audio\Audio.cpp" />
@@ -160,11 +161,13 @@
     <ClCompile Include="base\components\manager\TextureManager\TextureManager.cpp" />
     <ClCompile Include="base\components\pipelineState\Gaussian\Gaussian.cpp" />
     <ClCompile Include="base\components\pipelineState\Grayscale\Grayscale.cpp" />
+    <ClCompile Include="base\components\pipelineState\MaskTexture\MaskTexture.cpp" />
     <ClCompile Include="base\components\pipelineState\Outline\Outline.cpp" />
     <ClCompile Include="base\components\pipelineState\Particle\Particle.cpp" />
     <ClCompile Include="base\components\pipelineState\PostProcess\PostProcess.cpp" />
     <ClCompile Include="base\components\pipelineState\RadialBlur\RadialBlur.cpp" />
     <ClCompile Include="base\components\pipelineState\Skinning\Skinning.cpp" />
+    <ClCompile Include="base\components\pipelineState\SkyBox\SkyBox.cpp" />
     <ClCompile Include="base\components\pipelineState\Smoothing\Smoothing.cpp" />
     <ClCompile Include="base\components\pipelineState\VAT\VAT.cpp" />
     <ClCompile Include="base\components\pipelineState\Standard2D\Standard2D.cpp" />
@@ -185,6 +188,7 @@
     <ClCompile Include="base\components\3d\Model.cpp" />
     <ClCompile Include="base\components\debugCamera\DebugCamera.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
+    <ClCompile Include="externals\imgui\ImGuizmo.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
     <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp" />
@@ -258,6 +262,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\MaskTexture.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="project\gamedata\resources\shaders\Object2d.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -330,6 +342,22 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\SkyBox.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\SkyBox.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="project\gamedata\resources\shaders\VAT.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -358,6 +386,7 @@
   <ItemGroup>
     <ClInclude Include="base\components\2d\CreateParticle.h" />
     <ClInclude Include="base\components\3d\CreateLine.h" />
+    <ClInclude Include="base\components\3d\CreateSkyBox.h" />
     <ClInclude Include="base\components\3d\ViewProjection.h" />
     <ClInclude Include="base\components\3d\WorldTransform.h" />
     <ClInclude Include="base\components\audio\Audio.h" />
@@ -370,12 +399,14 @@
     <ClInclude Include="base\components\pipelineState\Grayscale\Grayscale.h" />
     <ClInclude Include="base\components\math\Structure.h" />
     <ClInclude Include="base\components\pipelineState\IPipeLineStateObject.h" />
+    <ClInclude Include="base\components\pipelineState\MaskTexture\MaskTexture.h" />
     <ClInclude Include="base\components\pipelineState\Outline\Outline.h" />
     <ClInclude Include="base\components\pipelineState\Particle\Particle.h" />
     <ClInclude Include="base\components\pipelineState\PipeLineList.h" />
     <ClInclude Include="base\components\pipelineState\PostProcess\PostProcess.h" />
     <ClInclude Include="base\components\pipelineState\RadialBlur\RadialBlur.h" />
     <ClInclude Include="base\components\pipelineState\Skinning\Skinning.h" />
+    <ClInclude Include="base\components\pipelineState\SkyBox\SkyBox.h" />
     <ClInclude Include="base\components\pipelineState\Smoothing\Smoothing.h" />
     <ClInclude Include="base\components\pipelineState\VAT\VAT.h" />
     <ClInclude Include="base\components\pipelineState\Standard2D\Standard2D.h" />
@@ -398,6 +429,7 @@
     <ClInclude Include="base\components\debugCamera\DebugCamera.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
+    <ClInclude Include="externals\imgui\ImGuizmo.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
     <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
     <ClInclude Include="externals\imgui\imgui_internal.h" />
@@ -445,6 +477,7 @@
     <None Include="project\gamedata\resources\shaders\Object3d.hlsli" />
     <None Include="project\gamedata\resources\shaders\Particle.hlsli" />
     <None Include="project\gamedata\resources\shaders\SkinningObject3d.hlsli" />
+    <None Include="project\gamedata\resources\shaders\SkyBox.hlsli" />
     <None Include="project\gamedata\resources\shaders\VAT.hlsli" />
   </ItemGroup>
   <ItemGroup>

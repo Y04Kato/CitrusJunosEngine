@@ -1,10 +1,24 @@
 #include "PostEffect.h"
 
-void PostEffect::Initialize(){
+PostEffect* PostEffect::GetInstance() {
+	static PostEffect instance;
+	return &instance;
+}
+
+void PostEffect::Initialize() {
 	CJEngine_ = CitrusJunosEngine::GetInstance();
 	dxCommon_ = DirectXCommon::GetInstance();
+	textureManager_ = TextureManager::GetInstance();
 	SRVManager_ = SRVManager::GetInstance();
 
+	//一応初期設定でデータ割り当て
+	maskTexture_ = textureManager_->Load("project/gamedata/resources/noise0.png");
+	thresholdResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(MaskData));
+	thresholdResource_->Map(0, NULL, reinterpret_cast<void**>(&maskData_));
+
+	maskData_->maskThreshold = 0.5f;
+	maskData_->maskColor = {0.0f, 1.0f, 0.0f};
+	maskData_->edgeColor = { 1.0f,0.4f,0.3f };
 }
 
 void PostEffect::Draw(){
@@ -15,6 +29,12 @@ void PostEffect::Draw(){
 	//Outlineの時のみ使用
 	if (CJEngine_->renderer_->GetNowPipeLineType() == PipelineType::Outline) {
 
+	}
+
+	//MaskTextureの時のみ使用
+	if (CJEngine_->renderer_->GetNowPipeLineType() == PipelineType::MaskTexture) {
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, textureManager_->GetGPUHandle(maskTexture_));
+		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(2, thresholdResource_->GetGPUVirtualAddress());
 	}
 
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);

@@ -14,6 +14,7 @@ void PSOManager::Initialize(){
 	std::unique_ptr<Standard2D> standard2D = std::make_unique<Standard2D>();
 	std::unique_ptr<ParticlePSO> particle = std::make_unique<ParticlePSO>();
 	std::unique_ptr<Skinning> skininng = std::make_unique<Skinning>();
+	std::unique_ptr<SkyBox> skyBox = std::make_unique<SkyBox>();
 	std::unique_ptr<VAT> vat = std::make_unique<VAT>();
 	std::unique_ptr<PostProcess> postProcess = std::make_unique<PostProcess>();
 	std::unique_ptr<Grayscale> grayscale = std::make_unique<Grayscale>();
@@ -22,6 +23,7 @@ void PSOManager::Initialize(){
 	std::unique_ptr<Gaussian> gaussian = std::make_unique<Gaussian>();
 	std::unique_ptr<Outline> outline = std::make_unique<Outline>();
 	std::unique_ptr<RadialBlur> radialBlur = std::make_unique<RadialBlur>();
+	std::unique_ptr<MaskTexture> maskTexture = std::make_unique<MaskTexture>();
 
 
 	//Initializeの宣言
@@ -29,6 +31,7 @@ void PSOManager::Initialize(){
 	standard2D->Initialize();
 	particle->Initialize();
 	skininng->Initialize();
+	skyBox->Initialize();
 	vat->Initialize();
 	postProcess->Initialize();
 	grayscale->Initialize();
@@ -37,6 +40,7 @@ void PSOManager::Initialize(){
 	gaussian->Initialize();
 	outline->Initialize();
 	radialBlur->Initialize();
+	maskTexture->Initialize();
 
 
 	//パイプラインを追加する
@@ -44,6 +48,7 @@ void PSOManager::Initialize(){
 	AddPipeline(standard2D->GetPSO(), PipelineType::Standard2D);
 	AddPipeline(particle->GetPSO(), PipelineType::Particle);
 	AddPipeline(skininng->GetPSO(), PipelineType::Skinning);
+	AddPipeline(skyBox->GetPSO(), PipelineType::SkyBox);
 	AddPipeline(vat->GetPSO(), PipelineType::VertexAnimationTexture);
 	AddPipeline(postProcess->GetPSO(), PipelineType::PostProcess);
 	AddPipeline(grayscale->GetPSO(), PipelineType::Grayscale);
@@ -52,4 +57,5 @@ void PSOManager::Initialize(){
 	AddPipeline(gaussian->GetPSO(), PipelineType::Gaussian);
 	AddPipeline(outline->GetPSO(), PipelineType::Outline);
 	AddPipeline(radialBlur->GetPSO(), PipelineType::RadialBlur);
+	AddPipeline(maskTexture->GetPSO(), PipelineType::MaskTexture);
 }

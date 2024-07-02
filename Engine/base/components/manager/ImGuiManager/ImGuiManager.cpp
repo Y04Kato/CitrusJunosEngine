@@ -24,6 +24,7 @@ void ImGuiManager::Begin(){
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 	ID3D12DescriptorHeap* descriptorHeaps[] = { dxCommon_->GetSrvDescriptiorHeap().Get() };
 	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
@@ -37,7 +38,12 @@ void ImGuiManager::Draw(){
 #ifdef USE_IMGUI
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon_->GetCommandList().Get());
 #endif
+}
 
+void ImGuiManager::DrawGuizmo(float viewMatrix,float projectionMatrix,float objectMatrix){
+#ifdef USE_IMGUI
+	ImGuizmo::Manipulate(&viewMatrix, &projectionMatrix, ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, &objectMatrix);
+#endif
 }
 
 void ImGuiManager::Finalize() {

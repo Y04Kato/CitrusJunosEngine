@@ -4,6 +4,7 @@
 #include "pipelineState/Standard2D/Standard2D.h"
 #include "pipelineState/Particle/Particle.h"
 #include "pipelineState/Skinning/Skinning.h"
+#include "pipelineState/SkyBox/SkyBox.h"
 #include "pipelineState/VAT/VAT.h"
 #include "pipelineState/PostProcess/PostProcess.h"
 #include "pipelineState/Grayscale/Grayscale.h"
@@ -12,6 +13,7 @@
 #include "pipelineState/Gaussian/Gaussian.h"
 #include "pipelineState/Outline/Outline.h"
 #include "pipelineState/RadialBlur/RadialBlur.h"
+#include "pipelineState/MaskTexture/MaskTexture.h"
 
 #include <map>
 

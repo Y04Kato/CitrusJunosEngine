@@ -10,11 +10,13 @@
 #include "components/2d/CreateParticle.h"
 #include "components/3d/CreateLine.h"
 #include "components/3d/CreateSphere.h"
+#include "components/3d/CreateSkyBox.h"
 #include "components/3d/Model.h"
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
 #include "levelDataLoader/LevelDataLoader.h"
+#include "postEffect/PostEffect.h"
 
 #include "components/utilities/globalVariables/GlobalVariables.h"
 
@@ -68,6 +70,10 @@ private:
 	WorldTransform worldTransformSphere_[2];
 	Vector4 sphereMaterial_[2];
 
+	std::unique_ptr <CreateSkyBox> skyBox_;
+	WorldTransform worldTransformSkyBox_;
+	Vector4 skyBoxMaterial_;
+
 	std::unique_ptr<Model> model_[3];
 	WorldTransform worldTransformModel_[3];
 	Vector4 modelMaterial_[3];
@@ -81,6 +87,7 @@ private:
 	uint32_t monsterBallResourceNum_;
 	uint32_t kaedeResourceNum_;
 	uint32_t cjEngineResourceNum_;
+	uint32_t ddsResourceNum_;
 
 	Audio* audio_;
 	SoundData soundData1_;
@@ -90,6 +97,13 @@ private:
 
 	DebugCamera* debugCamera_;
 
+
+	PostEffect* postEffect_;
+	//MaskTexture用Data
+	uint32_t noiseTexture_[2];
+	int maskTextureNum_;
+	MaskData maskData_;
+
 	int texture_[2];
 
 	bool isTriangleDraw_[2];
@@ -98,6 +112,7 @@ private:
 	bool isModelDraw_[3];
 	bool isParticleDraw_[2];
 	bool isLineDraw_;
+	bool isSkyBoxDraw_;
 	bool isVATDraw_;
 
 	bool isGrayScaleDraw_;
@@ -106,6 +121,7 @@ private:
 	bool isGaussianDraw_;
 	bool isOutlineDraw_;
 	bool isRadialBlurDraw_;
+	bool isMaskDraw_;
 
 	//ステージエディター擬き、名前をtest0~始め、それを記録する
 	struct Obj {

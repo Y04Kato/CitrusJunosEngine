@@ -312,6 +312,18 @@
     <ClCompile Include="base\components\3d\CreateLine.cpp">
       <Filter>ソース ファイル\base\components\3d</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\3d\CreateSkyBox.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\MaskTexture\MaskTexture.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\ImGuizmo.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\SkyBox\SkyBox.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -344,6 +356,9 @@
     <FxCompile Include="project\gamedata\resources\shaders\GaussianFilter.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\DepthBasedOutline.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\RadialBlur.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\MaskTexture.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\SkyBox.VS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\SkyBox.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\DirectXCommon.h">
@@ -541,6 +556,18 @@
     <ClInclude Include="base\components\pipelineState\RadialBlur\RadialBlur.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="base\components\3d\CreateSkyBox.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\MaskTexture\MaskTexture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\ImGuizmo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\SkyBox\SkyBox.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -560,6 +587,7 @@
     <None Include="project\gamedata\resources\shaders\VAT.hlsli" />
     <None Include="project\gamedata\resources\shaders\CopyImage.hlsli" />
     <None Include="project\gamedata\resources\shaders\SkinningObject3d.hlsli" />
+    <None Include="project\gamedata\resources\shaders\SkyBox.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CitrusJunosEngine.rc">

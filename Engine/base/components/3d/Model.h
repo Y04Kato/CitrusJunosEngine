@@ -64,9 +64,9 @@ public:
 	/// 1:VATpos.png
 	/// 2:VATrot.png
 	/// </summary>
-	void LoadVATData(const std::string& directoryPath, const VATData& vatdata);
+	void LoadVATData(const std::string& directoryPath, const VATData* vatdata);
 
-	void SetVATTime(float animTime) { vatData_.VATTime = animTime; };
+	void SetVATTime(const float& animTime) { vatData_->VATTime = animTime; };
 
 private:
 	DirectXCommon* dxCommon_;
@@ -113,7 +113,7 @@ private:
 	uint32_t vatPosTex_;
 	uint32_t vatRotTex_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> vatResource_;
-	VATData vatData_;
+	VATData* vatData_;
 
 	WorldTransform world_;
 

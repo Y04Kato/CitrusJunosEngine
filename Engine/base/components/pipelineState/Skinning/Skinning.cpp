@@ -34,16 +34,16 @@ void Skinning::CreateRootSignature() {
 	rootParameters[7].DescriptorTable.pDescriptorRanges = descriptorRangeForStructured;//tableの中身の配列を指定
 	rootParameters[7].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForStructured);//Tableで利用する数
 
-	D3D12_DESCRIPTOR_RANGE descriptoraRange[1] = {};
-	descriptoraRange[0].BaseShaderRegister = 1;//0から始まる
-	descriptoraRange[0].NumDescriptors = 1;//数は1つ
-	descriptoraRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptoraRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	descriptorRange[0].BaseShaderRegister = 1;//0から始まる
+	descriptorRange[0].NumDescriptors = 1;//数は1つ
+	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 	//Texture
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixcelShaderを使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptoraRange;//tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptoraRange);//Tableで利用する数
+	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//tableの中身の配列を指定
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
 
 	//MaterialResource
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う

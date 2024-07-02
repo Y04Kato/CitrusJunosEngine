@@ -4,6 +4,8 @@
 #include <imgui/imgui_impl_dx12.h>
 #include <imgui/imgui_impl_win32.h>
 
+#include <imgui/ImGuizmo.h>
+
 class ImGuiManager {
 public:
 	static ImGuiManager* GetInstance();
@@ -11,6 +13,7 @@ public:
 	void Begin();
 	void End();
 	void Draw();
+	void DrawGuizmo(float viewMatrix, float projectionMatrix, float objectMatrix);
 	void Finalize();
 private:
 	DirectXCommon* dxCommon_;
