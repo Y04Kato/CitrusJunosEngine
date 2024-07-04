@@ -76,6 +76,8 @@ void Enemy::IsFallStart() {
 
 void Enemy::SetWorldTransform(const Vector3 translation) {
 	worldTransform_.translation_ = translation;
+	worldTransform_.TransferMatrix();
+	worldTransform_.UpdateMatrix();
 	velocity_.num[1] = 0.001f;
 	isDead_ = false;
 }
@@ -85,6 +87,6 @@ void Enemy::SetObjectPos(const WorldTransform& worldtransform) {
 }
 
 void Enemy::SetVelocity(const Vector3 velocity) {
-	//velocity_ = velocity;
+	velocity_ = velocity;
 	isGravityAccelerationCalc = true;
 }

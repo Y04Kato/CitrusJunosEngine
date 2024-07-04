@@ -122,7 +122,8 @@ void GamePlayScene::Initialize() {
 
 void GamePlayScene::Update() {
 	if (gameStart == true) {
-		player_->SetWorldTransform(Vector3{ 20.0f,0.2f,0.0f });
+		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
+		player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
 		player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
 		directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.5f };
 		pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
@@ -253,13 +254,19 @@ void GamePlayScene::Update() {
 		StructSphere eSphere;
 		eSphere = enemy->GetStructSphere();
 		if (IsCollision(pSphere,eSphere)) {
-			Vector3 test = pSphere.center - eSphere.center * 0.5;
-			test += eSphere.center;
-			pSphere.center = test + Normalize(pSphere.center - test) * pSphere.radius * 1.1f;
-			player_->SetWorldTransform(pSphere.center);
+			//押し戻しの処理
+			Vector3 direction = eSphere.center - pSphere.center;
+			float distance = Length(direction);
+			float overlap = pSphere.radius + eSphere.radius - distance;
 
-			eSphere.center = test + Normalize(eSphere.center - test) * eSphere.radius * 1.1f;
-			enemy->SetWorldTransform(eSphere.center);
+			if (overlap > 0.0f) {
+				Vector3 correction = Normalize(direction) * (overlap / 2) * 1.5f;
+				pSphere.center = pSphere.center - correction;
+				eSphere.center = eSphere.center + correction;
+
+				player_->SetWorldTransform(pSphere.center);
+				enemy->SetWorldTransform(eSphere.center);
+			}
 
 			std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), 0.8f, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
 			player_->SetVelocity(pair.first);
@@ -278,6 +285,20 @@ void GamePlayScene::Update() {
 				eSphere2 = enemy2->GetStructSphere();
 			}
 			if (IsCollision(eSphere1, eSphere2)) {
+				//押し戻しの処理
+				Vector3 direction = eSphere2.center - eSphere1.center;
+				float distance = Length(direction);
+				float overlap = eSphere1.radius + eSphere2.radius - distance;
+
+				if (overlap > 0.0f) {
+					Vector3 correction = Normalize(direction) * (overlap / 2) * 1.5f;
+					eSphere1.center = eSphere1.center - correction;
+					eSphere2.center = eSphere2.center + correction;
+
+					enemy->SetWorldTransform(eSphere1.center);
+					enemy2->SetWorldTransform(eSphere2.center);
+				}
+
 				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy->GetVelocity(), 1.0f, enemy2->GetVelocity(), 0.8f, Normalize(enemy->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
 				enemy->SetVelocity(pair.first);
 				enemy2->SetVelocity(pair.second);
@@ -391,8 +412,8 @@ void GamePlayScene::ApplyGlobalVariables() {
 
 void GamePlayScene::SetEnemy(Vector3 pos) {
 	Enemy* enemy = new Enemy();
-	enemy->SetWorldTransform(pos);
 	enemy->Initialize(enemyModel_.get());
+	enemy->SetWorldTransform(pos);
 	enemys_.push_back(enemy);
 	enemyDethCount++;
 }

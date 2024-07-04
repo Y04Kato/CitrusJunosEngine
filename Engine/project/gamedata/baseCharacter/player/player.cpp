@@ -201,7 +201,8 @@ void Player::IsFallStart() {
 
 void Player::SetWorldTransform(const Vector3 translation) {
 	worldTransform_.translation_ = translation;
-	velocity_ = { 0.0f,0.0f,0.0f };
+	worldTransform_.TransferMatrix();
+	worldTransform_.UpdateMatrix();
 	velocity_.num[1] = 0.001f;
 	gameOver = false;
 }
