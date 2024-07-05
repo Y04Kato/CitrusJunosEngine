@@ -12,6 +12,7 @@ void PostEffect::Initialize() {
 	SRVManager_ = SRVManager::GetInstance();
 
 	//一応初期設定でデータ割り当て
+	//Mask
 	maskTexture_ = textureManager_->Load("project/gamedata/resources/noise0.png");
 	thresholdResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(MaskData));
 	thresholdResource_->Map(0, NULL, reinterpret_cast<void**>(&maskData_));
@@ -19,6 +20,12 @@ void PostEffect::Initialize() {
 	maskData_->maskThreshold = 0.5f;
 	maskData_->maskColor = {0.0f, 1.0f, 0.0f};
 	maskData_->edgeColor = { 1.0f,0.4f,0.3f };
+
+	//Random
+	randomResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(RandomData));
+	randomResource_->Map(0, NULL, reinterpret_cast<void**>(&randomData_));
+
+	randomData_->time = 0.0f;
 }
 
 void PostEffect::Draw(){
@@ -35,6 +42,12 @@ void PostEffect::Draw(){
 	if (CJEngine_->renderer_->GetNowPipeLineType() == PipelineType::MaskTexture) {
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, textureManager_->GetGPUHandle(maskTexture_));
 		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(2, thresholdResource_->GetGPUVirtualAddress());
+	}
+
+	//Randomの時のみ使用
+	randomData_->time++;
+	if (CJEngine_->renderer_->GetNowPipeLineType() == PipelineType::Random) {
+		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, randomResource_->GetGPUVirtualAddress());
 	}
 
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);

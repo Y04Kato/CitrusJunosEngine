@@ -428,6 +428,7 @@ void GameDemoScene::Update() {
 				ImGui::TreePop();
 			}
 		}
+		ImGui::Checkbox("DrawRandom", &isRandomDraw_);
 		ImGui::TreePop();
 	}
 
@@ -619,6 +620,9 @@ void GameDemoScene::DrawPostEffect() {
 	}
 	if (isMaskDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::MaskTexture);
+	}
+	if (isRandomDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Random);
 	}
 }
 

@@ -8,3 +8,8 @@ struct MaskData{
     float32_t3 maskColor;
     float32_t3 edgeColor;
 };
+
+struct RandomData
+{
+    float32_t time;
+};

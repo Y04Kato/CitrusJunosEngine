@@ -15,4 +15,5 @@ enum class PipelineType {
 	Outline,
 	RadialBlur,
 	MaskTexture,
+	Random,
 };
