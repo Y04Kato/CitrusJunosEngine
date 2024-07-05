@@ -106,11 +106,10 @@ void GamePlayScene::Initialize() {
 	enemyModel_->SetDirectionalLightFlag(true, 2);
 
 	postEffect_ = PostEffect::GetInstance();
-	noiseTexture_ = textureManager_->Load("project/gamedata/resources/noise1.png");
+	noiseTexture_ = textureManager_->Load("project/gamedata/resources/noise0.png");
 	maskData_.maskThreshold = 1.0f;
-	maskData_.maskColor = { 0.0f,1.0f,0.0f };
-	maskData_.edgeColor = { 1.0f,0.4f,0.3f };
-	postEffect_->SetMaskTexture(noiseTexture_);
+	maskData_.maskColor = { 0.2f,0.2f,0.2f };
+	maskData_.edgeColor = { 0.2f,0.2f,0.2f };
 
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
@@ -135,7 +134,8 @@ void GamePlayScene::Update() {
 		directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.5f };
 		pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
 		debugCamera_->MovingCamera(Vector3{ 0.0f,44.7f,-55.2f }, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
-		maskData_.maskThreshold = 0.0f;
+		maskData_.maskThreshold = 1.0f;
+		postEffect_->SetMaskTexture(noiseTexture_);
 		for (int i = 0; i < 10; i++) {
 			SetEnemy(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
 		}
@@ -162,7 +162,6 @@ void GamePlayScene::Update() {
 	else if (isfadeIn == true && gameclear == true) {
 		debugCamera_->MovingCamera(player_->GetWorldTransform().translation_, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ += 4;
-		maskData_.maskThreshold -= 0.05f;
 		if (fadeAlpha_ >= 256) {
 			gameStart = true;
 			isfadeIn = false;
@@ -174,7 +173,7 @@ void GamePlayScene::Update() {
 	}
 	else if (isfadeIn == true && gameover == true) {
 		fadeAlpha_ += 4;
-		maskData_.maskThreshold -= 0.05f;
+		maskData_.maskThreshold -= 0.02f;
 		if (fadeAlpha_ >= 256) {
 			gameStart = true;
 			for (Enemy* enemy : enemys_) {
@@ -409,8 +408,11 @@ void GamePlayScene::DrawUI() {
 
 void GamePlayScene::DrawPostEffect() {
 	CJEngine_->renderer_->Draw(PipelineType::Vignette);
-	if (gameclear == true || gameover == true) {
+	if (gameover == true) {
 		CJEngine_->renderer_->Draw(PipelineType::MaskTexture);
+	}
+	if (gameclear == true) {
+		CJEngine_->renderer_->Draw(PipelineType::RadialBlur);
 	}
 }
 
