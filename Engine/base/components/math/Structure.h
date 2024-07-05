@@ -183,6 +183,10 @@ struct MaskData {
 	Vector3 edgeColor;
 };
 
+struct RandomData {
+	float time;
+};
+
 #pragma endregion
 
 #pragma region Particle

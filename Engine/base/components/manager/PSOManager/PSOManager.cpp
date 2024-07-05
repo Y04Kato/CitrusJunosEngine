@@ -24,6 +24,7 @@ void PSOManager::Initialize(){
 	std::unique_ptr<Outline> outline = std::make_unique<Outline>();
 	std::unique_ptr<RadialBlur> radialBlur = std::make_unique<RadialBlur>();
 	std::unique_ptr<MaskTexture> maskTexture = std::make_unique<MaskTexture>();
+	std::unique_ptr<Random> random = std::make_unique<Random>();
 
 
 	//Initializeの宣言
@@ -41,6 +42,7 @@ void PSOManager::Initialize(){
 	outline->Initialize();
 	radialBlur->Initialize();
 	maskTexture->Initialize();
+	random->Initialize();
 
 
 	//パイプラインを追加する
@@ -58,4 +60,5 @@ void PSOManager::Initialize(){
 	AddPipeline(outline->GetPSO(), PipelineType::Outline);
 	AddPipeline(radialBlur->GetPSO(), PipelineType::RadialBlur);
 	AddPipeline(maskTexture->GetPSO(), PipelineType::MaskTexture);
+	AddPipeline(random->GetPSO(), PipelineType::Random);
 }

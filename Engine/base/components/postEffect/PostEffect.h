@@ -72,5 +72,9 @@ private:
 	//Mask用の閾値
 	Microsoft::WRL::ComPtr<ID3D12Resource> thresholdResource_;
 	MaskData* maskData_;
+
+	//Random用
+	Microsoft::WRL::ComPtr<ID3D12Resource> randomResource_;
+	RandomData* randomData_;
 };
 
