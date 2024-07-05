@@ -260,7 +260,7 @@ void GamePlayScene::Update() {
 			float overlap = pSphere.radius + eSphere.radius - distance;
 
 			if (overlap > 0.0f) {
-				Vector3 correction = Normalize(direction) * (overlap / 2) * 1.5f;
+				Vector3 correction = Normalize(direction) * (overlap / 2) * 2.0f;
 				pSphere.center = pSphere.center - correction;
 				eSphere.center = eSphere.center + correction;
 
@@ -275,38 +275,6 @@ void GamePlayScene::Update() {
 			audio_->SoundPlayWave(soundData2_, 0.1f, false);
 		}
 	}
-
-	//for (Enemy* enemy : enemys_) {
-	//	StructSphere eSphere1;
-	//	eSphere1 = enemy->GetStructSphere();
-	//	for (Enemy* enemy2 : enemys_) {
-	//		StructSphere eSphere2;
-	//		if (enemy != enemy2) {
-	//			eSphere2 = enemy2->GetStructSphere();
-
-	//			if (IsCollision(eSphere1, eSphere2)) {
-	//				//押し戻しの処理
-	//				Vector3 direction = eSphere2.center - eSphere1.center;
-	//				float distance = Length(direction);
-	//				float overlap = eSphere1.radius + eSphere2.radius - distance;
-
-	//				if (overlap > 0.0f) {
-	//					Vector3 correction = Normalize(direction) * (overlap / 2) * 1.5f;
-	//					eSphere1.center = eSphere1.center - correction;
-	//					eSphere2.center = eSphere2.center + correction;
-
-	//					enemy->SetWorldTransform(eSphere1.center);
-	//					enemy2->SetWorldTransform(eSphere2.center);
-	//				}
-
-	//				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy->GetVelocity(), 1.0f, enemy2->GetVelocity(), 0.8f, Normalize(enemy->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
-	//				enemy->SetVelocity(pair.first);
-	//				enemy2->SetVelocity(pair.second);
-	//				audio_->SoundPlayWave(soundData2_, 0.1f, false);
-	//			}
-	//		}
-	//	}
-	//}
 
 	for (auto it1 = enemys_.begin(); it1 != enemys_.end(); ++it1) {
 		for (auto it2 = std::next(it1); it2 != enemys_.end(); ++it2) {
@@ -323,7 +291,7 @@ void GamePlayScene::Update() {
 				float overlap = eSphere1.radius + eSphere2.radius - distance;
 
 				if (overlap > 0.0f) {
-					Vector3 correction = Normalize(direction) * (overlap / 2) * 1.5f;
+					Vector3 correction = Normalize(direction) * (overlap / 2) * 2.0f;
 					eSphere1.center = eSphere1.center - correction;
 					eSphere2.center = eSphere2.center + correction;
 

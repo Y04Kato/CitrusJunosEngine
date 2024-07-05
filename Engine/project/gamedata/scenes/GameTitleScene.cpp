@@ -252,7 +252,12 @@ void GameTitleScene::DrawUI() {
 }
 
 void GameTitleScene::DrawPostEffect() {
-	CJEngine_->renderer_->Draw(PipelineType::Gaussian);
+	if (count == 2) {
+		CJEngine_->renderer_->Draw(PipelineType::RadialBlur);
+	}
+	else {
+		CJEngine_->renderer_->Draw(PipelineType::Gaussian);
+	}
 }
 
 void GameTitleScene::Finalize() {
