@@ -148,6 +148,10 @@ void GameTitleScene::Update() {
 		pageChange_ = false;
 	}
 
+	ImGui::Begin("debug");
+	ImGui::Text("%d", count);
+	ImGui::End();
+
 	if (changeAlpha_ == false) {
 		spriteAlpha_ -= 8;
 		if (spriteAlpha_ <= 0) {
@@ -172,6 +176,7 @@ void GameTitleScene::Update() {
 	if (count == 1) {
 		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,-29.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ -= 4;
+		player_->SetVelocity({ 0.0f,0.0f,0.0f });
 		if (fadeAlpha_ <= 0) {
 			fadeAlpha_ = 0;
 		}
@@ -252,11 +257,14 @@ void GameTitleScene::DrawUI() {
 }
 
 void GameTitleScene::DrawPostEffect() {
+	if (count == 0) {
+		CJEngine_->renderer_->Draw(PipelineType::Gaussian);
+	}
+	if (count == 1) {
+		CJEngine_->renderer_->Draw(PipelineType::Grayscale);
+	}
 	if (count == 2) {
 		CJEngine_->renderer_->Draw(PipelineType::RadialBlur);
-	}
-	else {
-		CJEngine_->renderer_->Draw(PipelineType::Gaussian);
 	}
 }
 

@@ -142,7 +142,7 @@ void Player::Move() {
 					moveMode_ = 0;
 				}
 			}
-			float kCharacterSpeed;
+			float kCharacterSpeed = 0.5f;
 			if (moveMode_ == 0) {
 				kCharacterSpeed = 0.5f;
 			}

@@ -114,6 +114,13 @@ void GameClearScene::Draw() {
 
 #pragma region 前景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
+
+#pragma endregion
+}
+
+void GameClearScene::DrawUI() {
+#pragma region 前景スプライト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 	if (pageChange_ == false) {
 		sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 1.0f,1.0f,1.0f,spriteAlpha_ / 256.0f });
 		if (count == 0) {
@@ -122,10 +129,6 @@ void GameClearScene::Draw() {
 	}
 	sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlpha_ / 256.0f });
 #pragma endregion
-}
-
-void GameClearScene::DrawUI() {
-
 }
 
 void GameClearScene::DrawPostEffect() {
