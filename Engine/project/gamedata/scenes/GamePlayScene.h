@@ -13,6 +13,7 @@
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
+#include "postEffect/PostEffect.h"
 
 #include "ground/Ground.h"
 #include "baseCharacter/player/Player.h"
@@ -91,4 +92,8 @@ private:
 
 	PointLights* pointLights_;
 	PointLight pointLight_;
+
+	PostEffect* postEffect_;
+	uint32_t noiseTexture_;
+	MaskData maskData_;
 };
