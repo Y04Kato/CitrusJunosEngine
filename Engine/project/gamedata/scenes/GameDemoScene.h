@@ -17,6 +17,7 @@
 #include "components/utilities/collisionManager/CollisionConfig.h"
 #include "levelDataLoader/LevelDataLoader.h"
 #include "postEffect/PostEffect.h"
+#include "ImGuiManager.h"
 
 #include "components/utilities/globalVariables/GlobalVariables.h"
 

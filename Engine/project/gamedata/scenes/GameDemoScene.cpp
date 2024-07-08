@@ -595,6 +595,10 @@ void GameDemoScene::DrawUI() {
 		}
 	}
 
+	for (Obj& obj : objects_) {
+		ImGuizmo::Manipulate(&viewProjection_.matView.m[0][0], &viewProjection_.matProjection.m[0][0], ImGuizmo::TRANSLATE, ImGuizmo::WORLD, &obj.world.constMap->matWorld.m[0][0]);
+	}
+
 #pragma endregion
 }
 
