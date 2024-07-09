@@ -32,7 +32,7 @@ private:
 	static LevelData* SearchObjects(nlohmann::json& deserialized);
 
 	//子ノードのロード
-	static void SearchChildren(LevelData* levelData, nlohmann::json& parent);
+	static void SearchChildren(LevelData* levelData, nlohmann::json& parent, EulerTransform& parentTransform);
 
 	//Transformのロード
 	static EulerTransform TransformLoad(nlohmann::json& object);
