@@ -429,6 +429,7 @@ void GameDemoScene::Update() {
 			}
 		}
 		ImGui::Checkbox("DrawRandom", &isRandomDraw_);
+		ImGui::Checkbox("DrawLensDistortion", &isLensDistortionDraw_);
 		ImGui::TreePop();
 	}
 
@@ -627,6 +628,9 @@ void GameDemoScene::DrawPostEffect() {
 	}
 	if (isRandomDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::Random);
+	}
+	if (isLensDistortionDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::LensDistortion);
 	}
 }
 

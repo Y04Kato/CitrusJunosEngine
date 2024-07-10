@@ -124,6 +124,7 @@ private:
 	bool isRadialBlurDraw_;
 	bool isMaskDraw_;
 	bool isRandomDraw_;
+	bool isLensDistortionDraw_;
 
 	//ステージエディター擬き、名前をtest0~始め、それを記録する
 	struct Obj {

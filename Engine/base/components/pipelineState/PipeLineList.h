@@ -16,4 +16,5 @@ enum class PipelineType {
 	RadialBlur,
 	MaskTexture,
 	Random,
+	LensDistortion,
 };
