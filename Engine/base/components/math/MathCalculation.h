@@ -231,6 +231,7 @@ Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e);
 #pragma endregion
 
 EulerTransform operator+(const EulerTransform& v1, const EulerTransform& v2);
+EulerTransform operator-(const EulerTransform& v1, const EulerTransform& v2);
 
 bool IsCollision(const AABB& aabb, const StructSphere& sphere);
 bool IsCollision(const AABB& aabb, const Vector3& point);
