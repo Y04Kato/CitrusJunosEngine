@@ -52,11 +52,20 @@ LevelData* LevelDataLoader::SearchObjects(nlohmann::json& deserialized){
 	//レベルデータ格納用インスタンスを生成
 	LevelData* levelData = new LevelData();
 
+	//子ノードに送るデータ記録用
+	std::string parentName;
+	EulerTransform parentTransform;
+
 	//全オブジェクトを走査
 	for (nlohmann::json& object : deserialized["objects"]) {
 		assert(object.contains("Type"));
 		//種別を取得
 		std::string type = object["Type"].get<std::string>();
+
+		parentName = "NULL";
+		parentTransform.translate = { 0.0f,0.0f,0.0f };
+		parentTransform.rotate = { 0.0f,0.0f,0.0f };
+		parentTransform.scale = { 0.0f,0.0f,0.0f };
 
 		//geoノード
 		if (type.compare("geo") == 0) {
@@ -67,6 +76,7 @@ LevelData* LevelDataLoader::SearchObjects(nlohmann::json& deserialized){
 
 			//オブジェクト名
 			objectData.name = object["Name"];
+			parentName = objectData.name;
 
 			if (object.contains("file_name")) {
 				//ファイル名
@@ -75,23 +85,31 @@ LevelData* LevelDataLoader::SearchObjects(nlohmann::json& deserialized){
 
 			//トランスフォーム
 			objectData.transform = TransformLoad(object);
+			parentTransform = objectData.transform;
+
 		}
 
 		//子ノード
 		if (object.contains("Children")) {
-			SearchChildren(levelData, object);
+			SearchChildren(levelData, object, parentTransform);
 		}
 	}
 
 	return levelData;
 }
 
-void LevelDataLoader::SearchChildren(LevelData* levelData, nlohmann::json& parent){
+void LevelDataLoader::SearchChildren(LevelData* levelData, nlohmann::json& parent, EulerTransform& parentTransform){
+	EulerTransform parentChildrenTransform;
+	
 	//全オブジェクトを走査
 	for (nlohmann::json& object : parent["Children"]) {
 		assert(object.contains("Type"));
 		//種別を取得
 		std::string type = object["Type"].get<std::string>();
+
+		parentChildrenTransform.translate = { 0.0f,0.0f,0.0f };
+		parentChildrenTransform.rotate = { 0.0f,0.0f,0.0f };
+		parentChildrenTransform.scale = { 0.0f,0.0f,0.0f };
 
 		//box
 		if (type.compare("box") == 0) {
@@ -109,12 +127,12 @@ void LevelDataLoader::SearchChildren(LevelData* levelData, nlohmann::json& paren
 			}
 
 			//トランスフォーム
-			objectData.transform = TransformLoad(object);
+			objectData.transform = TransformLoad(object) + parentTransform;
 		}
 
 		//子ノード
 		if (object.contains("Children")) {
-			SearchChildren(levelData, object);
+			SearchChildren(levelData, object, parentChildrenTransform);
 		}
 	}
 

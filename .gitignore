@@ -38,8 +38,8 @@ vc143.pdb/
 libGU.dll
 libSOP.dll
 
-!externals/assimp/build/lib/Debug
-!externals/assimp/build/lib/Release
+!Engine/externals/assimp/build/lib/Debug
+!Engine/externals/assimp/build/lib/Release
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
