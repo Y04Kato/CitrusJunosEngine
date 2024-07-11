@@ -36,9 +36,7 @@ private:
 
 	bool changeAlpha_ = false;
 
-	int count = 0;
-
-	bool pageChange_ = false;
+	int sceneCount_ = 0;
 
 	Audio* audio_;
 	SoundData soundData1_;

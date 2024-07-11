@@ -21,10 +21,10 @@ void Enemy::Update() {
 
 	structSphere_.center = worldTransform_.GetWorldPos();
 
-	if (worldTransform_.translation_.num[1] < -10.0f) {
+	if (worldTransform_.translation_.num[1] < -10.0f) {//Yが-10以上で
 		isDead_ = true;
 	}
-	if (!isHitOnFloor || worldTransform_.GetWorldPos().num[1] < 0.0f) {
+	if (!isHitOnFloor || worldTransform_.GetWorldPos().num[1] < 0.0f) {//地面と当たっていなければ
 		IsFallStart();
 	}
 	else {
@@ -44,6 +44,7 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 }
 
 void Enemy::Move() {
+	//加速度減衰処理
 	const float kGravityAcceleration = 0.01f;
 	if (isGravityAccelerationCalc == true) {
 		if (velocity_.num[0] >= 0.01f) {

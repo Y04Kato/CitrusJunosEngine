@@ -23,6 +23,7 @@ public:
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 	void SetWorldTransform(const Vector3 translation);
 
+	//落下処理
 	void IsFallStart();
 
 	void SetScale(const Vector3 scale) { worldTransform_.scale_ = scale; }
@@ -62,8 +63,11 @@ private:
 
 	//0~2で弱~強
 	int moveMode_ = 0;
+
+	float CharacterSpeed_ = 0.5f;
 	
 	bool moveFlag_ = true;//行動入力受け付けフラグ
 	const int moveCountMax_ = 60;//次に行動可能になるまでの時間
 	int moveCount_ = 0;//行動入力可能までのタイマー
+	const int keyboardAdditionalInputsTimerMax_ = 10;//キーボード時限定、追加入力受付時間
 };

@@ -45,35 +45,20 @@ void GameClearScene::Initialize() {
 	sprite_[3]->SetTextureInitialSize();
 	sprite_[3]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	count = 0;
+	sceneCount_ = 0;
 }
 
 void GameClearScene::Update() {
-	if (input_->TriggerKey(DIK_SPACE) && count < 1) {
-		if (pageChange_ == false) {
-			pageChange_ = true;
-			audio_->SoundPlayWave(soundData1_, 0.5f, false);
-		}
-		else {
-
-		}
+	if (input_->TriggerKey(DIK_SPACE) && sceneCount_ < 1) {
+		sceneCount_++;
+		audio_->SoundPlayWave(soundData1_, 0.5f, false);
 	}
 
 	XINPUT_STATE joyState;
 	Input::GetInstance()->GetJoystickState(0, joyState);
-	if (input_->PushAButton(joyState) && count < 1) {
-		if (pageChange_ == false) {
-			pageChange_ = true;
-			audio_->SoundPlayWave(soundData1_, 0.5f, false);
-		}
-		else {
-
-		}
-	}
-
-	if (pageChange_ == true) {
-		count++;
-		pageChange_ = false;
+	if (input_->TriggerAButton(joyState) && sceneCount_ < 1) {
+		sceneCount_++;
+		audio_->SoundPlayWave(soundData1_, 0.5f, false);
 	}
 
 	if (changeAlpha_ == false) {
@@ -89,16 +74,16 @@ void GameClearScene::Update() {
 		}
 	}
 
-	if (count == 0) {
+	if (sceneCount_ == 0) {
 		fadeAlpha_ -= 4;
 		if (fadeAlpha_ <= 0) {
 			fadeAlpha_ = 0;
 		}
 	}
-	if (count == 1) {
+	if (sceneCount_ == 1) {
 		fadeAlpha_ += 4;
 		if (fadeAlpha_ >= 256) {
-			count = 0;
+			sceneCount_ = 0;
 			fadeAlpha_ = 256;
 			sceneNo = TITLE_SCENE;
 		}
@@ -121,12 +106,8 @@ void GameClearScene::Draw() {
 void GameClearScene::DrawUI() {
 #pragma region 前景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
-	if (pageChange_ == false) {
-		sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 1.0f,1.0f,1.0f,spriteAlpha_ / 256.0f });
-		if (count == 0) {
-			sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
-		}
-	}
+	sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 1.0f,1.0f,1.0f,spriteAlpha_ / 256.0f });
+	sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 	sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlpha_ / 256.0f });
 #pragma endregion
 }

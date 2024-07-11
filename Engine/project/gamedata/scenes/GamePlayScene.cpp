@@ -98,14 +98,14 @@ void GamePlayScene::Initialize() {
 	testEmitter_.frequency = 0.2f;//0.5秒ごとに発生
 	testEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
 
-	accelerationField.acceleration = { 15.0f,0.0f,0.0f };
-	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
-	accelerationField.area.max = { 1.0f,1.0f,1.0f };
+	accelerationField_.acceleration = { 15.0f,0.0f,0.0f };
+	accelerationField_.area.min = { -1.0f,-1.0f,-1.0f };
+	accelerationField_.area.max = { 1.0f,1.0f,1.0f };
 
 	particleResourceNum_ = textureManager_->Load("project/gamedata/resources/circle.png");
 
 	particle_ = std::make_unique <CreateParticle>();
-	particle_->Initialize(100, testEmitter_, accelerationField, particleResourceNum_);
+	particle_->Initialize(100, testEmitter_, accelerationField_, particleResourceNum_);
 	particle_->SetColor(Vector4{ 1.0f,1.0f,1.0f,1.0f });
 
 	//PostEffectの読み込み
@@ -130,12 +130,12 @@ void GamePlayScene::Initialize() {
 	pointLights_ = PointLights::GetInstance();
 
 	//ステージ開始用フラグ
-	gameStart = true;
+	gameStart_ = true;
 }
 
 void GamePlayScene::Update() {
 	//ステージ開始
-	if (gameStart == true) {
+	if (gameStart_ == true) {
 		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
 		player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
 		player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
@@ -147,58 +147,58 @@ void GamePlayScene::Update() {
 		for (int i = 0; i < 10; i++) {
 			SetEnemy(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
 		}
-		gameStart = false;
+		gameStart_ = false;
 	}
 
 	//敵を全員倒した時
-	if (enemyDethCount == 0 && isfadeIn == false) {
-		gameclear = true;
-		isfadeIn = true;
+	if (enemyDethCount_ == 0 && isfadeIn_ == false) {
+		isGameclear_ = true;
+		isfadeIn_ = true;
 	}
 
 	//プレイヤーがゲームオーバーになった時
-	if (player_->isGameover() && isfadeIn == false) {
-		gameover = true;
-		isfadeIn = true;
+	if (player_->isGameover() && isfadeIn_ == false) {
+		isGameover_ = true;
+		isfadeIn_ = true;
 	}
 
 	//フェード用
-	if (isfadeIn == false) {
+	if (isfadeIn_ == false) {
 		fadeAlpha_ -= 4;
 		if (fadeAlpha_ <= 0) {
 			fadeAlpha_ = 0;
 		}
 	}
-	else if (isfadeIn == true && gameclear == true) {//ゲームクリア時
+	else if (isfadeIn_ == true && isGameclear_ == true) {//ゲームクリア時
 		debugCamera_->MovingCamera(player_->GetWorldTransform().translation_, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ += 4;
 		if (fadeAlpha_ >= 256) {
-			gameStart = true;
-			isfadeIn = false;
-			gameclear = false;
+			gameStart_ = true;
+			isfadeIn_ = false;
+			isGameclear_ = false;
 			directionalLight_.intensity = 1.0f;
 			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
 			sceneNo = CLEAR_SCENE;
 		}
 	}
-	else if (isfadeIn == true && gameover == true) {//ゲームオーバー時
+	else if (isfadeIn_ == true && isGameover_ == true) {//ゲームオーバー時
 		fadeAlpha_ += 4;
 		maskData_.maskThreshold -= 0.02f;
 		if (fadeAlpha_ >= 256) {
-			gameStart = true;
+			gameStart_ = true;
 			for (Enemy* enemy : enemys_) {
 				enemy->SetisDead();
 			}
 			enemys_.remove_if([&](Enemy* enemy) {
 				if (enemy->GetisDead()) {
 					delete enemy;
-					enemyDethCount--;
+					enemyDethCount_--;
 					return true;
 				}
 				return false;
 				});
-			isfadeIn = false;
-			gameover = false;
+			isfadeIn_ = false;
+			isGameover_ = false;
 			directionalLight_.intensity = 1.0f;
 			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
 			sceneNo = OVER_SCENE;
@@ -232,7 +232,7 @@ void GamePlayScene::Update() {
 	enemys_.remove_if([&](Enemy* enemy) {
 		if (enemy->GetisDead()) {
 			delete enemy;
-			enemyDethCount--;
+			enemyDethCount_--;
 			return true;
 		}
 		return false;
@@ -426,10 +426,10 @@ void GamePlayScene::DrawUI() {
 
 void GamePlayScene::DrawPostEffect() {
 	CJEngine_->renderer_->Draw(PipelineType::Vignette);
-	if (gameover == true) {
+	if (isGameover_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::MaskTexture);
 	}
-	if (gameclear == true) {
+	if (isGameclear_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::RadialBlur);
 	}
 }
@@ -449,5 +449,5 @@ void GamePlayScene::SetEnemy(Vector3 pos) {
 	enemy->Initialize(enemyModel_.get());
 	enemy->SetWorldTransform(pos);
 	enemys_.push_back(enemy);
-	enemyDethCount++;
+	enemyDethCount_++;
 }

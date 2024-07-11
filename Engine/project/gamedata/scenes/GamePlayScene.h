@@ -60,7 +60,7 @@ private:
 
 	std::unique_ptr<CreateParticle> particle_;
 	Emitter testEmitter_{};
-	AccelerationField accelerationField;
+	AccelerationField accelerationField_;
 	uint32_t particleResourceNum_;
 
 	std::list<Enemy*> enemys_;
@@ -76,15 +76,15 @@ private:
 	uint32_t move2_;
 	uint32_t move3_;
 
-	int enemyDethCount = 0;
+	int enemyDethCount_ = 0;
 
-	bool gameStart = true;
+	bool gameStart_ = true;
 
 	float fadeAlpha_ = 256.0f;
-	bool isfadeIn = false;
+	bool isfadeIn_ = false;
 
-	bool gameover = false;
-	bool gameclear = false;
+	bool isGameover_ = false;
+	bool isGameclear_ = false;
 
 	DirectionalLights* directionalLights_;
 	DirectionalLight directionalLight_;

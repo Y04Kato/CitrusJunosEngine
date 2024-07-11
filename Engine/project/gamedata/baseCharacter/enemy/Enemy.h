@@ -46,10 +46,6 @@ private:
 
 	StructSphere structSphere_;
 
-	Quaternion quaternion_;
-	Vector3 preMove_;
-	Quaternion preQuaternion_;
-
 	const ViewProjection* viewProjection_ = nullptr;
 
 	bool isGravityAccelerationCalc = false;

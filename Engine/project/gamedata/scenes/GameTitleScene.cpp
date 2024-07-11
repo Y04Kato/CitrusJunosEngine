@@ -197,7 +197,7 @@ void GameTitleScene::Update() {
 
 	//
 	ImGui::Begin("TitleScene");
-	ImGui::Text("%d", sceneCount_);
+	ImGui::Text("SceneCount : %d", sceneCount_);
 	ImGui::End();
 }
 
