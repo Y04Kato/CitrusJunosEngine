@@ -85,5 +85,8 @@ private:
 	bool toggleCursor_ = true;
 
 	//コントローラー
-	XINPUT_STATE prevState;
+	XINPUT_STATE prevStateA;
+	XINPUT_STATE prevStateB;
+	XINPUT_STATE prevStateX;
+	XINPUT_STATE prevStateY;
 };

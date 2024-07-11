@@ -517,6 +517,10 @@ void GameDemoScene::Update() {
 	if (input_->TriggerAButton(joyState)) {
 		OutputDebugStringA("A button\n");
 	}
+
+	if (input_->TriggerBButton(joyState)) {
+		OutputDebugStringA("B button\n");
+	}
 }
 
 void GameDemoScene::Draw() {
