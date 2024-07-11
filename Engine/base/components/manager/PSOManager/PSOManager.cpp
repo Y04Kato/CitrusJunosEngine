@@ -26,6 +26,7 @@ void PSOManager::Initialize(){
 	std::unique_ptr<MaskTexture> maskTexture = std::make_unique<MaskTexture>();
 	std::unique_ptr<Random> random = std::make_unique<Random>();
 	std::unique_ptr<LensDistortion> lensDistortion = std::make_unique<LensDistortion>();
+	std::unique_ptr<Scanlines> scanlines = std::make_unique<Scanlines>();
 
 
 	//Initializeの宣言
@@ -45,6 +46,7 @@ void PSOManager::Initialize(){
 	maskTexture->Initialize();
 	random->Initialize();
 	lensDistortion->Initialize();
+	scanlines->Initialize();
 
 
 	//パイプラインを追加する
@@ -64,4 +66,5 @@ void PSOManager::Initialize(){
 	AddPipeline(maskTexture->GetPSO(), PipelineType::MaskTexture);
 	AddPipeline(random->GetPSO(), PipelineType::Random);
 	AddPipeline(lensDistortion->GetPSO(), PipelineType::LensDistortion);
+	AddPipeline(scanlines->GetPSO(), PipelineType::Scanlines);
 }

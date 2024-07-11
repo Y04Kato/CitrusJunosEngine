@@ -16,6 +16,7 @@
 #include "pipelineState/MaskTexture/MaskTexture.h"
 #include "pipelineState/Random/Random.h"
 #include "pipelineState/LensDistortion/LensDistortion.h"
+#include "pipelineState/Scanlines/Scanlines.h"
 
 #include <map>
 

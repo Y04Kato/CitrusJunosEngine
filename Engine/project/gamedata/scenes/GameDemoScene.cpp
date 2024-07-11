@@ -131,6 +131,8 @@ void GameDemoScene::Initialize() {
 
 	viewProjection_.Initialize();
 
+
+	//PostEffect
 	postEffect_ = PostEffect::GetInstance();
 	noiseTexture_[0] = textureManager_->Load("project/gamedata/resources/noise0.png");
 	noiseTexture_[1] = textureManager_->Load("project/gamedata/resources/noise1.png");
@@ -138,6 +140,10 @@ void GameDemoScene::Initialize() {
 	maskData_.maskColor = { 0.0f,1.0f,0.0f };
 	maskData_.edgeColor = { 1.0f,0.4f,0.3f };
 	postEffect_->SetMaskTexture(noiseTexture_[0]);
+
+	scanlineData_.scanlineIntensity = 0.2f;
+	scanlineData_.scanlineFrequency = 1000.0f;
+	scanlineData_.time = 0.0f;
 
 	levelDataLoader_ = LevelDataLoader::GetInstance();
 	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
@@ -205,6 +211,7 @@ void GameDemoScene::Update() {
 
 	postEffect_->SetMaskTexture(noiseTexture_[maskTextureNum_]);
 	postEffect_->SetMaskData(maskData_);
+	postEffect_->SetScanlineData(scanlineData_);
 
 	ImGui::Begin("debug");
 	ImGui::Text("GameDemoScene");
@@ -430,6 +437,15 @@ void GameDemoScene::Update() {
 		}
 		ImGui::Checkbox("DrawRandom", &isRandomDraw_);
 		ImGui::Checkbox("DrawLensDistortion", &isLensDistortionDraw_);
+		ImGui::Checkbox("DrawScanlines", &isScanlineDraw_);
+		scanlineData_.time++;
+		if (isScanlineDraw_ == true) {
+			if (ImGui::TreeNode("ScanlineData")) {
+				ImGui::DragFloat("ScanlineIntensity", &scanlineData_.scanlineIntensity, 0.05f, 0.0f, 1.0f);
+				ImGui::DragFloat("ScanlineFrequency", &scanlineData_.scanlineFrequency, 1.0f, 0.0f, 1000.0f);
+				ImGui::TreePop();
+			}
+		}
 		ImGui::TreePop();
 	}
 
@@ -631,6 +647,9 @@ void GameDemoScene::DrawPostEffect() {
 	}
 	if (isLensDistortionDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::LensDistortion);
+	}
+	if (isScanlineDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::Scanlines);
 	}
 }
 

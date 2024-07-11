@@ -17,4 +17,5 @@ enum class PipelineType {
 	MaskTexture,
 	Random,
 	LensDistortion,
+	Scanlines,
 };

@@ -105,6 +105,9 @@ private:
 	int maskTextureNum_;
 	MaskData maskData_;
 
+	//Scanline用Data
+	ScanlineData scanlineData_;
+
 	int texture_[2];
 
 	bool isTriangleDraw_[2];
@@ -125,6 +128,7 @@ private:
 	bool isMaskDraw_;
 	bool isRandomDraw_;
 	bool isLensDistortionDraw_;
+	bool isScanlineDraw_;
 
 	//ステージエディター擬き、名前をtest0~始め、それを記録する
 	struct Obj {
