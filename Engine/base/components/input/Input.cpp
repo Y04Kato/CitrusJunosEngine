@@ -185,6 +185,78 @@ bool Input::PushYButton(XINPUT_STATE& out) {
 	return false;
 }
 
+bool Input::TriggerAButton(XINPUT_STATE& out) {
+	// XInputGetState 関数を使用してコントローラの現在の状態を取得
+	DWORD dwResult = XInputGetState(0, &out);
+
+	// XInputGetState が成功した場合
+	if (dwResult == ERROR_SUCCESS) {
+		// 現在の状態と前の状態を比較して、Aボタンが押された瞬間を検出
+		if ((out.Gamepad.wButtons & XINPUT_GAMEPAD_A) && !(prevState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+			// 現在の状態を前の状態として保存
+			prevState = out;
+			return true;
+		}
+		// 現在の状態を前の状態として保存
+		prevState = out;
+	}
+	return false;
+}
+
+bool Input::TriggerBButton(XINPUT_STATE& out) {
+	// XInputGetState 関数を使用してコントローラの現在の状態を取得
+	DWORD dwResult = XInputGetState(0, &out);
+
+	// XInputGetState が成功した場合
+	if (dwResult == ERROR_SUCCESS) {
+		// 現在の状態と前の状態を比較して、Aボタンが押された瞬間を検出
+		if ((out.Gamepad.wButtons & XINPUT_GAMEPAD_B) && !(prevState.Gamepad.wButtons & XINPUT_GAMEPAD_B)) {
+			// 現在の状態を前の状態として保存
+			prevState = out;
+			return true;
+		}
+		// 現在の状態を前の状態として保存
+		prevState = out;
+	}
+	return false;
+}
+
+bool Input::TriggerXButton(XINPUT_STATE& out) {
+	// XInputGetState 関数を使用してコントローラの現在の状態を取得
+	DWORD dwResult = XInputGetState(0, &out);
+
+	// XInputGetState が成功した場合
+	if (dwResult == ERROR_SUCCESS) {
+		// 現在の状態と前の状態を比較して、Aボタンが押された瞬間を検出
+		if ((out.Gamepad.wButtons & XINPUT_GAMEPAD_X) && !(prevState.Gamepad.wButtons & XINPUT_GAMEPAD_X)) {
+			// 現在の状態を前の状態として保存
+			prevState = out;
+			return true;
+		}
+		// 現在の状態を前の状態として保存
+		prevState = out;
+	}
+	return false;
+}
+
+bool Input::TriggerYButton(XINPUT_STATE& out) {
+	// XInputGetState 関数を使用してコントローラの現在の状態を取得
+	DWORD dwResult = XInputGetState(0, &out);
+
+	// XInputGetState が成功した場合
+	if (dwResult == ERROR_SUCCESS) {
+		// 現在の状態と前の状態を比較して、Aボタンが押された瞬間を検出
+		if ((out.Gamepad.wButtons & XINPUT_GAMEPAD_Y) && !(prevState.Gamepad.wButtons & XINPUT_GAMEPAD_Y)) {
+			// 現在の状態を前の状態として保存
+			prevState = out;
+			return true;
+		}
+		// 現在の状態を前の状態として保存
+		prevState = out;
+	}
+	return false;
+}
+
 void Input::ViewCursor() {
 	toggleCursor_ = true;
 

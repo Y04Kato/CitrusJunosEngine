@@ -514,7 +514,7 @@ void GameDemoScene::Update() {
 		return;
 	}
 
-	if (input_->PushAButton(joyState)) {
+	if (input_->TriggerAButton(joyState)) {
 		OutputDebugStringA("A button\n");
 	}
 }
