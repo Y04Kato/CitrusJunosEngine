@@ -1132,6 +1132,16 @@ EulerTransform operator+(const EulerTransform& v1, const EulerTransform& v2) {
 	return result; 
 }
 
+EulerTransform operator-(const EulerTransform& v1, const EulerTransform& v2) {
+	EulerTransform result;
+
+	result.translate = v1.translate - v2.translate;
+	result.rotate = v1.rotate - v2.rotate;
+	result.scale = v1.scale - v2.scale;
+
+	return result;
+}
+
 bool IsCollision(const AABB& aabb, const StructSphere& sphere) {
 	Vector3 clossestPoint{
 		std::clamp(sphere.center.num[0], aabb.min.num[0], aabb.max.num[0]),

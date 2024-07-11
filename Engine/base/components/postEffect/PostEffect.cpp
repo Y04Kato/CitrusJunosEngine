@@ -26,6 +26,14 @@ void PostEffect::Initialize() {
 	randomResource_->Map(0, NULL, reinterpret_cast<void**>(&randomData_));
 
 	randomData_->time = 0.0f;
+
+	//ScanLines
+	scanlineResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(ScanlineData));
+	scanlineResource_->Map(0, NULL, reinterpret_cast<void**>(&scanlineData_));
+
+	scanlineData_->scanlineIntensity = 0.2f;
+	scanlineData_->scanlineFrequency = 1000.0f;
+	scanlineData_->time = 0.0f;
 }
 
 void PostEffect::Draw(){
@@ -48,6 +56,12 @@ void PostEffect::Draw(){
 	randomData_->time++;
 	if (CJEngine_->renderer_->GetNowPipeLineType() == PipelineType::Random) {
 		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, randomResource_->GetGPUVirtualAddress());
+	}
+
+	//Scanlineの時のみ使用
+	scanlineData_->time++;
+	if (CJEngine_->renderer_->GetNowPipeLineType() == PipelineType::Scanlines) {
+		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, scanlineResource_->GetGPUVirtualAddress());
 	}
 
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);

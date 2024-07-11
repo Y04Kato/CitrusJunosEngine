@@ -327,6 +327,12 @@
     <ClCompile Include="base\components\pipelineState\Random\Random.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\pipelineState\LensDistortion\LensDistortion.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\Scanlines\Scanlines.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -363,6 +369,8 @@
     <FxCompile Include="project\gamedata\resources\shaders\SkyBox.VS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\SkyBox.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\Random.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\LensDistortion.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\Scanlines.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\DirectXCommon.h">
@@ -575,6 +583,12 @@
     <ClInclude Include="base\components\pipelineState\Random\Random.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="base\components\pipelineState\LensDistortion\LensDistortion.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Scanlines\Scanlines.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -592,9 +606,9 @@
       <Filter>ヘッダー ファイル\project\gamedata\resources\shaders</Filter>
     </None>
     <None Include="project\gamedata\resources\shaders\VAT.hlsli" />
-    <None Include="project\gamedata\resources\shaders\CopyImage.hlsli" />
     <None Include="project\gamedata\resources\shaders\SkinningObject3d.hlsli" />
     <None Include="project\gamedata\resources\shaders\SkyBox.hlsli" />
+    <None Include="project\gamedata\resources\shaders\CopyImage.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CitrusJunosEngine.rc">

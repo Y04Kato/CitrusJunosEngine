@@ -24,6 +24,8 @@ public:
 	void SetMaskTexture(uint32_t maskTexture) { maskTexture_ = maskTexture; }
 	//MaskData割り当て用
 	void SetMaskData(const MaskData& maskData) {*maskData_ = maskData; }
+	//ScanlineData割り当て用
+	void SetScanlineData(const ScanlineData& scanlineData) { *scanlineData_ = scanlineData; }
 
 	PostEffect(const PostEffect& obj) = delete;
 	PostEffect& operator=(const PostEffect& obj) = delete;
@@ -76,5 +78,9 @@ private:
 	//Random用
 	Microsoft::WRL::ComPtr<ID3D12Resource> randomResource_;
 	RandomData* randomData_;
+
+	//Random用
+	Microsoft::WRL::ComPtr<ID3D12Resource> scanlineResource_;
+	ScanlineData* scanlineData_;
 };
 

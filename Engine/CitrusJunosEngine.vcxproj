@@ -161,12 +161,14 @@
     <ClCompile Include="base\components\manager\TextureManager\TextureManager.cpp" />
     <ClCompile Include="base\components\pipelineState\Gaussian\Gaussian.cpp" />
     <ClCompile Include="base\components\pipelineState\Grayscale\Grayscale.cpp" />
+    <ClCompile Include="base\components\pipelineState\LensDistortion\LensDistortion.cpp" />
     <ClCompile Include="base\components\pipelineState\MaskTexture\MaskTexture.cpp" />
     <ClCompile Include="base\components\pipelineState\Outline\Outline.cpp" />
     <ClCompile Include="base\components\pipelineState\Particle\Particle.cpp" />
     <ClCompile Include="base\components\pipelineState\PostProcess\PostProcess.cpp" />
     <ClCompile Include="base\components\pipelineState\RadialBlur\RadialBlur.cpp" />
     <ClCompile Include="base\components\pipelineState\Random\Random.cpp" />
+    <ClCompile Include="base\components\pipelineState\Scanlines\Scanlines.cpp" />
     <ClCompile Include="base\components\pipelineState\Skinning\Skinning.cpp" />
     <ClCompile Include="base\components\pipelineState\SkyBox\SkyBox.cpp" />
     <ClCompile Include="base\components\pipelineState\Smoothing\Smoothing.cpp" />
@@ -263,6 +265,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\LensDistortion.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="project\gamedata\resources\shaders\MaskTexture.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -328,6 +338,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="project\gamedata\resources\shaders\Random.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\Scanlines.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
@@ -408,6 +426,7 @@
     <ClInclude Include="base\components\pipelineState\Grayscale\Grayscale.h" />
     <ClInclude Include="base\components\math\Structure.h" />
     <ClInclude Include="base\components\pipelineState\IPipeLineStateObject.h" />
+    <ClInclude Include="base\components\pipelineState\LensDistortion\LensDistortion.h" />
     <ClInclude Include="base\components\pipelineState\MaskTexture\MaskTexture.h" />
     <ClInclude Include="base\components\pipelineState\Outline\Outline.h" />
     <ClInclude Include="base\components\pipelineState\Particle\Particle.h" />
@@ -415,6 +434,7 @@
     <ClInclude Include="base\components\pipelineState\PostProcess\PostProcess.h" />
     <ClInclude Include="base\components\pipelineState\RadialBlur\RadialBlur.h" />
     <ClInclude Include="base\components\pipelineState\Random\Random.h" />
+    <ClInclude Include="base\components\pipelineState\Scanlines\Scanlines.h" />
     <ClInclude Include="base\components\pipelineState\Skinning\Skinning.h" />
     <ClInclude Include="base\components\pipelineState\SkyBox\SkyBox.h" />
     <ClInclude Include="base\components\pipelineState\Smoothing\Smoothing.h" />

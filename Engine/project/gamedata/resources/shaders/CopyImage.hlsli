@@ -13,3 +13,10 @@ struct RandomData
 {
     float32_t time;
 };
+
+struct ScanlineData
+{
+    float32_t scanlineIntensity;
+    float32_t scanlineFrequency;
+    float32_t time;
+};

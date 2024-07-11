@@ -178,13 +178,19 @@ struct StructSphere {
 
 #pragma region PostEffect
 struct MaskData {
-	float maskThreshold;
-	Vector3 maskColor;
-	Vector3 edgeColor;
+	float maskThreshold;//閾値
+	Vector3 maskColor;//色
+	Vector3 edgeColor;//境界線の色
 };
 
 struct RandomData {
 	float time;
+};
+
+struct ScanlineData{
+	float scanlineIntensity;//スキャンラインの強度
+	float scanlineFrequency;//スキャンラインの頻度
+	float time;//時間（秒単位）
 };
 
 #pragma endregion
