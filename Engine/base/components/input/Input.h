@@ -49,6 +49,11 @@ public:
 	bool PushXButton(XINPUT_STATE& out);
 	bool PushYButton(XINPUT_STATE& out);
 
+	bool TriggerAButton(XINPUT_STATE& out);
+	bool TriggerBButton(XINPUT_STATE& out);
+	bool TriggerXButton(XINPUT_STATE& out);
+	bool TriggerYButton(XINPUT_STATE& out);
+
 	void ViewCursor();
 	void HideCursor();
 	void ToggleCursor();
@@ -60,7 +65,6 @@ public:
 
 	Input(const Input& obj) = delete;
 	Input& operator=(const Input& obj) = delete;
-
 private:
 	Input() = default;
 	~Input() = default;
@@ -79,4 +83,7 @@ private:
 	Vector2 MouseVelocity();
 	float MouseScroll();
 	bool toggleCursor_ = true;
+
+	//コントローラー
+	XINPUT_STATE prevState;
 };
