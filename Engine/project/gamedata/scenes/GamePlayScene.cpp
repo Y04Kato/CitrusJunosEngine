@@ -358,7 +358,7 @@ void GamePlayScene::Update() {
 		XINPUT_STATE joyState;
 		Input::GetInstance()->GetJoystickState(0, joyState);
 
-		if (input_->TriggerAButton(joyState)) {
+		if (input_->PushAButton(joyState)) {
 			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 		}
 	}
