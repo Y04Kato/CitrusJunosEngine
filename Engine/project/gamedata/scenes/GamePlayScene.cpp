@@ -10,8 +10,8 @@ void GamePlayScene::Initialize() {
 
 	//Input
 	input_ = Input::GetInstance();
-
-	//Audio
+	
+	//Audioの初期化
 	audio_ = Audio::GetInstance();
 	soundData1_ = audio_->SoundLoad("project/gamedata/resources/CraftsmansForge.mp3");
 	soundData2_ = audio_->SoundLoad("project/gamedata/resources/metal.mp3");
@@ -21,12 +21,17 @@ void GamePlayScene::Initialize() {
 	// デバッグカメラの初期化
 	debugCamera_ = DebugCamera::GetInstance();
 
+	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
+	//モデルの初期化と読み込み
 	player_ = std::make_unique<Player>();
 	playerModel_.reset(Model::CreateModel("project/gamedata/resources/player", "player.obj"));
 	playerModel_->SetDirectionalLightFlag(true, 3);
 	player_->Initialize(playerModel_.get());
+
+	enemyModel_.reset(Model::CreateModel("project/gamedata/resources/enemy", "enemy.obj"));
+	enemyModel_->SetDirectionalLightFlag(true, 2);
 
 	ground_ = std::make_unique<Ground>();
 	groundModel_.reset(Model::CreateModel("project/gamedata/resources/floor", "Floor.obj"));
@@ -45,11 +50,13 @@ void GamePlayScene::Initialize() {
 	world_[2].translation_ = { 30.0f,0.0f,25.0f };
 	world_[3].translation_ = { 30.0f,0.0f,-35.0f };
 
+	//テクスチャの初期化と読み込み
 	background_ = textureManager_->Load("project/gamedata/resources/paper.png");
 	move1_ = textureManager_->Load("project/gamedata/resources/move1.png");
 	move2_ = textureManager_->Load("project/gamedata/resources/move2.png");
 	move3_ = textureManager_->Load("project/gamedata/resources/move3.png");
 
+	//UIの初期化
 	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
 	SpriteuvTransform_ = {
@@ -83,7 +90,7 @@ void GamePlayScene::Initialize() {
 	sprite_[4]->SetTextureInitialSize();
 	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	//パーティクル
+	//パーティクルの初期化
 	testEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
 	testEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
 	testEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
@@ -99,18 +106,16 @@ void GamePlayScene::Initialize() {
 
 	particle_ = std::make_unique <CreateParticle>();
 	particle_->Initialize(100, testEmitter_, accelerationField, particleResourceNum_);
-	particle_->SetColor(test);
+	particle_->SetColor(Vector4{ 1.0f,1.0f,1.0f,1.0f });
 
-
-	enemyModel_.reset(Model::CreateModel("project/gamedata/resources/enemy", "enemy.obj"));
-	enemyModel_->SetDirectionalLightFlag(true, 2);
-
+	//PostEffectの読み込み
 	postEffect_ = PostEffect::GetInstance();
 	noiseTexture_ = textureManager_->Load("project/gamedata/resources/noise0.png");
 	maskData_.maskThreshold = 1.0f;
 	maskData_.maskColor = { 0.2f,0.2f,0.2f };
 	maskData_.edgeColor = { 0.2f,0.2f,0.2f };
 
+	//
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 
@@ -120,13 +125,16 @@ void GamePlayScene::Initialize() {
 
 	srand((unsigned int)time(NULL));
 
+	//ライト
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
 
+	//ステージ開始用フラグ
 	gameStart = true;
 }
 
 void GamePlayScene::Update() {
+	//ステージ開始
 	if (gameStart == true) {
 		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
 		player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
@@ -142,24 +150,26 @@ void GamePlayScene::Update() {
 		gameStart = false;
 	}
 
+	//敵を全員倒した時
 	if (enemyDethCount == 0 && isfadeIn == false) {
 		gameclear = true;
 		isfadeIn = true;
 	}
 
+	//プレイヤーがゲームオーバーになった時
 	if (player_->isGameover() && isfadeIn == false) {
 		gameover = true;
 		isfadeIn = true;
 	}
 
-
+	//フェード用
 	if (isfadeIn == false) {
 		fadeAlpha_ -= 4;
 		if (fadeAlpha_ <= 0) {
 			fadeAlpha_ = 0;
 		}
 	}
-	else if (isfadeIn == true && gameclear == true) {
+	else if (isfadeIn == true && gameclear == true) {//ゲームクリア時
 		debugCamera_->MovingCamera(player_->GetWorldTransform().translation_, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ += 4;
 		if (fadeAlpha_ >= 256) {
@@ -171,7 +181,7 @@ void GamePlayScene::Update() {
 			sceneNo = CLEAR_SCENE;
 		}
 	}
-	else if (isfadeIn == true && gameover == true) {
+	else if (isfadeIn == true && gameover == true) {//ゲームオーバー時
 		fadeAlpha_ += 4;
 		maskData_.maskThreshold -= 0.02f;
 		if (fadeAlpha_ >= 256) {
@@ -196,58 +206,29 @@ void GamePlayScene::Update() {
 	}
 
 	ApplyGlobalVariables();
+	//PostEffect更新
 	postEffect_->SetMaskData(maskData_);
 
+	//プレイヤー更新
 	player_->SetViewProjection(&viewProjection_);
 	player_->Update();
 	world_[4].translation_ = player_->GetWorldTransform().translation_;
 	for (int i = 0; i < 5; i++) {
 		world_[i].UpdateMatrix();
 	}
+
+	//ライト更新
 	directionalLights_->SetTarget(directionalLight_);
 	pointLight_.position.num[0] = player_->GetWorldTransform().GetWorldPos().num[0];
 	pointLight_.position.num[2] = player_->GetWorldTransform().GetWorldPos().num[2];
 	pointLights_->SetTarget(pointLight_);
 
+	//エネミー更新
 	for (Enemy* enemy : enemys_) {
 		enemy->Update();
 	}
 
-	ground_->Update();
-	Obb_.center = ground_->GetWorldTransform().GetWorldPos();
-	GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), Obb_.orientation);
-	Obb_.size = ground_->GetWorldTransform().scale_;
-
-	if (IsCollision(Obb_, player_->GetStructSphere())) {
-		player_->isHitOnFloor = true;
-		player_->SetObjectPos(ground_->GetWorldTransform());
-	}
-	else {
-		player_->isHitOnFloor = false;
-	}
-
-	for (Enemy* enemy : enemys_) {
-		if (IsCollision(Obb_, enemy->GetStructSphere())) {
-			enemy->isHitOnFloor = true;
-			enemy->SetObjectPos(ground_->GetWorldTransform());
-		}
-		else {
-			enemy->isHitOnFloor = false;
-		}
-		if (enemy->GetisDead() == true) {
-
-		}
-	}
-
-	particle_->Update();
-	particle_->SetTranslate(player_->GetWorldTransform().translation_);
-	ImGui::Begin("Particle");
-	ImGui::ColorEdit4("Color", test.num, 0);
-	ImGui::DragFloat3("Translate", world_[4].translation_.num, 0.1f);
-	ImGui::DragFloat3("Rotate", world_[4].rotation_.num, 0.1f);
-	ImGui::End();
-	particle_->SetColor(test);
-
+	//エネミーが倒されたら削除する
 	enemys_.remove_if([&](Enemy* enemy) {
 		if (enemy->GetisDead()) {
 			delete enemy;
@@ -257,9 +238,48 @@ void GamePlayScene::Update() {
 		return false;
 		});
 
+	//地面更新
+	ground_->Update();
+	Obb_.center = ground_->GetWorldTransform().GetWorldPos();
+	GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), Obb_.orientation);
+	Obb_.size = ground_->GetWorldTransform().scale_;
+
+	//Particle更新
+	particle_->Update();
+	particle_->SetTranslate(player_->GetWorldTransform().translation_);
+
+	//カメラの更新
+	debugCamera_->Update();
+
+	viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
+	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
+	viewProjection_.UpdateMatrix();
+
+	//プレイヤーの判定取得
 	StructSphere pSphere;
 	pSphere = player_->GetStructSphere();
 
+	//プレイヤーと地面の当たり判定
+	if (IsCollision(Obb_, pSphere)) {
+		player_->isHitOnFloor = true;
+		player_->SetObjectPos(ground_->GetWorldTransform());
+	}
+	else {
+		player_->isHitOnFloor = false;
+	}
+
+	//エネミーと地面の当たり判定
+	for (Enemy* enemy : enemys_) {
+		if (IsCollision(Obb_, enemy->GetStructSphere())) {
+			enemy->isHitOnFloor = true;
+			enemy->SetObjectPos(ground_->GetWorldTransform());
+		}
+		else {
+			enemy->isHitOnFloor = false;
+		}
+	}
+
+	//プレイヤーとエネミーの当たり判定
 	for (Enemy* enemy : enemys_) {
 		StructSphere eSphere;
 		eSphere = enemy->GetStructSphere();
@@ -278,14 +298,16 @@ void GamePlayScene::Update() {
 				enemy->SetWorldTransform(eSphere.center);
 			}
 
+			//反発処理
 			std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), 0.8f, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
 			player_->SetVelocity(pair.first);
 			enemy->SetVelocity(pair.second);
-			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 			audio_->SoundPlayWave(soundData2_, 0.1f, false);
 		}
 	}
 
+	//エネミー同士の当たり判定
 	for (auto it1 = enemys_.begin(); it1 != enemys_.end(); ++it1) {
 		for (auto it2 = std::next(it1); it2 != enemys_.end(); ++it2) {
 			Enemy* enemy1 = *it1;
@@ -309,6 +331,7 @@ void GamePlayScene::Update() {
 					enemy2->SetWorldTransform(eSphere2.center);
 				}
 
+				//反発処理
 				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy1->GetVelocity(), 1.0f, enemy2->GetVelocity(), 0.8f, Normalize(enemy1->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
 				enemy1->SetVelocity(pair.first);
 				enemy2->SetVelocity(pair.second);
@@ -317,35 +340,30 @@ void GamePlayScene::Update() {
 		}
 	}
 
-	debugCamera_->Update();
-
-	viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
-	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
-	viewProjection_.UpdateMatrix();
-
+	//プレイヤー移動時の演出の処理
 	if (player_->GetIsMoveFlag() == false) {
 		if (input_->TriggerKey(DIK_W)) {
-			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 		}
 		if (input_->TriggerKey(DIK_A)) {
-			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 		}
 		if (input_->TriggerKey(DIK_S)) {
-			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 		}
 		if (input_->TriggerKey(DIK_D)) {
-			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 		}
 
 		XINPUT_STATE joyState;
 		Input::GetInstance()->GetJoystickState(0, joyState);
 
-		if (input_->PushAButton(joyState)) {
-			rotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+		if (input_->TriggerAButton(joyState)) {
+			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 		}
 	}
 
-	world_[4].rotation_.num[1] = LerpShortAngle(world_[4].rotation_.num[1], -rotate_, 0.3f);
+	world_[4].rotation_.num[1] = LerpShortAngle(world_[4].rotation_.num[1], -playerFlagRotate_, 0.3f);
 }
 
 void GamePlayScene::Draw() {

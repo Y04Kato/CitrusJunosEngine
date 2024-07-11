@@ -7,6 +7,7 @@ void GameTitleScene::Initialize() {
 	//Input
 	input_ = Input::GetInstance();
 
+	//テクスチャの初期化と読み込み
 	textureManager_ = TextureManager::GetInstance();
 
 	pageAll_ = textureManager_->Load("project/gamedata/resources/paper.png");
@@ -14,10 +15,11 @@ void GameTitleScene::Initialize() {
 	title_ = textureManager_->Load("project/gamedata/resources/title.png");
 	tutorial_ = textureManager_->Load("project/gamedata/resources/tutorial.png");
 
-	//Audio
+	//Audioの初期化
 	audio_ = Audio::GetInstance();
 	soundData1_ = audio_->SoundLoad("project/gamedata/resources/system.mp3");
 
+	//UIの初期化
 	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
 	SpriteuvTransform_ = {
@@ -51,15 +53,16 @@ void GameTitleScene::Initialize() {
 	sprite_[4]->SetTextureInitialSize();
 	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	count = 0;
+	sceneCount_ = 0;
 
+	//プレイヤーの初期化
 	player_ = std::make_unique<Player>();
 	playerModel_.reset(Model::CreateModel("project/gamedata/resources/player", "player.obj"));
 	playerModel_->SetDirectionalLightFlag(true, 3);
 	player_->Initialize(playerModel_.get());
 	player_->SetScale(Vector3{ 5.0f,5.0f,5.0f });
 
-	//パーティクル
+	//パーティクルの初期化
 	testEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
 	testEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
 	testEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
@@ -77,11 +80,12 @@ void GameTitleScene::Initialize() {
 	particle_->Initialize(100, testEmitter_, accelerationField, particleResourceNum_);
 	particle_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
+	//ステージの初期化
 	stage_[0].reset(Model::CreateModel("project/gamedata/resources/GarageMain", "GarageMain.obj"));
 	stage_[1].reset(Model::CreateModel("project/gamedata/resources/GarageDoor", "GarageDoor.gltf"));
 	stage_[0]->SetDirectionalLightFlag(true, 3);
 	stage_[1]->SetDirectionalLightFlag(true, 3);
-	stage_[1]->SetAnimationTime(testTimer_);
+	stage_[1]->SetAnimationTime(animationTimer_);
 	for (int i = 0; i < 3; i++) {
 		world_[i].Initialize();
 	}
@@ -95,63 +99,41 @@ void GameTitleScene::Initialize() {
 
 	viewProjection_.Initialize();
 
+	//ライトの初期化
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
 }
 
 void GameTitleScene::Update() {
-	if (input_->TriggerKey(DIK_SPACE) && count < 2) {
-		if (pageChange_ == false) {
-			pageChange_ = true;
-			audio_->SoundPlayWave(soundData1_, 0.5f, false);
-		}
-		else {
-
-		}
+	//SPACEで次のページへ
+	if (input_->TriggerKey(DIK_SPACE) && sceneCount_ < 2) {
+		sceneCount_++;
+		audio_->SoundPlayWave(soundData1_, 0.5f, false);
 	}
 
 	XINPUT_STATE joyState;
 	Input::GetInstance()->GetJoystickState(0, joyState);
-	if (cFlag == true) {
-		if (input_->PushAButton(joyState) && count < 2) {
-			if (pageChange_ == false) {
-				pageChange_ = true;
-				cFlag = false;
-				audio_->SoundPlayWave(soundData1_, 0.5f, false);
-			}
-			else {
-
-			}
-		}
+	//Aボタンで次のページへ
+	if (input_->TriggerAButton(joyState) && sceneCount_ < 2) {
+		sceneCount_++;
+		audio_->SoundPlayWave(soundData1_, 0.5f, false);
 	}
 
-	if (cFlag == false) {
-		cTimer_++;
-	}
-	if (cTimer_ >= 10) {
-		cFlag = true;
-		cTimer_ = 0;
-	}
-
+	//Playerの更新
 	player_->UpdateView();
 	player_->SetViewProjection(&viewProjection_);
+	
+	//Particle更新
 	particle_->Update();
 	particle_->SetTranslate(player_->GetWorldTransform().translation_);
 
+	//ライト更新
 	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.2f };
 	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{player_->GetWorldTransform().translation_.num[0],4.6f,player_->GetWorldTransform().translation_.num[2]},0.2f ,10.0f,1.0f };
 	directionalLights_->SetTarget(directionalLight_);
 	pointLights_->SetTarget(pointLight_);
 
-	if (pageChange_ == true) {
-		count++;
-		pageChange_ = false;
-	}
-
-	ImGui::Begin("debug");
-	ImGui::Text("%d", count);
-	ImGui::End();
-
+	//UI点滅用
 	if (changeAlpha_ == false) {
 		spriteAlpha_ -= 8;
 		if (spriteAlpha_ <= 0) {
@@ -165,7 +147,8 @@ void GameTitleScene::Update() {
 		}
 	}
 
-	if (count == 0) {
+	//各カウントの処理
+	if (sceneCount_ == 0) {
 		debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
 		player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
 		fadeAlpha_ -= 4;
@@ -173,7 +156,7 @@ void GameTitleScene::Update() {
 			fadeAlpha_ = 0;
 		}
 	}
-	if (count == 1) {
+	if (sceneCount_ == 1) {
 		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,-29.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ -= 4;
 		player_->SetVelocity({ 0.0f,0.0f,0.0f });
@@ -181,32 +164,41 @@ void GameTitleScene::Update() {
 			fadeAlpha_ = 0;
 		}
 	}
-	if (count == 2) {
+	if (sceneCount_ == 2) {
 		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,20.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ += 4;
 		player_->SetVelocity({ 0.0f,0.0f,2.0f });
+		//フェードしてゲームシーンへ
 		if (fadeAlpha_ >= 256) {
-			count = 0;
+			sceneCount_ = 0;
 			fadeAlpha_ = 256;
-			testTimer_ = 1.0f;
+			animationTimer_ = 1.0f;
 			player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
 			sceneNo = GAME_SCENE;
 		}
 	}
 
-	if (count >= 1) {
-		testTimer_ += 1.0f;
+	//アニメーション開始
+	if (sceneCount_ >= 1) {
+		animationTimer_ += 1.0f;
 	}
-	stage_[1]->SetAnimationTime(testTimer_);
+	stage_[1]->SetAnimationTime(animationTimer_);
 
+	//ワールド座標更新
 	for (int i = 0; i < 3; i++) {
 		world_[i].UpdateMatrix();
 	}
 
+	//カメラとビュープロジェクション更新
 	debugCamera_->Update();
 	viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
 	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 	viewProjection_.UpdateMatrix();
+
+	//
+	ImGui::Begin("TitleScene");
+	ImGui::Text("%d", sceneCount_);
+	ImGui::End();
 }
 
 void GameTitleScene::Draw() {
@@ -242,12 +234,12 @@ void GameTitleScene::DrawUI() {
 #pragma region 前景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
-	if (pageChange_ == false) {
+	if (sceneCount_ != 2) {
 		sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 1.0f,1.0f,1.0f,spriteAlpha_ / 256.0f });
-		if (count == 0) {
+		if (sceneCount_ == 0) {
 			sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 		}
-		if (count == 1) {
+		if (sceneCount_ == 1) {
 			sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 		}
 	}
@@ -257,13 +249,13 @@ void GameTitleScene::DrawUI() {
 }
 
 void GameTitleScene::DrawPostEffect() {
-	if (count == 0) {
+	if (sceneCount_ == 0) {
 		CJEngine_->renderer_->Draw(PipelineType::Gaussian);
 	}
-	if (count == 1) {
+	if (sceneCount_ == 1) {
 		CJEngine_->renderer_->Draw(PipelineType::Grayscale);
 	}
-	if (count == 2) {
+	if (sceneCount_ == 2) {
 		CJEngine_->renderer_->Draw(PipelineType::RadialBlur);
 	}
 }

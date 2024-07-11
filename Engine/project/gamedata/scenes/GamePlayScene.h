@@ -30,6 +30,7 @@ public:
 
 	void ApplyGlobalVariables();
 
+	//敵の配置
 	void SetEnemy(Vector3 pos);
 
 private:
@@ -55,7 +56,7 @@ private:
 
 	std::unique_ptr<Model> flagModel_[5];
 	WorldTransform world_[5];
-	float rotate_ = 30.0f;
+	float playerFlagRotate_ = 30.0f;
 
 	std::unique_ptr<CreateParticle> particle_;
 	Emitter testEmitter_{};
@@ -78,8 +79,6 @@ private:
 	int enemyDethCount = 0;
 
 	bool gameStart = true;
-
-	Vector4 test = { 1.0f,1.0f,1.0f,1.0f };
 
 	float fadeAlpha_ = 256.0f;
 	bool isfadeIn = false;

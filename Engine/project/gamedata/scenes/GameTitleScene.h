@@ -32,46 +32,50 @@ private:
 
 	TextureManager* textureManager_;
 
+	//
 	std::unique_ptr <CreateSprite> sprite_[5];
 	EulerTransform spriteTransform_;
 	EulerTransform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
-
-	float spriteAlpha_ = 256.0f;
 	float fadeAlpha_ = 0.0f;
 
+	//テクスチャ
 	uint32_t pageAll_;
 	uint32_t start_;
 	uint32_t title_;
 	uint32_t tutorial_;
 
+	//UI点滅用
 	bool changeAlpha_ = false;
+	float spriteAlpha_ = 256.0f;
 
-	int count = 0;
+	//シーン内の演出遷移用カウント
+	int sceneCount_ = 0;
 
-	bool pageChange_ = false;
-
+	//Audio
 	Audio* audio_;
 	SoundData soundData1_;
 
+	//自機
 	WorldTransform world_[3];
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Model> playerModel_;
 	ViewProjection viewProjection_;
 
+	//ステージ
 	std::unique_ptr<Model> stage_[2];
-	float testTimer_ = 1.0f;
+	float animationTimer_ = 1.0f;//アニメーション用のタイマー
 
-	int cTimer_ = 0;
-	bool cFlag = true;
-
+	//
 	DebugCamera* debugCamera_;
 
+	//
 	std::unique_ptr<CreateParticle> particle_;
 	Emitter testEmitter_{};
 	AccelerationField accelerationField;
 	uint32_t particleResourceNum_;
 
+	//ライト
 	DirectionalLights* directionalLights_;
 	DirectionalLight directionalLight_;
 

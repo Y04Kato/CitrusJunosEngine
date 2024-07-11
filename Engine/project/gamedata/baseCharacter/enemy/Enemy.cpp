@@ -9,6 +9,8 @@ void Enemy::Initialize(Model* model) {
 	BaseCharacter::Initialize(model);
 
 	input_ = Input::GetInstance();
+
+	structSphere_.radius = 1.5f;
 }
 
 void Enemy::Update() {
@@ -18,7 +20,6 @@ void Enemy::Update() {
 	Move();
 
 	structSphere_.center = worldTransform_.GetWorldPos();
-	structSphere_.radius = 1.5f;
 
 	if (worldTransform_.translation_.num[1] < -10.0f) {
 		isDead_ = true;

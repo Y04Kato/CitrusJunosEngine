@@ -62,7 +62,8 @@ private:
 
 	//0~2で弱~強
 	int moveMode_ = 0;
-
-	bool moveFlag_ = true;
-	int moveCount_ = 0;
+	
+	bool moveFlag_ = true;//行動入力受け付けフラグ
+	const int moveCountMax_ = 60;//次に行動可能になるまでの時間
+	int moveCount_ = 0;//行動入力可能までのタイマー
 };

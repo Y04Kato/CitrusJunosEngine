@@ -11,6 +11,8 @@ void Player::Initialize(Model* model) {
 	input_ = Input::GetInstance();
 
 	worldTransform_.translation_ = { 0.0f,0.1f,0.0f };
+
+	structSphere_.radius = 1.5f;
 }
 
 void Player::Update() {
@@ -20,12 +22,11 @@ void Player::Update() {
 	Move();
 
 	structSphere_.center = worldTransform_.GetWorldPos();
-	structSphere_.radius = 1.5f;
 
 	if (moveFlag_ == false) {
 		moveCount_++;
 	}
-	if (moveCount_ >= 60) {
+	if (moveCount_ >= moveCountMax_) {
 		moveFlag_ = true;
 		moveCount_ = 0;
 	}
@@ -45,6 +46,13 @@ void Player::Update() {
 	worldTransform_.rotation_.num[1] += 1.0f;
 
 	worldTransform_.UpdateMatrix();
+
+	ImGui::Begin("player");
+	ImGui::Text("Move WASD");
+	ImGui::Text("MovePowerChange Space");
+	ImGui::DragFloat3("vector", velocity_.num);
+	ImGui::DragFloat3("vectorC", velocityC_.num);
+	ImGui::End();
 }
 
 void Player::UpdateView() {
@@ -63,13 +71,6 @@ void Player::UpdateView() {
 void Player::Draw(const ViewProjection& viewProjection) {
 	// 3Dモデルを描画
 	model_->Draw(worldTransform_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
-
-	ImGui::Begin("player");
-	ImGui::Text("Move WASD");
-	ImGui::Text("MovePowerChange Space");
-	ImGui::DragFloat3("vector", velocity_.num);
-	ImGui::DragFloat3("vectorC", velocityC_.num);
-	ImGui::End();
 }
 
 void Player::Move() {
@@ -135,7 +136,7 @@ void Player::Move() {
 
 	if (moveFlag_ == true) {
 		if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-			if (input_->PushXButton(joystate)) {
+			if (input_->TriggerXButton(joystate)) {
 				moveFlag_ = false;
 				moveMode_++;
 				if (moveMode_ >= 3) {
@@ -152,7 +153,7 @@ void Player::Move() {
 			if (moveMode_ == 2) {
 				kCharacterSpeed = 0.9f;
 			}
-			if (input_->PushAButton(joystate)) {
+			if (input_->TriggerAButton(joystate)) {
 				moveFlag_ = false;
 				velocityC_ = { (float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
 
@@ -169,6 +170,7 @@ void Player::Move() {
 		}
 	}
 
+	//加速度減衰処理
 	const float kGravityAcceleration = 0.01f;
 
 	if (velocity_.num[0] >= 0.01f) {
