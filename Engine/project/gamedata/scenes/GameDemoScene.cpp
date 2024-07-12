@@ -13,7 +13,7 @@ void GameDemoScene::Initialize() {
 	kaedeResourceNum_ = textureManager_->Load("project/gamedata/resources/kaede.png");
 
 	cjEngineResourceNum_ = textureManager_->Load("project/gamedata/resources/CitrusJunosEngine.png");
-	
+
 	ddsResourceNum_ = textureManager_->Load("project/gamedata/resources/rostock_laage_airport_4k.dds");
 
 	//三角形
@@ -145,23 +145,14 @@ void GameDemoScene::Initialize() {
 	scanlineData_.scanlineFrequency = 1000.0f;
 	scanlineData_.time = 0.0f;
 
-	levelDataLoader_ = LevelDataLoader::GetInstance();
-	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
-
-	//
 	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
 	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
-
-	for (int i = 0; i < objCountMax_; i++) {
-		objNameHolder_[i] = "test" + std::to_string(i);
-	}
+	levelDataLoader_ = LevelDataLoader::GetInstance();
 
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
-
-	globalVariables->AddItem(groupName, "ObjCount", objCount_);
 }
 
 void GameDemoScene::Update() {
@@ -200,10 +191,6 @@ void GameDemoScene::Update() {
 
 	worldTransformSkyBox_.UpdateMatrix();
 	worldTransformModelVAT_.UpdateMatrix();
-
-	for (Obj& obj : objects_) {
-		obj.world.UpdateMatrix();
-	}
 
 	for (Obj& obj : levelEditorObjects_) {
 		obj.world.UpdateMatrix();
@@ -451,39 +438,6 @@ void GameDemoScene::Update() {
 
 	ImGui::Text("%f", ImGui::GetIO().Framerate);
 
-	ImGui::InputText("BlockName", objName_, sizeof(objName_));
-	if (ImGui::Button("SpawnBlock")) {
-		SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
-		objCount_++;
-		globalVariables->SetValue(groupName, "ObjCount", objCount_);
-		for (Obj& obj : objects_) {
-			globalVariables->AddItem(groupName, obj.name, (std::string)objName_);
-			globalVariables->AddItem(groupName, obj.name + "Translate", obj.world.translation_);
-			//globalVariables->AddItem(groupName,obj.name + "Rotate", obj.world.rotation_);
-			globalVariables->AddItem(groupName, obj.name + "Scale", obj.world.scale_);
-		}
-	}
-	if (ImGui::Button("DeleteBlock")) {
-		SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
-		for (auto it = objects_.begin(); it != objects_.end();) {
-			if (it->name == objName_) {
-				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Translate");
-				globalVariables->RemoveItem(groupName, (std::string)objName_ + "Scale");
-				objCount_--;
-				globalVariables->SetValue(groupName, "ObjCount", objCount_);
-				it = objects_.erase(it);
-			}
-			else {
-				++it;
-			}
-		}
-	}
-	if (ImGui::Button("StartSetBlock")) {
-		for (int i = 0; i < objCount_; i++) {
-			SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
-		}
-	}
-
 	if (ImGui::Button("LevelEditorLoadScene")) {
 		LevelSetObject();
 	}
@@ -559,13 +513,10 @@ void GameDemoScene::Draw() {
 
 	if (isModelDraw_[1]) {//Model描画
 		model_[1]->Draw(worldTransformModel_[1], viewProjection_, modelMaterial_[1]);
+		
 	}
 	if (isModelDraw_[2]) {//Model描画
 		model_[2]->Draw(worldTransformModel_[2], viewProjection_, modelMaterial_[2]);
-	}
-
-	for (Obj& obj : objects_) {
-		obj.model.Draw(obj.world, viewProjection_, obj.material);
 	}
 
 	for (Obj& obj : levelEditorObjects_) {
@@ -616,10 +567,6 @@ void GameDemoScene::DrawUI() {
 		}
 	}
 
-	for (Obj& obj : objects_) {
-		ImGuizmo::Manipulate(&viewProjection_.matView.m[0][0], &viewProjection_.matProjection.m[0][0], ImGuizmo::TRANSLATE, ImGuizmo::WORLD, &obj.world.constMap->matWorld.m[0][0]);
-	}
-
 #pragma endregion
 }
 
@@ -661,40 +608,19 @@ void GameDemoScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 	audio_->SoundUnload(&soundData2_);
 
-	objects_.clear();
+	levelEditorObjects_.clear();
 }
 
 void GameDemoScene::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "GameDemoScene";
 
-	objCount_ = globalVariables->GetIntValue(groupName, "ObjCount");
-
-	for (Obj& obj : objects_) {
-		obj.world.translation_ = globalVariables->GetVector3Value(groupName, obj.name + "Translate");
-		//obj.world.rotation_ = globalVariables->GetVector3Value(groupName,  obj.name + "Rotate");
-		obj.world.scale_ = globalVariables->GetVector3Value(groupName, obj.name + "Scale");
-	}
-}
-
-void GameDemoScene::SetObject(EulerTransform trans, const std::string& name) {
-	Obj obj;
-	obj.model.Initialize(ObjModelData_, ObjTexture_);
-	obj.model.SetDirectionalLightFlag(true, 3);
-
-	obj.world.Initialize();
-	obj.world.translation_ = trans.translate;
-	obj.world.rotation_ = trans.rotate;
-	obj.world.scale_ = trans.scale;
-
-	obj.material = { 1.0f,1.0f,1.0f,1.0f };
-
-	obj.name = name;
-	objects_.push_back(obj);
 }
 
 void GameDemoScene::LevelSetObject() {
 	//レベルデータからオブジェクトを生成　配置
+	levelEditorObjects_.clear();
+	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
 	for (auto& objectData : levelDataLoader_->GetLevelData()->objectsData_) {
 		Obj obj;
 		obj.model.Initialize(ObjModelData_, ObjTexture_);

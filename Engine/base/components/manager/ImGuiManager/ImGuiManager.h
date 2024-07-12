@@ -13,7 +13,6 @@ public:
 	void Begin();
 	void End();
 	void Draw();
-	void DrawGuizmo(float viewMatrix, float projectionMatrix, float objectMatrix);
 	void Finalize();
 private:
 	DirectXCommon* dxCommon_;

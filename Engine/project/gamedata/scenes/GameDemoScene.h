@@ -17,7 +17,7 @@
 #include "components/utilities/collisionManager/CollisionConfig.h"
 #include "levelDataLoader/LevelDataLoader.h"
 #include "postEffect/PostEffect.h"
-#include "ImGuiManager.h"
+#include "editors/Editors.h"
 
 #include "components/utilities/globalVariables/GlobalVariables.h"
 
@@ -32,7 +32,6 @@ public:
 
 	void ApplyGlobalVariables();
 
-	void SetObject(EulerTransform trans, const std::string& name);
 	void LevelSetObject();
 
 private:
@@ -130,25 +129,12 @@ private:
 	bool isLensDistortionDraw_;
 	bool isScanlineDraw_;
 
-	//ステージエディター擬き、名前をtest0~始め、それを記録する
-	struct Obj {
-		Model model;
-		WorldTransform world;
-		Vector4 material;
-		std::string name;
-	};
-	std::list<Obj> objects_;
-	ModelData ObjModelData_;
-	uint32_t ObjTexture_;
-	char objName_[64];
-	static const int objCountMax_ = 100;
-	int objCount_ = 0;
-	std::string objNameHolder_[objCountMax_];
-
 	const char* groupName = "GameDemoScene";
 
 	//LevelEditor
 	LevelDataLoader* levelDataLoader_;
 	std::list<Obj> levelEditorObjects_;
+	ModelData ObjModelData_;
+	uint32_t ObjTexture_;
 };
 
