@@ -120,6 +120,7 @@ void LevelDataLoader::SearchChildren(LevelData* levelData, nlohmann::json& paren
 
 			//オブジェクト名
 			objectData.name = object["Name"];
+			objectData.name = "-" + objectData.name;
 
 			//ファイル名
 			if (object.contains("file_name")) {
