@@ -148,11 +148,14 @@ void GameDemoScene::Initialize() {
 	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
 	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
 	levelDataLoader_ = LevelDataLoader::GetInstance();
+	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
 
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
+
+	LevelSetObject();
 }
 
 void GameDemoScene::Update() {
@@ -438,7 +441,7 @@ void GameDemoScene::Update() {
 
 	ImGui::Text("%f", ImGui::GetIO().Framerate);
 
-	if (ImGui::Button("LevelEditorLoadScene")) {
+	if (ImGui::Button("LevelEditorHotReload")) {
 		LevelSetObject();
 	}
 
@@ -620,7 +623,9 @@ void GameDemoScene::ApplyGlobalVariables() {
 void GameDemoScene::LevelSetObject() {
 	//レベルデータからオブジェクトを生成　配置
 	levelEditorObjects_.clear();
+
 	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
+
 	for (auto& objectData : levelDataLoader_->GetLevelData()->objectsData_) {
 		Obj obj;
 		obj.model.Initialize(ObjModelData_, ObjTexture_);

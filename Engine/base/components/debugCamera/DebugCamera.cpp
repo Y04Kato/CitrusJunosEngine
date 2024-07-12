@@ -7,8 +7,8 @@ DebugCamera* DebugCamera::GetInstance() {
 
 void DebugCamera::initialize() {
 	viewProjection_.Initialize();
-	viewProjection_.translation_ = { 0,00,-30 };
-	viewProjection_.rotation_ = { 0,0,0 };
+	viewProjection_.translation_ = { 0.0f,0.0f,-45.0f };
+	viewProjection_.rotation_ = { 0.0f,0.0f,0.0f };
 
 	input_ = Input::GetInstance();
 }
@@ -42,12 +42,12 @@ void DebugCamera::Update() {
 	}
 
 	viewProjection_.translation_.num[2] = input_->GetMousePosition().Scroll / 40.0f;
+#endif
 
 	ImGui::Begin("DebugCamera");
 	ImGui::DragFloat3("rotation", viewProjection_.rotation_.num, 0.1f);
 	ImGui::DragFloat3("translation", viewProjection_.translation_.num, 0.1f);
 	ImGui::End();
-#endif
 
 	if (isMovingCamera == true) {
 		timer_ += timerCountr_;

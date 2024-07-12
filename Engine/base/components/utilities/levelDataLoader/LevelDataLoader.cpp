@@ -14,7 +14,7 @@ void LevelDataLoader::Initialize(const std::string& directoryPath, const std::st
 	nlohmann::json deserialized;
 
 	//JSONデータが正しい物か確認
-	assert(FileLoad(fullpath, deserialized));
+	FileLoad(fullpath, deserialized);
 
 	//データのロード
 	levelData_ = SearchObjects(deserialized);
