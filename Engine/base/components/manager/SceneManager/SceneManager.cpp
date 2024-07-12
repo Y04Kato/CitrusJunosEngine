@@ -51,7 +51,7 @@ void SceneManager::Initialize() {
 	}
 
 	//タイトルシーンから開始
-	Iscene::sceneNo = DEMO_SCENE;
+	Iscene::sceneNo = TITLE_SCENE;
 
 	postEffect_ = PostEffect::GetInstance();
 	postEffect_->Initialize();
