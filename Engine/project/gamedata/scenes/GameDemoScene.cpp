@@ -131,7 +131,6 @@ void GameDemoScene::Initialize() {
 
 	viewProjection_.Initialize();
 
-
 	//PostEffect
 	postEffect_ = PostEffect::GetInstance();
 	noiseTexture_[0] = textureManager_->Load("project/gamedata/resources/noise0.png");
@@ -150,6 +149,11 @@ void GameDemoScene::Initialize() {
 	levelDataLoader_ = LevelDataLoader::GetInstance();
 	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
 
+	//
+	editors_ = Editors::GetInstance();
+	editors_->Initialize();
+	editors_->SetModels(ObjModelData_,ObjTexture_);
+
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 
@@ -159,7 +163,6 @@ void GameDemoScene::Initialize() {
 }
 
 void GameDemoScene::Update() {
-
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
 	ApplyGlobalVariables();
@@ -202,6 +205,9 @@ void GameDemoScene::Update() {
 	postEffect_->SetMaskTexture(noiseTexture_[maskTextureNum_]);
 	postEffect_->SetMaskData(maskData_);
 	postEffect_->SetScanlineData(scanlineData_);
+
+	//
+	editors_->Update();
 
 	ImGui::Begin("debug");
 	ImGui::Text("GameDemoScene");
@@ -522,6 +528,8 @@ void GameDemoScene::Draw() {
 		model_[2]->Draw(worldTransformModel_[2], viewProjection_, modelMaterial_[2]);
 	}
 
+	editors_->Draw(viewProjection_);
+
 	for (Obj& obj : levelEditorObjects_) {
 		obj.model.Draw(obj.world, viewProjection_, obj.material);
 	}
@@ -610,6 +618,8 @@ void GameDemoScene::DrawPostEffect() {
 void GameDemoScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 	audio_->SoundUnload(&soundData2_);
+
+	editors_->Finalize();
 
 	levelEditorObjects_.clear();
 }

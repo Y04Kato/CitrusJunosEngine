@@ -7,31 +7,35 @@ Editors* Editors::GetInstance() {
 }
 
 void Editors::Initialize() {
-	input_ = Input::GetInstance();
-	textureManager_ = TextureManager::GetInstance();
-
-	worldTransform_.Initialize();
-
-	Model model;
-	ObjModelData_ = model.LoadModelFile("project/gamedata/resources/block", "block.obj");
-	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
+	//とりあえず初期設定
+	decisionGroupName_ = (char*)"None";
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	globalVariables->AddItem("None", "ObjCount", objCount_);
+	ApplyGlobalVariables();
 
 	for (int i = 0; i < objCountMax_; i++) {
-		objNameHolder_[i] = "test" + std::to_string(i);
+		objNameHolder_[i] = "obj" + std::to_string(i);
 	}
+}
+
+void Editors::SetModels(ModelData ObjModelData, uint32_t ObjTexture) {
+	ObjModelData_ = ObjModelData;
+	ObjTexture_ = ObjTexture;
 }
 
 void Editors::Update() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	ApplyGlobalVariables();
+	SetGlobalVariables();
 
 	//Group名の設定
 	ImGui::InputText("GroupName", groupName_, sizeof(groupName_));
 	if (ImGui::Button("SetGroupName")) {
-		decisionGroupName_ = groupName_;
+		decisionGroupName_ = (char*)groupName_;
 		GlobalVariables::GetInstance()->CreateGroup(decisionGroupName_);
 
 		globalVariables->AddItem(decisionGroupName_, "ObjCount", objCount_);
+
+		ApplyGlobalVariables();
 	}
 
 	//配置するブロック名の設定
@@ -44,7 +48,7 @@ void Editors::Update() {
 		for (Obj& obj : objects_) {
 			globalVariables->AddItem(decisionGroupName_, obj.name, (std::string)objName_);
 			globalVariables->AddItem(decisionGroupName_, obj.name + "Translate", obj.world.translation_);
-			//globalVariables->AddItem(decisionGroupName_,obj.name + "Rotate", obj.world.rotation_);
+			globalVariables->AddItem(decisionGroupName_,obj.name + "Rotate", obj.world.rotation_);
 			globalVariables->AddItem(decisionGroupName_, obj.name + "Scale", obj.world.scale_);
 		}
 	}
@@ -54,6 +58,7 @@ void Editors::Update() {
 		for (auto it = objects_.begin(); it != objects_.end();) {
 			if (it->name == objName_) {
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Translate");
+				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Rotate");
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Scale");
 				objCount_--;
 				globalVariables->SetValue(decisionGroupName_, "ObjCount", objCount_);
@@ -83,7 +88,7 @@ void Editors::Draw(ViewProjection view) {
 
 		//Guizmo操作
 		if (objName_ == obj.name) {
-			obj.world = Editor(view, obj.world);
+			obj.world = Guizmo(view, obj.world);
 		}
 	}
 }
@@ -99,8 +104,20 @@ void Editors::ApplyGlobalVariables() {
 
 	for (Obj& obj : objects_) {
 		obj.world.translation_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Translate");
-		//obj.world.rotation_ = globalVariables->GetVector3Value(decisionGroupName_,  obj.name + "Rotate");
+		obj.world.rotation_ = globalVariables->GetVector3Value(decisionGroupName_,  obj.name + "Rotate");
 		obj.world.scale_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Scale");
+	}
+}
+
+void Editors::SetGlobalVariables() {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+
+	globalVariables->SetValue(decisionGroupName_, "ObjCount", objCount_);
+
+	for (Obj& obj : objects_) {
+		globalVariables->SetValue(decisionGroupName_, obj.name + "Translate", obj.world.translation_);
+		globalVariables->SetValue(decisionGroupName_, obj.name + "Rotate", obj.world.rotation_);
+		globalVariables->SetValue(decisionGroupName_, obj.name + "Scale", obj.world.scale_);
 	}
 }
 
@@ -120,18 +137,18 @@ void Editors::SetObject(EulerTransform transform, const std::string& name) {
 	objects_.push_back(obj);
 }
 
-WorldTransform Editors::Editor(ViewProjection& view, WorldTransform world) {
+WorldTransform Editors::Guizmo(ViewProjection& view, WorldTransform world) {
 	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 
-	worldTransform_ = world;
-
-	if (input_->TriggerKey(DIK_1)) {
+	WorldTransform worldTransform_ = world;
+	
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_1)) {
 		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 	}
-	if (input_->TriggerKey(DIK_2)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_2)) {
 		mCurrentGizmoOperation = ImGuizmo::ROTATE;
 	}
-	if (input_->TriggerKey(DIK_3)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_3)) {
 		mCurrentGizmoOperation = ImGuizmo::SCALE;
 	}
 
@@ -150,16 +167,16 @@ WorldTransform Editors::Editor(ViewProjection& view, WorldTransform world) {
 	return worldTransform_;
 }
 
-EulerTransform Editors::Editor(ViewProjection& view, EulerTransform world) {
+EulerTransform Editors::Guizmo(ViewProjection& view, EulerTransform world) {
 	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 
-	if (input_->TriggerKey(DIK_1)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_1)) {
 		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 	}
-	if (input_->TriggerKey(DIK_2)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_2)) {
 		mCurrentGizmoOperation = ImGuizmo::ROTATE;
 	}
-	if (input_->TriggerKey(DIK_3)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_3)) {
 		mCurrentGizmoOperation = ImGuizmo::SCALE;
 	}
 

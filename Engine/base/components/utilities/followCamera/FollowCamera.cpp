@@ -77,3 +77,12 @@ void FollowCamera::ApplyGlobalVariables() {
 
 	latency = globalVariables->GetFloatValue(groupName, "Latency");
 }
+
+void FollowCamera::ShakeCamera(int shakePower, int dividePower) {
+	viewprojection_.translation_.num[0] += (rand() % shakePower - shakePower / 2 + rand() / (float)RAND_MAX) / dividePower;
+	viewprojection_.translation_.num[1] += (rand() % shakePower - shakePower / 2 + rand() / (float)RAND_MAX) / dividePower;
+	viewprojection_.translation_.num[2] += (rand() % shakePower - shakePower / 2 + rand() / (float)RAND_MAX) / dividePower;
+
+	viewprojection_.UpdateViewMatrix();
+	viewprojection_.TransferMatrix();
+}

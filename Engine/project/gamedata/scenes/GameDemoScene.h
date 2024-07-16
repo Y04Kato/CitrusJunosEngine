@@ -129,6 +129,9 @@ private:
 	bool isLensDistortionDraw_;
 	bool isScanlineDraw_;
 
+	//エディター擬き
+	Editors* editors_;
+
 	const char* groupName = "GameDemoScene";
 
 	//LevelEditor

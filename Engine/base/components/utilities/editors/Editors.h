@@ -1,10 +1,8 @@
 #pragma once
-#include "Input.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "ImGuiManager.h"
 #include "Model.h"
-#include "TextureManager.h"
 
 #include "components/utilities/globalVariables/GlobalVariables.h"
 
@@ -21,6 +19,8 @@ public:
 
 	void Initialize();
 
+	void SetModels(ModelData ObjModelData, uint32_t ObjTexture);
+
 	void Update();
 
 	void Draw(ViewProjection view);
@@ -28,12 +28,17 @@ public:
 	void Finalize();
 
 	void ApplyGlobalVariables();
+	void SetGlobalVariables();
 
 	void SetObject(EulerTransform trans, const std::string& name);
 
-	WorldTransform Editor(ViewProjection& view, WorldTransform world);
+	void SetGroupName(char* groupName) { decisionGroupName_ = groupName; }
 
-	EulerTransform Editor(ViewProjection& view, EulerTransform world);
+	//Key1でTRANSLATE、key2でROTATE、key3でSCALE
+	WorldTransform Guizmo(ViewProjection& view, WorldTransform world);
+
+	//Key1でTRANSLATE、key2でROTATE、key3でSCALE
+	EulerTransform Guizmo(ViewProjection& view, EulerTransform world);
 
 private:
 	Editors() = default;
@@ -41,12 +46,7 @@ private:
 	Editors(const Editors& obj) = default;
 	Editors& operator=(const Editors& obj) = default;
 
-	Input* input_;
-	TextureManager* textureManager_;
-
-	WorldTransform worldTransform_;
-
-	//ステージエディター擬き、名前をtest0~始め、それを記録する
+	//ステージエディター擬き、名前をobj0~始め、それを記録する
 	std::list<Obj> objects_;
 	ModelData ObjModelData_;
 	uint32_t ObjTexture_;
@@ -54,7 +54,7 @@ private:
 	int objCount_ = 0;
 	std::string objNameHolder_[objCountMax_];
 
-	char* objName_;
-	char* groupName_;
+	char objName_[64];
+	char groupName_[64];
 	char* decisionGroupName_;
 };
