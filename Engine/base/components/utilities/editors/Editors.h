@@ -34,6 +34,8 @@ public:
 
 	void SetGroupName(char* groupName) { decisionGroupName_ = groupName; }
 
+	int GetObjCount() { return objCount_; }
+
 	//Key1でTRANSLATE、key2でROTATE、key3でSCALE
 	WorldTransform Guizmo(ViewProjection& view, WorldTransform world);
 
