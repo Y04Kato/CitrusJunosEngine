@@ -6,12 +6,12 @@
             "Name": "box_object1",
             "Transform": {
                 "Translate": [
-                    0.0,
-                    0.0,
-                    0.0
+                    -5.0,
+                    -0.5,
+                    -5.0
                 ],
                 "Rotate": [
-                    0.0,
+                    45.0,
                     0.0,
                     0.0
                 ],
@@ -27,13 +27,13 @@
                     "Name": "box1",
                     "Transform": {
                         "Translate": [
-                            1.0,
-                            0.5,
-                            1.0
+                            2.5,
+                            0.0,
+                            2.5
                         ],
                         "Rotate": [
                             0.0,
-                            0.0,
+                            45.0,
                             0.0
                         ],
                         "Scale": [
@@ -48,9 +48,9 @@
                     "Name": "box2",
                     "Transform": {
                         "Translate": [
-                            -1.0,
+                            -2.0,
                             0.5,
-                            -1.0
+                            -2.0
                         ],
                         "Rotate": [
                             0.0,
@@ -71,9 +71,9 @@
             "Name": "box_object2",
             "Transform": {
                 "Translate": [
-                    0.0,
+                    5.0,
                     0.5,
-                    0.0
+                    5.0
                 ],
                 "Rotate": [
                     0.0,

@@ -16,6 +16,8 @@ public:
 
 	void ApplyGlobalVariables();
 
+	void ShakeCamera(int shakePower, int dividePower);
+
 private:
 	ViewProjection viewprojection_;
 	const WorldTransform* target_ = nullptr;

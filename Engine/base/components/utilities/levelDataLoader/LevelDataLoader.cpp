@@ -14,7 +14,7 @@ void LevelDataLoader::Initialize(const std::string& directoryPath, const std::st
 	nlohmann::json deserialized;
 
 	//JSONデータが正しい物か確認
-	assert(FileLoad(fullpath, deserialized));
+	FileLoad(fullpath, deserialized);
 
 	//データのロード
 	levelData_ = SearchObjects(deserialized);
@@ -120,6 +120,7 @@ void LevelDataLoader::SearchChildren(LevelData* levelData, nlohmann::json& paren
 
 			//オブジェクト名
 			objectData.name = object["Name"];
+			objectData.name = "-" + objectData.name;
 
 			//ファイル名
 			if (object.contains("file_name")) {

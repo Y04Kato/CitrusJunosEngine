@@ -7,47 +7,58 @@ DebugCamera* DebugCamera::GetInstance() {
 
 void DebugCamera::initialize() {
 	viewProjection_.Initialize();
-	viewProjection_.translation_ = { 0,00,-30 };
-	viewProjection_.rotation_ = { 0,0,0 };
+	viewProjection_.translation_ = { 0.0f,0.0f,-45.0f };
+	viewProjection_.rotation_ = { 0.0f,0.0f,0.0f };
 
 	input_ = Input::GetInstance();
 }
 
 void DebugCamera::Update() {
 #ifdef _DEBUG
-	//if (input_->PressKey(DIK_W)) {
-	//	viewProjection_.rotation_.num[0] -= 0.02f;
-	//}
-	//if (input_->PressKey(DIK_S)) {
-	//	viewProjection_.rotation_.num[0] += 0.02f;
-	//}
-	//if (input_->PressKey(DIK_D)) {
-	//	viewProjection_.rotation_.num[1] += 0.02f;
-	//}
-	//if (input_->PressKey(DIK_A)) {
-	//	viewProjection_.rotation_.num[1] -= 0.02f;
-	//}
+	if (input_->TriggerKey(DIK_C)) {
+		if (isKeyControlCamera_ == true) {
+			isKeyControlCamera_ = false;
+		}
+		else {
+			isKeyControlCamera_ = true;
+		}
+	}
+	if (isKeyControlCamera_ == true) {
+		if (input_->PressKey(DIK_W)) {
+			viewProjection_.rotation_.num[0] -= 0.02f;
+		}
+		if (input_->PressKey(DIK_S)) {
+			viewProjection_.rotation_.num[0] += 0.02f;
+		}
+		if (input_->PressKey(DIK_D)) {
+			viewProjection_.rotation_.num[1] += 0.02f;
+		}
+		if (input_->PressKey(DIK_A)) {
+			viewProjection_.rotation_.num[1] -= 0.02f;
+		}
 
-	//if (input_->PressKey(DIK_UP)) {
-	//	viewProjection_.translation_.num[1] += 2.0f;
-	//}
-	//if (input_->PressKey(DIK_DOWN)) {
-	//	viewProjection_.translation_.num[1] -= 2.0f;
-	//}
-	//if (input_->PressKey(DIK_RIGHT)) {
-	//	viewProjection_.translation_.num[0] += 2.0f;
-	//}
-	//if (input_->PressKey(DIK_LEFT)) {
-	//	viewProjection_.translation_.num[0] -= 2.0f;
-	//}
-
-	//viewProjection_.translation_.num[2] = input_->GetMousePosition().Scroll / 40.0f;
+		if (input_->PressKey(DIK_UP)) {
+			viewProjection_.translation_.num[1] += 2.0f;
+		}
+		if (input_->PressKey(DIK_DOWN)) {
+			viewProjection_.translation_.num[1] -= 2.0f;
+		}
+		if (input_->PressKey(DIK_RIGHT)) {
+			viewProjection_.translation_.num[0] += 2.0f;
+		}
+		if (input_->PressKey(DIK_LEFT)) {
+			viewProjection_.translation_.num[0] -= 2.0f;
+		}
+	
+		viewProjection_.translation_.num[2] = input_->GetMousePosition().Scroll / 40.0f;
+	}
+#endif
 
 	ImGui::Begin("DebugCamera");
+	ImGui::Text("KeyControlCamera : 'C'key");
 	ImGui::DragFloat3("rotation", viewProjection_.rotation_.num, 0.1f);
 	ImGui::DragFloat3("translation", viewProjection_.translation_.num, 0.1f);
 	ImGui::End();
-#endif
 
 	if (isMovingCamera == true) {
 		timer_ += timerCountr_;
@@ -65,7 +76,6 @@ void DebugCamera::Update() {
 		viewProjection_.rotation_.num[1] = (1.0f - timer_) * movingStartRotate_.num[1] + timer_ * movingEndRotate_.num[1];
 		viewProjection_.rotation_.num[2] = (1.0f - timer_) * movingStartRotate_.num[2] + timer_ * movingEndRotate_.num[2];
 	}
-
 
 	viewProjection_.UpdateMatrix();
 }
