@@ -36,4 +36,7 @@ private:
 	float timer_ = 0.0f;
 	float timerCountr_ = 0.01f;
 	Vector3 movingSpeed_ = { 0.0f,0.0f,0.0f };
+
+	//キーでカメラを操作するか否かのフラグ
+	bool isKeyControlCamera_ = false;
 };
