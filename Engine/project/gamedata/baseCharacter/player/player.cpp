@@ -87,6 +87,31 @@ void Player::Move() {
 			if (moveMode_ == 2) {
 				velocity_.num[2] = 0.9f;
 			}
+
+			if (input_->TriggerKey(DIK_A)) {
+				moveFlag_ = false;
+				if (moveMode_ == 0) {
+					velocity_.num[0] = -0.5f;
+				}
+				if (moveMode_ == 1) {
+					velocity_.num[0] = -0.7f;
+				}
+				if (moveMode_ == 2) {
+					velocity_.num[0] = -0.9f;
+				}
+			}
+			if (input_->TriggerKey(DIK_D)) {
+				moveFlag_ = false;
+				if (moveMode_ == 0) {
+					velocity_.num[0] = 0.5f;
+				}
+				if (moveMode_ == 1) {
+					velocity_.num[0] = 0.7f;
+				}
+				if (moveMode_ == 2) {
+					velocity_.num[0] = 0.9f;
+				}
+			}
 		}
 		if (input_->TriggerKey(DIK_S)) {
 			moveFlag_ = false;
@@ -98,6 +123,31 @@ void Player::Move() {
 			}
 			if (moveMode_ == 2) {
 				velocity_.num[2] = -0.9f;
+			}
+
+			if (input_->TriggerKey(DIK_A)) {
+				moveFlag_ = false;
+				if (moveMode_ == 0) {
+					velocity_.num[0] = -0.5f;
+				}
+				if (moveMode_ == 1) {
+					velocity_.num[0] = -0.7f;
+				}
+				if (moveMode_ == 2) {
+					velocity_.num[0] = -0.9f;
+				}
+			}
+			if (input_->TriggerKey(DIK_D)) {
+				moveFlag_ = false;
+				if (moveMode_ == 0) {
+					velocity_.num[0] = 0.5f;
+				}
+				if (moveMode_ == 1) {
+					velocity_.num[0] = 0.7f;
+				}
+				if (moveMode_ == 2) {
+					velocity_.num[0] = 0.9f;
+				}
 			}
 		}
 		if (input_->TriggerKey(DIK_A)) {
@@ -111,6 +161,31 @@ void Player::Move() {
 			if (moveMode_ == 2) {
 				velocity_.num[0] = -0.9f;
 			}
+
+			if (input_->TriggerKey(DIK_W)) {
+				moveFlag_ = false;
+				if (moveMode_ == 0) {
+					velocity_.num[2] = 0.5f;
+				}
+				if (moveMode_ == 1) {
+					velocity_.num[2] = 0.7f;
+				}
+				if (moveMode_ == 2) {
+					velocity_.num[2] = 0.9f;
+				}
+			}
+			if (input_->TriggerKey(DIK_S)) {
+				moveFlag_ = false;
+				if (moveMode_ == 0) {
+					velocity_.num[2] = -0.5f;
+				}
+				if (moveMode_ == 1) {
+					velocity_.num[2] = -0.7f;
+				}
+				if (moveMode_ == 2) {
+					velocity_.num[2] = -0.9f;
+				}
+			}
 		}
 		if (input_->TriggerKey(DIK_D)) {
 			moveFlag_ = false;
@@ -122,6 +197,31 @@ void Player::Move() {
 			}
 			if (moveMode_ == 2) {
 				velocity_.num[0] = 0.9f;
+			}
+
+			if (input_->TriggerKey(DIK_W)) {
+				moveFlag_ = false;
+				if (moveMode_ == 0) {
+					velocity_.num[2] = 0.5f;
+				}
+				if (moveMode_ == 1) {
+					velocity_.num[2] = 0.7f;
+				}
+				if (moveMode_ == 2) {
+					velocity_.num[2] = 0.9f;
+				}
+			}
+			if (input_->TriggerKey(DIK_S)) {
+				moveFlag_ = false;
+				if (moveMode_ == 0) {
+					velocity_.num[2] = -0.5f;
+				}
+				if (moveMode_ == 1) {
+					velocity_.num[2] = -0.7f;
+				}
+				if (moveMode_ == 2) {
+					velocity_.num[2] = -0.9f;
+				}
 			}
 		}
 	}
