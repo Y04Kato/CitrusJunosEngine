@@ -155,49 +155,16 @@ void GamePlayScene::Update() {
 		postEffect_->SetMaskTexture(noiseTexture_);
 
 		//エネミーの配置
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < enemyMaxCount_; i++) {
 			SetEnemy(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
 		}
-		//もし何かしらに接触しているなら再配置
-		//プレイヤーの判定取得
-		StructSphere pSphere;
-		pSphere = player_->GetStructSphere();
 
-		//プレイヤーとエネミーの当たり判定
 		for (Enemy* enemy : enemys_) {
-			StructSphere eSphere;
-			eSphere = enemy->GetStructSphere();
-			if (IsCollision(pSphere, eSphere)) {
-				enemy->SetWorldTransform(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
-			}
+			enemy->Update();
 		}
 
-		//エネミー同士の当たり判定
-		for (auto it1 = enemys_.begin(); it1 != enemys_.end(); ++it1) {
-			for (auto it2 = std::next(it1); it2 != enemys_.end(); ++it2) {
-				Enemy* enemy1 = *it1;
-				Enemy* enemy2 = *it2;
-
-				StructSphere eSphere1 = enemy1->GetStructSphere();
-				StructSphere eSphere2 = enemy2->GetStructSphere();
-
-				if (IsCollision(eSphere1, eSphere2)) {
-					enemy2->SetWorldTransform(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
-				}
-			}
-		}
-
-		//エネミーとオブジェクトの当たり判定
-		for (Enemy* enemy : enemys_) {
-			StructSphere eSphere;
-			eSphere = enemy->GetStructSphere();
-			for (Obj obj : editors_->GetObj()) {
-				OBB objOBB;
-				objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
-				if (IsCollision(objOBB, eSphere)) {
-					enemy->SetWorldTransform(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
-				}
-			}
+		for (int i = 0; i < enemyMaxCount_ * 10; i++) {
+			ReSetEnemy();
 		}
 
 		gameStart_ = false;
@@ -353,7 +320,7 @@ void GamePlayScene::Update() {
 			float overlap = pSphere.radius + eSphere.radius - distance;
 
 			if (overlap > 0.0f) {
-				Vector3 correction = Normalize(direction) * (overlap / 2) * 2.0f;
+				Vector3 correction = Normalize(direction) * (overlap / 2) * 3.5f;
 				pSphere.center = pSphere.center - correction;
 				eSphere.center = eSphere.center + correction;
 
@@ -386,7 +353,7 @@ void GamePlayScene::Update() {
 				float overlap = eSphere1.radius + eSphere2.radius - distance;
 
 				if (overlap > 0.0f) {
-					Vector3 correction = Normalize(direction) * (overlap / 2) * 2.0f;
+					Vector3 correction = Normalize(direction) * (overlap / 2) * 3.5f;
 					eSphere1.center = eSphere1.center - correction;
 					eSphere2.center = eSphere2.center + correction;
 
@@ -594,4 +561,48 @@ void GamePlayScene::SetEnemy(Vector3 pos) {
 	enemy->SetWorldTransform(pos);
 	enemys_.push_back(enemy);
 	enemyDethCount_++;
+}
+
+void GamePlayScene::ReSetEnemy() {
+	//もし何かしらに接触しているなら再配置
+		//プレイヤーの判定取得
+	StructSphere pSphere;
+	pSphere = player_->GetStructSphere();
+
+	//プレイヤーとエネミーの当たり判定
+	for (Enemy* enemy : enemys_) {
+		StructSphere eSphere;
+		eSphere = enemy->GetStructSphere();
+		if (IsCollision(pSphere, eSphere)) {
+			enemy->SetWorldTransform(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
+		}
+	}
+
+	//エネミー同士の当たり判定
+	for (auto it1 = enemys_.begin(); it1 != enemys_.end(); ++it1) {
+		for (auto it2 = std::next(it1); it2 != enemys_.end(); ++it2) {
+			Enemy* enemy1 = *it1;
+			Enemy* enemy2 = *it2;
+
+			StructSphere eSphere1 = enemy1->GetStructSphere();
+			StructSphere eSphere2 = enemy2->GetStructSphere();
+
+			if (IsCollision(eSphere1, eSphere2)) {
+				enemy2->SetWorldTransform(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
+			}
+		}
+	}
+
+	//エネミーとオブジェクトの当たり判定
+	for (Enemy* enemy : enemys_) {
+		StructSphere eSphere;
+		eSphere = enemy->GetStructSphere();
+		for (Obj obj : editors_->GetObj()) {
+			OBB objOBB;
+			objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+			if (IsCollision(objOBB, eSphere)) {
+				enemy->SetWorldTransform(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
+			}
+		}
+	}
 }

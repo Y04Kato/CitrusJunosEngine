@@ -1,7 +1,7 @@
 {
     "DemoStage": {
-        "ObjCount": 5,
-        "obj0": "obj0",
+        "ObjCount": 11,
+        "obj0": "obj5",
         "obj0Durability": 3,
         "obj0Rotate": [
             0.0,
@@ -18,7 +18,24 @@
             2.0,
             11.0
         ],
-        "obj1": "obj1",
+        "obj1": "obj5",
+        "obj10": "obj10",
+        "obj10Durability": 3,
+        "obj10Rotate": [
+            0.0,
+            0.4000000059604645,
+            0.0
+        ],
+        "obj10Scale": [
+            1.9999903440475464,
+            0.9999954104423523,
+            1.9999892711639404
+        ],
+        "obj10Translate": [
+            -0.7375245094299316,
+            2.0,
+            13.935901641845703
+        ],
         "obj1Durability": 3,
         "obj1Rotate": [
             0.0,
@@ -35,7 +52,7 @@
             2.0,
             -25.900999069213867
         ],
-        "obj2": "obj2",
+        "obj2": "obj5",
         "obj2Durability": 3,
         "obj2Rotate": [
             0.699999988079071,
@@ -52,7 +69,7 @@
             2.0,
             0.0
         ],
-        "obj3": "obj3",
+        "obj3": "obj5",
         "obj3Durability": 3,
         "obj3Rotate": [
             0.0,
@@ -69,7 +86,7 @@
             2.0,
             17.0
         ],
-        "obj4": "obj4",
+        "obj4": "obj5",
         "obj4Durability": 3,
         "obj4Rotate": [
             0.0,
@@ -85,6 +102,91 @@
             -20.0,
             2.0,
             -26.0
+        ],
+        "obj5": "obj5",
+        "obj5Durability": 3,
+        "obj5Rotate": [
+            0.0,
+            1.0,
+            0.0
+        ],
+        "obj5Scale": [
+            2.0,
+            1.0,
+            2.0
+        ],
+        "obj5Translate": [
+            4.415616035461426,
+            2.0,
+            -18.263690948486328
+        ],
+        "obj6": "obj6",
+        "obj6Durability": 3,
+        "obj6Rotate": [
+            0.0,
+            0.0,
+            2.200000047683716
+        ],
+        "obj6Scale": [
+            1.5,
+            2.0,
+            3.0
+        ],
+        "obj6Translate": [
+            -13.0,
+            1.0,
+            -7.0
+        ],
+        "obj7": "obj7",
+        "obj7Durability": 3,
+        "obj7Rotate": [
+            0.0,
+            2.0,
+            0.0
+        ],
+        "obj7Scale": [
+            1.5,
+            1.0,
+            1.5
+        ],
+        "obj7Translate": [
+            -23.472511291503906,
+            2.0,
+            -5.880819797515869
+        ],
+        "obj8": "obj8",
+        "obj8Durability": 3,
+        "obj8Rotate": [
+            0.0,
+            0.4000000059604645,
+            0.0
+        ],
+        "obj8Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "obj8Translate": [
+            17.0,
+            2.0,
+            -11.0
+        ],
+        "obj9": "obj9",
+        "obj9Durability": 3,
+        "obj9Rotate": [
+            0.0,
+            0.20000000298023224,
+            0.0
+        ],
+        "obj9Scale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "obj9Translate": [
+            -7.0,
+            2.0,
+            -23.0
         ]
     }
 }

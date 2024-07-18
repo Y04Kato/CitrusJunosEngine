@@ -33,6 +33,7 @@ public:
 
 	//敵の配置
 	void SetEnemy(Vector3 pos);
+	void ReSetEnemy();
 
 private:
 	CitrusJunosEngine* CJEngine_;
@@ -73,6 +74,7 @@ private:
 
 	std::list<Enemy*> enemys_;
 	std::unique_ptr<Model> enemyModel_;
+	const int enemyMaxCount_ = 20;
 
 	std::unique_ptr <CreateSprite> sprite_[5];
 	EulerTransform spriteTransform_;
