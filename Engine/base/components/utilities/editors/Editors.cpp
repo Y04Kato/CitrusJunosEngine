@@ -25,7 +25,12 @@ void Editors::SetModels(ModelData ObjModelData, uint32_t ObjTexture) {
 
 void Editors::Update() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	SetGlobalVariables();
+	if (isDirectInputMode_ == true) {
+		ApplyGlobalVariables();
+	}
+	else {
+		SetGlobalVariables();
+	}
 
 	//Group名の設定
 	ImGui::InputText("GroupName", groupName_, sizeof(groupName_));
@@ -48,7 +53,7 @@ void Editors::Update() {
 		for (Obj& obj : objects_) {
 			globalVariables->AddItem(decisionGroupName_, obj.name, (std::string)objName_);
 			globalVariables->AddItem(decisionGroupName_, obj.name + "Translate", obj.world.translation_);
-			globalVariables->AddItem(decisionGroupName_,obj.name + "Rotate", obj.world.rotation_);
+			globalVariables->AddItem(decisionGroupName_, obj.name + "Rotate", obj.world.rotation_);
 			globalVariables->AddItem(decisionGroupName_, obj.name + "Scale", obj.world.scale_);
 		}
 	}
@@ -76,6 +81,8 @@ void Editors::Update() {
 		}
 	}
 
+	ImGui::Checkbox("DataDirectInputMode", &isDirectInputMode_);
+
 	//WorldTransform更新
 	for (Obj& obj : objects_) {
 		obj.world.UpdateMatrix();
@@ -87,8 +94,10 @@ void Editors::Draw(ViewProjection view) {
 		obj.model.Draw(obj.world, view, obj.material);
 
 		//Guizmo操作
-		if (objName_ == obj.name) {
-			obj.world = Guizmo(view, obj.world);
+		if (isDirectInputMode_ == false) {
+			if (objName_ == obj.name) {
+				obj.world = Guizmo(view, obj.world);
+			}
 		}
 	}
 }
@@ -104,7 +113,7 @@ void Editors::ApplyGlobalVariables() {
 
 	for (Obj& obj : objects_) {
 		obj.world.translation_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Translate");
-		obj.world.rotation_ = globalVariables->GetVector3Value(decisionGroupName_,  obj.name + "Rotate");
+		obj.world.rotation_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Rotate");
 		obj.world.scale_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Scale");
 	}
 }
@@ -134,6 +143,7 @@ void Editors::SetObject(EulerTransform transform, const std::string& name) {
 	obj.material = { 1.0f,1.0f,1.0f,1.0f };
 
 	obj.name = name;
+
 	objects_.push_back(obj);
 }
 
@@ -141,7 +151,7 @@ WorldTransform Editors::Guizmo(ViewProjection& view, WorldTransform world) {
 	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 
 	WorldTransform worldTransform_ = world;
-	
+
 	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_1)) {
 		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 	}

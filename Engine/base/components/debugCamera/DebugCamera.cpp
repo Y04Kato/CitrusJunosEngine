@@ -15,14 +15,6 @@ void DebugCamera::initialize() {
 
 void DebugCamera::Update() {
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_C)) {
-		if (isKeyControlCamera_ == true) {
-			isKeyControlCamera_ = false;
-		}
-		else {
-			isKeyControlCamera_ = true;
-		}
-	}
 	if (isKeyControlCamera_ == true) {
 		if (input_->PressKey(DIK_W)) {
 			viewProjection_.rotation_.num[0] -= 0.02f;
@@ -49,13 +41,13 @@ void DebugCamera::Update() {
 		if (input_->PressKey(DIK_LEFT)) {
 			viewProjection_.translation_.num[0] -= 2.0f;
 		}
-	
+
 		viewProjection_.translation_.num[2] = input_->GetMousePosition().Scroll / 40.0f;
 	}
 #endif
 
 	ImGui::Begin("DebugCamera");
-	ImGui::Text("KeyControlCamera : 'C'key");
+	ImGui::Checkbox("KeyControlCamera", &isKeyControlCamera_);
 	ImGui::DragFloat3("rotation", viewProjection_.rotation_.num, 0.1f);
 	ImGui::DragFloat3("translation", viewProjection_.translation_.num, 0.1f);
 	ImGui::End();
