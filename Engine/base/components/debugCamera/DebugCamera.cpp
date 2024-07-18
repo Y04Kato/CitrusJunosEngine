@@ -41,7 +41,7 @@ void DebugCamera::Update() {
 		if (input_->PressKey(DIK_LEFT)) {
 			viewProjection_.translation_.num[0] -= 2.0f;
 		}
-	
+
 		viewProjection_.translation_.num[2] = input_->GetMousePosition().Scroll / 40.0f;
 	}
 #endif
