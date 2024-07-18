@@ -57,6 +57,7 @@ void GamePlayScene::Initialize() {
 	editors_ = Editors::GetInstance();
 	editors_->Initialize();
 	editors_->SetModels(ObjModelData_, ObjTexture_);
+	editors_->SetGroupName((char*)"DemoStage");
 
 	//テクスチャの初期化と読み込み
 	background_ = textureManager_->Load("project/gamedata/resources/paper.png");
