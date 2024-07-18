@@ -65,7 +65,4 @@ private:
 
 	//trueでguiに直接数字を打ち込めるようにする
 	bool isDirectInputMode_ = false;
-
-	//
-	const int durabilityMax_ = 3;
 };
