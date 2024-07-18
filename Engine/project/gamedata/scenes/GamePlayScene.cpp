@@ -153,9 +153,53 @@ void GamePlayScene::Update() {
 		debugCamera_->MovingCamera(Vector3{ 0.0f,44.7f,-55.2f }, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
 		maskData_.maskThreshold = 1.0f;
 		postEffect_->SetMaskTexture(noiseTexture_);
+
+		//エネミーの配置
 		for (int i = 0; i < 10; i++) {
 			SetEnemy(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
 		}
+		//もし何かしらに接触しているなら再配置
+		//プレイヤーの判定取得
+		StructSphere pSphere;
+		pSphere = player_->GetStructSphere();
+
+		//プレイヤーとエネミーの当たり判定
+		for (Enemy* enemy : enemys_) {
+			StructSphere eSphere;
+			eSphere = enemy->GetStructSphere();
+			if (IsCollision(pSphere, eSphere)) {
+				enemy->SetWorldTransform(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
+			}
+		}
+
+		//エネミー同士の当たり判定
+		for (auto it1 = enemys_.begin(); it1 != enemys_.end(); ++it1) {
+			for (auto it2 = std::next(it1); it2 != enemys_.end(); ++it2) {
+				Enemy* enemy1 = *it1;
+				Enemy* enemy2 = *it2;
+
+				StructSphere eSphere1 = enemy1->GetStructSphere();
+				StructSphere eSphere2 = enemy2->GetStructSphere();
+
+				if (IsCollision(eSphere1, eSphere2)) {
+					enemy2->SetWorldTransform(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
+				}
+			}
+		}
+
+		//エネミーとオブジェクトの当たり判定
+		for (Enemy* enemy : enemys_) {
+			StructSphere eSphere;
+			eSphere = enemy->GetStructSphere();
+			for (Obj obj : editors_->GetObj()) {
+				OBB objOBB;
+				objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+				if (IsCollision(objOBB, eSphere)) {
+					enemy->SetWorldTransform(Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX ,2.0f,rand() % 59 - 36 + rand() / (float)RAND_MAX });
+				}
+			}
+		}
+
 		gameStart_ = false;
 	}
 
@@ -363,7 +407,7 @@ void GamePlayScene::Update() {
 	for (Obj obj : editors_->GetObj()) {
 		OBB objOBB;
 		objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
-		if (IsCollision(objOBB,pSphere)) {
+		if (IsCollision(objOBB, pSphere)) {
 			//押し戻し処理
 			//Sphere から OBB の最近接点を計算
 			Vector3 closestPoint = objOBB.center;
