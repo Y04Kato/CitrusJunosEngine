@@ -33,7 +33,7 @@ public:
 
 	void SetObject(EulerTransform trans, const std::string& name);
 
-	void SetGroupName(char* groupName) { decisionGroupName_ = groupName; }
+	void SetGroupName(char* groupName);
 
 	int GetObjCount() { return objCount_; }
 
