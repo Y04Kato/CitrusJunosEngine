@@ -10,7 +10,7 @@ void GamePlayScene::Initialize() {
 
 	//Input
 	input_ = Input::GetInstance();
-	
+
 	//Audioの初期化
 	audio_ = Audio::GetInstance();
 	soundData1_ = audio_->SoundLoad("project/gamedata/resources/CraftsmansForge.mp3");
@@ -49,6 +49,14 @@ void GamePlayScene::Initialize() {
 	world_[1].translation_ = { -30.0f,0.0f,-35.0f };
 	world_[2].translation_ = { 30.0f,0.0f,25.0f };
 	world_[3].translation_ = { 30.0f,0.0f,-35.0f };
+
+	//
+	ObjModelData_ = playerModel_->LoadModelFile("project/gamedata/resources/block", "block.obj");
+	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
+
+	editors_ = Editors::GetInstance();
+	editors_->Initialize();
+	editors_->SetModels(ObjModelData_, ObjTexture_);
 
 	//テクスチャの初期化と読み込み
 	background_ = textureManager_->Load("project/gamedata/resources/paper.png");
@@ -211,11 +219,21 @@ void GamePlayScene::Update() {
 
 	//プレイヤー更新
 	player_->SetViewProjection(&viewProjection_);
-	player_->Update();
+	if (isEditorMode_ == false) {
+		player_->Update();
+	}
 	world_[4].translation_ = player_->GetWorldTransform().translation_;
 	for (int i = 0; i < 5; i++) {
 		world_[i].UpdateMatrix();
 	}
+
+	//
+	editors_->Update();
+#ifdef _DEBUG
+	ImGui::Begin("PlayScene");
+	ImGui::Checkbox("isEditorMode", &isEditorMode_);
+	ImGui::End();
+#endif // _DEBUG
 
 	//ライト更新
 	directionalLights_->SetTarget(directionalLight_);
@@ -283,7 +301,7 @@ void GamePlayScene::Update() {
 	for (Enemy* enemy : enemys_) {
 		StructSphere eSphere;
 		eSphere = enemy->GetStructSphere();
-		if (IsCollision(pSphere,eSphere)) {
+		if (IsCollision(pSphere, eSphere)) {
 			//押し戻しの処理
 			Vector3 direction = eSphere.center - pSphere.center;
 			float distance = Length(direction);
@@ -340,6 +358,82 @@ void GamePlayScene::Update() {
 		}
 	}
 
+	//プレイヤーとオブジェクトの当たり判定
+	for (Obj obj : editors_->GetObj()) {
+		OBB objOBB;
+		objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+		if (IsCollision(objOBB,pSphere)) {
+			//押し戻し処理
+			//Sphere から OBB の最近接点を計算
+			Vector3 closestPoint = objOBB.center;
+			Vector3 d = pSphere.center - objOBB.center;
+
+			for (int i = 0; i < 3; ++i) {
+				float dist = Dot(d, objOBB.orientation[i]);
+				dist = std::fmax(-objOBB.size.num[i], std::fmin(dist, objOBB.size.num[i]));
+				closestPoint += objOBB.orientation[i] * dist;
+			}
+
+			//Sphere の中心と最近接点の距離を計算
+			Vector3 direction = pSphere.center - closestPoint;
+			float distance = Length(direction);
+			float overlap = pSphere.radius - distance;
+
+			if (overlap > 0.0f) {
+				Vector3 correction = Normalize(direction) * overlap * 1.5f;
+				pSphere.center += correction;
+
+				player_->SetWorldTransform(pSphere.center);
+			}
+
+			//反発処理
+			Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(pSphere, player_->GetVelocity(), objOBB, 0.8f);
+			player_->SetVelocity(velocity);
+			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+			audio_->SoundPlayWave(soundData2_, 0.1f, false);
+		}
+	}
+
+	//エネミーとオブジェクトの当たり判定
+	for (Enemy* enemy : enemys_) {
+		StructSphere eSphere;
+		eSphere = enemy->GetStructSphere();
+		for (Obj obj : editors_->GetObj()) {
+			OBB objOBB;
+			objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+			if (IsCollision(objOBB, eSphere)) {
+				//押し戻し処理
+				//Sphere から OBB の最近接点を計算
+				Vector3 closestPoint = objOBB.center;
+				Vector3 d = eSphere.center - objOBB.center;
+
+				for (int i = 0; i < 3; ++i) {
+					float dist = Dot(d, objOBB.orientation[i]);
+					dist = std::fmax(-objOBB.size.num[i], std::fmin(dist, objOBB.size.num[i]));
+					closestPoint += objOBB.orientation[i] * dist;
+				}
+
+				//Sphere の中心と最近接点の距離を計算
+				Vector3 direction = eSphere.center - closestPoint;
+				float distance = Length(direction);
+				float overlap = eSphere.radius - distance;
+
+				if (overlap > 0.0f) {
+					Vector3 correction = Normalize(direction) * overlap * 1.5f;
+					eSphere.center += correction;
+
+					enemy->SetWorldTransform(eSphere.center);
+				}
+
+				//反発処理
+				Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(eSphere, enemy->GetVelocity(), objOBB, 0.8f);
+				enemy->SetVelocity(velocity);
+				audio_->SoundPlayWave(soundData2_, 0.1f, false);
+			}
+		}
+	}
+
+
 	//プレイヤー移動時の演出の処理
 	if (player_->GetIsMoveFlag() == false) {
 		if (input_->TriggerKey(DIK_W)) {
@@ -382,6 +476,9 @@ void GamePlayScene::Draw() {
 	for (Enemy* enemy : enemys_) {
 		enemy->Draw(viewProjection_);
 	}
+
+	editors_->Draw(viewProjection_);
+
 #pragma endregion
 
 #pragma region 3DSkinningオブジェクト描画
@@ -437,6 +534,8 @@ void GamePlayScene::DrawPostEffect() {
 void GamePlayScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 	audio_->SoundUnload(&soundData2_);
+
+	editors_->Finalize();
 }
 
 void GamePlayScene::ApplyGlobalVariables() {

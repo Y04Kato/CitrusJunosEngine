@@ -11,6 +11,7 @@ struct Obj {
 	WorldTransform world;
 	Vector4 material;
 	std::string name;
+	int durability;
 };
 
 class Editors {
@@ -36,6 +37,9 @@ public:
 
 	int GetObjCount() { return objCount_; }
 
+	void SetObj(std::list<Obj> obj) { objects_ = obj; }
+	std::list<Obj> GetObj() { return objects_; }
+
 	//Key1でTRANSLATE、key2でROTATE、key3でSCALE
 	WorldTransform Guizmo(ViewProjection& view, WorldTransform world);
 
@@ -59,4 +63,10 @@ private:
 	char objName_[64];
 	char groupName_[64];
 	char* decisionGroupName_;
+
+	//trueでguiに直接数字を打ち込めるようにする
+	bool isDirectInputMode_ = false;
+
+	//
+	const int durabilityMax_ = 3;
 };

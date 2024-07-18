@@ -14,6 +14,7 @@
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
 #include "postEffect/PostEffect.h"
+#include "editors/Editors.h"
 
 #include "ground/Ground.h"
 #include "baseCharacter/player/Player.h"
@@ -57,6 +58,13 @@ private:
 	std::unique_ptr<Model> flagModel_[5];
 	WorldTransform world_[5];
 	float playerFlagRotate_ = 30.0f;
+
+	//
+	Editors* editors_;
+	ModelData ObjModelData_;
+	uint32_t ObjTexture_;
+	bool isEditorMode_ = false;
+	std::list<Obj> objects_;
 
 	std::unique_ptr<CreateParticle> particle_;
 	Emitter testEmitter_{};

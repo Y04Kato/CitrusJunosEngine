@@ -333,6 +333,24 @@ Vector3 Project(const Vector3& v, const Vector3 n) {
 	return n * projectionLength;
 }
 
+std::tuple<Vector3, Vector3, Vector3> ComputeRotationMatrix(const Vector3& rotate) {
+	Vector3 result[3];
+
+	float cx = cos(rotate.num[0]);
+	float sx = sin(rotate.num[0]);
+	float cy = cos(rotate.num[1]);
+	float sy = sin(rotate.num[1]);
+	float cz = cos(rotate.num[2]);
+	float sz = sin(rotate.num[2]);
+
+	// 回転行列の各軸のベクトルを計算
+	result[0] = Vector3{ cy * cz, cy * sz, -sy };
+	result[1] = Vector3{ sx * sy * cz - cx * sz, sx * sy * sz + cx * cz, sx * cy };
+	result[2] = Vector3{ cx * sy * cz + sx * sz, cx * sy * sz - sx * cz, cx * cy };
+
+	return std::make_tuple(result[0], result[1], result[2]);
+}
+
 std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector3& velocity1, float mass2, const Vector3& velocity2, float coefficientOfRestitution, const Vector3& normal) {
 	//衝突面法線方向(射影)とその他に分解
 	Vector3 project1 = Project(velocity1, normal);
@@ -346,6 +364,31 @@ std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector
 
 	//反発後の衝突面方向の速度と、元々の速度で分解していて反発に関わらない速度を足して最終的反発後の速度を計算する
 	return std::make_pair(velocityAfter1 + sub1, velocityAfter2 + sub2);
+}
+
+Vector3 ComputeSphereVelocityAfterCollisionWithOBB(const StructSphere& sphere, const Vector3& sphereVelocity, const OBB& obb, float restitution) {
+	//最近接点を計算
+	Vector3 closestPoint = obb.center;
+	Vector3 d = sphere.center - obb.center;
+
+	for (int i = 0; i < 3; ++i) {
+		float dist = Dot(d, obb.orientation[i]);
+		dist = std::fmax(-obb.size.num[i], std::fmin(dist, obb.size.num[i]));
+		closestPoint += obb.orientation[i] * dist;
+	}
+
+	//衝突法線を計算
+	Vector3 collisionNormal = Normalize(sphere.center - closestPoint);
+
+	//速度を衝突面法線方向とその他に分解
+	Vector3 velocityNormal = Project(sphereVelocity, collisionNormal);
+	Vector3 velocityTangent = sphereVelocity - velocityNormal;
+
+	//反発係数を考慮して新しい速度を計算
+	Vector3 newVelocityNormal = -restitution * velocityNormal;
+	Vector3 newSphereVelocity = newVelocityNormal + velocityTangent;
+
+	return newSphereVelocity;
 }
 
 Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time) {
@@ -1128,8 +1171,8 @@ EulerTransform operator+(const EulerTransform& v1, const EulerTransform& v2) {
 	result.translate = v1.translate + v2.translate;
 	result.rotate = v1.rotate + v2.rotate;
 	result.scale = v1.scale + v2.scale;
-	
-	return result; 
+
+	return result;
 }
 
 EulerTransform operator-(const EulerTransform& v1, const EulerTransform& v2) {
@@ -1140,6 +1183,19 @@ EulerTransform operator-(const EulerTransform& v1, const EulerTransform& v2) {
 	result.scale = v1.scale - v2.scale;
 
 	return result;
+}
+
+OBB CreateOBBFromEulerTransform(const EulerTransform& transform) {
+	OBB obb;
+	obb.center = transform.translate;
+	obb.size = transform.scale;
+
+	auto [o1, o2, o3] = ComputeRotationMatrix(transform.rotate);
+	obb.orientation[0] = o1;
+	obb.orientation[1] = o2;
+	obb.orientation[2] = o3;
+
+	return obb;
 }
 
 bool IsCollision(const AABB& aabb, const StructSphere& sphere) {
