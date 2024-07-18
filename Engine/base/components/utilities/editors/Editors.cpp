@@ -147,6 +147,23 @@ void Editors::SetObject(EulerTransform transform, const std::string& name) {
 	objects_.push_back(obj);
 }
 
+void Editors::SetGroupName(char* groupName) {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+
+	decisionGroupName_ = groupName; 
+	GlobalVariables::GetInstance()->CreateGroup(decisionGroupName_);
+
+	globalVariables->AddItem(decisionGroupName_, "ObjCount", objCount_);
+
+	ApplyGlobalVariables();
+
+	for (int i = 0; i < objCount_; i++) {
+		SetObject(EulerTransform{ { 0.0f,0.0f,0.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
+	}
+
+	ApplyGlobalVariables();
+}
+
 WorldTransform Editors::Guizmo(ViewProjection& view, WorldTransform world) {
 	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 
