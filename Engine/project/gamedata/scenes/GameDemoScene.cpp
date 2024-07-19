@@ -15,6 +15,7 @@ void GameDemoScene::Initialize() {
 	cjEngineResourceNum_ = textureManager_->Load("project/gamedata/resources/CitrusJunosEngine.png");
 
 	ddsResourceNum_ = textureManager_->Load("project/gamedata/resources/rostock_laage_airport_4k.dds");
+	
 
 	//三角形
 	for (int i = 0; i < 2; i++) {
