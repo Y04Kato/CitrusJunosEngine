@@ -6,12 +6,12 @@
             "Name": "box_object1",
             "Transform": {
                 "Translate": [
-                    -5.0,
-                    -0.5,
-                    -5.0
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "Rotate": [
-                    45.0,
+                    0.0,
                     0.0,
                     0.0
                 ],
@@ -27,13 +27,13 @@
                     "Name": "box1",
                     "Transform": {
                         "Translate": [
-                            2.5,
                             0.0,
-                            2.5
+                            0.0,
+                            0.0
                         ],
                         "Rotate": [
                             0.0,
-                            45.0,
+                            0.0,
                             0.0
                         ],
                         "Scale": [
@@ -48,9 +48,9 @@
                     "Name": "box2",
                     "Transform": {
                         "Translate": [
-                            -2.0,
-                            0.5,
-                            -2.0
+                            1.0,
+                            0.0,
+                            1.0
                         ],
                         "Rotate": [
                             0.0,
@@ -63,6 +63,15 @@
                             1.0
                         ]
                     }
+                },
+                {
+                    "Type": "merge",
+                    "Name": "merge1",
+                    "Transform": {
+                        "Translate": null,
+                        "Rotate": null,
+                        "Scale": null
+                    }
                 }
             ]
         },
@@ -71,9 +80,9 @@
             "Name": "box_object2",
             "Transform": {
                 "Translate": [
-                    5.0,
-                    0.5,
-                    5.0
+                    -1.0,
+                    0.0,
+                    2.0
                 ],
                 "Rotate": [
                     0.0,
