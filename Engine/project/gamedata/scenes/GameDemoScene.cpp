@@ -638,18 +638,20 @@ void GameDemoScene::LevelSetObject() {
 	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
 
 	for (auto& objectData : levelDataLoader_->GetLevelData()->objectsData_) {
-		Obj obj;
-		obj.model.Initialize(ObjModelData_, ObjTexture_);
-		obj.model.SetDirectionalLightFlag(true, 3);
+		if (objectData.isParent == false) {//親ノードでなければ
+			Obj obj;
+			obj.model.Initialize(ObjModelData_, ObjTexture_);
+			obj.model.SetDirectionalLightFlag(true, 3);
 
-		obj.world.Initialize();
-		obj.world.translation_ = objectData.transform.translate;
-		obj.world.rotation_ = objectData.transform.rotate;
-		obj.world.scale_ = objectData.transform.scale;
+			obj.world.Initialize();
+			obj.world.translation_ = objectData.transform.translate;
+			obj.world.rotation_ = objectData.transform.rotate;
+			obj.world.scale_ = objectData.transform.scale;
 
-		obj.material = { 1.0f,1.0f,1.0f,1.0f };
+			obj.material = { 1.0f,1.0f,1.0f,1.0f };
 
-		obj.name = objectData.name;
-		levelEditorObjects_.push_back(obj);
+			obj.name = objectData.name;
+			levelEditorObjects_.push_back(obj);
+		}
 	}
 }

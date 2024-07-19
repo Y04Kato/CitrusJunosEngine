@@ -11,6 +11,7 @@ public:
 		std::string name;
 		std::string flieName;
 		EulerTransform transform;
+		bool isParent;
 	};
 
 	using ObjectData = MeshData;
