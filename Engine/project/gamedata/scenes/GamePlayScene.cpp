@@ -100,22 +100,42 @@ void GamePlayScene::Initialize() {
 	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
 
 	//パーティクルの初期化
-	testEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
-	testEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
-	testEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
-	testEmitter_.count = 5;
-	testEmitter_.frequency = 0.2f;//0.5秒ごとに発生
-	testEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
+	playerEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
+	playerEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
+	playerEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	playerEmitter_.count = 5;
+	playerEmitter_.frequency = 0.2f;//0.5秒ごとに発生
+	playerEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
 
-	accelerationField_.acceleration = { 15.0f,0.0f,0.0f };
-	accelerationField_.area.min = { -1.0f,-1.0f,-1.0f };
-	accelerationField_.area.max = { 1.0f,1.0f,1.0f };
+	playerAccelerationField_.acceleration = { 15.0f,0.0f,0.0f };
+	playerAccelerationField_.area.min = { -1.0f,-1.0f,-1.0f };
+	playerAccelerationField_.area.max = { 1.0f,1.0f,1.0f };
 
-	particleResourceNum_ = textureManager_->Load("project/gamedata/resources/circle.png");
+	playerParticleResource_ = textureManager_->Load("project/gamedata/resources/circle.png");
 
-	particle_ = std::make_unique <CreateParticle>();
-	particle_->Initialize(100, testEmitter_, accelerationField_, particleResourceNum_);
-	particle_->SetColor(Vector4{ 1.0f,1.0f,1.0f,1.0f });
+	playerParticle_ = std::make_unique <CreateParticle>();
+	playerParticle_->Initialize(100, playerEmitter_, playerAccelerationField_, playerParticleResource_);
+	playerParticle_->SetColor(Vector4{ 1.0f,1.0f,1.0f,1.0f });
+
+	//
+	collisionEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
+	collisionEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
+	collisionEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	collisionEmitter_.count = 0;
+	collisionEmitter_.frequency = 0.0f;//0.0秒ごとに発生
+	collisionEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
+
+	collisionAccelerationField_.acceleration = { 15.0f,0.0f,0.0f };
+	collisionAccelerationField_.area.min = { -1.0f,-1.0f,-1.0f };
+	collisionAccelerationField_.area.max = { 1.0f,1.0f,1.0f };
+
+	collisionParticleResource_ = textureManager_->Load("project/gamedata/resources/circle.png");
+
+	collisionParticle_ = std::make_unique <CreateParticle>();
+	collisionParticle_->Initialize(100, collisionEmitter_, collisionAccelerationField_, collisionParticleResource_);
+	collisionParticle_->SetColor(Vector4{ 1.0f,1.0f,1.0f,1.0f });
+	collisionParticle_->SetisVelocity(true, 10.0f);
+	collisionParticle_->SetLifeTime(3.0f);
 
 	//PostEffectの読み込み
 	postEffect_ = PostEffect::GetInstance();
@@ -275,8 +295,11 @@ void GamePlayScene::Update() {
 	Obb_.size = ground_->GetWorldTransform().scale_;
 
 	//Particle更新
-	particle_->Update();
-	particle_->SetTranslate(player_->GetWorldTransform().translation_);
+	playerParticle_->Update();
+	playerParticle_->SetTranslate(player_->GetWorldTransform().translation_);
+
+	collisionParticle_->Update();
+	collisionParticle_->SetAccelerationField(collisionAccelerationField_);
 
 	//カメラの更新
 	debugCamera_->Update();
@@ -332,6 +355,7 @@ void GamePlayScene::Update() {
 			std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), 0.8f, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
 			player_->SetVelocity(pair.first);
 			enemy->SetVelocity(pair.second);
+
 			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 			audio_->SoundPlayWave(soundData2_, 0.1f, false);
 		}
@@ -401,6 +425,9 @@ void GamePlayScene::Update() {
 			//反発処理
 			Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(pSphere, player_->GetVelocity(), objOBB, 0.8f);
 			player_->SetVelocity(velocity);
+
+			collisionParticle_->SetTranslate(closestPoint);
+			collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
 			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 			audio_->SoundPlayWave(soundData2_, 0.1f, false);
 		}
@@ -440,6 +467,9 @@ void GamePlayScene::Update() {
 				//反発処理
 				Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(eSphere, enemy->GetVelocity(), objOBB, 0.8f);
 				enemy->SetVelocity(velocity);
+
+				collisionParticle_->SetTranslate(closestPoint);
+				collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
 				audio_->SoundPlayWave(soundData2_, 0.1f, false);
 			}
 		}
@@ -504,7 +534,8 @@ void GamePlayScene::Draw() {
 #pragma region パーティクル描画
 	CJEngine_->renderer_->Draw(PipelineType::Particle);
 
-	particle_->Draw(viewProjection_);
+	playerParticle_->Draw(viewProjection_);
+	collisionParticle_->Draw(viewProjection_);
 
 #pragma endregion
 

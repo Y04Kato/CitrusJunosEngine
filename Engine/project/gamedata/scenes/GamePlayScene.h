@@ -67,10 +67,17 @@ private:
 	bool isEditorMode_ = false;
 	std::list<Obj> objects_;
 
-	std::unique_ptr<CreateParticle> particle_;
-	Emitter testEmitter_{};
-	AccelerationField accelerationField_;
-	uint32_t particleResourceNum_;
+	//
+	std::unique_ptr<CreateParticle> playerParticle_;
+	Emitter playerEmitter_{};
+	AccelerationField playerAccelerationField_;
+	uint32_t playerParticleResource_;
+
+	std::unique_ptr<CreateParticle> collisionParticle_;
+	Emitter collisionEmitter_{};
+	AccelerationField collisionAccelerationField_;
+	uint32_t collisionParticleResource_;
+	const int collisionParticleOccursNum_ = 20;
 
 	std::list<Enemy*> enemys_;
 	std::unique_ptr<Model> enemyModel_;
