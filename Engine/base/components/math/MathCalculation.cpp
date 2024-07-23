@@ -309,6 +309,16 @@ bool CompereVector3(const Vector3& q1, const Vector3& q2) {
 	}
 }
 
+Vector3 MidPoint(const Vector3& v1, const Vector3& v2) {
+	Vector3 result;
+
+	result.num[0] = (v1.num[0] + v2.num[0]) / 2.0f;
+	result.num[1] = (v1.num[1] + v2.num[1]) / 2.0f;
+	result.num[2] = (v1.num[2] + v2.num[2]) / 2.0f;
+
+	return result;
+}
+
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
 	return v1 + Multiply(t, v2 - v1);
 }
