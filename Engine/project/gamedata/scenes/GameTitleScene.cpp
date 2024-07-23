@@ -253,7 +253,7 @@ void GameTitleScene::DrawPostEffect() {
 		CJEngine_->renderer_->Draw(PipelineType::Gaussian);
 	}
 	if (sceneCount_ == 1) {
-		CJEngine_->renderer_->Draw(PipelineType::Grayscale);
+		CJEngine_->renderer_->Draw(PipelineType::Scanlines);
 	}
 	if (sceneCount_ == 2) {
 		CJEngine_->renderer_->Draw(PipelineType::RadialBlur);
