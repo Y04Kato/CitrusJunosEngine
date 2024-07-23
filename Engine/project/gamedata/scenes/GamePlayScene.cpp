@@ -343,7 +343,7 @@ void GamePlayScene::Update() {
 			float overlap = pSphere.radius + eSphere.radius - distance;
 
 			if (overlap > 0.0f) {
-				Vector3 correction = Normalize(direction) * (overlap / 2) * 2.0f;
+				Vector3 correction = Normalize(direction) * (overlap / 2) * 3.5f;
 				pSphere.center = pSphere.center - correction;
 				eSphere.center = eSphere.center + correction;
 
@@ -379,7 +379,7 @@ void GamePlayScene::Update() {
 				float overlap = eSphere1.radius + eSphere2.radius - distance;
 
 				if (overlap > 0.0f) {
-					Vector3 correction = Normalize(direction) * (overlap / 2) * 1.5f;
+					Vector3 correction = Normalize(direction) * (overlap / 2) * 3.5f;
 					eSphere1.center = eSphere1.center - correction;
 					eSphere2.center = eSphere2.center + correction;
 
