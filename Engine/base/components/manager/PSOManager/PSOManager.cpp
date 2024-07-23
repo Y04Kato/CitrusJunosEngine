@@ -27,6 +27,7 @@ void PSOManager::Initialize(){
 	std::unique_ptr<Random> random = std::make_unique<Random>();
 	std::unique_ptr<LensDistortion> lensDistortion = std::make_unique<LensDistortion>();
 	std::unique_ptr<Scanlines> scanlines = std::make_unique<Scanlines>();
+	std::unique_ptr<HSV> hsv = std::make_unique<HSV>();
 
 
 	//Initializeの宣言
@@ -47,6 +48,7 @@ void PSOManager::Initialize(){
 	random->Initialize();
 	lensDistortion->Initialize();
 	scanlines->Initialize();
+	hsv->Initialize();
 
 
 	//パイプラインを追加する
@@ -67,4 +69,5 @@ void PSOManager::Initialize(){
 	AddPipeline(random->GetPSO(), PipelineType::Random);
 	AddPipeline(lensDistortion->GetPSO(), PipelineType::LensDistortion);
 	AddPipeline(scanlines->GetPSO(), PipelineType::Scanlines);
+	AddPipeline(hsv->GetPSO(), PipelineType::HSV);
 }

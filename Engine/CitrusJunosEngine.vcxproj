@@ -161,6 +161,7 @@
     <ClCompile Include="base\components\manager\TextureManager\TextureManager.cpp" />
     <ClCompile Include="base\components\pipelineState\Gaussian\Gaussian.cpp" />
     <ClCompile Include="base\components\pipelineState\Grayscale\Grayscale.cpp" />
+    <ClCompile Include="base\components\pipelineState\HSV\HSV.cpp" />
     <ClCompile Include="base\components\pipelineState\LensDistortion\LensDistortion.cpp" />
     <ClCompile Include="base\components\pipelineState\MaskTexture\MaskTexture.cpp" />
     <ClCompile Include="base\components\pipelineState\Outline\Outline.cpp" />
@@ -264,6 +265,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\HSV.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="project\gamedata\resources\shaders\LensDistortion.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -425,6 +434,7 @@
     <ClInclude Include="base\components\pipelineState\Gaussian\Gaussian.h" />
     <ClInclude Include="base\components\pipelineState\Grayscale\Grayscale.h" />
     <ClInclude Include="base\components\math\Structure.h" />
+    <ClInclude Include="base\components\pipelineState\HSV\HSV.h" />
     <ClInclude Include="base\components\pipelineState\IPipeLineStateObject.h" />
     <ClInclude Include="base\components\pipelineState\LensDistortion\LensDistortion.h" />
     <ClInclude Include="base\components\pipelineState\MaskTexture\MaskTexture.h" />

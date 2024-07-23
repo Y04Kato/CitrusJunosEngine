@@ -85,7 +85,11 @@ LevelData* LevelDataLoader::SearchObjects(nlohmann::json& deserialized){
 
 			//トランスフォーム
 			objectData.transform = TransformLoad(object);
+			objectData.transform.translate = objectData.transform.translate;
 			parentTransform = objectData.transform;
+
+			//Houdiniでは親ノードはそもそも描画しない
+			objectData.isParent = true;
 
 		}
 
@@ -129,6 +133,11 @@ void LevelDataLoader::SearchChildren(LevelData* levelData, nlohmann::json& paren
 
 			//トランスフォーム
 			objectData.transform = TransformLoad(object) + parentTransform;
+			objectData.transform.translate = objectData.transform.translate * 6.0f;
+			objectData.transform.scale = objectData.transform.scale + parentTransform.scale;
+			objectData.transform.rotate = objectData.transform.rotate + parentTransform.rotate;
+
+			objectData.isParent = false;
 		}
 
 		//子ノード

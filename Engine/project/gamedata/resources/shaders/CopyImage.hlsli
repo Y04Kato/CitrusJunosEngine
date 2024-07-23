@@ -9,6 +9,12 @@ struct MaskData{
     float32_t3 edgeColor;
 };
 
+struct HSVMaterial{
+    float32_t hue;
+    float32_t saturation;
+    float32_t value;
+};
+
 struct RandomData
 {
     float32_t time;
