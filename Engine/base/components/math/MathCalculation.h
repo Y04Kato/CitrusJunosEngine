@@ -94,6 +94,8 @@ Vector3 GetFrontVectorFromModelMatrix(const Matrix4x4& modelMatrix);
 
 bool CompereVector3(const Vector3& q1, const Vector3& q2);
 
+Vector3 MidPoint(const Vector3& v1, const Vector3& v2);
+
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
