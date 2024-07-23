@@ -8,20 +8,35 @@ Texture2D<float4> VatPositionTex : register(t0);
 Texture2D<float4> VatNormalTex : register(t1);
 SamplerState gSampler : register(s0);
 
-VertexShaderOutput main(VertexShaderInput input, uint32_t index : SV_VertexID) {
-	VertexShaderOutput output;
+VertexShaderOutput main(VertexShaderInput input, uint index : SV_VertexID) {
+    VertexShaderOutput output;
 
-    float32_t vertCoords = index * gVATData.VatPositionTexSize.x;
-	float32_t animCoords = gVATData.VATTime * gVATData.VatPositionTexSize.y;
-	float32_t2 texCoords = { vertCoords, animCoords };
+    // テクスチャ座標の計算
+    float32_t vertCoords = (index % int32_t(gVATData.VatPositionTexSize.z)) * gVATData.VatPositionTexSize.x;
+    float32_t animCoords = gVATData.VATTime * gVATData.VatPositionTexSize.y;
+    float32_t2 texCoords = float2(vertCoords, animCoords);
 
-	float32_t4 pos = VatPositionTex.SampleLevel(gSampler, texCoords, 0);
+    // VATテクスチャから位置データをサンプリング
+    float32_t4 sampledPosition = VatPositionTex.SampleLevel(gSampler, texCoords, 0);
+    float32_t4 animatedPosition = input.position + sampledPosition;
 
-	float32_t4x4 WorldViewProjection = mul(gViewProjectionMatrix.view, gViewProjectionMatrix.projection);
-	float32_t4 pos2 = input.position + pos;
-	output.position = mul(pos2, mul(gTransformationMatrix.matWorld, WorldViewProjection));
-	output.texcoord = input.texcoord;
-	output.normal = normalize(mul(input.normal, (float32_t3x3)gTransformationMatrix.WorldInverseTranspose));
-	output.worldPosition = mul(input.position, gTransformationMatrix.matWorld).xyz;
-	return output;
+    // ワールド座標への変換
+    float32_t4 worldPosition = mul(animatedPosition, gTransformationMatrix.matWorld);
+
+    // ビュー・プロジェクションマトリックスを適用
+    float32_t4x4 WorldViewProjection = mul(gViewProjectionMatrix.view, gViewProjectionMatrix.projection);
+    output.position = mul(worldPosition, WorldViewProjection);
+
+    // テクスチャ座標
+    output.texcoord = input.texcoord;
+
+    // 法線データのサンプリングと変換
+    float32_t4 sampledNormal = VatNormalTex.SampleLevel(gSampler, texCoords, 0);
+    float32_t3 animatedNormal = normalize(input.normal + sampledNormal.xyz);
+    output.normal = normalize(mul(animatedNormal, (float3x3)gTransformationMatrix.WorldInverseTranspose));
+
+    // ワールド座標
+    output.worldPosition = worldPosition.xyz;
+
+    return output;
 }
