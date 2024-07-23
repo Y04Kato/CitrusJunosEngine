@@ -145,6 +145,10 @@ void GameDemoScene::Initialize() {
 	scanlineData_.scanlineFrequency = 1000.0f;
 	scanlineData_.time = 0.0f;
 
+	hsvMaterial_.hue = 0.0f;
+	hsvMaterial_.saturation = 0.0f;
+	hsvMaterial_.value = 0.0f;
+
 	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
 	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
 	levelDataLoader_ = LevelDataLoader::GetInstance();
@@ -206,6 +210,7 @@ void GameDemoScene::Update() {
 	postEffect_->SetMaskTexture(noiseTexture_[maskTextureNum_]);
 	postEffect_->SetMaskData(maskData_);
 	postEffect_->SetScanlineData(scanlineData_);
+	postEffect_->SetHSVMaterial(hsvMaterial_);
 
 	//
 	editors_->Update();
@@ -443,6 +448,15 @@ void GameDemoScene::Update() {
 				ImGui::TreePop();
 			}
 		}
+		ImGui::Checkbox("DrawHSVColor", &isHSVDraw_);
+		if (isHSVDraw_ == true) {
+			if (ImGui::TreeNode("HSVMaterial")) {
+				ImGui::SliderFloat("Hue", &hsvMaterial_.hue, -1.0f, 1.0f);
+				ImGui::SliderFloat("Saturation", &hsvMaterial_.saturation, -1.0f, 1.0f);
+				ImGui::SliderFloat("Value", &hsvMaterial_.value, -1.0f, 1.0f);
+				ImGui::TreePop();
+			}
+		}
 		ImGui::TreePop();
 	}
 
@@ -613,6 +627,9 @@ void GameDemoScene::DrawPostEffect() {
 	}
 	if (isScanlineDraw_ == true) {
 		CJEngine_->renderer_->Draw(PipelineType::Scanlines);
+	}
+	if (isHSVDraw_ == true) {
+		CJEngine_->renderer_->Draw(PipelineType::HSV);
 	}
 }
 

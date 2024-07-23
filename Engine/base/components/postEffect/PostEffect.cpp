@@ -18,7 +18,7 @@ void PostEffect::Initialize() {
 	thresholdResource_->Map(0, NULL, reinterpret_cast<void**>(&maskData_));
 
 	maskData_->maskThreshold = 0.5f;
-	maskData_->maskColor = {0.0f, 1.0f, 0.0f};
+	maskData_->maskColor = { 0.0f, 1.0f, 0.0f };
 	maskData_->edgeColor = { 1.0f,0.4f,0.3f };
 
 	//Random
@@ -30,10 +30,16 @@ void PostEffect::Initialize() {
 	//ScanLines
 	scanlineResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(ScanlineData));
 	scanlineResource_->Map(0, NULL, reinterpret_cast<void**>(&scanlineData_));
-
 	scanlineData_->scanlineIntensity = 0.2f;
 	scanlineData_->scanlineFrequency = 1000.0f;
 	scanlineData_->time = 0.0f;
+
+	//HSV
+	hsvResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(HSVMaterial));
+	hsvResource_->Map(0, NULL, reinterpret_cast<void**>(&hsvMaterial_));
+	hsvMaterial_->hue = 0.0f;
+	hsvMaterial_->saturation = 0.0f;
+	hsvMaterial_->value = 0.0f;
 }
 
 void PostEffect::Draw(){
@@ -62,6 +68,11 @@ void PostEffect::Draw(){
 	scanlineData_->time++;
 	if (CJEngine_->renderer_->GetNowPipeLineType() == PipelineType::Scanlines) {
 		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, scanlineResource_->GetGPUVirtualAddress());
+	}
+
+	//HSVの時のみ使用
+	if (CJEngine_->renderer_->GetNowPipeLineType() == PipelineType::HSV) {
+		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, hsvResource_->GetGPUVirtualAddress());
 	}
 
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);

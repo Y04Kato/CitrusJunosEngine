@@ -336,6 +336,9 @@
     <ClCompile Include="base\components\utilities\editors\Editors.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\pipelineState\HSV\HSV.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -374,6 +377,7 @@
     <FxCompile Include="project\gamedata\resources\shaders\Random.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\LensDistortion.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\Scanlines.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\HSV.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\DirectXCommon.h">
@@ -593,6 +597,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="base\components\utilities\editors\Editors.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\HSV\HSV.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

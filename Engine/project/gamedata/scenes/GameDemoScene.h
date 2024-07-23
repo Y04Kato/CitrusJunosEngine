@@ -107,6 +107,9 @@ private:
 	//Scanline用Data
 	ScanlineData scanlineData_;
 
+	//HSV用Material
+	HSVMaterial hsvMaterial_;
+
 	int texture_[2];
 
 	bool isTriangleDraw_[2];
@@ -128,6 +131,7 @@ private:
 	bool isRandomDraw_;
 	bool isLensDistortionDraw_;
 	bool isScanlineDraw_;
+	bool isHSVDraw_;
 
 	//エディター擬き
 	Editors* editors_;

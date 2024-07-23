@@ -193,6 +193,12 @@ struct ScanlineData{
 	float time;//時間（秒単位）
 };
 
+struct HSVMaterial {
+	float hue;
+	float saturation;
+	float value;
+};
+
 #pragma endregion
 
 #pragma region Particle

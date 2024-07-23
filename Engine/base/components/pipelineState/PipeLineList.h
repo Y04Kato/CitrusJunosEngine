@@ -18,4 +18,5 @@ enum class PipelineType {
 	Random,
 	LensDistortion,
 	Scanlines,
+	HSV,
 };

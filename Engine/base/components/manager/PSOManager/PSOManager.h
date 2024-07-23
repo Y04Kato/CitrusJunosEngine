@@ -17,6 +17,7 @@
 #include "pipelineState/Random/Random.h"
 #include "pipelineState/LensDistortion/LensDistortion.h"
 #include "pipelineState/Scanlines/Scanlines.h"
+#include "pipelineState/HSV/HSV.h"
 
 #include <map>
 

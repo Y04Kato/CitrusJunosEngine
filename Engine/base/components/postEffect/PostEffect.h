@@ -26,6 +26,8 @@ public:
 	void SetMaskData(const MaskData& maskData) {*maskData_ = maskData; }
 	//ScanlineData割り当て用
 	void SetScanlineData(const ScanlineData& scanlineData) { *scanlineData_ = scanlineData; }
+	//HSVMaterial割り当て用
+	void SetHSVMaterial(const HSVMaterial& hsvMaterial) { *hsvMaterial_ = hsvMaterial; }
 
 	PostEffect(const PostEffect& obj) = delete;
 	PostEffect& operator=(const PostEffect& obj) = delete;
@@ -82,5 +84,9 @@ private:
 	//Random用
 	Microsoft::WRL::ComPtr<ID3D12Resource> scanlineResource_;
 	ScanlineData* scanlineData_;
+
+	//HSV用
+	Microsoft::WRL::ComPtr<ID3D12Resource> hsvResource_;
+	HSVMaterial* hsvMaterial_;
 };
 
