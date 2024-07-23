@@ -356,6 +356,8 @@ void GamePlayScene::Update() {
 			player_->SetVelocity(pair.first);
 			enemy->SetVelocity(pair.second);
 
+			collisionParticle_->SetTranslate(MidPoint(player_->GetWorldTransform().translation_, enemy->GetWorldTransform().translation_));
+			collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
 			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 			audio_->SoundPlayWave(soundData2_, 0.1f, false);
 		}
@@ -389,6 +391,9 @@ void GamePlayScene::Update() {
 				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy1->GetVelocity(), 1.0f, enemy2->GetVelocity(), 0.8f, Normalize(enemy1->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
 				enemy1->SetVelocity(pair.first);
 				enemy2->SetVelocity(pair.second);
+
+				collisionParticle_->SetTranslate(MidPoint(enemy1->GetWorldTransform().translation_, enemy2->GetWorldTransform().translation_));
+				collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
 				audio_->SoundPlayWave(soundData2_, 0.1f, false);
 			}
 		}
