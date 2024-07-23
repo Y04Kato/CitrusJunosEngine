@@ -33,7 +33,47 @@ public:
 
 	//敵の配置
 	void SetEnemy(Vector3 pos);
-	void ReSetEnemy();
+	Vector3 GenerateRandomPosition() {
+		return Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX, 2.0f, rand() % 59 - 36 + rand() / (float)RAND_MAX };
+	}
+
+	bool IsValidPosition(const Vector3 pos) {
+		StructSphere sphere;
+		sphere.center = pos;
+		sphere.radius = 1.5f;
+
+		StructSphere pSphere;
+		pSphere = player_->GetStructSphere();
+		if (IsCollision(pSphere, sphere)) {
+			return false;
+		}
+		for (Enemy* enemy : enemys_) {
+			StructSphere eSphere;
+			eSphere = enemy->GetStructSphere();
+			if (IsCollision(eSphere, sphere)) {
+				return false;
+			}
+		}
+		for (Obj obj : editors_->GetObj()) {
+			OBB objOBB;
+			objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+			if (IsCollision(objOBB, sphere)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	Vector3 FindValidPosition() {
+		const int maxAttempts = 100;
+		for (int attempt = 0; attempt < maxAttempts; ++attempt) {
+			Vector3 pos = GenerateRandomPosition();
+			if (IsValidPosition(pos)) {
+				return pos;
+			}
+		}
+		return Vector3{ 0.0f,0.0f,0.0f };
+	}
 
 private:
 	CitrusJunosEngine* CJEngine_;
