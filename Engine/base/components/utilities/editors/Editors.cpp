@@ -55,6 +55,7 @@ void Editors::Update() {
 			globalVariables->AddItem(decisionGroupName_, obj.name + "Translate", obj.world.translation_);
 			globalVariables->AddItem(decisionGroupName_, obj.name + "Rotate", obj.world.rotation_);
 			globalVariables->AddItem(decisionGroupName_, obj.name + "Scale", obj.world.scale_);
+			globalVariables->AddItem(decisionGroupName_, obj.name + "Durability", obj.durability);
 		}
 	}
 	//ブロックの削除
@@ -65,6 +66,7 @@ void Editors::Update() {
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Translate");
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Rotate");
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Scale");
+				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Durability");
 				objCount_--;
 				globalVariables->SetValue(decisionGroupName_, "ObjCount", objCount_);
 				it = objects_.erase(it);
@@ -115,6 +117,7 @@ void Editors::ApplyGlobalVariables() {
 		obj.world.translation_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Translate");
 		obj.world.rotation_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Rotate");
 		obj.world.scale_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Scale");
+		obj.durability = globalVariables->GetIntValue(decisionGroupName_, obj.name + "Durability");
 	}
 }
 
@@ -127,6 +130,7 @@ void Editors::SetGlobalVariables() {
 		globalVariables->SetValue(decisionGroupName_, obj.name + "Translate", obj.world.translation_);
 		globalVariables->SetValue(decisionGroupName_, obj.name + "Rotate", obj.world.rotation_);
 		globalVariables->SetValue(decisionGroupName_, obj.name + "Scale", obj.world.scale_);
+		globalVariables->SetValue(decisionGroupName_, obj.name + "Durability", obj.durability);
 	}
 }
 
@@ -144,16 +148,27 @@ void Editors::SetObject(EulerTransform transform, const std::string& name) {
 
 	obj.name = name;
 
+	obj.durability = durabilityMax_;
+
 	objects_.push_back(obj);
+}
+
+void Editors::AddGroupName(char* groupName) {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+
+	decisionGroupName_ = groupName;
+	GlobalVariables::GetInstance()->CreateGroup(decisionGroupName_);
+
+	objCount_ = 0;
+
+	globalVariables->AddItem(decisionGroupName_, "ObjCount", objCount_);
 }
 
 void Editors::SetGroupName(char* groupName) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 
-	decisionGroupName_ = groupName; 
-	GlobalVariables::GetInstance()->CreateGroup(decisionGroupName_);
-
-	globalVariables->AddItem(decisionGroupName_, "ObjCount", objCount_);
+	decisionGroupName_ = groupName;
+	objCount_ = 0;
 
 	ApplyGlobalVariables();
 

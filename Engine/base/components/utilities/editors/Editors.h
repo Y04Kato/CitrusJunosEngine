@@ -11,6 +11,7 @@ struct Obj {
 	WorldTransform world;
 	Vector4 material;
 	std::string name;
+	int durability;
 };
 
 class Editors {
@@ -31,6 +32,8 @@ public:
 	void SetGlobalVariables();
 
 	void SetObject(EulerTransform trans, const std::string& name);
+
+	void AddGroupName(char* groupName);
 
 	void SetGroupName(char* groupName);
 
@@ -65,4 +68,7 @@ private:
 
 	//trueでguiに直接数字を打ち込めるようにする
 	bool isDirectInputMode_ = false;
+
+	//
+	const int durabilityMax_ = 3;
 };
