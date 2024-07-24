@@ -132,6 +132,10 @@ Vector3 Multiply(const Vector3& v1, const Vector3& v2) {
 	return returnV;
 }
 
+Vector3 ScalarMultiply(const Vector3& vec, float scalar) {
+	return { vec.num[0] * scalar, vec.num[1] * scalar, vec.num[2] * scalar };
+}
+
 Vector3 Division(float scalar, const Vector3& v) {
 	Vector3 returnV;
 	returnV.num[0] = v.num[0] / scalar;
@@ -339,8 +343,9 @@ Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) {
 }
 
 Vector3 Project(const Vector3& v, const Vector3 n) {
-	float projectionLength = Dot(v, n);
-	return n * projectionLength;
+	float dotProduct = Dot(v, n);
+	float ontoLengthSquared = Dot(n, n);
+	return ScalarMultiply(n, dotProduct / ontoLengthSquared);
 }
 
 std::tuple<Vector3, Vector3, Vector3> ComputeRotationMatrix(const Vector3& rotate) {
@@ -362,18 +367,30 @@ std::tuple<Vector3, Vector3, Vector3> ComputeRotationMatrix(const Vector3& rotat
 }
 
 std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector3& velocity1, float mass2, const Vector3& velocity2, float coefficientOfRestitution, const Vector3& normal) {
-	//衝突面法線方向(射影)とその他に分解
-	Vector3 project1 = Project(velocity1, normal);
-	Vector3 project2 = Project(velocity2, normal);
-	Vector3 sub1 = velocity1 - project1;
-	Vector3 sub2 = velocity2 - project2;
+	// 法線ベクトルを正規化
+	Vector3 n = Normalize(normal);
 
-	//衝突面方向に対する反発後の速度を求める
-	Vector3 velocityAfter1 = mass1 * velocity1 + mass2 * velocity2 + coefficientOfRestitution * mass2 * (velocity2 - velocity1) / (mass1 + mass2);
-	Vector3 velocityAfter2 = mass1 * velocity1 + mass2 * velocity2 + coefficientOfRestitution * mass1 * (velocity1 - velocity2) / (mass1 + mass2);
+	// 速度の法線成分と接線成分を計算
+	Vector3 v1n = Project(velocity1, n);
+	Vector3 v1t = Subtruct(velocity1, v1n);
+	Vector3 v2n = Project(velocity2, n);
+	Vector3 v2t = Subtruct(velocity2, v2n);
 
-	//反発後の衝突面方向の速度と、元々の速度で分解していて反発に関わらない速度を足して最終的反発後の速度を計算する
-	return std::make_pair(velocityAfter1 + sub1, velocityAfter2 + sub2);
+	// 衝突後の法線方向の速度を計算
+	float v1n_dot_n = Dot(v1n, n);
+	float v2n_dot_n = Dot(v2n, n);
+
+	float new_v1n_dot_n = (v1n_dot_n * (mass1 - coefficientOfRestitution * mass2) + v2n_dot_n * (1 + coefficientOfRestitution) * mass2) / (mass1 + mass2);
+	float new_v2n_dot_n = (v2n_dot_n * (mass2 - coefficientOfRestitution * mass1) + v1n_dot_n * (1 + coefficientOfRestitution) * mass1) / (mass1 + mass2);
+
+	Vector3 new_v1n = ScalarMultiply(n, new_v1n_dot_n);
+	Vector3 new_v2n = ScalarMultiply(n, new_v2n_dot_n);
+
+	// 衝突後の速度は法線成分と接線成分の和
+	Vector3 new_velocity1 = Add(new_v1n, v1t);
+	Vector3 new_velocity2 = Add(new_v2n, v2t);
+
+	return std::make_pair(new_velocity1, new_velocity2);
 }
 
 Vector3 ComputeSphereVelocityAfterCollisionWithOBB(const StructSphere& sphere, const Vector3& sphereVelocity, const OBB& obb, float restitution) {

@@ -198,7 +198,16 @@ void GameTitleScene::Update() {
 	//
 	ImGui::Begin("TitleScene");
 	ImGui::Text("SceneCount : %d", sceneCount_);
+	ImGui::Text("DebugScene:1 key");
 	ImGui::End();
+
+#ifdef _DEBUG
+	//DebugSceneへ
+	if (input_->TriggerKey(DIK_1)) {
+		sceneNo = DEBUG_SCENE;
+	}
+#endif // _DEBUG
+
 }
 
 void GameTitleScene::Draw() {

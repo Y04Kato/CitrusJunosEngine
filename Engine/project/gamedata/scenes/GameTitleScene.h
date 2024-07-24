@@ -32,7 +32,7 @@ private:
 
 	TextureManager* textureManager_;
 
-	//
+	//Sprite
 	std::unique_ptr <CreateSprite> sprite_[5];
 	EulerTransform spriteTransform_;
 	EulerTransform SpriteuvTransform_;
@@ -66,10 +66,10 @@ private:
 	std::unique_ptr<Model> stage_[2];
 	float animationTimer_ = 1.0f;//アニメーション用のタイマー
 
-	//
+	//Camera
 	DebugCamera* debugCamera_;
 
-	//
+	//Particle
 	std::unique_ptr<CreateParticle> particle_;
 	Emitter testEmitter_{};
 	AccelerationField accelerationField;

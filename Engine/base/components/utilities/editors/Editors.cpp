@@ -153,13 +153,22 @@ void Editors::SetObject(EulerTransform transform, const std::string& name) {
 	objects_.push_back(obj);
 }
 
+void Editors::AddGroupName(char* groupName) {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+
+	decisionGroupName_ = groupName;
+	GlobalVariables::GetInstance()->CreateGroup(decisionGroupName_);
+
+	objCount_ = 0;
+
+	globalVariables->AddItem(decisionGroupName_, "ObjCount", objCount_);
+}
+
 void Editors::SetGroupName(char* groupName) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 
-	decisionGroupName_ = groupName; 
-	GlobalVariables::GetInstance()->CreateGroup(decisionGroupName_);
-
-	globalVariables->AddItem(decisionGroupName_, "ObjCount", objCount_);
+	decisionGroupName_ = groupName;
+	objCount_ = 0;
 
 	ApplyGlobalVariables();
 

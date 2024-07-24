@@ -57,7 +57,7 @@ void GamePlayScene::Initialize() {
 	editors_ = Editors::GetInstance();
 	editors_->Initialize();
 	editors_->SetModels(ObjModelData_, ObjTexture_);
-	editors_->SetGroupName((char*)"DemoStage");
+	editors_->AddGroupName((char*)"DemoStage");
 
 	//テクスチャの初期化と読み込み
 	background_ = textureManager_->Load("project/gamedata/resources/paper.png");
@@ -159,36 +159,17 @@ void GamePlayScene::Initialize() {
 	pointLights_ = PointLights::GetInstance();
 
 	//ステージ開始用フラグ
-	gameStart_ = true;
+	isGameStart_ = true;
 }
 
 void GamePlayScene::Update() {
-	//ステージ開始
-	if (gameStart_ == true) {
-		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
-		player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
-		player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
-		directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.5f };
-		pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
-		debugCamera_->MovingCamera(Vector3{ 0.0f,44.7f,-55.2f }, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
-		maskData_.maskThreshold = 1.0f;
-		postEffect_->SetMaskTexture(noiseTexture_);
-
-		//エネミーの配置
-		for (int i = 0; i < enemyMaxCount_; i++) {
-			Vector3 pos = FindValidPosition();
-			SetEnemy(pos);
-		}
-
-		for (Enemy* enemy : enemys_) {
-			enemy->Update();
-		}
-
-		gameStart_ = false;
+	//ステージ初期設定
+	if (isGameStart_ == true) {
+		GameStartProcessing();
 	}
 
 	//敵を全員倒した時
-	if (enemyDethCount_ == 0 && isfadeIn_ == false) {
+	if (enemyAliveCount_ == 0 && isfadeIn_ == false) {
 		isGameclear_ = true;
 		isfadeIn_ = true;
 	}
@@ -210,11 +191,12 @@ void GamePlayScene::Update() {
 		debugCamera_->MovingCamera(player_->GetWorldTransform().translation_, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ += 4;
 		if (fadeAlpha_ >= 256) {
-			gameStart_ = true;
+			isGameStart_ = true;
 			isfadeIn_ = false;
 			isGameclear_ = false;
 			directionalLight_.intensity = 1.0f;
 			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
+			editors_->Finalize();
 			sceneNo = CLEAR_SCENE;
 		}
 	}
@@ -222,14 +204,14 @@ void GamePlayScene::Update() {
 		fadeAlpha_ += 4;
 		maskData_.maskThreshold -= 0.02f;
 		if (fadeAlpha_ >= 256) {
-			gameStart_ = true;
+			isGameStart_ = true;
 			for (Enemy* enemy : enemys_) {
 				enemy->SetisDead();
 			}
 			enemys_.remove_if([&](Enemy* enemy) {
 				if (enemy->GetisDead()) {
 					delete enemy;
-					enemyDethCount_--;
+					enemyAliveCount_--;
 					return true;
 				}
 				return false;
@@ -238,6 +220,7 @@ void GamePlayScene::Update() {
 			isGameover_ = false;
 			directionalLight_.intensity = 1.0f;
 			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
+			editors_->Finalize();
 			sceneNo = OVER_SCENE;
 		}
 	}
@@ -251,12 +234,14 @@ void GamePlayScene::Update() {
 	if (isEditorMode_ == false) {
 		player_->Update();
 	}
+
 	world_[4].translation_ = player_->GetWorldTransform().translation_;
+
 	for (int i = 0; i < 5; i++) {
 		world_[i].UpdateMatrix();
 	}
 
-	//
+	//Edirots更新
 	editors_->Update();
 #ifdef _DEBUG
 	ImGui::Begin("PlayScene");
@@ -279,17 +264,17 @@ void GamePlayScene::Update() {
 	enemys_.remove_if([&](Enemy* enemy) {
 		if (enemy->GetisDead()) {
 			delete enemy;
-			enemyDethCount_--;
+			enemyAliveCount_--;
 			return true;
 		}
 		return false;
 		});
 
-	//地面更新
+	//Ground更新
 	ground_->Update();
-	Obb_.center = ground_->GetWorldTransform().GetWorldPos();
-	GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), Obb_.orientation);
-	Obb_.size = ground_->GetWorldTransform().scale_;
+	groundObb_.center = ground_->GetWorldTransform().GetWorldPos();
+	GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), groundObb_.orientation);
+	groundObb_.size = ground_->GetWorldTransform().scale_;
 
 	//Particle更新
 	playerParticle_->Update();
@@ -305,178 +290,8 @@ void GamePlayScene::Update() {
 	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 	viewProjection_.UpdateMatrix();
 
-	//プレイヤーの判定取得
-	StructSphere pSphere;
-	pSphere = player_->GetStructSphere();
-
-	//プレイヤーと地面の当たり判定
-	if (IsCollision(Obb_, pSphere)) {
-		player_->isHitOnFloor = true;
-		player_->SetObjectPos(ground_->GetWorldTransform());
-	}
-	else {
-		player_->isHitOnFloor = false;
-	}
-
-	//エネミーと地面の当たり判定
-	for (Enemy* enemy : enemys_) {
-		if (IsCollision(Obb_, enemy->GetStructSphere())) {
-			enemy->isHitOnFloor = true;
-			enemy->SetObjectPos(ground_->GetWorldTransform());
-		}
-		else {
-			enemy->isHitOnFloor = false;
-		}
-	}
-
-	//プレイヤーとエネミーの当たり判定
-	for (Enemy* enemy : enemys_) {
-		StructSphere eSphere;
-		eSphere = enemy->GetStructSphere();
-		if (IsCollision(pSphere, eSphere)) {
-			//押し戻しの処理
-			Vector3 direction = eSphere.center - pSphere.center;
-			float distance = Length(direction);
-			float overlap = pSphere.radius + eSphere.radius - distance;
-
-			if (overlap > 0.0f) {
-				Vector3 correction = Normalize(direction) * (overlap / 2) * 3.0f;
-				pSphere.center = pSphere.center - correction;
-				eSphere.center = eSphere.center + correction;
-
-				player_->SetWorldTransform(pSphere.center);
-				enemy->SetWorldTransform(eSphere.center);
-			}
-
-			//反発処理
-			std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), 0.8f, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
-			player_->SetVelocity(pair.first);
-			enemy->SetVelocity(pair.second);
-
-			collisionParticle_->SetTranslate(MidPoint(player_->GetWorldTransform().translation_, enemy->GetWorldTransform().translation_));
-			collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-			audio_->SoundPlayWave(soundData2_, 0.1f, false);
-		}
-	}
-
-	//エネミー同士の当たり判定
-	for (auto it1 = enemys_.begin(); it1 != enemys_.end(); ++it1) {
-		for (auto it2 = std::next(it1); it2 != enemys_.end(); ++it2) {
-			Enemy* enemy1 = *it1;
-			Enemy* enemy2 = *it2;
-
-			StructSphere eSphere1 = enemy1->GetStructSphere();
-			StructSphere eSphere2 = enemy2->GetStructSphere();
-
-			if (IsCollision(eSphere1, eSphere2)) {
-				// 押し戻しの処理
-				Vector3 direction = eSphere2.center - eSphere1.center;
-				float distance = Length(direction);
-				float overlap = eSphere1.radius + eSphere2.radius - distance;
-
-				if (overlap > 0.0f) {
-					Vector3 correction = Normalize(direction) * (overlap / 2) * 3.0f;
-					eSphere1.center = eSphere1.center - correction;
-					eSphere2.center = eSphere2.center + correction;
-
-					enemy1->SetWorldTransform(eSphere1.center);
-					enemy2->SetWorldTransform(eSphere2.center);
-				}
-
-				//反発処理
-				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy1->GetVelocity(), 1.0f, enemy2->GetVelocity(), 0.8f, Normalize(enemy1->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
-				enemy1->SetVelocity(pair.first);
-				enemy2->SetVelocity(pair.second);
-
-				collisionParticle_->SetTranslate(MidPoint(enemy1->GetWorldTransform().translation_, enemy2->GetWorldTransform().translation_));
-				collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-				audio_->SoundPlayWave(soundData2_, 0.1f, false);
-			}
-		}
-	}
-
-	//プレイヤーとオブジェクトの当たり判定
-	for (Obj obj : editors_->GetObj()) {
-		OBB objOBB;
-		objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
-		if (IsCollision(objOBB, pSphere)) {
-			//押し戻し処理
-			//Sphere から OBB の最近接点を計算
-			Vector3 closestPoint = objOBB.center;
-			Vector3 d = pSphere.center - objOBB.center;
-
-			for (int i = 0; i < 3; ++i) {
-				float dist = Dot(d, objOBB.orientation[i]);
-				dist = std::fmax(-objOBB.size.num[i], std::fmin(dist, objOBB.size.num[i]));
-				closestPoint += objOBB.orientation[i] * dist;
-			}
-
-			//Sphere の中心と最近接点の距離を計算
-			Vector3 direction = pSphere.center - closestPoint;
-			float distance = Length(direction);
-			float overlap = pSphere.radius - distance;
-
-			if (overlap > 0.0f) {
-				Vector3 correction = Normalize(direction) * overlap * 1.5f;
-				pSphere.center += correction;
-
-				player_->SetWorldTransform(pSphere.center);
-			}
-
-			//反発処理
-			Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(pSphere, player_->GetVelocity(), objOBB, 0.8f);
-			player_->SetVelocity(velocity);
-
-			collisionParticle_->SetTranslate(closestPoint);
-			collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-			audio_->SoundPlayWave(soundData2_, 0.1f, false);
-		}
-	}
-
-	//エネミーとオブジェクトの当たり判定
-	for (Enemy* enemy : enemys_) {
-		StructSphere eSphere;
-		eSphere = enemy->GetStructSphere();
-		for (Obj obj : editors_->GetObj()) {
-			OBB objOBB;
-			objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
-			if (IsCollision(objOBB, eSphere)) {
-				//押し戻し処理
-				//Sphere から OBB の最近接点を計算
-				Vector3 closestPoint = objOBB.center;
-				Vector3 d = eSphere.center - objOBB.center;
-
-				for (int i = 0; i < 3; ++i) {
-					float dist = Dot(d, objOBB.orientation[i]);
-					dist = std::fmax(-objOBB.size.num[i], std::fmin(dist, objOBB.size.num[i]));
-					closestPoint += objOBB.orientation[i] * dist;
-				}
-
-				//Sphere の中心と最近接点の距離を計算
-				Vector3 direction = eSphere.center - closestPoint;
-				float distance = Length(direction);
-				float overlap = eSphere.radius - distance;
-
-				if (overlap > 0.0f) {
-					Vector3 correction = Normalize(direction) * overlap * 1.5f;
-					eSphere.center += correction;
-
-					enemy->SetWorldTransform(eSphere.center);
-				}
-
-				//反発処理
-				Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(eSphere, enemy->GetVelocity(), objOBB, 0.8f);
-				enemy->SetVelocity(velocity);
-
-				collisionParticle_->SetTranslate(closestPoint);
-				collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-				audio_->SoundPlayWave(soundData2_, 0.1f, false);
-			}
-		}
-	}
-
+	//当たり判定処理
+	CollisionConclusion();
 
 	//プレイヤー移動時の演出の処理
 	if (player_->GetIsMoveFlag() == false) {
@@ -588,10 +403,255 @@ void GamePlayScene::ApplyGlobalVariables() {
 	const char* groupName = "GamePlayScene";
 }
 
+void GamePlayScene::GameStartProcessing() {
+	player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
+	player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
+	player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
+
+	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.5f };
+	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
+	
+	debugCamera_->MovingCamera(Vector3{ 0.0f,44.7f,-55.2f }, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
+	
+	maskData_.maskThreshold = 1.0f;
+	postEffect_->SetMaskTexture(noiseTexture_);
+
+	editors_->SetModels(ObjModelData_, ObjTexture_);
+	editors_->SetGroupName((char*)"DemoStage");
+
+	//エネミーの配置
+	for (int i = 0; i < enemyMaxCount_; i++) {
+		Vector3 pos = FindValidPosition();
+		SetEnemy(pos);
+	}
+
+	isGameStart_ = false;
+}
+
+void GamePlayScene::CollisionConclusion() {
+	//プレイヤーの判定取得
+	StructSphere pSphere;
+	pSphere = player_->GetStructSphere();
+
+	//プレイヤーと地面の当たり判定
+	if (IsCollision(groundObb_, pSphere)) {
+		player_->isHitOnFloor = true;
+		player_->SetObjectPos(ground_->GetWorldTransform());
+	}
+	else {
+		player_->isHitOnFloor = false;
+	}
+
+	//エネミーと地面の当たり判定
+	for (Enemy* enemy : enemys_) {
+		if (IsCollision(groundObb_, enemy->GetStructSphere())) {
+			enemy->isHitOnFloor = true;
+			enemy->SetObjectPos(ground_->GetWorldTransform());
+		}
+		else {
+			enemy->isHitOnFloor = false;
+		}
+	}
+
+	//プレイヤーとエネミーの当たり判定
+	for (Enemy* enemy : enemys_) {
+		StructSphere eSphere;
+		eSphere = enemy->GetStructSphere();
+		if (IsCollision(pSphere, eSphere)) {
+			//押し戻しの処理
+			Vector3 direction = eSphere.center - pSphere.center;
+			float distance = Length(direction);
+			float overlap = pSphere.radius + eSphere.radius - distance;
+
+			if (overlap > 0.0f) {
+				Vector3 correction = Normalize(direction) * (overlap / 2) * pushbackMultiplier_;
+				pSphere.center = pSphere.center - correction;
+				eSphere.center = eSphere.center + correction;
+
+				player_->SetWorldTransform(pSphere.center);
+				enemy->SetWorldTransform(eSphere.center);
+			}
+
+			//反発処理
+			std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), repulsionCoefficient_, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
+			player_->SetVelocity(pair.first);
+			enemy->SetVelocity(pair.second);
+
+			collisionParticle_->SetTranslate(MidPoint(player_->GetWorldTransform().translation_, enemy->GetWorldTransform().translation_));
+			collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
+			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+			audio_->SoundPlayWave(soundData2_, 0.1f, false);
+		}
+	}
+
+	//エネミー同士の当たり判定
+	for (auto it1 = enemys_.begin(); it1 != enemys_.end(); ++it1) {
+		for (auto it2 = std::next(it1); it2 != enemys_.end(); ++it2) {
+			Enemy* enemy1 = *it1;
+			Enemy* enemy2 = *it2;
+
+			StructSphere eSphere1 = enemy1->GetStructSphere();
+			StructSphere eSphere2 = enemy2->GetStructSphere();
+
+			if (IsCollision(eSphere1, eSphere2)) {
+				// 押し戻しの処理
+				Vector3 direction = eSphere2.center - eSphere1.center;
+				float distance = Length(direction);
+				float overlap = eSphere1.radius + eSphere2.radius - distance;
+
+				if (overlap > 0.0f) {
+					Vector3 correction = Normalize(direction) * (overlap / 2) * pushbackMultiplier_;
+					eSphere1.center = eSphere1.center - correction;
+					eSphere2.center = eSphere2.center + correction;
+
+					enemy1->SetWorldTransform(eSphere1.center);
+					enemy2->SetWorldTransform(eSphere2.center);
+				}
+
+				//反発処理
+				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy1->GetVelocity(), 1.0f, enemy2->GetVelocity(), repulsionCoefficient_, Normalize(enemy1->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
+				enemy1->SetVelocity(pair.first);
+				enemy2->SetVelocity(pair.second);
+
+				collisionParticle_->SetTranslate(MidPoint(enemy1->GetWorldTransform().translation_, enemy2->GetWorldTransform().translation_));
+				collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
+				audio_->SoundPlayWave(soundData2_, 0.1f, false);
+			}
+		}
+	}
+
+	//プレイヤーとオブジェクトの当たり判定
+	for (Obj obj : editors_->GetObj()) {
+		OBB objOBB;
+		objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+		if (IsCollision(objOBB, pSphere)) {
+			//押し戻し処理
+			//Sphere から OBB の最近接点を計算
+			Vector3 closestPoint = objOBB.center;
+			Vector3 d = pSphere.center - objOBB.center;
+
+			for (int i = 0; i < 3; ++i) {
+				float dist = Dot(d, objOBB.orientation[i]);
+				dist = std::fmax(-objOBB.size.num[i], std::fmin(dist, objOBB.size.num[i]));
+				closestPoint += objOBB.orientation[i] * dist;
+			}
+
+			//Sphere の中心と最近接点の距離を計算
+			Vector3 direction = pSphere.center - closestPoint;
+			float distance = Length(direction);
+			float overlap = pSphere.radius - distance;
+
+			if (overlap > 0.0f) {
+				Vector3 correction = Normalize(direction) * overlap * pushbackMultiplierObj_;
+				pSphere.center += correction;
+
+				player_->SetWorldTransform(pSphere.center);
+			}
+
+			//反発処理
+			Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(pSphere, player_->GetVelocity(), objOBB, repulsionCoefficient_);
+			player_->SetVelocity(velocity);
+
+			collisionParticle_->SetTranslate(closestPoint);
+			collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
+			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+			audio_->SoundPlayWave(soundData2_, 0.1f, false);
+		}
+	}
+
+	//エネミーとオブジェクトの当たり判定
+	for (Enemy* enemy : enemys_) {
+		StructSphere eSphere;
+		eSphere = enemy->GetStructSphere();
+		for (Obj obj : editors_->GetObj()) {
+			OBB objOBB;
+			objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+			if (IsCollision(objOBB, eSphere)) {
+				//押し戻し処理
+				//Sphere から OBB の最近接点を計算
+				Vector3 closestPoint = objOBB.center;
+				Vector3 d = eSphere.center - objOBB.center;
+
+				for (int i = 0; i < 3; ++i) {
+					float dist = Dot(d, objOBB.orientation[i]);
+					dist = std::fmax(-objOBB.size.num[i], std::fmin(dist, objOBB.size.num[i]));
+					closestPoint += objOBB.orientation[i] * dist;
+				}
+
+				//Sphere の中心と最近接点の距離を計算
+				Vector3 direction = eSphere.center - closestPoint;
+				float distance = Length(direction);
+				float overlap = eSphere.radius - distance;
+
+				if (overlap > 0.0f) {
+					Vector3 correction = Normalize(direction) * overlap * pushbackMultiplierObj_;
+					eSphere.center += correction;
+
+					enemy->SetWorldTransform(eSphere.center);
+				}
+
+				//反発処理
+				Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(eSphere, enemy->GetVelocity(), objOBB, repulsionCoefficient_);
+				enemy->SetVelocity(velocity);
+
+				collisionParticle_->SetTranslate(closestPoint);
+				collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
+				audio_->SoundPlayWave(soundData2_, 0.1f, false);
+			}
+		}
+	}
+}
+
 void GamePlayScene::SetEnemy(Vector3 pos) {
 	Enemy* enemy = new Enemy();
 	enemy->Initialize(enemyModel_.get());
 	enemy->SetWorldTransform(pos);
 	enemys_.push_back(enemy);
-	enemyDethCount_++;
+	enemyAliveCount_++;
+}
+
+Vector3 GamePlayScene::GenerateRandomPosition() {
+	return Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX, 2.0f, rand() % 59 - 36 + rand() / (float)RAND_MAX };
+}
+
+bool GamePlayScene::IsValidPosition(const Vector3 pos) {
+	StructSphere sphere;
+	sphere.center = pos;
+	sphere.radius = 1.5f;
+
+	StructSphere pSphere;
+	pSphere = player_->GetStructSphere();
+
+	//各種オブジェクトと衝突しているか確認
+	if (IsCollision(pSphere, sphere)) {
+		return false;
+	}
+	for (Enemy* enemy : enemys_) {
+		StructSphere eSphere;
+		eSphere = enemy->GetStructSphere();
+		if (IsCollision(eSphere, sphere)) {
+			return false;
+		}
+	}
+	for (Obj obj : editors_->GetObj()) {
+		OBB objOBB;
+		objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+		if (IsCollision(objOBB, sphere)) {
+			return false;
+		}
+	}
+
+	//衝突していなければTrueを返す
+	return true;
+}
+
+Vector3 GamePlayScene::FindValidPosition() {
+	const int maxAttempts = 100;
+	for (int i = 0; i < maxAttempts; ++i) {
+		Vector3 pos = GenerateRandomPosition();
+		if (IsValidPosition(pos)) {
+			return pos;
+		}
+	}
+	return Vector3{ 0.0f,0.0f,0.0f };
 }

@@ -8,7 +8,7 @@ void SceneManager::Run() {
 
 void SceneManager::Initialize() {
 	//WindowTitle
-	const char kWindowTitle[] = "title";
+	const char kWindowTitle[] = "独楽弾き";
 	//COMの初期化
 	CoInitializeEx(0, COINIT_MULTITHREADED);
 	//Engine
@@ -46,6 +46,7 @@ void SceneManager::Initialize() {
 	scene_[GAME_SCENE] = std::make_unique<GamePlayScene>();
 	scene_[CLEAR_SCENE] = std::make_unique<GameClearScene>();
 	scene_[OVER_SCENE] = std::make_unique<GameOverScene>();
+	scene_[DEBUG_SCENE] = std::make_unique<DebugScene>();
 	for (int i = 0; i < SCENE_MAX; i++) {
 		scene_[i]->Initialize();
 	}

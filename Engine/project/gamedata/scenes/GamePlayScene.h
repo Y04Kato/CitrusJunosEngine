@@ -31,49 +31,20 @@ public:
 
 	void ApplyGlobalVariables();
 
+	//ゲーム開始時の処理
+	void GameStartProcessing();
+
+	//当たり判定まとめ
+	void CollisionConclusion();
+
 	//敵の配置
 	void SetEnemy(Vector3 pos);
-	Vector3 GenerateRandomPosition() {
-		return Vector3{ rand() % 60 - 30 + rand() / (float)RAND_MAX, 2.0f, rand() % 59 - 36 + rand() / (float)RAND_MAX };
-	}
-
-	bool IsValidPosition(const Vector3 pos) {
-		StructSphere sphere;
-		sphere.center = pos;
-		sphere.radius = 1.5f;
-
-		StructSphere pSphere;
-		pSphere = player_->GetStructSphere();
-		if (IsCollision(pSphere, sphere)) {
-			return false;
-		}
-		for (Enemy* enemy : enemys_) {
-			StructSphere eSphere;
-			eSphere = enemy->GetStructSphere();
-			if (IsCollision(eSphere, sphere)) {
-				return false;
-			}
-		}
-		for (Obj obj : editors_->GetObj()) {
-			OBB objOBB;
-			objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
-			if (IsCollision(objOBB, sphere)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	Vector3 FindValidPosition() {
-		const int maxAttempts = 100;
-		for (int attempt = 0; attempt < maxAttempts; ++attempt) {
-			Vector3 pos = GenerateRandomPosition();
-			if (IsValidPosition(pos)) {
-				return pos;
-			}
-		}
-		return Vector3{ 0.0f,0.0f,0.0f };
-	}
+	//ランダムな座標を返す
+	Vector3 GenerateRandomPosition();
+	//他オブジェクトに接触しているか確認
+	bool IsValidPosition(const Vector3 pos);
+	//指定した回数、座標が問題ないか確認し座標を返す
+	Vector3 FindValidPosition();
 
 private:
 	CitrusJunosEngine* CJEngine_;
@@ -89,66 +60,83 @@ private:
 
 	DebugCamera* debugCamera_;
 
+	//Player
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Model> playerModel_;
 
-	std::unique_ptr<Ground>ground_;
-	std::unique_ptr<Model> groundModel_;
-	OBB Obb_;
-
-	std::unique_ptr<Model> flagModel_[5];
-	WorldTransform world_[5];
-	float playerFlagRotate_ = 30.0f;
-
-	//
-	Editors* editors_;
-	ModelData ObjModelData_;
-	uint32_t ObjTexture_;
-	bool isEditorMode_ = false;
-	std::list<Obj> objects_;
-
-	//
 	std::unique_ptr<CreateParticle> playerParticle_;
 	Emitter playerEmitter_{};
 	AccelerationField playerAccelerationField_;
 	uint32_t playerParticleResource_;
 
+	//Enemy
+	std::list<Enemy*> enemys_;
+	std::unique_ptr<Model> enemyModel_;
+	const int enemyMaxCount_ = 20;//エネミーの最大発生数
+	int enemyAliveCount_ = 0;//エネミーの生存数
+
+	//Ground
+	std::unique_ptr<Ground>ground_;
+	std::unique_ptr<Model> groundModel_;
+	OBB groundObb_;
+
+	//Flag
+	std::unique_ptr<Model> flagModel_[5];
+	WorldTransform world_[5];
+	float playerFlagRotate_ = 30.0f;//Playerに付随しているFlagの回転
+
+	//Editor
+	Editors* editors_;
+	bool isEditorMode_ = false;
+
+	//Objects
+	ModelData ObjModelData_;
+	uint32_t ObjTexture_;
+	std::list<Obj> objects_;
+
+	//CollisionParticle
 	std::unique_ptr<CreateParticle> collisionParticle_;
 	Emitter collisionEmitter_{};
 	AccelerationField collisionAccelerationField_;
 	uint32_t collisionParticleResource_;
 	const int collisionParticleOccursNum_ = 20;
 
-	std::list<Enemy*> enemys_;
-	std::unique_ptr<Model> enemyModel_;
-	const int enemyMaxCount_ = 20;
-
+	//Sprite
 	std::unique_ptr <CreateSprite> sprite_[5];
 	EulerTransform spriteTransform_;
 	EulerTransform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
 
+	//Texture
 	uint32_t background_;
 	uint32_t move1_;
 	uint32_t move2_;
 	uint32_t move3_;
 
-	int enemyDethCount_ = 0;
-
-	bool gameStart_ = true;
-
+	//Fade
 	float fadeAlpha_ = 256.0f;
 	bool isfadeIn_ = false;
 
-	bool isGameover_ = false;
-	bool isGameclear_ = false;
+	//Other
+	bool isGameStart_ = true;//ゲームスタート時の処理
+	bool isGameover_ = false;//ゲームオーバー時の処理
+	bool isGameclear_ = false;//ゲームクリア時の処理
 
+	//押し戻しの倍率
+	float pushbackMultiplier_ = 2.0f;
+	float pushbackMultiplierObj_ = 1.5f;
+
+	//反発係数
+	float repulsionCoefficient_ = 0.8f;
+
+	//Lights
 	DirectionalLights* directionalLights_;
 	DirectionalLight directionalLight_;
 
 	PointLights* pointLights_;
 	PointLight pointLight_;
 
+	//PostEffect
 	PostEffect* postEffect_;
 	uint32_t noiseTexture_;
 	MaskData maskData_;
