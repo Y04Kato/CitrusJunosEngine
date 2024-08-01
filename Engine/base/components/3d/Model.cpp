@@ -127,6 +127,8 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
+
+
 	if (isVAT_ == true) {//VATモデルである場合
 		ImGui::Text("VATAnimFrame %f", vatData_->VATTime);
 		vatData_->VATTime = vatData_->VATTime / vatData_->MaxVATTime;
@@ -136,7 +138,21 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(vatPosTex_));
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(vatRotTex_));
 		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(9, vatResource_->GetGPUVirtualAddress());
+		if (isSetEnviromentTexture_ == true) {
+			dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(10, textureManager_->GetGPUHandle(environmentTexture_));
+		}
+		else {
+			dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(10, textureManager_->GetGPUHandle(textureManager_->ddsSample));
+		}
 
+	}
+	else {
+		if (isSetEnviromentTexture_ == true) {
+			dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(environmentTexture_));
+		}
+		else {
+			dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(textureManager_->ddsSample));
+		}
 	}
 
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(modelData_.textureIndex));
@@ -187,6 +203,12 @@ void Model::SkinningDraw(const WorldTransform& worldTransform, const ViewProject
 
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(modelData_.textureIndex));
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, skinCluster_.paletteSrvHandle.GPU);
+	if (isSetEnviromentTexture_ == true) {
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(environmentTexture_));
+	}
+	else {
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(8, textureManager_->GetGPUHandle(textureManager_->ddsSample));
+	}
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
 
 }

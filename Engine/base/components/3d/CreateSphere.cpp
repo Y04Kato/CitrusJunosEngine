@@ -9,6 +9,8 @@ void CreateSphere::Initialize() {
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
 
+	environmentTexture_ = textureManager_->ddsSample;
+
 	kSubDivision_ = 16;
 	vertexCount_ = kSubDivision_ * kSubDivision_ * 6;
 	SettingVertex();
@@ -50,6 +52,12 @@ void CreateSphere::Draw(const WorldTransform& worldTransform, const ViewProjecti
 
 	//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]のこと
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(textureIndex));
+	if (isSetEnviromentTexture_ == true) {
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(environmentTexture_));
+	}
+	else {
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(textureManager_->ddsSample));
+	}
 
 	//描画
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(vertexCount_, 1, 0, 0, 0);

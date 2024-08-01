@@ -368,7 +368,6 @@
     <FxCompile Include="project\gamedata\resources\shaders\Vignette.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\BoxFilter.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\GaussianFilter.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\DepthBasedOutline.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\RadialBlur.PS.hlsl" />
     <FxCompile Include="project\gamedata\resources\shaders\MaskTexture.PS.hlsl" />

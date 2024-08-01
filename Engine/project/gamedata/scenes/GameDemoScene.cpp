@@ -95,7 +95,8 @@ void GameDemoScene::Initialize() {
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].Initialize();
 		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
-		model_[i]->SetDirectionalLightFlag(true, 3);
+		model_[i]->SetDirectionalLightFlag(true, 4);
+		model_[i]->SetEnvironmentTexture(ddsResourceNum_);
 	}
 
 	skyBox_ = std::make_unique <CreateSkyBox>();
@@ -658,7 +659,7 @@ void GameDemoScene::LevelSetObject() {
 		if (objectData.isParent == false) {//親ノードでなければ
 			Obj obj;
 			obj.model.Initialize(ObjModelData_, ObjTexture_);
-			obj.model.SetDirectionalLightFlag(true, 3);
+			obj.model.SetDirectionalLightFlag(true, 4);
 
 			obj.world.Initialize();
 			obj.world.translation_ = objectData.transform.translate;

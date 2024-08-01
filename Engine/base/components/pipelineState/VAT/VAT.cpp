@@ -11,7 +11,7 @@ void VAT::CreateRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	//RootParameter作成、複数設定可能な為、配列に
-	D3D12_ROOT_PARAMETER rootParameters[10] = {};
+	D3D12_ROOT_PARAMETER rootParameters[11] = {};
 
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
@@ -30,6 +30,12 @@ void VAT::CreateRootSignature() {
 	descriptorRange3[0].NumDescriptors = 1;//数は1つ
 	descriptorRange3[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
 	descriptorRange3[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE descriptorRange4[1] = {};
+	descriptorRange4[0].BaseShaderRegister = 3;//3から始まる
+	descriptorRange4[0].NumDescriptors = 1;//数は1つ
+	descriptorRange4[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptorRange4[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
 	//VertexShader
 	//Worldtransform
@@ -85,6 +91,12 @@ void VAT::CreateRootSignature() {
 	rootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixcelShaderで使う
 	rootParameters[6].Descriptor.ShaderRegister = 3;//レジスタ番号3を使う
+
+	//EnviromentTex
+	rootParameters[10].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Descriptortableを使う
+	rootParameters[10].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixcelShaderを使う
+	rootParameters[10].DescriptorTable.pDescriptorRanges = descriptorRange4;//tableの中身の配列を指定
+	rootParameters[10].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange4);//Tableで利用する数
 
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[2] = {};//Samplerの設定
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ

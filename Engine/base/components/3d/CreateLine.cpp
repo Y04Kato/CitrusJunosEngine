@@ -10,6 +10,8 @@ void CreateLine::Initialize() {
 
 	world_.Initialize();
 
+	environmentTexture_ = textureManager_->ddsSample;
+
 	SettingVertex();
 	SettingColor();
 	SettingDictionalLight();
@@ -101,6 +103,12 @@ void CreateLine::Draw(const WorldTransform& worldTransform1, const WorldTransfor
 
 	//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]のこと
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(textureManager_->white));
+	if (isSetEnviromentTexture_ == true) {
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(environmentTexture_));
+	}
+	else {
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(textureManager_->ddsSample));
+	}
 
 	//描画
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(vertexCount_, 1, 0, 0, 0);

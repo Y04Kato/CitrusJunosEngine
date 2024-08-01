@@ -31,6 +31,7 @@ public:
 	uint32_t GetDescriptorSizeDSV() { return descriptorSizeDSV; }
 
 	uint32_t white;
+	uint32_t ddsSample;
 
 private:
 	DirectXCommon* dxCommon_;
