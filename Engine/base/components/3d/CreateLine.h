@@ -21,12 +21,15 @@ public:
 	/// ライティングを行うかどうか＆ライティングの種類
 	/// 1:HalfLambert
 	/// 2:PhongReflection
-	/// 2:BlinnPhongReflection
+	/// 3:BlinnPhongReflection
+	/// 4:Enviroment+
 	/// </summary>
 	void SetDirectionalLightFlag(bool isDirectionalLight, int lightNum);
 
 	//ラインの太さ
 	void SetLineThickness(float thickness) { size_ = thickness; };
+
+	void SetEnvironmentTexture(const uint32_t& envTex) { environmentTexture_ = envTex; isSetEnviromentTexture_ = true; }
 
 private:
 	void SettingVertex();
@@ -67,4 +70,7 @@ private:
 
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
 	CameraForGPU* cameraData_ = nullptr;
+
+	bool isSetEnviromentTexture_ = false;
+	uint32_t environmentTexture_;
 };

@@ -16,6 +16,8 @@ public:
 
 	void Finalize();
 
+	void SetEnvironmentTexture(const uint32_t& envTex) { environmentTexture_ = envTex; isSetEnviromentTexture_ = true; }
+
 private:
 	void SettingVertex();
 
@@ -43,4 +45,7 @@ private:
 	DirectionalLights* directionalLights_;
 	DirectionalLight* directionalLight_;
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
+
+	bool isSetEnviromentTexture_ = false;
+	uint32_t environmentTexture_;
 };

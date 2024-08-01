@@ -35,7 +35,7 @@ void GamePlayScene::Initialize() {
 
 	ground_ = std::make_unique<Ground>();
 	groundModel_.reset(Model::CreateModel("project/gamedata/resources/floor", "Floor.obj"));
-	groundModel_->SetDirectionalLightFlag(true, 3);
+	groundModel_->SetDirectionalLightFlag(true, 4);
 	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
 
 	for (int i = 0; i < 5; i++) {

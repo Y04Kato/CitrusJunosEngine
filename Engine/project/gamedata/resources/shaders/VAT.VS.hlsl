@@ -5,7 +5,7 @@ ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
 ConstantBuffer<VATData> gVATData : register(b2);
 
 Texture2D<float4> VatPositionTex : register(t0);
-Texture2D<float4> VatNormalTex : register(t1);
+Texture2D<float4> VatRotTex : register(t1);
 SamplerState gSampler : register(s0);
 
 VertexShaderOutput main(VertexShaderInput input, uint index : SV_VertexID) {
@@ -31,7 +31,7 @@ VertexShaderOutput main(VertexShaderInput input, uint index : SV_VertexID) {
     output.texcoord = input.texcoord;
 
     // 法線データのサンプリングと変換
-    float32_t4 sampledNormal = VatNormalTex.SampleLevel(gSampler, texCoords, 0);
+    float32_t4 sampledNormal = VatRotTex.SampleLevel(gSampler, texCoords, 0);
     float32_t3 animatedNormal = normalize(input.normal + sampledNormal.xyz);
     output.normal = normalize(mul(animatedNormal, (float3x3)gTransformationMatrix.WorldInverseTranspose));
 

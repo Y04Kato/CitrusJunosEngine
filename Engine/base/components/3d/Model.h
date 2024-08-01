@@ -35,7 +35,8 @@ public:
 	/// ライティングを行うかどうか＆ライティングの種類
 	/// 1:HalfLambert
 	/// 2:PhongReflection
-	/// 2:BlinnPhongReflection
+	/// 3:BlinnPhongReflection
+	/// 4:Enviroment+
 	/// </summary>
 	void SetDirectionalLightFlag(bool isDirectionalLight, int lightNum);
 
@@ -59,6 +60,8 @@ public:
 	static Model* CreateSkinningModel(const std::string& directoryPath, const std::string& filename);
 	static Model* CreateSkinningModel(const ModelData modeldata, const uint32_t texture);
 
+	void SetEnvironmentTexture(const uint32_t& envTex) { environmentTexture_ = envTex; isSetEnviromentTexture_ = true; }
+
 	/// <summary>
 	/// VATに必要なテクスチャのロード(テクスチャの名前は固定、モデルファイルと同じディレクトリを参照)
 	/// 1:VATpos.png
@@ -66,7 +69,7 @@ public:
 	/// </summary>
 	void LoadVATData(const std::string& directoryPath, const VATData* vatdata);
 
-	void SetVATTime(const float& animTime) { vatData_->VATTime = animTime; };
+	void SetVATTime(const float& animTime) { vatData_->VATTime = animTime; }
 
 private:
 	DirectXCommon* dxCommon_;
@@ -116,6 +119,9 @@ private:
 	VATData* vatData_;
 
 	WorldTransform world_;
+
+	bool isSetEnviromentTexture_ = false;
+	uint32_t environmentTexture_;
 
 private:
 	void CreateVartexData();

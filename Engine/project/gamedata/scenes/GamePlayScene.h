@@ -99,7 +99,7 @@ private:
 	Emitter collisionEmitter_{};
 	AccelerationField collisionAccelerationField_;
 	uint32_t collisionParticleResource_;
-	const int collisionParticleOccursNum_ = 20;
+	const int collisionParticleOccursNum_ = 10;
 
 	//Sprite
 	std::unique_ptr <CreateSprite> sprite_[5];

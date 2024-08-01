@@ -11,6 +11,8 @@ void CreateTriangle::Initialize() {
 	SettingColor();
 	SettingDictionalLight();
 
+	environmentTexture_ = textureManager_->ddsSample;
+
 	//左下
 	vertexData_[0].position = { -0.5f,0.0f,0.0f,1.0f };
 	vertexData_[0].texcoord = { 0.0f,1.0f };
@@ -48,6 +50,12 @@ void CreateTriangle::Draw(const WorldTransform& worldTransform, const ViewProjec
 
 	//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]のこと
 	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(textureIndex));
+	if (isSetEnviromentTexture_ == true) {
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(environmentTexture_));
+	}
+	else {
+		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(7, textureManager_->GetGPUHandle(textureManager_->ddsSample));
+	}
 
 	//描画
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
