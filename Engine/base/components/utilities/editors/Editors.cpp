@@ -37,7 +37,7 @@ void Editors::Update() {
 	//Groupの生成
 	if (ImGui::Button("SetGroupName")) {
 		decisionGroupName_ = (char*)groupName_;
-		GlobalVariables::GetInstance()->CreateGroup(decisionGroupName_);
+		GlobalVariables::GetInstance()->CreateGroup((char*)groupName_);
 
 		globalVariables->AddItem(decisionGroupName_, "ObjCount", objCount_);
 
@@ -56,7 +56,6 @@ void Editors::Update() {
 			else {
 				isSpawn = false;
 			}
-
 		}
 
 		if (isSpawn == false) {
