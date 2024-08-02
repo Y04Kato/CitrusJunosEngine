@@ -36,6 +36,8 @@ public:
 	Vector4 GetVector4Value(const std::string& groupName, const std::string& key);
 	std::string GetStringValue(const std::string& groupName, const std::string& key);
 
+	bool GroupNameSearch(const std::string& groupName);
+
 private:
 	GlobalVariables() = default;
 	~GlobalVariables() = default;

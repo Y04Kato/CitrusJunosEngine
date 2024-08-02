@@ -9,6 +9,7 @@
 #include "components/2d/CreateSprite.h"
 #include "components/2d/CreateParticle.h"
 #include "components/3d/CreateSphere.h"
+#include "components/3d/CreateSkyBox.h"
 #include "components/3d/Model.h"
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
@@ -80,6 +81,11 @@ private:
 	std::unique_ptr<Model> groundModel_;
 	OBB groundObb_;
 
+	//SkyBox
+	std::unique_ptr <CreateSkyBox> skyBox_;
+	WorldTransform worldTransformSkyBox_;
+	Vector4 skyBoxMaterial_;
+
 	//Flag
 	std::unique_ptr<Model> flagModel_[5];
 	WorldTransform world_[5];
@@ -112,6 +118,7 @@ private:
 	uint32_t move1_;
 	uint32_t move2_;
 	uint32_t move3_;
+	uint32_t skyboxTex_;
 
 	//Fade
 	float fadeAlpha_ = 256.0f;

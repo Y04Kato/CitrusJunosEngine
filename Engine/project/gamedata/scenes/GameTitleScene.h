@@ -9,6 +9,7 @@
 #include "components/2d/CreateSprite.h"
 #include "components/2d/CreateParticle.h"
 #include "components/3d/CreateSphere.h"
+#include "components/3d/CreateSkyBox.h"
 #include "components/3d/Model.h"
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
@@ -65,6 +66,12 @@ private:
 	//ステージ
 	std::unique_ptr<Model> stage_[2];
 	float animationTimer_ = 1.0f;//アニメーション用のタイマー
+
+	//SkyBox
+	std::unique_ptr <CreateSkyBox> skyBox_;
+	WorldTransform worldTransformSkyBox_;
+	Vector4 skyBoxMaterial_;
+	uint32_t skyboxTex_;
 
 	//Camera
 	DebugCamera* debugCamera_;

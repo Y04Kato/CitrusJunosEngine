@@ -30,14 +30,27 @@ void GamePlayScene::Initialize() {
 	playerModel_->SetDirectionalLightFlag(true, 3);
 	player_->Initialize(playerModel_.get());
 
+	//
 	enemyModel_.reset(Model::CreateModel("project/gamedata/resources/enemy", "enemy.obj"));
 	enemyModel_->SetDirectionalLightFlag(true, 2);
 
+	//
 	ground_ = std::make_unique<Ground>();
+	skyboxTex_ = textureManager_->Load("project/gamedata/resources/vz_empty_space_cubemap_ue.dds");
 	groundModel_.reset(Model::CreateModel("project/gamedata/resources/floor", "Floor.obj"));
 	groundModel_->SetDirectionalLightFlag(true, 4);
 	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
+	groundModel_->SetEnvironmentTexture(skyboxTex_);
 
+	//
+	skyBox_ = std::make_unique <CreateSkyBox>();
+	skyBox_->Initialize();
+	worldTransformSkyBox_.Initialize();
+	worldTransformSkyBox_.scale_ = { 1000.0f,1000.0f,1000.0f };
+	skyBoxMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	skyBox_->SetDirectionalLightFlag(true, 3);
+
+	//
 	for (int i = 0; i < 5; i++) {
 		flagModel_[i].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
 		flagModel_[i]->SetDirectionalLightFlag(true, 3);
@@ -276,6 +289,9 @@ void GamePlayScene::Update() {
 	GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), groundObb_.orientation);
 	groundObb_.size = ground_->GetWorldTransform().scale_;
 
+	//SkyBox更新
+	worldTransformSkyBox_.UpdateMatrix();
+
 	//Particle更新
 	playerParticle_->Update();
 	playerParticle_->SetTranslate(player_->GetWorldTransform().translation_);
@@ -325,6 +341,12 @@ void GamePlayScene::Draw() {
 
 	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 
+#pragma endregion
+
+#pragma region SkyBox描画
+	CJEngine_->renderer_->Draw(PipelineType::SkyBox);
+
+	skyBox_->Draw(worldTransformSkyBox_, viewProjection_, skyBoxMaterial_, skyboxTex_);
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画

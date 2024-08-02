@@ -75,6 +75,8 @@ void CreateLine::Draw(const WorldTransform& worldTransform1, const WorldTransfor
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.num[2]));
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
 
+	cameraData_->worldPosition = viewProjection.translation_;
+
 	if (isDirectionalLight_ == false) {
 		*materialData_ = { material,0 };
 	}

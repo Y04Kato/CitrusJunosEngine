@@ -24,6 +24,8 @@ void CreateSphere::Draw(const WorldTransform& worldTransform, const ViewProjecti
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.num[2]));
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
 
+	cameraData_->worldPosition = viewProjection.translation_;
+
 	if (isDirectionalLight_ == false) {
 		*materialData_ = { material,0 };
 	}

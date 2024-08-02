@@ -15,6 +15,8 @@ void GameTitleScene::Initialize() {
 	title_ = textureManager_->Load("project/gamedata/resources/title.png");
 	tutorial_ = textureManager_->Load("project/gamedata/resources/tutorial.png");
 
+	skyboxTex_ = textureManager_->Load("project/gamedata/resources/vz_empty_space_cubemap_ue.dds");
+
 	//Audioの初期化
 	audio_ = Audio::GetInstance();
 	soundData1_ = audio_->SoundLoad("project/gamedata/resources/system.mp3");
@@ -93,6 +95,14 @@ void GameTitleScene::Initialize() {
 	world_[1].translation_.num[1] = 12.0f;
 	world_[1].translation_.num[2] = 150.0f;
 
+	//
+	skyBox_ = std::make_unique <CreateSkyBox>();
+	skyBox_->Initialize();
+	worldTransformSkyBox_.Initialize();
+	worldTransformSkyBox_.scale_ = { 1000.0f,1000.0f,1000.0f };
+	skyBoxMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	skyBox_->SetDirectionalLightFlag(true, 3);
+
 	// デバッグカメラの初期化
 	debugCamera_ = DebugCamera::GetInstance();
 	debugCamera_->initialize();
@@ -122,6 +132,10 @@ void GameTitleScene::Update() {
 	//Playerの更新
 	player_->UpdateView();
 	player_->SetViewProjection(&viewProjection_);
+
+
+	//SkyBox更新
+	worldTransformSkyBox_.UpdateMatrix();
 	
 	//Particle更新
 	particle_->Update();
@@ -216,6 +230,12 @@ void GameTitleScene::Draw() {
 
 	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 
+#pragma endregion
+
+#pragma region SkyBox描画
+	CJEngine_->renderer_->Draw(PipelineType::SkyBox);
+
+	skyBox_->Draw(worldTransformSkyBox_, viewProjection_, skyBoxMaterial_, skyboxTex_);
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画

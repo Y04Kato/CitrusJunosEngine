@@ -25,18 +25,13 @@ void Editors::SetModels(ModelData ObjModelData, uint32_t ObjTexture) {
 
 void Editors::Update() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	if (isDirectInputMode_ == true) {
-		ApplyGlobalVariables();
-	}
-	else {
-		SetGlobalVariables();
-	}
 
 	//Group名の設定
 	ImGui::InputText("GroupName", groupName_, sizeof(groupName_));
+	//Groupの生成
 	if (ImGui::Button("SetGroupName")) {
 		decisionGroupName_ = (char*)groupName_;
-		GlobalVariables::GetInstance()->CreateGroup(decisionGroupName_);
+		GlobalVariables::GetInstance()->CreateGroup((char*)groupName_);
 
 		globalVariables->AddItem(decisionGroupName_, "ObjCount", objCount_);
 
@@ -47,15 +42,27 @@ void Editors::Update() {
 	ImGui::InputText("BlockName", objName_, sizeof(objName_));
 	//ブロックの配置
 	if (ImGui::Button("SpawnBlock")) {
-		SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
-		objCount_++;
-		globalVariables->SetValue(decisionGroupName_, "ObjCount", objCount_);
+		bool isSpawn = false;
 		for (Obj& obj : objects_) {
-			globalVariables->AddItem(decisionGroupName_, obj.name, (std::string)objName_);
-			globalVariables->AddItem(decisionGroupName_, obj.name + "Translate", obj.world.translation_);
-			globalVariables->AddItem(decisionGroupName_,obj.name + "Rotate", obj.world.rotation_);
-			globalVariables->AddItem(decisionGroupName_, obj.name + "Scale", obj.world.scale_);
-			globalVariables->AddItem(decisionGroupName_, obj.name + "Durability", obj.durability);
+			if (obj.name == objName_) {
+				isSpawn = true;
+			}
+			else {
+				isSpawn = false;
+			}
+		}
+
+		if (isSpawn == false) {
+			SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+
+			objCount_++;
+			globalVariables->SetValue(decisionGroupName_, "ObjCount", objCount_);
+			for (Obj& obj : objects_) {
+				globalVariables->AddItem(decisionGroupName_, obj.name, (std::string)objName_);
+				globalVariables->AddItem(decisionGroupName_, obj.name + "Translate", obj.world.translation_);
+				globalVariables->AddItem(decisionGroupName_, obj.name + "Rotate", obj.world.rotation_);
+				globalVariables->AddItem(decisionGroupName_, obj.name + "Scale", obj.world.scale_);
+			}
 		}
 	}
 	//ブロックの削除
@@ -66,7 +73,6 @@ void Editors::Update() {
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Translate");
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Rotate");
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Scale");
-				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Durability");
 				objCount_--;
 				globalVariables->SetValue(decisionGroupName_, "ObjCount", objCount_);
 				it = objects_.erase(it);
@@ -83,7 +89,17 @@ void Editors::Update() {
 		}
 	}
 
+	//データ入力方法切り替え
 	ImGui::Checkbox("DataDirectInputMode", &isDirectInputMode_);
+
+	if (globalVariables->GroupNameSearch(decisionGroupName_) == true) {
+		if (isDirectInputMode_ == true) {
+			ApplyGlobalVariables();
+		}
+		else {
+			SetGlobalVariables();
+		}
+	}
 
 	//WorldTransform更新
 	for (Obj& obj : objects_) {
@@ -117,7 +133,6 @@ void Editors::ApplyGlobalVariables() {
 		obj.world.translation_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Translate");
 		obj.world.rotation_ = globalVariables->GetVector3Value(decisionGroupName_,  obj.name + "Rotate");
 		obj.world.scale_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Scale");
-		obj.durability = globalVariables->GetIntValue(decisionGroupName_, obj.name + "Durability");
 	}
 }
 
@@ -130,7 +145,6 @@ void Editors::SetGlobalVariables() {
 		globalVariables->SetValue(decisionGroupName_, obj.name + "Translate", obj.world.translation_);
 		globalVariables->SetValue(decisionGroupName_, obj.name + "Rotate", obj.world.rotation_);
 		globalVariables->SetValue(decisionGroupName_, obj.name + "Scale", obj.world.scale_);
-		globalVariables->SetValue(decisionGroupName_, obj.name + "Durability", obj.durability);
 	}
 }
 
@@ -147,8 +161,6 @@ void Editors::SetObject(EulerTransform transform, const std::string& name) {
 	obj.material = { 1.0f,1.0f,1.0f,1.0f };
 
 	obj.name = name;
-
-	obj.durability = durabilityMax_;
 
 	objects_.push_back(obj);
 }

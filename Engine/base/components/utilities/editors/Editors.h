@@ -11,7 +11,6 @@ struct Obj {
 	WorldTransform world;
 	Vector4 material;
 	std::string name;
-	int durability;
 };
 
 class Editors {
@@ -68,7 +67,4 @@ private:
 
 	//trueでguiに直接数字を打ち込めるようにする
 	bool isDirectInputMode_ = false;
-
-	//
-	const int durabilityMax_ = 3;
 };

@@ -106,7 +106,8 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float32_t3 reflectVector = reflect(cameraToPosition, normalize(input.normal));
 		float32_t4 enviromentColor = gEnviromentTexture.Sample(gSampler, reflectVector);
 
-		enviromentColor = enviromentColor * 0.1f;
+		//enviromentColor = enviromentColor * 0.1f;
+		enviromentColor = enviromentColor * 1.0f;
 
 		output.color.rgb = diffuseDirectionalLight + specularDirectionalLight + diffusePointLight + specularPointLight + enviromentColor.rgb;
 		output.color.a = gMaterial.color.a * textureColor.a;
