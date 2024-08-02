@@ -79,6 +79,8 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.num[2]));
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
 
+	cameraData_->worldPosition = viewProjection.translation_;
+
 	if (isDirectionalLight_ == false) {
 		*material_ = { material,0 };
 	}
@@ -166,6 +168,8 @@ void Model::SkinningDraw(const WorldTransform& worldTransform, const ViewProject
 	Matrix4x4 uvtransformMtrix = MakeScaleMatrix(uvTransform.scale);
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.num[2]));
 	uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
+
+	cameraData_->worldPosition = viewProjection.translation_;
 
 	if (isDirectionalLight_ == false) {
 		*material_ = { material,0 };

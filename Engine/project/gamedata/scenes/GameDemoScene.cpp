@@ -150,7 +150,7 @@ void GameDemoScene::Initialize() {
 	hsvMaterial_.saturation = 0.0f;
 	hsvMaterial_.value = 0.0f;
 
-	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.obj");
+	ObjModelData_ = model_[0]->LoadModelFile("project/gamedata/resources/block", "block.gltf");
 	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
 	levelDataLoader_ = LevelDataLoader::GetInstance();
 	levelDataLoader_->Initialize("project/gamedata/levelEditor", "Transform.json");
