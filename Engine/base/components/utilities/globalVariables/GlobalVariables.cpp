@@ -330,3 +330,14 @@ void GlobalVariables::RemoveItem(const std::string& groupName, const std::string
 	// アイテムを削除
 	groupIt->second.items.erase(itemIt);
 }
+
+bool GlobalVariables::GroupNameSearch(const std::string& groupName) {
+	// グループが存在するかを確認
+	auto groupIt = datas_.find(groupName);
+	if (groupIt == datas_.end()) {//グループが存在しない場合はfalseを返す
+		return false;
+	}
+	else {//ある場合trueを返す
+		return true;
+	}
+}

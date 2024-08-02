@@ -25,12 +25,6 @@ void Editors::SetModels(ModelData ObjModelData, uint32_t ObjTexture) {
 
 void Editors::Update() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	if (isDirectInputMode_ == true) {
-		ApplyGlobalVariables();
-	}
-	else {
-		SetGlobalVariables();
-	}
 
 	//Group名の設定
 	ImGui::InputText("GroupName", groupName_, sizeof(groupName_));
@@ -95,7 +89,17 @@ void Editors::Update() {
 		}
 	}
 
+	//データ入力方法切り替え
 	ImGui::Checkbox("DataDirectInputMode", &isDirectInputMode_);
+
+	if (globalVariables->GroupNameSearch(decisionGroupName_) == true) {
+		if (isDirectInputMode_ == true) {
+			ApplyGlobalVariables();
+		}
+		else {
+			SetGlobalVariables();
+		}
+	}
 
 	//WorldTransform更新
 	for (Obj& obj : objects_) {
