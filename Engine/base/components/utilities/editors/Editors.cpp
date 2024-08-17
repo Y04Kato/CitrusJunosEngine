@@ -196,13 +196,13 @@ WorldTransform Editors::Guizmo(ViewProjection& view, WorldTransform world) {
 
 	WorldTransform worldTransform_ = world;
 
-	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_1)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_RightShift) && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T)) {
 		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 	}
-	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_2)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_RightShift) && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R)) {
 		mCurrentGizmoOperation = ImGuizmo::ROTATE;
 	}
-	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_3)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_RightShift) && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S)) {
 		mCurrentGizmoOperation = ImGuizmo::SCALE;
 	}
 
@@ -224,13 +224,13 @@ WorldTransform Editors::Guizmo(ViewProjection& view, WorldTransform world) {
 EulerTransform Editors::Guizmo(ViewProjection& view, EulerTransform world) {
 	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 
-	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_1)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_RightShift) && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T)) {
 		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 	}
-	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_2)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_RightShift) && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R)) {
 		mCurrentGizmoOperation = ImGuizmo::ROTATE;
 	}
-	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_3)) {
+	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_RightShift) && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S)) {
 		mCurrentGizmoOperation = ImGuizmo::SCALE;
 	}
 
