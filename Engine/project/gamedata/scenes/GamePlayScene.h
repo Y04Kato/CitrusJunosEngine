@@ -134,7 +134,7 @@ private:
 	float pushbackMultiplierObj_ = 1.5f;
 
 	//反発係数
-	float repulsionCoefficient_ = 0.8f;
+	float repulsionCoefficient_ = 1.0f;
 
 	//Lights
 	DirectionalLights* directionalLights_;
