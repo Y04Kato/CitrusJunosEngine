@@ -79,9 +79,9 @@ void GamePlayScene::Initialize() {
 
 	//テクスチャの初期化と読み込み
 	background_ = textureManager_->Load("project/gamedata/resources/paper.png");
-	move1_ = textureManager_->Load("project/gamedata/resources/move1.png");
-	move2_ = textureManager_->Load("project/gamedata/resources/move2.png");
-	move3_ = textureManager_->Load("project/gamedata/resources/move3.png");
+	move1_ = textureManager_->Load("project/gamedata/resources/ui/move1.png");
+	move2_ = textureManager_->Load("project/gamedata/resources/ui/move2.png");
+	move3_ = textureManager_->Load("project/gamedata/resources/ui/move3.png");
 
 	//UIの初期化
 	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
@@ -206,7 +206,6 @@ void GamePlayScene::Update() {
 		}
 	}
 	else if (isfadeIn_ == true && isGameclear_ == true) {//ゲームクリア時
-		debugCamera_->MovingCamera(player_->GetWorldTransform().translation_, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
 		fadeAlpha_ += 4;
 		if (fadeAlpha_ >= 256) {
 			isGameStart_ = true;
@@ -305,19 +304,51 @@ void GamePlayScene::Update() {
 	collisionParticle_->Update();
 	collisionParticle_->SetAccelerationField(collisionAccelerationField_);
 
+	if (input_->TriggerKey(DIK_E)) {
+		if (isEditorMode_ == false) {
+			debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
+			isEditorMode_ = true;
+
+			debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });
+			debugCamera_->Update();
+
+			viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
+			viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
+			viewProjection_.UpdateMatrix();
+		}
+		else {
+			debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, 0.05f);
+
+			cameraChange_ = true;
+		}
+	}
+
+	if (cameraChange_ == true) {
+		cameraChangeTimer_++;
+	}
+
+	if (cameraChangeTimer_ >= 25) {
+		debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
+		cameraChangeTimer_ = 0;
+		cameraChange_ = false;
+		isEditorMode_ = false;
+	}
+
 	//カメラの更新
-	//debugCamera_->Update();
+	if (isEditorMode_ == false) {
+		followCamera_->Update();
+		viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
+		viewProjection_.matView = followCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
+	}
+	else {
+		debugCamera_->Update();
 
-	//viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
-	//viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
-	//viewProjection_.UpdateMatrix();
-
-	followCamera_->Update();
-
-	viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
-	viewProjection_.matView = followCamera_->GetViewProjection().matView;
-	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
-	viewProjection_.TransferMatrix();
+		viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
+		viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
+		viewProjection_.UpdateMatrix();
+	}
 
 	//当たり判定処理
 	CollisionConclusion();
@@ -377,7 +408,7 @@ void GamePlayScene::Draw() {
 
 #pragma region 3DSkinningオブジェクト描画
 	CJEngine_->renderer_->Draw(PipelineType::Skinning);
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 4; i++) {
 		flagModel_[i]->SkinningDraw(world_[i], viewProjection_, Vector4{ 1.0f,1.0f,1.0f,1.0f });
 	}
 
@@ -446,10 +477,11 @@ void GamePlayScene::GameStartProcessing() {
 	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.5f };
 	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
 
-	debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
-
 	maskData_.maskThreshold = 1.0f;
 	postEffect_->SetMaskTexture(noiseTexture_);
+
+	debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
+	isEditorMode_ = false;
 
 	editors_->SetModels(ObjModelData_, ObjTexture_);
 	editors_->SetGroupName((char*)"DemoStage");
@@ -557,42 +589,45 @@ void GamePlayScene::CollisionConclusion() {
 
 	//プレイヤーとオブジェクトの当たり判定
 	for (Obj obj : editors_->GetObj()) {
-		if (obj.type == "Wall") {
-			OBB objOBB;
-			objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
-			if (IsCollision(objOBB, pSphere)) {
-				//押し戻し処理
-				//Sphere から OBB の最近接点を計算
-				Vector3 closestPoint = objOBB.center;
-				Vector3 d = pSphere.center - objOBB.center;
+		if (obj.durability > 0) {
+			if (obj.type == "Wall") {
+				OBB objOBB;
+				objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+				if (IsCollision(objOBB, pSphere)) {
+					//押し戻し処理
+					//Sphere から OBB の最近接点を計算
+					Vector3 closestPoint = objOBB.center;
+					Vector3 d = pSphere.center - objOBB.center;
 
-				for (int i = 0; i < 3; ++i) {
-					float dist = Dot(d, objOBB.orientation[i]);
-					dist = std::fmax(-objOBB.size.num[i], std::fmin(dist, objOBB.size.num[i]));
-					closestPoint += objOBB.orientation[i] * dist;
+					for (int i = 0; i < 3; ++i) {
+						float dist = Dot(d, objOBB.orientation[i]);
+						dist = std::fmax(-objOBB.size.num[i], std::fmin(dist, objOBB.size.num[i]));
+						closestPoint += objOBB.orientation[i] * dist;
+					}
+
+					//Sphere の中心と最近接点の距離を計算
+					Vector3 direction = pSphere.center - closestPoint;
+					float distance = Length(direction);
+					float overlap = pSphere.radius - distance;
+
+					if (overlap > 0.0f) {
+						Vector3 correction = Normalize(direction) * overlap * pushbackMultiplierObj_;
+						pSphere.center += correction;
+
+						player_->SetWorldTransform(pSphere.center);
+					}
+
+					//反発処理
+					Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(pSphere, player_->GetVelocity(), objOBB, repulsionCoefficient_);
+					player_->SetVelocity(velocity);
+
+					editors_->Hitobj(obj);
+
+					collisionParticle_->SetTranslate(closestPoint);
+					collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
+					playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
+					audio_->SoundPlayWave(soundData2_, 0.1f, false);
 				}
-
-				//Sphere の中心と最近接点の距離を計算
-				Vector3 direction = pSphere.center - closestPoint;
-				float distance = Length(direction);
-				float overlap = pSphere.radius - distance;
-
-				if (overlap > 0.0f) {
-					Vector3 correction = Normalize(direction) * overlap * pushbackMultiplierObj_;
-					pSphere.center += correction;
-
-					player_->SetWorldTransform(pSphere.center);
-				}
-
-				//反発処理
-				Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(pSphere, player_->GetVelocity(), objOBB, repulsionCoefficient_);
-				player_->SetVelocity(velocity);
-
-
-				collisionParticle_->SetTranslate(closestPoint);
-				collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-				playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-				audio_->SoundPlayWave(soundData2_, 0.1f, false);
 			}
 		}
 	}
@@ -602,40 +637,44 @@ void GamePlayScene::CollisionConclusion() {
 		StructSphere eSphere;
 		eSphere = enemy->GetStructSphere();
 		for (Obj obj : editors_->GetObj()) {
-			if (obj.type == "Wall") {
-				OBB objOBB;
-				objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
-				if (IsCollision(objOBB, eSphere)) {
-					//押し戻し処理
-					//Sphere から OBB の最近接点を計算
-					Vector3 closestPoint = objOBB.center;
-					Vector3 d = eSphere.center - objOBB.center;
+			if (obj.durability > 0) {
+				if (obj.type == "Wall") {
+					OBB objOBB;
+					objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+					if (IsCollision(objOBB, eSphere)) {
+						//押し戻し処理
+						//Sphere から OBB の最近接点を計算
+						Vector3 closestPoint = objOBB.center;
+						Vector3 d = eSphere.center - objOBB.center;
 
-					for (int i = 0; i < 3; ++i) {
-						float dist = Dot(d, objOBB.orientation[i]);
-						dist = std::fmax(-objOBB.size.num[i], std::fmin(dist, objOBB.size.num[i]));
-						closestPoint += objOBB.orientation[i] * dist;
+						for (int i = 0; i < 3; ++i) {
+							float dist = Dot(d, objOBB.orientation[i]);
+							dist = std::fmax(-objOBB.size.num[i], std::fmin(dist, objOBB.size.num[i]));
+							closestPoint += objOBB.orientation[i] * dist;
+						}
+
+						//Sphere の中心と最近接点の距離を計算
+						Vector3 direction = eSphere.center - closestPoint;
+						float distance = Length(direction);
+						float overlap = eSphere.radius - distance;
+
+						if (overlap > 0.0f) {
+							Vector3 correction = Normalize(direction) * overlap * pushbackMultiplierObj_;
+							eSphere.center += correction;
+
+							enemy->SetWorldTransform(eSphere.center);
+						}
+
+						//反発処理
+						Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(eSphere, enemy->GetVelocity(), objOBB, repulsionCoefficient_);
+						enemy->SetVelocity(velocity);
+
+						editors_->Hitobj(obj);
+
+						collisionParticle_->SetTranslate(closestPoint);
+						collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
+						audio_->SoundPlayWave(soundData2_, 0.1f, false);
 					}
-
-					//Sphere の中心と最近接点の距離を計算
-					Vector3 direction = eSphere.center - closestPoint;
-					float distance = Length(direction);
-					float overlap = eSphere.radius - distance;
-
-					if (overlap > 0.0f) {
-						Vector3 correction = Normalize(direction) * overlap * pushbackMultiplierObj_;
-						eSphere.center += correction;
-
-						enemy->SetWorldTransform(eSphere.center);
-					}
-
-					//反発処理
-					Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(eSphere, enemy->GetVelocity(), objOBB, repulsionCoefficient_);
-					enemy->SetVelocity(velocity);
-
-					collisionParticle_->SetTranslate(closestPoint);
-					collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-					audio_->SoundPlayWave(soundData2_, 0.1f, false);
 				}
 			}
 		}

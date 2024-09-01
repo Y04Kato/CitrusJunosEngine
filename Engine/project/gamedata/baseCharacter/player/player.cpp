@@ -53,12 +53,14 @@ void Player::Update() {
 	worldTransform_.UpdateMatrix();
 	worldTransform2_.UpdateMatrix();
 
+	Vector3 test = viewProjection_->translation_;
+
 	ImGui::Begin("player");
 	ImGui::Text("Move WASD");
 	ImGui::Text("MovePowerChange Space");
 	ImGui::DragFloat3("vector", velocity_.num);
 	ImGui::DragFloat3("vectorC", velocityC_.num);
-	ImGui::DragFloat3("vectorC", worldTransform2_.rotation_.num);
+	ImGui::DragFloat3("vectorC", test.num);
 	ImGui::End();
 }
 
@@ -83,10 +85,14 @@ void Player::Draw(const ViewProjection& viewProjection) {
 void Player::Move() {
 	if (input_->PressKey(DIK_A)) {
 		worldTransform2_.rotation_.num[1] -= 0.1f;
+		rotate_.num[0] -= 0.1f;
 	}
 	if (input_->PressKey(DIK_D)) {
 		worldTransform2_.rotation_.num[1] += 0.1f;
+		rotate_.num[0] += 0.1f;
 	}
+
+	rotate_.num[1] = worldTransform2_.rotation_.num[1];
 
 	if (moveMode_ == 0) {
 		CharacterSpeed_ = 0.5f;
@@ -101,17 +107,24 @@ void Player::Move() {
 	if (moveFlag_ == true) {
 		if (input_->TriggerKey(DIK_SPACE)) {
 			moveFlag_ = false;
-
+			Vector3 direction = Normalize(viewProjection_->translation_ - worldTransform2_.translation_);
+			velocity_ = -(velocity_ + direction * CharacterSpeed_);
 		}
 	}
 
 	//加速度のモード変更
-	//if (input_->TriggerKey(DIK_SPACE)) {
-	//	moveMode_++;
-	//	if (moveMode_ >= 3) {
-	//		moveMode_ = 0;
-	//	}
-	//}
+	if (input_->TriggerKey(DIK_W)) {
+		moveMode_++;
+		if (moveMode_ >= 3) {
+			moveMode_ = 0;
+		}
+	}
+	if (input_->TriggerKey(DIK_S)) {
+		moveMode_--;
+		if (moveMode_ < 0) {
+			moveMode_ = 2;
+		}
+	}
 
 	XINPUT_STATE joystate;
 

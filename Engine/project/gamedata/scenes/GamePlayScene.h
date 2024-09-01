@@ -62,6 +62,8 @@ private:
 
 	DebugCamera* debugCamera_;
 	std::unique_ptr<FollowCamera> followCamera_;
+	int cameraChangeTimer_ = 0;
+	bool cameraChange_ = false;
 
 	//Player
 	std::unique_ptr<Player> player_;
@@ -136,7 +138,7 @@ private:
 	float pushbackMultiplierObj_ = 1.5f;
 
 	//反発係数
-	float repulsionCoefficient_ = 1.0f;
+	float repulsionCoefficient_ = 1.2f;
 
 	//Lights
 	DirectionalLights* directionalLights_;

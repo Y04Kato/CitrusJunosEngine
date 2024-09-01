@@ -12,6 +12,7 @@ struct Obj {
 	Vector4 material;
 	std::string name;
 	std::string type;
+	int durability;
 };
 
 class Editors {
@@ -36,6 +37,8 @@ public:
 	void AddGroupName(char* groupName);
 
 	void SetGroupName(char* groupName);
+
+	void Hitobj(Obj o);
 
 	int GetObjCount() { return objCount_; }
 

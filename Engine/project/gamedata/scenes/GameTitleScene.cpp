@@ -11,9 +11,9 @@ void GameTitleScene::Initialize() {
 	textureManager_ = TextureManager::GetInstance();
 
 	pageAll_ = textureManager_->Load("project/gamedata/resources/paper.png");
-	start_ = textureManager_->Load("project/gamedata/resources/pressSpace.png");
-	title_ = textureManager_->Load("project/gamedata/resources/title.png");
-	tutorial_ = textureManager_->Load("project/gamedata/resources/tutorial.png");
+	start_ = textureManager_->Load("project/gamedata/resources/ui/pressSpace.png");
+	title_ = textureManager_->Load("project/gamedata/resources/ui/title.png");
+	tutorial_ = textureManager_->Load("project/gamedata/resources/ui/tutorial.png");
 
 	skyboxTex_ = textureManager_->Load("project/gamedata/resources/vz_empty_space_cubemap_ue.dds");
 

@@ -10,8 +10,8 @@ void GameOverScene::Initialize() {
 	textureManager_ = TextureManager::GetInstance();
 
 	pageAll_ = textureManager_->Load("project/gamedata/resources/paper.png");
-	start_ = textureManager_->Load("project/gamedata/resources/pressSpace.png");
-	game_ = textureManager_->Load("project/gamedata/resources/gameover.png");
+	start_ = textureManager_->Load("project/gamedata/resources/ui/pressSpace.png");
+	game_ = textureManager_->Load("project/gamedata/resources/ui/gameover.png");
 
 	//Audio
 	audio_ = Audio::GetInstance();

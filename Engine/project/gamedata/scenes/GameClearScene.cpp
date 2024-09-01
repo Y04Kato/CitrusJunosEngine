@@ -10,8 +10,8 @@ void GameClearScene::Initialize() {
 	textureManager_ = TextureManager::GetInstance();
 
 	pageAll_ = textureManager_->Load("project/gamedata/resources/paper.png");
-	start_ = textureManager_->Load("project/gamedata/resources/pressSpace.png");
-	game_ = textureManager_->Load("project/gamedata/resources/gameclear.png");
+	start_ = textureManager_->Load("project/gamedata/resources/ui/pressSpace.png");
+	game_ = textureManager_->Load("project/gamedata/resources/ui/gameclear.png");
 
 	//Audio
 	audio_ = Audio::GetInstance();

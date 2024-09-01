@@ -57,6 +57,7 @@ private:
 	WorldTransform objectPos_;
 
 	WorldTransform worldTransform2_;
+	Vector3 rotate_;
 
 	bool gameOver = false;
 
