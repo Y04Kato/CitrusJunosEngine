@@ -197,6 +197,10 @@ void GlobalVariables::LoadFile(const std::string& groupName) {
 			double value = itItem->get<double>();
 			SetValue(groupName, itemName, static_cast<float>(value));
 		}
+		else if (itItem->is_string()) {
+			std::string value = itItem->get<std::string>();
+			SetValue(groupName, itemName, static_cast<std::string>(value));
+		}
 		else if (itItem->is_array() && itItem->size() == 3) {
 			Vector3 value = { itItem->at(0), itItem->at(1), itItem->at(2) };
 			SetValue(groupName, itemName, value);

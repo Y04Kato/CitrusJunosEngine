@@ -38,8 +38,9 @@ void Editors::Update() {
 		ApplyGlobalVariables();
 	}
 
-	//配置するブロック名の設定
+	//配置するブロック名とタイプの設定
 	ImGui::InputText("BlockName", objName_, sizeof(objName_));
+	ImGui::InputText("BlockType", objType_, sizeof(objType_));
 	//ブロックの配置
 	if (ImGui::Button("SpawnBlock")) {
 		bool isSpawn = false;
@@ -53,12 +54,13 @@ void Editors::Update() {
 		}
 
 		if (isSpawn == false) {
-			SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+			SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_, objType_);
 
 			objCount_++;
 			globalVariables->SetValue(decisionGroupName_, "ObjCount", objCount_);
 			for (Obj& obj : objects_) {
 				globalVariables->AddItem(decisionGroupName_, obj.name, (std::string)objName_);
+				globalVariables->AddItem(decisionGroupName_, obj.name + "Type", (std::string)objType_);
 				globalVariables->AddItem(decisionGroupName_, obj.name + "Translate", obj.world.translation_);
 				globalVariables->AddItem(decisionGroupName_, obj.name + "Rotate", obj.world.rotation_);
 				globalVariables->AddItem(decisionGroupName_, obj.name + "Scale", obj.world.scale_);
@@ -67,9 +69,11 @@ void Editors::Update() {
 	}
 	//ブロックの削除
 	if (ImGui::Button("DeleteBlock")) {
-		SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_);
+		SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objName_, "None");
 		for (auto it = objects_.begin(); it != objects_.end();) {
 			if (it->name == objName_) {
+				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_);
+				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Type");
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Translate");
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Rotate");
 				globalVariables->RemoveItem(decisionGroupName_, (std::string)objName_ + "Scale");
@@ -85,7 +89,7 @@ void Editors::Update() {
 	//Jsonから配置のロード
 	if (ImGui::Button("StartSetBlock")) {
 		for (int i = 0; i < objCount_; i++) {
-			SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
+			SetObject(EulerTransform{ { 1.0f,1.0f,1.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i], "None");
 		}
 	}
 
@@ -133,6 +137,7 @@ void Editors::ApplyGlobalVariables() {
 		obj.world.translation_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Translate");
 		obj.world.rotation_ = globalVariables->GetVector3Value(decisionGroupName_,  obj.name + "Rotate");
 		obj.world.scale_ = globalVariables->GetVector3Value(decisionGroupName_, obj.name + "Scale");
+		obj.type = globalVariables->GetStringValue(decisionGroupName_, obj.name + "Type");
 	}
 }
 
@@ -145,10 +150,11 @@ void Editors::SetGlobalVariables() {
 		globalVariables->SetValue(decisionGroupName_, obj.name + "Translate", obj.world.translation_);
 		globalVariables->SetValue(decisionGroupName_, obj.name + "Rotate", obj.world.rotation_);
 		globalVariables->SetValue(decisionGroupName_, obj.name + "Scale", obj.world.scale_);
+		globalVariables->SetValue(decisionGroupName_, obj.name + "Type", obj.type);
 	}
 }
 
-void Editors::SetObject(EulerTransform transform, const std::string& name) {
+void Editors::SetObject(EulerTransform transform, const std::string& name, const std::string& type) {
 	Obj obj;
 	obj.model.Initialize(ObjModelData_, ObjTexture_);
 	obj.model.SetDirectionalLightFlag(true, 3);
@@ -161,6 +167,8 @@ void Editors::SetObject(EulerTransform transform, const std::string& name) {
 	obj.material = { 1.0f,1.0f,1.0f,1.0f };
 
 	obj.name = name;
+
+	obj.type = type;
 
 	objects_.push_back(obj);
 }
@@ -185,7 +193,7 @@ void Editors::SetGroupName(char* groupName) {
 	ApplyGlobalVariables();
 
 	for (int i = 0; i < objCount_; i++) {
-		SetObject(EulerTransform{ { 0.0f,0.0f,0.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i]);
+		SetObject(EulerTransform{ { 0.0f,0.0f,0.0f }, {0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} }, objNameHolder_[i], "None");
 	}
 
 	ApplyGlobalVariables();
@@ -213,7 +221,7 @@ WorldTransform Editors::Guizmo(ViewProjection& view, WorldTransform world) {
 	ImGuizmo::DecomposeMatrixToComponents(&gizmoMatrix.m[0][0], &transform.translate.num[0], &transform.rotate.num[0], &transform.scale.num[0]);
 
 	worldTransform_.translation_ = transform.translate;
-	worldTransform_.rotation_ = transform.rotate;
+	//worldTransform_.rotation_ = transform.rotate;
 	worldTransform_.scale_ = transform.scale;
 
 	worldTransform_.UpdateMatrix();
@@ -228,7 +236,7 @@ EulerTransform Editors::Guizmo(ViewProjection& view, EulerTransform world) {
 		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 	}
 	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_RightShift) && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R)) {
-		mCurrentGizmoOperation = ImGuizmo::ROTATE;
+		//mCurrentGizmoOperation = ImGuizmo::ROTATE;
 	}
 	if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_RightShift) && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S)) {
 		mCurrentGizmoOperation = ImGuizmo::SCALE;

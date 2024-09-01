@@ -11,6 +11,7 @@ struct Obj {
 	WorldTransform world;
 	Vector4 material;
 	std::string name;
+	std::string type;
 };
 
 class Editors {
@@ -30,7 +31,7 @@ public:
 	void ApplyGlobalVariables();
 	void SetGlobalVariables();
 
-	void SetObject(EulerTransform trans, const std::string& name);
+	void SetObject(EulerTransform trans, const std::string& name, const std::string& type);
 
 	void AddGroupName(char* groupName);
 
@@ -62,6 +63,7 @@ private:
 	std::string objNameHolder_[objCountMax_];
 
 	char objName_[64];
+	char objType_[64];
 	char groupName_[64];
 	char* decisionGroupName_;
 

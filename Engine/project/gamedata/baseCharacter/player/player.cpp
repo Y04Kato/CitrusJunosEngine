@@ -11,6 +11,7 @@ void Player::Initialize(Model* model) {
 	input_ = Input::GetInstance();
 
 	worldTransform_.translation_ = { 0.0f,0.1f,0.0f };
+	worldTransform2_ = worldTransform_;
 
 	structSphere_.radius = 1.5f;
 }
@@ -18,6 +19,7 @@ void Player::Initialize(Model* model) {
 void Player::Update() {
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
+	worldTransform2_.TransferMatrix();
 
 	Move();
 
@@ -46,13 +48,17 @@ void Player::Update() {
 	worldTransform_.translation_ += velocity_;
 	worldTransform_.rotation_.num[1] += 1.0f;
 
+	worldTransform2_.translation_ = worldTransform_.translation_;
+
 	worldTransform_.UpdateMatrix();
+	worldTransform2_.UpdateMatrix();
 
 	ImGui::Begin("player");
 	ImGui::Text("Move WASD");
 	ImGui::Text("MovePowerChange Space");
 	ImGui::DragFloat3("vector", velocity_.num);
 	ImGui::DragFloat3("vectorC", velocityC_.num);
+	ImGui::DragFloat3("vectorC", worldTransform2_.rotation_.num);
 	ImGui::End();
 }
 
@@ -75,211 +81,37 @@ void Player::Draw(const ViewProjection& viewProjection) {
 }
 
 void Player::Move() {
-	if (moveFlag_ == true) {
-		if (input_->TriggerKey(DIK_W)) {
-			moveFlag_ = false;
-			if (moveMode_ == 0) {
-				velocity_.num[2] = 0.5f;
-			}
-			if (moveMode_ == 1) {
-				velocity_.num[2] = 0.7f;
-			}
-			if (moveMode_ == 2) {
-				velocity_.num[2] = 0.9f;
-			}
-
-			if (input_->TriggerKey(DIK_A)) {
-				moveFlag_ = false;
-				if (moveMode_ == 0) {
-					velocity_.num[0] = -0.5f;
-				}
-				if (moveMode_ == 1) {
-					velocity_.num[0] = -0.7f;
-				}
-				if (moveMode_ == 2) {
-					velocity_.num[0] = -0.9f;
-				}
-			}
-			if (input_->TriggerKey(DIK_D)) {
-				moveFlag_ = false;
-				if (moveMode_ == 0) {
-					velocity_.num[0] = 0.5f;
-				}
-				if (moveMode_ == 1) {
-					velocity_.num[0] = 0.7f;
-				}
-				if (moveMode_ == 2) {
-					velocity_.num[0] = 0.9f;
-				}
-			}
-		}
-		if (input_->TriggerKey(DIK_S)) {
-			moveFlag_ = false;
-			if (moveMode_ == 0) {
-				velocity_.num[2] = -0.5f;
-			}
-			if (moveMode_ == 1) {
-				velocity_.num[2] = -0.7f;
-			}
-			if (moveMode_ == 2) {
-				velocity_.num[2] = -0.9f;
-			}
-
-			if (input_->TriggerKey(DIK_A)) {
-				moveFlag_ = false;
-				if (moveMode_ == 0) {
-					velocity_.num[0] = -0.5f;
-				}
-				if (moveMode_ == 1) {
-					velocity_.num[0] = -0.7f;
-				}
-				if (moveMode_ == 2) {
-					velocity_.num[0] = -0.9f;
-				}
-			}
-			if (input_->TriggerKey(DIK_D)) {
-				moveFlag_ = false;
-				if (moveMode_ == 0) {
-					velocity_.num[0] = 0.5f;
-				}
-				if (moveMode_ == 1) {
-					velocity_.num[0] = 0.7f;
-				}
-				if (moveMode_ == 2) {
-					velocity_.num[0] = 0.9f;
-				}
-			}
-		}
-		if (input_->TriggerKey(DIK_A)) {
-			moveFlag_ = false;
-			if (moveMode_ == 0) {
-				velocity_.num[0] = -0.5f;
-			}
-			if (moveMode_ == 1) {
-				velocity_.num[0] = -0.7f;
-			}
-			if (moveMode_ == 2) {
-				velocity_.num[0] = -0.9f;
-			}
-
-			if (input_->TriggerKey(DIK_W)) {
-				moveFlag_ = false;
-				if (moveMode_ == 0) {
-					velocity_.num[2] = 0.5f;
-				}
-				if (moveMode_ == 1) {
-					velocity_.num[2] = 0.7f;
-				}
-				if (moveMode_ == 2) {
-					velocity_.num[2] = 0.9f;
-				}
-			}
-			if (input_->TriggerKey(DIK_S)) {
-				moveFlag_ = false;
-				if (moveMode_ == 0) {
-					velocity_.num[2] = -0.5f;
-				}
-				if (moveMode_ == 1) {
-					velocity_.num[2] = -0.7f;
-				}
-				if (moveMode_ == 2) {
-					velocity_.num[2] = -0.9f;
-				}
-			}
-		}
-		if (input_->TriggerKey(DIK_D)) {
-			moveFlag_ = false;
-			if (moveMode_ == 0) {
-				velocity_.num[0] = 0.5f;
-			}
-			if (moveMode_ == 1) {
-				velocity_.num[0] = 0.7f;
-			}
-			if (moveMode_ == 2) {
-				velocity_.num[0] = 0.9f;
-			}
-
-			if (input_->TriggerKey(DIK_W)) {
-				moveFlag_ = false;
-				if (moveMode_ == 0) {
-					velocity_.num[2] = 0.5f;
-				}
-				if (moveMode_ == 1) {
-					velocity_.num[2] = 0.7f;
-				}
-				if (moveMode_ == 2) {
-					velocity_.num[2] = 0.9f;
-				}
-			}
-			if (input_->TriggerKey(DIK_S)) {
-				moveFlag_ = false;
-				if (moveMode_ == 0) {
-					velocity_.num[2] = -0.5f;
-				}
-				if (moveMode_ == 1) {
-					velocity_.num[2] = -0.7f;
-				}
-				if (moveMode_ == 2) {
-					velocity_.num[2] = -0.9f;
-				}
-			}
-		}
+	if (input_->PressKey(DIK_A)) {
+		worldTransform2_.rotation_.num[1] -= 0.1f;
 	}
-	//追加行動入力
-	if (moveFlag_ == false && moveCount_ > 0 && moveCount_ <= keyboardAdditionalInputsTimerMax_) {
-		if (input_->TriggerKey(DIK_W)) {
-			if (moveMode_ == 0) {
-				velocity_.num[2] = 0.5f;
-			}
-			if (moveMode_ == 1) {
-				velocity_.num[2] = 0.7f;
-			}
-			if (moveMode_ == 2) {
-				velocity_.num[2] = 0.9f;
-			}
-		}
-		if (input_->TriggerKey(DIK_S)) {
-			if (moveMode_ == 0) {
-				velocity_.num[2] = -0.5f;
-			}
-			if (moveMode_ == 1) {
-				velocity_.num[2] = -0.7f;
-			}
-			if (moveMode_ == 2) {
-				velocity_.num[2] = -0.9f;
-			}
-		}
-		if (input_->TriggerKey(DIK_A)) {
-			if (moveMode_ == 0) {
-				velocity_.num[0] = -0.5f;
-			}
-			if (moveMode_ == 1) {
-				velocity_.num[0] = -0.7f;
-			}
-			if (moveMode_ == 2) {
-				velocity_.num[0] = -0.9f;
-			}
-		}
-		if (input_->TriggerKey(DIK_D)) {
-			if (moveMode_ == 0) {
-				velocity_.num[0] = 0.5f;
-			}
-			if (moveMode_ == 1) {
-				velocity_.num[0] = 0.7f;
-			}
-			if (moveMode_ == 2) {
-				velocity_.num[0] = 0.9f;
-			}
+	if (input_->PressKey(DIK_D)) {
+		worldTransform2_.rotation_.num[1] += 0.1f;
+	}
+
+	if (moveMode_ == 0) {
+		CharacterSpeed_ = 0.5f;
+	}
+	if (moveMode_ == 1) {
+		CharacterSpeed_ = 0.7f;
+	}
+	if (moveMode_ == 2) {
+		CharacterSpeed_ = 0.9f;
+	}
+
+	if (moveFlag_ == true) {
+		if (input_->TriggerKey(DIK_SPACE)) {
+			moveFlag_ = false;
+
 		}
 	}
 
 	//加速度のモード変更
-	if (input_->TriggerKey(DIK_SPACE)) {
-		moveMode_++;
-		if (moveMode_ >= 3) {
-			moveMode_ = 0;
-		}
-	}
+	//if (input_->TriggerKey(DIK_SPACE)) {
+	//	moveMode_++;
+	//	if (moveMode_ >= 3) {
+	//		moveMode_ = 0;
+	//	}
+	//}
 
 	XINPUT_STATE joystate;
 
@@ -304,15 +136,6 @@ void Player::Move() {
 					if (moveMode_ >= 3) {
 						moveMode_ = 0;
 					}
-				}
-				if (moveMode_ == 0) {
-					CharacterSpeed_ = 0.5f;
-				}
-				if (moveMode_ == 1) {
-					CharacterSpeed_ = 0.7f;
-				}
-				if (moveMode_ == 2) {
-					CharacterSpeed_ = 0.9f;
 				}
 			}
 		}

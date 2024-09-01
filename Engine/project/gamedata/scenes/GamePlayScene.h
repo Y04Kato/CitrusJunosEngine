@@ -12,6 +12,7 @@
 #include "components/3d/CreateSkyBox.h"
 #include "components/3d/Model.h"
 #include "components/debugcamera/DebugCamera.h"
+#include "components/utilities/followCamera/FollowCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
 #include "components/utilities/collisionManager/CollisionConfig.h"
 #include "postEffect/PostEffect.h"
@@ -60,6 +61,7 @@ private:
 	Input* input_;
 
 	DebugCamera* debugCamera_;
+	std::unique_ptr<FollowCamera> followCamera_;
 
 	//Player
 	std::unique_ptr<Player> player_;

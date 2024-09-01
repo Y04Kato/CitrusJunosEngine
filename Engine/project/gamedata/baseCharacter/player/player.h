@@ -21,6 +21,7 @@ public:
 	void Move();
 
 	WorldTransform GetWorldTransform() { return worldTransform_; }
+	const WorldTransform& GetWorldTransformPlayer() { return worldTransform2_; }
 	void SetWorldTransform(const Vector3 translation);
 
 	//落下処理
@@ -54,6 +55,8 @@ private:
 	Vector3 velocityC_ = {};
 
 	WorldTransform objectPos_;
+
+	WorldTransform worldTransform2_;
 
 	bool gameOver = false;
 
