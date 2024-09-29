@@ -223,7 +223,7 @@ void DebugScene::Finalize() {
 }
 
 void DebugScene::ResetProcessing() {
-	player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
+	player_->SetWorldTransform(Vector3{ 10.0f,0.2f,10.0f });
 	player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
 	player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
 
