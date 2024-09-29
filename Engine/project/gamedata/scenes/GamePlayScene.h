@@ -21,6 +21,7 @@
 #include "ground/Ground.h"
 #include "baseCharacter/player/Player.h"
 #include "baseCharacter/enemy/Enemy.h"
+#include "explosion/explosion.h"
 
 class GamePlayScene :public Iscene {
 public:
@@ -91,9 +92,8 @@ private:
 	Vector4 skyBoxMaterial_;
 
 	//Flag
-	std::unique_ptr<Model> flagModel_[5];
-	WorldTransform world_[5];
-	float playerFlagRotate_ = 30.0f;//Playerに付随しているFlagの回転
+	std::unique_ptr<Model> flagModel_[4];
+	WorldTransform world_[4];
 
 	//Editor
 	Editors* editors_;
@@ -151,4 +151,9 @@ private:
 	PostEffect* postEffect_;
 	uint32_t noiseTexture_;
 	MaskData maskData_;
+
+	//Explosion
+	Explosion* explosion_;
+	float explosionTimer_;
+	bool isExplosion_;
 };

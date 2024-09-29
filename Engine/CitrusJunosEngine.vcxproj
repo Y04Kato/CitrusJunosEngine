@@ -208,6 +208,7 @@
     <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp" />
     <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp" />
     <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp" />
+    <ClCompile Include="project\gamedata\explosion\explosion.cpp" />
     <ClCompile Include="project\gamedata\ground\Ground.cpp" />
     <ClCompile Include="project\gamedata\scenes\DebugScene.cpp" />
     <ClCompile Include="project\gamedata\scenes\GameClearScene.cpp" />
@@ -483,6 +484,7 @@
     <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h" />
     <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h" />
     <ClInclude Include="project\gamedata\baseCharacter\player\Player.h" />
+    <ClInclude Include="project\gamedata\explosion\explosion.h" />
     <ClInclude Include="project\gamedata\ground\Ground.h" />
     <ClInclude Include="project\gamedata\scenes\DebugScene.h" />
     <ClInclude Include="project\gamedata\scenes\GameClearScene.h" />

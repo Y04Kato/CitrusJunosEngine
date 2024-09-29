@@ -56,7 +56,7 @@ void GamePlayScene::Initialize() {
 	skyBox_->SetDirectionalLightFlag(true, 3);
 
 	//
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 4; i++) {
 		flagModel_[i].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
 		flagModel_[i]->SetDirectionalLightFlag(true, 3);
 		world_[i].Initialize();
@@ -162,6 +162,12 @@ void GamePlayScene::Initialize() {
 	maskData_.maskColor = { 0.2f,0.2f,0.2f };
 	maskData_.edgeColor = { 0.2f,0.2f,0.2f };
 
+	//Explosion
+	explosion_ = new Explosion();
+	explosion_->Initialize();
+	explosionTimer_ = 10;
+	isExplosion_ = false;
+
 	//
 	GlobalVariables* globalVariables{};
 	globalVariables = GlobalVariables::GetInstance();
@@ -254,7 +260,7 @@ void GamePlayScene::Update() {
 
 	world_[4].translation_ = player_->GetWorldTransform().translation_;
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 4; i++) {
 		world_[i].UpdateMatrix();
 	}
 
@@ -304,6 +310,26 @@ void GamePlayScene::Update() {
 	collisionParticle_->Update();
 	collisionParticle_->SetAccelerationField(collisionAccelerationField_);
 
+	//Explosion更新
+	explosion_->Update();
+
+	if (isExplosion_ == true) {
+		explosionTimer_--;
+		debugCamera_->ShakeCamera(10,5);
+	}
+
+	if (explosionTimer_ <= 0 && isExplosion_ == true) {
+		isExplosion_ = false;
+		if (isEditorMode_ == false) {
+			debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });
+		}
+		else {
+			debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
+
+			cameraChange_ = true;
+		}
+	}
+
 	if (input_->TriggerKey(DIK_E)) {
 		if (isEditorMode_ == false) {
 			debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
@@ -352,31 +378,6 @@ void GamePlayScene::Update() {
 
 	//当たり判定処理
 	CollisionConclusion();
-
-	//プレイヤー移動時の演出の処理
-	if (player_->GetIsMoveFlag() == false) {
-		if (input_->TriggerKey(DIK_W)) {
-			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-		}
-		if (input_->TriggerKey(DIK_A)) {
-			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-		}
-		if (input_->TriggerKey(DIK_S)) {
-			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-		}
-		if (input_->TriggerKey(DIK_D)) {
-			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-		}
-
-		XINPUT_STATE joyState;
-		Input::GetInstance()->GetJoystickState(0, joyState);
-
-		if (input_->PushAButton(joyState)) {
-			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-		}
-	}
-
-	world_[4].rotation_.num[1] = LerpShortAngle(world_[4].rotation_.num[1], -playerFlagRotate_, 0.3f);
 }
 
 void GamePlayScene::Draw() {
@@ -398,6 +399,7 @@ void GamePlayScene::Draw() {
 
 	player_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
+	explosion_->Draw(viewProjection_);
 	for (Enemy* enemy : enemys_) {
 		enemy->Draw(viewProjection_);
 	}
@@ -539,6 +541,18 @@ void GamePlayScene::CollisionConclusion() {
 				enemy->SetWorldTransform(eSphere.center);
 			}
 
+			//接触速度に基づく音量の調整
+			float collisionSpeed = Length(player_->GetVelocity());
+			float maxSpeed = 0.95f;//最大速度の仮定
+			float minVolume = 0.0005f;//最小音量
+			float maxVolume = 0.12f;//最大音量
+
+			//速度に基づく音量の計算 (速度が最大時には maxVolume、速度が0の時には minVolume)
+			float volume = minVolume + (maxVolume - minVolume) * (collisionSpeed / maxSpeed);
+			volume = std::clamp(volume, minVolume, maxVolume);//音量の範囲を制限
+
+			audio_->SoundPlayWave(soundData2_, volume, false);
+
 			//反発処理
 			std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), repulsionCoefficient_, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
 			player_->SetVelocity(pair.first);
@@ -546,8 +560,6 @@ void GamePlayScene::CollisionConclusion() {
 
 			collisionParticle_->SetTranslate(MidPoint(player_->GetWorldTransform().translation_, enemy->GetWorldTransform().translation_));
 			collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-			playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
-			audio_->SoundPlayWave(soundData2_, 0.1f, false);
 		}
 	}
 
@@ -574,6 +586,18 @@ void GamePlayScene::CollisionConclusion() {
 					enemy1->SetWorldTransform(eSphere1.center);
 					enemy2->SetWorldTransform(eSphere2.center);
 				}
+
+				//接触速度に基づく音量の調整
+				float collisionSpeed = Length(enemy1->GetVelocity());
+				float maxSpeed = 0.95f;//最大速度の仮定
+				float minVolume = 0.0005f;//最小音量
+				float maxVolume = 0.12f;//最大音量
+
+				//速度に基づく音量の計算 (速度が最大時には maxVolume、速度が0の時には minVolume)
+				float volume = minVolume + (maxVolume - minVolume) * (collisionSpeed / maxSpeed);
+				volume = std::clamp(volume, minVolume, maxVolume);//音量の範囲を制限
+
+				audio_->SoundPlayWave(soundData2_, volume, false);
 
 				//反発処理
 				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy1->GetVelocity(), 1.0f, enemy2->GetVelocity(), repulsionCoefficient_, Normalize(enemy1->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
@@ -617,15 +641,32 @@ void GamePlayScene::CollisionConclusion() {
 						player_->SetWorldTransform(pSphere.center);
 					}
 
+					//接触速度に基づく音量の調整
+					float collisionSpeed = Length(player_->GetVelocity());
+					float maxSpeed = 0.95f;//最大速度の仮定
+					float minVolume = 0.0005f;//最小音量
+					float maxVolume = 0.12f;//最大音量
+
+					//速度に基づく音量の計算 (速度が最大時には maxVolume、速度が0の時には minVolume)
+					float volume = minVolume + (maxVolume - minVolume) * (collisionSpeed / maxSpeed);
+					volume = std::clamp(volume, minVolume, maxVolume);//音量の範囲を制限
+
+					audio_->SoundPlayWave(soundData2_, volume, false);
+
 					//反発処理
 					Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(pSphere, player_->GetVelocity(), objOBB, repulsionCoefficient_);
 					player_->SetVelocity(velocity);
 
 					editors_->Hitobj(obj);
+					if (obj.durability <= 1) {
+						explosion_->SetWorldTransform(obj.world);
+						isExplosion_ = true;
+						explosion_->ExplosionFlagTrue();
+						explosionTimer_ = 10;
+					}
 
 					collisionParticle_->SetTranslate(closestPoint);
 					collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-					playerFlagRotate_ = Angle(player_->GetVelocity(), { 0.0f,0.0f,1.0f });
 					audio_->SoundPlayWave(soundData2_, 0.1f, false);
 				}
 			}
@@ -665,11 +706,29 @@ void GamePlayScene::CollisionConclusion() {
 							enemy->SetWorldTransform(eSphere.center);
 						}
 
+						//接触速度に基づく音量の調整
+						float collisionSpeed = Length(enemy->GetVelocity());
+						float maxSpeed = 0.95f;//最大速度の仮定
+						float minVolume = 0.0005f;//最小音量
+						float maxVolume = 0.12f;//最大音量
+
+						//速度に基づく音量の計算 (速度が最大時には maxVolume、速度が0の時には minVolume)
+						float volume = minVolume + (maxVolume - minVolume) * (collisionSpeed / maxSpeed);
+						volume = std::clamp(volume, minVolume, maxVolume);//音量の範囲を制限
+
+						audio_->SoundPlayWave(soundData2_, volume, false);
+
 						//反発処理
 						Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(eSphere, enemy->GetVelocity(), objOBB, repulsionCoefficient_);
 						enemy->SetVelocity(velocity);
 
 						editors_->Hitobj(obj);
+						if (obj.durability == 0) {
+							explosion_->SetWorldTransform(obj.world);
+							isExplosion_ = true;
+							explosion_->ExplosionFlagTrue();
+							explosionTimer_ = 10;
+						}
 
 						collisionParticle_->SetTranslate(closestPoint);
 						collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);

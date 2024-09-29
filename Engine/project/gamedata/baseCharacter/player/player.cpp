@@ -133,13 +133,17 @@ void Player::Move() {
 			if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 				if (input_->TriggerAButton(joystate)) {
 					moveFlag_ = false;
-					velocityC_ = { (float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
-
-					Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-					velocity_.num[0] = TransformNormal(velocityC_, rotateMatrix).num[0];
-					velocity_.num[2] = TransformNormal(velocityC_, rotateMatrix).num[2];
-					velocity_.num[0] = Multiply(CharacterSpeed_, Normalize(velocity_)).num[0];
-					velocity_.num[2] = Multiply(CharacterSpeed_, Normalize(velocity_)).num[2];
+					
+					//スティックの左右入力に基づいて回転を加算減算
+					float rotationSpeed = 0.1f;//回転速度を調整
+					if (joystate.Gamepad.sThumbLX > 5000) {//右方向入力
+						worldTransform2_.rotation_.num[1] += rotationSpeed;
+						rotate_.num[0] += rotationSpeed;
+					}
+					else if (joystate.Gamepad.sThumbLX < -5000) {//左方向入力
+						worldTransform2_.rotation_.num[1] -= rotationSpeed;
+						rotate_.num[0] -= rotationSpeed;
+					}
 
 				}
 
