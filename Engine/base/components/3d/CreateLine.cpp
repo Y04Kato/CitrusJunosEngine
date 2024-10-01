@@ -8,7 +8,7 @@ void CreateLine::Initialize() {
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
 
-	world_.Initialize();
+	worldModels_.Initialize();
 
 	environmentTexture_ = textureManager_->ddsSample;
 
@@ -66,9 +66,9 @@ void CreateLine::Draw(const WorldTransform& worldTransform1, const WorldTransfor
 		vertexData_[i].normal = { 0.0f,0.0f,1.0f };
 	}
 
-	world_.translation_ = { 0.0f,0.0f,0.0f };
-	world_.scale_ = { 1.0f,1.0f,1.0f };
-	world_.UpdateMatrix();
+	worldModels_.translation_ = { 0.0f,0.0f,0.0f };
+	worldModels_.scale_ = { 1.0f,1.0f,1.0f };
+	worldModels_.UpdateMatrix();
 
 	EulerTransform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 	Matrix4x4 uvtransformMtrix = MakeScaleMatrix(uvTransform.scale);
@@ -97,7 +97,7 @@ void CreateLine::Draw(const WorldTransform& worldTransform1, const WorldTransfor
 
 	//マテリアルCBufferの場所を設定
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, world_.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, worldModels_.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());

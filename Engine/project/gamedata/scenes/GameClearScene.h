@@ -28,7 +28,7 @@ private:
 	Vector4 spriteMaterial_;
 
 	float spriteAlpha_ = 256.0f;
-	float fadeAlpha_ = 256.0f;
+	float fadeAlphaBG_ = 256.0f;
 
 	uint32_t pageAll_;
 	uint32_t start_;

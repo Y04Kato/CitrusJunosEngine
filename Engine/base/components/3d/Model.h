@@ -118,7 +118,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> vatResource_;
 	VATData* vatData_;
 
-	WorldTransform world_;
+	WorldTransform worldModels_;
 
 	bool isSetEnviromentTexture_ = false;
 	uint32_t environmentTexture_;

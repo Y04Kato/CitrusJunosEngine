@@ -42,10 +42,13 @@ public:
 
 	//敵の配置
 	void SetEnemy(Vector3 pos);
+
 	//ランダムな座標を返す
 	Vector3 GenerateRandomPosition();
+
 	//他オブジェクトに接触しているか確認
 	bool IsValidPosition(const Vector3 pos);
+
 	//指定した回数、座標が問題ないか確認し座標を返す
 	Vector3 FindValidPosition();
 
@@ -61,15 +64,18 @@ private:
 
 	Input* input_;
 
+	//各種カメラ
 	DebugCamera* debugCamera_;
 	std::unique_ptr<FollowCamera> followCamera_;
-	int cameraChangeTimer_ = 0;
-	bool cameraChange_ = false;
+	int cameraChangeTimer_ = 0;//カメラ切り替えの時間
+	int cameraChangeMaxTimer_ = 0;//カメラ切り替えの終了時間
+	bool cameraChange_ = false;//カメラの切り替えが終わっているか否か
+	bool isBirdseyeMode_ = false;//俯瞰視点か否か
 
 	//Player
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Model> playerModel_;
-
+	//PlayerParticle
 	std::unique_ptr<CreateParticle> playerParticle_;
 	Emitter playerEmitter_{};
 	AccelerationField playerAccelerationField_;
@@ -93,7 +99,7 @@ private:
 
 	//Flag
 	std::unique_ptr<Model> flagModel_[4];
-	WorldTransform world_[4];
+	WorldTransform worldModels_[4];
 
 	//Editor
 	Editors* editors_;
@@ -125,7 +131,7 @@ private:
 	uint32_t skyboxTex_;
 
 	//Fade
-	float fadeAlpha_ = 256.0f;
+	float fadeAlphaBG_ = 256.0f;
 	bool isfadeIn_ = false;
 
 	//Other
