@@ -86,3 +86,10 @@ void FollowCamera::ShakeCamera(int shakePower, int dividePower) {
 	viewprojection_.UpdateViewMatrix();
 	viewprojection_.TransferMatrix();
 }
+
+void FollowCamera::SetCamera(Vector3 translation, Vector3 rotation) {
+	viewprojection_.translation_ = translation;
+	viewprojection_.rotation_ = rotation;
+
+	viewprojection_.UpdateMatrix();
+}

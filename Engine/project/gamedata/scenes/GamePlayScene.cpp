@@ -268,8 +268,11 @@ void GamePlayScene::Update() {
 
 	//プレイヤー更新
 	player_->SetViewProjection(&viewProjection_);
-	if (isEditorMode_ == false) {//エディターモード時はPlayerを止める
+	if (isEditorMode_ == false && isBirdseyeMode_ == false) {//エディターモード時はPlayerを止める
 		player_->Update();
+	}
+	else if (isBirdseyeMode_ == true) {
+		player_->UpdateView();
 	}
 
 	//旗座標更新
@@ -340,18 +343,12 @@ void GamePlayScene::Update() {
 	//カメラ切り替え処理
 	if (input_->TriggerKey(DIK_E)) {
 		if (isBirdseyeMode_ == false) {//Player視点 → 俯瞰視点
-			debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
+			debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
+			debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, cameraMoveSpeed_);
 			isBirdseyeMode_ = true;
-
-			debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });
-			debugCamera_->Update();
-
-			viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
-			viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
-			viewProjection_.UpdateMatrix();
 		}
 		else {//俯瞰視点 → Player視点
-			debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, 0.05f);
+			debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, cameraMoveSpeed_);
 
 			cameraChange_ = true;
 		}
@@ -371,14 +368,14 @@ void GamePlayScene::Update() {
 	}
 
 	//カメラの更新
-	if (isBirdseyeMode_ == false) {//エディターモードでなければ
+	if (isBirdseyeMode_ == false) {//俯瞰モードでなければ
 		followCamera_->Update();
 		viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
 		viewProjection_.matView = followCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 		viewProjection_.TransferMatrix();
 	}
-	else {//エディターモードなら
+	else {//俯瞰モードなら
 		debugCamera_->Update();
 
 		viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
@@ -502,7 +499,9 @@ void GamePlayScene::GameStartProcessing() {
 	postEffect_->SetMaskTexture(noiseTexture_);
 
 	//カメラ初期化
+	followCamera_->SetCamera(player_->GetWorldTransform().translation_, player_->GetWorldTransform().rotation_);
 	debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
+	debugCamera_->Update();
 	isBirdseyeMode_ = false;
 	isEditorMode_ = false;
 
