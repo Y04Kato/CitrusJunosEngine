@@ -18,7 +18,7 @@ void FollowCamera::Update() {
 	ApplyGlobalVariables();
 
 	if (target_) {
-		Vector3 offset = { 0.0f,2.0f,-10.0f };
+		Vector3 offset = { 0.0f,3.5f,-20.0f };
 
 		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewprojection_.rotation_);
 
@@ -85,4 +85,11 @@ void FollowCamera::ShakeCamera(int shakePower, int dividePower) {
 
 	viewprojection_.UpdateViewMatrix();
 	viewprojection_.TransferMatrix();
+}
+
+void FollowCamera::SetCamera(Vector3 translation, Vector3 rotation) {
+	viewprojection_.translation_ = translation;
+	viewprojection_.rotation_ = rotation;
+
+	viewprojection_.UpdateMatrix();
 }

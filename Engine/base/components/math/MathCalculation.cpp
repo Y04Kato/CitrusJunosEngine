@@ -50,6 +50,13 @@ float LerpShortAngle(float a, float b, float t) {
 
 	return Lerp(a, diff, t);
 }
+
+float NormalizeAngle(float angle) {
+	while (angle > (float)M_PI) angle -= 2.0f * (float)M_PI;
+	while (angle < (float)-M_PI) angle += 2.0f * (float)M_PI;
+	return angle;
+}
+
 #pragma endregion
 
 #pragma region Vector2

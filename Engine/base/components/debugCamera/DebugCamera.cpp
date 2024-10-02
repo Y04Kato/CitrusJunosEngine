@@ -52,21 +52,34 @@ void DebugCamera::Update() {
 	ImGui::DragFloat3("translation", viewProjection_.translation_.num, 0.1f);
 	ImGui::End();
 
+	movingStartTranslate_ = viewProjection_.translation_;
+	movingStartRotate_ = viewProjection_.rotation_;
+
 	if (isMovingCamera == true) {
 		timer_ += timerCountr_;
 		movingEndTranslate_.num[0] += movingSpeed_.num[0];
 		movingEndTranslate_.num[1] += movingSpeed_.num[1];
 		movingEndTranslate_.num[2] += movingSpeed_.num[2];
+
 		if (timer_ >= 1.0f) {
 			isMovingCamera = false;
 			timer_ = 1.0f;
 		}
+
+		//各回転成分を正規化し、短い回転経路を選択
+		float rotationDiffX = NormalizeAngle(movingEndRotate_.num[0] - movingStartRotate_.num[0]);
+		float rotationDiffY = NormalizeAngle(movingEndRotate_.num[1] - movingStartRotate_.num[1]);
+		float rotationDiffZ = NormalizeAngle(movingEndRotate_.num[2] - movingStartRotate_.num[2]);
+
+		//回転の内挿
 		viewProjection_.translation_.num[0] = (1.0f - timer_) * movingStartTranslate_.num[0] + timer_ * movingEndTranslate_.num[0];
 		viewProjection_.translation_.num[1] = (1.0f - timer_) * movingStartTranslate_.num[1] + timer_ * movingEndTranslate_.num[1];
 		viewProjection_.translation_.num[2] = (1.0f - timer_) * movingStartTranslate_.num[2] + timer_ * movingEndTranslate_.num[2];
-		viewProjection_.rotation_.num[0] = (1.0f - timer_) * movingStartRotate_.num[0] + timer_ * movingEndRotate_.num[0];
-		viewProjection_.rotation_.num[1] = (1.0f - timer_) * movingStartRotate_.num[1] + timer_ * movingEndRotate_.num[1];
-		viewProjection_.rotation_.num[2] = (1.0f - timer_) * movingStartRotate_.num[2] + timer_ * movingEndRotate_.num[2];
+
+		viewProjection_.rotation_.num[0] = movingStartRotate_.num[0] + timer_ * rotationDiffX;
+		viewProjection_.rotation_.num[1] = movingStartRotate_.num[1] + timer_ * rotationDiffY;
+		viewProjection_.rotation_.num[2] = movingStartRotate_.num[2] + timer_ * rotationDiffZ;
+
 	}
 
 	viewProjection_.UpdateMatrix();
@@ -81,13 +94,13 @@ void DebugCamera::ShakeCamera(int shakePower, int dividePower) {
 void DebugCamera::SetCamera(Vector3 translation, Vector3 rotation) {
 	viewProjection_.translation_ = translation;
 	viewProjection_.rotation_ = rotation;
+
+	viewProjection_.UpdateMatrix();
 }
 
 void DebugCamera::MovingCamera(Vector3 translation, Vector3 rotation, float timerSpeed) {
 	timer_ = 0.0f;
 	timerCountr_ = timerSpeed;
-	movingStartTranslate_ = viewProjection_.translation_;
-	movingStartRotate_ = viewProjection_.rotation_;
 	movingEndTranslate_ = translation;
 	movingEndRotate_ = rotation;
 	isMovingCamera = true;

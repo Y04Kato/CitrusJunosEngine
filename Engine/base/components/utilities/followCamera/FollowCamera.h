@@ -18,6 +18,9 @@ public:
 
 	void ShakeCamera(int shakePower, int dividePower);
 
+	//カメラの場所決め
+	void SetCamera(Vector3 translation, Vector3 rotation);
+
 private:
 	ViewProjection viewprojection_;
 	const WorldTransform* target_ = nullptr;

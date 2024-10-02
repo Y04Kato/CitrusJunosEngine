@@ -21,6 +21,9 @@ float Distance(const Vector3& v1, const Vector3& v2);
 float Lerp(float a, float b, float t);
 float LerpShortAngle(float a, float b, float t);
 
+//回転角度を -180度～180度の範囲に正規化する関数
+float NormalizeAngle(float angle);
+
 #pragma endregion
 
 #pragma region Vector2

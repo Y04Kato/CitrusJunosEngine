@@ -113,7 +113,9 @@ void Editors::Update() {
 
 void Editors::Draw(ViewProjection view) {
 	for (Obj& obj : objects_) {
-		obj.model.Draw(obj.world, view, obj.material);
+		if (obj.durability > 0) {
+			obj.model.Draw(obj.world, view, obj.material);
+		}
 
 		//Guizmo操作
 		if (isDirectInputMode_ == false) {
@@ -170,6 +172,8 @@ void Editors::SetObject(EulerTransform transform, const std::string& name, const
 
 	obj.type = type;
 
+	obj.durability = 3;
+
 	objects_.push_back(obj);
 }
 
@@ -197,6 +201,14 @@ void Editors::SetGroupName(char* groupName) {
 	}
 
 	ApplyGlobalVariables();
+}
+
+void Editors::Hitobj(Obj o) {
+	for (Obj& obj : objects_) {
+		if (obj.name == o.name) {
+			obj.durability--;
+		}
+	}
 }
 
 WorldTransform Editors::Guizmo(ViewProjection& view, WorldTransform world) {
