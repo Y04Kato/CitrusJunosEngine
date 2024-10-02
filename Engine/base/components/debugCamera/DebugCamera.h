@@ -2,7 +2,7 @@
 #include "ViewProjection.h"
 #include "Input.h"
 
-class DebugCamera{
+class DebugCamera {
 public:
 	static DebugCamera* GetInstance();
 
@@ -10,7 +10,7 @@ public:
 
 	void Update();
 
-	void ShakeCamera(int shakePower,int dividePower);
+	void ShakeCamera(int shakePower, int dividePower);
 
 	//カメラの場所決め
 	void SetCamera(Vector3 translation, Vector3 rotation);

@@ -145,6 +145,183 @@
     <Filter Include="ヘッダー ファイル\base\components\utilities\pointLight">
       <UniqueIdentifier>{811c93f2-5e69-4b8f-b350-cfa48158c1e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\base\components\manager\PSOManager">
+      <UniqueIdentifier>{88d47f87-ac18-4ba0-a0d9-4ca865f4b6c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\manager\RTVManager">
+      <UniqueIdentifier>{5dc81840-9d3b-4581-b4d8-d1b7ef8f0bcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\manager\SRVManager">
+      <UniqueIdentifier>{266fa949-6620-452f-8457-1d60e0eed756}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\manager\SceneManager">
+      <UniqueIdentifier>{feca3195-158f-42ff-ae9a-af670b5025c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\manager\TextureManager">
+      <UniqueIdentifier>{cb6754ae-93bf-4702-b967-98bed2612fc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState">
+      <UniqueIdentifier>{9087cd34-e6cf-4f4a-ace8-d1f728c25a5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Gaussian">
+      <UniqueIdentifier>{c0fd19ee-bf2b-49f6-8ada-212d11055eef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Grayscale">
+      <UniqueIdentifier>{0bb091ff-dec4-4f9d-8a10-60743f1848ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\HSV">
+      <UniqueIdentifier>{e4331eda-802a-4428-bff8-1ed60d2e5b40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\LensDistortion">
+      <UniqueIdentifier>{5e0b2319-fe6e-4a78-9a97-6354f4b56df7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\MaskTexture">
+      <UniqueIdentifier>{e27e3bca-3662-4c9e-b39a-bae56b23cbd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Outline">
+      <UniqueIdentifier>{086e7c84-aa0c-4a73-a03f-769a988acf46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Particle">
+      <UniqueIdentifier>{58380072-0c82-4be1-8e92-b97371e8d513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\PostProcess">
+      <UniqueIdentifier>{dd4a7f47-f5d5-4bc5-a9a1-5006e621fe6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\RadialBlur">
+      <UniqueIdentifier>{5c47e135-0847-407a-982b-f708930e222c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Random">
+      <UniqueIdentifier>{1294ecd9-f825-4550-a295-b322d8074c65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Scanlines">
+      <UniqueIdentifier>{79b2dbff-7c04-4fab-a59d-558a19045b13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Skinning">
+      <UniqueIdentifier>{dd71ed7c-278f-418f-ac0f-447e504f5c8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\SkyBox">
+      <UniqueIdentifier>{fb9e91be-ba16-42bc-97f4-17ad6eabf5ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Smoothing">
+      <UniqueIdentifier>{4188364f-c93e-4b81-8f86-0d71bd0bd944}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Standard2D">
+      <UniqueIdentifier>{64e2b6c7-e026-4775-947c-11a42221798c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Standard3D">
+      <UniqueIdentifier>{18a75f42-fdee-4453-b720-ce46c16b982e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\VAT">
+      <UniqueIdentifier>{2ac3eb5c-0838-4369-9501-1f45ef69e4da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\pipelineState\Vignette">
+      <UniqueIdentifier>{528ec265-d04a-4d85-bdfd-c5f48108339e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\renderer">
+      <UniqueIdentifier>{e960c11a-8769-45a6-9238-c410214fdb77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\postEffect">
+      <UniqueIdentifier>{9c9389b2-d72d-45e8-acdc-415feede0e2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\ShaderComplier">
+      <UniqueIdentifier>{c22ebb6b-fc2d-4579-8989-e4e055c47c96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\utilities\editors">
+      <UniqueIdentifier>{ed97be8d-d0b7-4b5c-a77f-b4e51da319c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\components\utilities\LevelDataLoader">
+      <UniqueIdentifier>{18a6a940-3328-41a6-9c10-a0dec01bf5ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\manager\PSOManager">
+      <UniqueIdentifier>{75a4c16a-fc28-4994-88c1-9235ff23e949}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\manager\RTVManager">
+      <UniqueIdentifier>{1001740e-c544-46de-bd6c-927572841f90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\manager\SRVManager">
+      <UniqueIdentifier>{75a497dd-461e-4d28-b616-0d25daff8c78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\manager\SceneManager">
+      <UniqueIdentifier>{ec6f646d-b2b2-406d-8da8-cfc689d82333}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\manager\TextureManager">
+      <UniqueIdentifier>{eee8e903-f985-4416-a204-00fc7b244768}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState">
+      <UniqueIdentifier>{e375c127-a191-492a-a521-e6d433cbbfb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Gaussian">
+      <UniqueIdentifier>{31feb9c5-abff-452c-8aef-1af8ae3b6f00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Grayscale">
+      <UniqueIdentifier>{85c2c98f-21dd-41bf-aafb-93fbc3d91d65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\HSV">
+      <UniqueIdentifier>{6f85d23c-c3c4-4d72-8f21-32c09d7440e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\LensDistortion">
+      <UniqueIdentifier>{741001e4-3400-4a0b-8990-3f24d4c63cbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\MaskTexture">
+      <UniqueIdentifier>{e6f5341d-3b0a-499f-980c-078760721280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Outline">
+      <UniqueIdentifier>{fb5a9a5c-481b-431d-8355-dfa4d3b3fc97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Particle">
+      <UniqueIdentifier>{deefc848-2913-4c0a-98ef-0107de7f5735}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\PostProcess">
+      <UniqueIdentifier>{2e3dd78b-aa68-453d-8374-fe64676493c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\RadialBlur">
+      <UniqueIdentifier>{7828c7f7-e337-4a0f-b1a6-9b21f1a9508d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Random">
+      <UniqueIdentifier>{96755944-1115-4484-b43a-dd225f92f1bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Scanlines">
+      <UniqueIdentifier>{f279e2e0-d625-4af5-ac9b-6190d3eda640}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Skinning">
+      <UniqueIdentifier>{ce60fe04-06da-4680-968b-28de08fe586a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\SkyBox">
+      <UniqueIdentifier>{93649bf1-5d55-46ec-8dc3-5f9b54a55fa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Smoothing">
+      <UniqueIdentifier>{fe888da9-c1d7-4a3a-9a8f-3625f4d5c0e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Standard2D">
+      <UniqueIdentifier>{eb9ce63b-4513-4a2a-9597-25f16147ad36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Standard3D">
+      <UniqueIdentifier>{f9eac069-927d-4209-b21d-cc70f286ed94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\VAT">
+      <UniqueIdentifier>{47e77472-7876-42d2-a302-fd8c1d3b779f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\pipelineState\Vignette">
+      <UniqueIdentifier>{5d430ba9-b951-4209-9429-b4664ef2a87f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\renderer">
+      <UniqueIdentifier>{50137e30-c8d1-462c-9ef7-bdac27fcefd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\postEffect">
+      <UniqueIdentifier>{b3442a51-b8a1-4d82-bc90-ac3567b5735c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\utilities\editors">
+      <UniqueIdentifier>{7d9133cc-d6b1-422e-8226-195ec4561c01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\utilities\levelDataLoader">
+      <UniqueIdentifier>{b1ebdd57-e6c6-46bc-9569-b6a858848a9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\shaderCompiler">
+      <UniqueIdentifier>{8820afd2-9d3f-4f94-984c-7524d9876788}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\hlsl">
+      <UniqueIdentifier>{1c3d9f48-c4b6-4ff9-a5f8-eddbe74c2733}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -189,9 +366,6 @@
     <ClCompile Include="base\components\debugCamera\DebugCamera.cpp">
       <Filter>ソース ファイル\base\components\debugCamera</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\manager\SceneManager\SceneManager.cpp">
-      <Filter>ソース ファイル\base\components\manager</Filter>
-    </ClCompile>
     <ClCompile Include="project\gamedata\scenes\GameTitleScene.cpp">
       <Filter>ソース ファイル\project\gamedata\scenes</Filter>
     </ClCompile>
@@ -225,9 +399,6 @@
     <ClCompile Include="base\components\3d\WorldTransform.cpp">
       <Filter>ソース ファイル\base\components\3d</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\manager\TextureManager\TextureManager.cpp">
-      <Filter>ソース ファイル\base\components\manager</Filter>
-    </ClCompile>
     <ClCompile Include="base\components\3d\ViewProjection.cpp">
       <Filter>ソース ファイル\base\components\3d</Filter>
     </ClCompile>
@@ -249,116 +420,101 @@
     <ClCompile Include="base\components\utilities\pointLight\PointLight.cpp">
       <Filter>ソース ファイル\base\components\utilities\pointLight</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\postEffect\PostEffect.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\manager\RTVManager\RTVManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\manager\SRVManager\SRVManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\shaderCompiler\ShaderCompiler.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Standard3D\Standard3D.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\manager\PSOManager\PSOManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\renderer\Renderer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Standard2D\Standard2D.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Particle\Particle.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\VAT\VAT.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\PostProcess\PostProcess.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Grayscale\Grayscale.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Vignette\Vignette.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Skinning\Skinning.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Smoothing\Smoothing.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Gaussian\Gaussian.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Outline\Outline.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\utilities\levelDataLoader\LevelDataLoader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\pipelineState\RadialBlur\RadialBlur.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="project\gamedata\scenes\GameDemoScene.cpp">
+      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
     </ClCompile>
     <ClCompile Include="base\components\3d\CreateLine.cpp">
       <Filter>ソース ファイル\base\components\3d</Filter>
     </ClCompile>
     <ClCompile Include="base\components\3d\CreateSkyBox.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\base\components\3d</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\pipelineState\MaskTexture\MaskTexture.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\manager\PSOManager\PSOManager.cpp">
+      <Filter>ソース ファイル\base\components\manager\PSOManager</Filter>
     </ClCompile>
-    <ClCompile Include="externals\imgui\ImGuizmo.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\manager\RTVManager\RTVManager.cpp">
+      <Filter>ソース ファイル\base\components\manager\RTVManager</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\pipelineState\SkyBox\SkyBox.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\manager\SRVManager\SRVManager.cpp">
+      <Filter>ソース ファイル\base\components\manager\SRVManager</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Random\Random.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\manager\SceneManager\SceneManager.cpp">
+      <Filter>ソース ファイル\base\components\manager\SceneManager</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\pipelineState\LensDistortion\LensDistortion.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\manager\TextureManager\TextureManager.cpp">
+      <Filter>ソース ファイル\base\components\manager\TextureManager</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\pipelineState\Scanlines\Scanlines.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\pipelineState\Gaussian\Gaussian.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Gaussian</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\utilities\editors\Editors.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\pipelineState\Grayscale\Grayscale.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Grayscale</Filter>
     </ClCompile>
     <ClCompile Include="base\components\pipelineState\HSV\HSV.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\base\components\pipelineState\HSV</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\pipelineState\LensDistortion\LensDistortion.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\LensDistortion</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\pipelineState\MaskTexture\MaskTexture.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\MaskTexture</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\pipelineState\Vignette\Vignette.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Vignette</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\ground\Ground.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\pipelineState\VAT\VAT.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\VAT</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\scenes\GameOverScene.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\pipelineState\Standard3D\Standard3D.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Standard3D</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\scenes\DebugScene.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\pipelineState\Standard2D\Standard2D.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Standard2D</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\explosion\explosion.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\pipelineState\Smoothing\Smoothing.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Smoothing</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\baseCharacter\boss\Boss.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\pipelineState\SkyBox\SkyBox.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\Skinning\Skinning.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Skinning</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\Scanlines\Scanlines.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Scanlines</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\PostProcess\PostProcess.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\Random\Random.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\RadialBlur\RadialBlur.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\RadialBlur</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\Particle\Particle.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\pipelineState\Outline\Outline.cpp">
+      <Filter>ソース ファイル\base\components\pipelineState\Outline</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\postEffect\PostEffect.cpp">
+      <Filter>ソース ファイル\base\components\postEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\renderer\Renderer.cpp">
+      <Filter>ソース ファイル\base\components\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\shaderCompiler\ShaderCompiler.cpp">
+      <Filter>ソース ファイル\base\components\ShaderComplier</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\utilities\editors\Editors.cpp">
+      <Filter>ソース ファイル\base\components\utilities\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="base\components\utilities\levelDataLoader\LevelDataLoader.cpp">
+      <Filter>ソース ファイル\base\components\utilities\LevelDataLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\ImGuizmo.cpp">
+      <Filter>externals\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -380,24 +536,60 @@
     <FxCompile Include="project\gamedata\resources\shaders\Particle.PS.hlsl">
       <Filter>ヘッダー ファイル\project\gamedata\resources\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="project\gamedata\resources\shaders\VAT.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\VAT.VS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.VS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\CopyImage.VS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\CopyImage.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\Grayscale.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\Vignette.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\BoxFilter.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\DepthBasedOutline.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\RadialBlur.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\MaskTexture.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\SkyBox.VS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\SkyBox.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\Random.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\LensDistortion.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\Scanlines.PS.hlsl" />
-    <FxCompile Include="project\gamedata\resources\shaders\HSV.PS.hlsl" />
+    <FxCompile Include="project\gamedata\resources\shaders\BoxFilter.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\CopyImage.VS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\HSV.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\CopyImage.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\DepthBasedOutline.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\Grayscale.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\LensDistortion.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\MaskTexture.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\RadialBlur.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\Random.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\Scanlines.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\SkinningObject3d.VS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\SkyBox.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\SkyBox.VS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\VAT.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\VAT.VS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="project\gamedata\resources\shaders\Vignette.PS.hlsl">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\DirectXCommon.h">
@@ -451,9 +643,6 @@
     <ClInclude Include="base\components\debugCamera\DebugCamera.h">
       <Filter>ヘッダー ファイル\base\components\debugCamera</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\manager\SceneManager\SceneManager.h">
-      <Filter>ヘッダー ファイル\base\components\manager</Filter>
-    </ClInclude>
     <ClInclude Include="project\gamedata\scenes\GameTitleScene.h">
       <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
     </ClInclude>
@@ -490,14 +679,8 @@
     <ClInclude Include="base\components\3d\Model.h">
       <Filter>ヘッダー ファイル\base\components\3d</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\manager\SceneManager\Iscene.h">
-      <Filter>ヘッダー ファイル\base\components\manager</Filter>
-    </ClInclude>
     <ClInclude Include="base\components\3d\WorldTransform.h">
       <Filter>ヘッダー ファイル\base\components\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\manager\TextureManager\TextureManager.h">
-      <Filter>ヘッダー ファイル\base\components\manager</Filter>
     </ClInclude>
     <ClInclude Include="base\components\3d\ViewProjection.h">
       <Filter>ヘッダー ファイル\base\components\3d</Filter>
@@ -523,125 +706,113 @@
     <ClInclude Include="base\components\utilities\pointLight\PointLight.h">
       <Filter>ヘッダー ファイル\base\components\utilities\pointLight</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\3d\CreateLine.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\postEffect\PostEffect.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\manager\RTVManager\RTVManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\manager\SRVManager\SRVManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\PipeLineList.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\IPipeLineStateObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Standard3D\Standard3D.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\manager\PSOManager\PSOManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\renderer\Renderer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Standard2D\Standard2D.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Particle\Particle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\VAT\VAT.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\PostProcess\PostProcess.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Grayscale\Grayscale.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Vignette\Vignette.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Skinning\Skinning.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Smoothing\Smoothing.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Gaussian\Gaussian.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Outline\Outline.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\utilities\levelDataLoader\LevelDataLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\utilities\levelDataLoader\LevelData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\RadialBlur\RadialBlur.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\3d\CreateSkyBox.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\pipelineState\MaskTexture\MaskTexture.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="project\gamedata\scenes\GameDemoScene.h">
+      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\ImGuizmo.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>externals\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\pipelineState\SkyBox\SkyBox.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\3d\CreateLine.h">
+      <Filter>ヘッダー ファイル\base\components\3d</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Random\Random.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\3d\CreateSkyBox.h">
+      <Filter>ヘッダー ファイル\base\components\3d</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\pipelineState\LensDistortion\LensDistortion.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\manager\SceneManager\SceneManager.h">
+      <Filter>ヘッダー ファイル\base\components\manager\SceneManager</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\pipelineState\Scanlines\Scanlines.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\manager\SceneManager\Iscene.h">
+      <Filter>ヘッダー ファイル\base\components\manager\SceneManager</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\utilities\editors\Editors.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\manager\TextureManager\TextureManager.h">
+      <Filter>ヘッダー ファイル\base\components\manager\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\manager\PSOManager\PSOManager.h">
+      <Filter>ヘッダー ファイル\base\components\manager\PSOManager</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\manager\RTVManager\RTVManager.h">
+      <Filter>ヘッダー ファイル\base\components\manager\RTVManager</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\manager\SRVManager\SRVManager.h">
+      <Filter>ヘッダー ファイル\base\components\manager\SRVManager</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Gaussian\Gaussian.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Gaussian</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Grayscale\Grayscale.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Grayscale</Filter>
     </ClInclude>
     <ClInclude Include="base\components\pipelineState\HSV\HSV.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\base\components\pipelineState\HSV</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\pipelineState\LensDistortion\LensDistortion.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\LensDistortion</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\pipelineState\MaskTexture\MaskTexture.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\MaskTexture</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\baseCharacter\player\Player.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\pipelineState\Vignette\Vignette.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Vignette</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\ground\Ground.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\pipelineState\VAT\VAT.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\VAT</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\scenes\GameOverScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\pipelineState\Standard3D\Standard3D.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Standard3D</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\scenes\DebugScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\pipelineState\Standard2D\Standard2D.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Standard2D</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\explosion\explosion.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\pipelineState\Smoothing\Smoothing.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Smoothing</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\baseCharacter\boss\Boss.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\pipelineState\SkyBox\SkyBox.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Skinning\Skinning.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Skinning</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Scanlines\Scanlines.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Scanlines</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Random\Random.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\RadialBlur\RadialBlur.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\RadialBlur</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\PostProcess\PostProcess.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Particle\Particle.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\Outline\Outline.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState\Outline</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\PipeLineList.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\pipelineState\IPipeLineStateObject.h">
+      <Filter>ヘッダー ファイル\base\components\pipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\postEffect\PostEffect.h">
+      <Filter>ヘッダー ファイル\base\components\postEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\renderer\Renderer.h">
+      <Filter>ヘッダー ファイル\base\components\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\utilities\editors\Editors.h">
+      <Filter>ヘッダー ファイル\base\components\utilities\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\utilities\levelDataLoader\LevelDataLoader.h">
+      <Filter>ヘッダー ファイル\base\components\utilities\levelDataLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\utilities\levelDataLoader\LevelData.h">
+      <Filter>ヘッダー ファイル\base\components\utilities\levelDataLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h">
+      <Filter>ヘッダー ファイル\base\components\shaderCompiler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -659,10 +830,18 @@
     <None Include="project\gamedata\resources\shaders\Particle.hlsli">
       <Filter>ヘッダー ファイル\project\gamedata\resources\shaders</Filter>
     </None>
-    <None Include="project\gamedata\resources\shaders\VAT.hlsli" />
-    <None Include="project\gamedata\resources\shaders\SkinningObject3d.hlsli" />
-    <None Include="project\gamedata\resources\shaders\SkyBox.hlsli" />
-    <None Include="project\gamedata\resources\shaders\CopyImage.hlsli" />
+    <None Include="project\gamedata\resources\shaders\CopyImage.hlsli">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </None>
+    <None Include="project\gamedata\resources\shaders\SkinningObject3d.hlsli">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </None>
+    <None Include="project\gamedata\resources\shaders\SkyBox.hlsli">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </None>
+    <None Include="project\gamedata\resources\shaders\VAT.hlsli">
+      <Filter>リソース ファイル\hlsl</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CitrusJunosEngine.rc">
