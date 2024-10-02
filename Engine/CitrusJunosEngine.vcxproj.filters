@@ -322,6 +322,42 @@
     <Filter Include="リソース ファイル\hlsl">
       <UniqueIdentifier>{1c3d9f48-c4b6-4ff9-a5f8-eddbe74c2733}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\baseCharacter">
+      <UniqueIdentifier>{48071ca1-2ba5-452d-90d9-a7b6cb14cff7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\baseCharacter\player">
+      <UniqueIdentifier>{fc1a7c41-f103-493f-9969-2e644fbce991}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\baseCharacter\enemy">
+      <UniqueIdentifier>{27822cf1-ad6c-4e7a-83b6-b89c8f50d73c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\baseCharacter\boss">
+      <UniqueIdentifier>{60d56ac7-1d44-4737-9e3f-3dbbdc11070f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\explosion">
+      <UniqueIdentifier>{1390661f-9a03-4629-9dbf-2cfe06d84b69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\ground">
+      <UniqueIdentifier>{5f206cd4-29b8-4aeb-b999-0e3eab4888d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\baseCharacter">
+      <UniqueIdentifier>{08fca2b2-5f58-4ede-aa5c-56e46adb9510}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\baseCharacter\player">
+      <UniqueIdentifier>{f0688e03-3859-460b-a04f-600899e075e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\baseCharacter\enemy">
+      <UniqueIdentifier>{4679084d-f38c-4235-afb4-f2c228b906e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\baseCharacter\boss">
+      <UniqueIdentifier>{5505fbae-aee5-4826-9d03-5802db389556}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\ground">
+      <UniqueIdentifier>{839aeab4-dad3-4b70-b20d-8b924c367d14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\explosion">
+      <UniqueIdentifier>{77df538a-c99e-44b2-8aa0-97af04fe5894}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -420,9 +456,6 @@
     <ClCompile Include="base\components\utilities\pointLight\PointLight.cpp">
       <Filter>ソース ファイル\base\components\utilities\pointLight</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\scenes\GameDemoScene.cpp">
-      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
-    </ClCompile>
     <ClCompile Include="base\components\3d\CreateLine.cpp">
       <Filter>ソース ファイル\base\components\3d</Filter>
     </ClCompile>
@@ -515,6 +548,30 @@
     </ClCompile>
     <ClCompile Include="externals\imgui\ImGuizmo.cpp">
       <Filter>externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\boss\Boss.cpp">
+      <Filter>ソース ファイル\project\gamedata\baseCharacter\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp">
+      <Filter>ソース ファイル\project\gamedata\baseCharacter\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp">
+      <Filter>ソース ファイル\project\gamedata\baseCharacter\player</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp">
+      <Filter>ソース ファイル\project\gamedata\baseCharacter</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\ground\Ground.cpp">
+      <Filter>ソース ファイル\project\gamedata\ground</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\explosion\explosion.cpp">
+      <Filter>ソース ファイル\project\gamedata\explosion</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\DebugScene.cpp">
+      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\GameOverScene.cpp">
+      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -706,9 +763,6 @@
     <ClInclude Include="base\components\utilities\pointLight\PointLight.h">
       <Filter>ヘッダー ファイル\base\components\utilities\pointLight</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\scenes\GameDemoScene.h">
-      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
-    </ClInclude>
     <ClInclude Include="externals\imgui\ImGuizmo.h">
       <Filter>externals\imgui</Filter>
     </ClInclude>
@@ -813,6 +867,30 @@
     </ClInclude>
     <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h">
       <Filter>ヘッダー ファイル\base\components\shaderCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\boss\Boss.h">
+      <Filter>ヘッダー ファイル\project\gamedata\baseCharacter\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h">
+      <Filter>ヘッダー ファイル\project\gamedata\baseCharacter\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\player\Player.h">
+      <Filter>ヘッダー ファイル\project\gamedata\baseCharacter\player</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\GameOverScene.h">
+      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h">
+      <Filter>ヘッダー ファイル\project\gamedata\baseCharacter</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\DebugScene.h">
+      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\explosion\explosion.h">
+      <Filter>ヘッダー ファイル\project\gamedata\explosion</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\ground\Ground.h">
+      <Filter>ヘッダー ファイル\project\gamedata\ground</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
