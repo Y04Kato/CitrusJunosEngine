@@ -1,3 +1,10 @@
+/**
+ * @file Renderer.h
+ * @brief 各種パイプラインの描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "DirectXCommon.h"
 #include "PSOManager/PSOManager.h"

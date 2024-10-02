@@ -1,3 +1,10 @@
+/**
+ * @file SkyBox.h
+ * @brief .ddsを使用したSkyBox描画を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "IPipelineStateObject.h"
 #include "PSOManager/PSOManager.h"

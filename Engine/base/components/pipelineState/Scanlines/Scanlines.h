@@ -1,3 +1,10 @@
+/**
+ * @file Scanlines.h
+ * @brief Scanlineを行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "IPipelineStateObject.h"
 #include "PSOManager/PSOManager.h"

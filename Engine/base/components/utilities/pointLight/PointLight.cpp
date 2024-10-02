@@ -1,3 +1,10 @@
+/**
+ * @file PointLight.cpp
+ * @brief PointLight用の各種設定を一元管理する
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "PointLight.h"
 
 PointLights* PointLights::GetInstance() {

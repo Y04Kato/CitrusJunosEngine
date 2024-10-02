@@ -1,3 +1,10 @@
+/**
+ * @file Input.h
+ * @brief キー入力及びマウス操作、コントローラー入力の初期化及び管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #define DIRECTINPUT_VERSION		0x0800  //DirectInputのバージョン指定
 #include <dinput.h>

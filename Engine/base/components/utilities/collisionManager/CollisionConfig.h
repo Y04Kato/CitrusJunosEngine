@@ -1,3 +1,10 @@
+/**
+ * @file CollisionConfig.h
+ * @brief Colliderの設定登録用
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include <cstdint>
 

@@ -1,3 +1,10 @@
+/**
+ * @file Matrix.h
+ * @brief 各種行列をまとめた部分
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 
 //4x4行列

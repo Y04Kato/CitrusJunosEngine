@@ -1,3 +1,10 @@
+/**
+ * @file SceneManager.h
+ * @brief 各種シーンや操作、管理クラスの生成を一元管理し、フレーム内の更新処理全体を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Iscene.h"
 #include "CJEngine.h"

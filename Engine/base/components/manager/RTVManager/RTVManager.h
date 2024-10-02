@@ -1,3 +1,10 @@
+/**
+ * @file RTVManager.h
+ * @brief RTVの割り当て、その後の管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "DirectXCommon.h"
 #include <DirectXTex/DirectXTex.h>

@@ -1,3 +1,10 @@
+/**
+ * @file MathCalculation.cpp
+ * @brief 数学系の関数や演算子をまとめた部分
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "MathCalculation.h"
 
 #pragma region float

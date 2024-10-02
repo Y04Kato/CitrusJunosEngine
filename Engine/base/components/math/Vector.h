@@ -1,3 +1,10 @@
+/**
+ * @file Vector.h
+ * @brief 各種Vector構造体をまとめた部分
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 
 struct Vector2 {

@@ -1,3 +1,10 @@
+/**
+ * @file LevelDataLoader.h
+ * @brief HoudiniからLevelDataとして出力された.jsonを読み込みLevelDataとして返す機能
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Input.h"
 #include "WorldTransform.h"

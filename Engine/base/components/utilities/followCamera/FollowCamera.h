@@ -1,3 +1,10 @@
+/**
+ * @file FloowCamera.h
+ * @brief 指定した対象からオフセットを元にカメラ管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Input.h"
 #include "WorldTransform.h"

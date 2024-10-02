@@ -1,3 +1,10 @@
+/**
+ * @file Audio.h
+ * @brief サウンド関係の初期化及び管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include <xaudio2.h>
 #pragma comment(lib,"xaudio2.lib")

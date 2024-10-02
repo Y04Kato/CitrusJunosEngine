@@ -1,3 +1,10 @@
+/**
+ * @file LevelData.h
+ * @brief .jsonから読み取るオブジェクトデータの形を構造体としてクラス化している部分
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include <string>
 #include <variant>

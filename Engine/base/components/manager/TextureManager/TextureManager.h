@@ -1,3 +1,10 @@
+/**
+ * @file TextureManager.h
+ * @brief テクスチャの読み込み、その後の管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "DirectXCommon.h"
 #include "SRVManager/SRVManager.h"

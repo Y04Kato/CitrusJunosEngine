@@ -1,3 +1,10 @@
+/**
+ * @file DebugCamera.h
+ * @brief カメラ及び視点関係の初期化及び管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "ViewProjection.h"
 #include "Input.h"

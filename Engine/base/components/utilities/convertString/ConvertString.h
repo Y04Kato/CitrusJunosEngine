@@ -1,3 +1,10 @@
+/**
+ * @file ConvertString.h
+ * @brief char型や各種string変数を相互変換する機能
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include <string>
 #include <format>

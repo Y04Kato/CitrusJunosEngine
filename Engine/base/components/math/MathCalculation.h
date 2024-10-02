@@ -1,3 +1,10 @@
+/**
+ * @file MathCalculation.h
+ * @brief 数学系の関数や演算子をまとめた部分
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Structure.h"
 #include <assert.h>

@@ -1,3 +1,10 @@
+/**
+ * @file SRVManager.cpp
+ * @brief SRVの割り当て、その後の管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "SRVManager.h"
 
 SRVManager* SRVManager::GetInstance(){

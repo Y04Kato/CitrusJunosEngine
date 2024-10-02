@@ -1,3 +1,10 @@
+/**
+ * @file Random.h
+ * @brief Randomノイズを行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Random.h"
 
 void Random::ShaderCompile() {

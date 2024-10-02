@@ -1,3 +1,10 @@
+/**
+ * @file Model.cpp
+ * @brief .objや.fbx、.gltfを使用したモデルの初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Model.h"
 
 void Model::Initialize(const std::string& directoryPath, const std::string& filename) {

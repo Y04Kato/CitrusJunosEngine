@@ -1,3 +1,10 @@
+/**
+ * @file LevelDataLoader.cpp
+ * @brief HoudiniからLevelDataとして出力された.jsonを読み込みLevelDataとして返す機能
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "LevelDataLoader.h"
 
 LevelDataLoader* LevelDataLoader::GetInstance() {

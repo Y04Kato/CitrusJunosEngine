@@ -1,3 +1,10 @@
+/**
+ * @file CJEngine.cpp
+ * @brief 各種フレーム処理、描画処理、終了処理をサポート
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "CJEngine.h"
 #include <assert.h>
 

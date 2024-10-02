@@ -1,3 +1,10 @@
+/**
+ * @file Audio.cpp
+ * @brief サウンド関係の初期化及び管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Audio.h"
 #include <cassert>
 
