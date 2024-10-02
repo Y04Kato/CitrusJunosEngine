@@ -1,3 +1,10 @@
+/**
+ * @file DirectionalLigh.cpp
+ * @brief DirectionalLight用の各種設定を一元管理する
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "DirectionalLight.h"
 
 DirectionalLights* DirectionalLights::GetInstance() {

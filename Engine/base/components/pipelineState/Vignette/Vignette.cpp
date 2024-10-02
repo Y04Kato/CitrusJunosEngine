@@ -1,3 +1,10 @@
+/**
+ * @file Vignette.cpp
+ * @brief Vignetteを行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Vignette.h"
 
 void Vignette::ShaderCompile() {

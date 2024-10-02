@@ -1,3 +1,10 @@
+/**
+ * @file ImGuiManager.cpp
+ * @brief ImGuiの生成、その後の管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "ImGuiManager.h"
 
 ImGuiManager* ImGuiManager::GetInstance(){

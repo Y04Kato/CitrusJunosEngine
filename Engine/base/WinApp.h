@@ -1,3 +1,10 @@
+/**
+ * @file WinApp.h
+ * @brief Windowsアプリケーションのウィンドウ管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include <Windows.h>
 #include <cstdint>
@@ -31,8 +38,10 @@ public:
 	HINSTANCE GetWc() { return wc_.hInstance; }
 	LPCSTR GetName() { return (LPCSTR)wc_.lpszClassName; }
 
+	//ウィンドウを作成する関数
 	void CreateWindowView(const wchar_t* title, int32_t clientWidth, int32_t clientHeight);
 
+	//クライアント領域サイズを得る為の関数
 	int32_t GetClientWidth() { return clientWidth_; }
 	int32_t GetClientHeight() { return clientHeight_; }
 

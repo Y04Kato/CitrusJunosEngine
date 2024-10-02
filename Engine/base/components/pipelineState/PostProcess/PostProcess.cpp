@@ -1,3 +1,10 @@
+/**
+ * @file PostEffect.cpp
+ * @brief PostEffect用の描画を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "PostProcess.h"
 
 void PostProcess::ShaderCompile() {

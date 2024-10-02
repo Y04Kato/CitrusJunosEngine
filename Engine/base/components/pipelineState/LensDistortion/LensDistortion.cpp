@@ -1,3 +1,10 @@
+/**
+ * @file LensDistortion.cpp
+ * @brief レンズ歪みを行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "LensDistortion.h"
 
 void LensDistortion::ShaderCompile() {

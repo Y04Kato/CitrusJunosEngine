@@ -1,3 +1,10 @@
+/**
+ * @file Particle.h
+ * @brief 2DParticle描画を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "IPipelineStateObject.h"
 #include "PSOManager/PSOManager.h"

@@ -1,3 +1,10 @@
+/**
+ * @file CreateParticle.cpp
+ * @brief 2DParticleの初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "CreateParticle.h"
 
 void CreateParticle::Initialize(int kNumInstance, Emitter emitter, AccelerationField accelerationField, uint32_t textureIndex) {

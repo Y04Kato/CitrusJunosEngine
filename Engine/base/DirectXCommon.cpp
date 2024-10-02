@@ -1,3 +1,10 @@
+/**
+ * @file DirectXCommon.cpp
+ * @brief DirectX12によるグラフィック描画の初期化及び、設定、リソース管理を行っている
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "DirectXCommon.h"
 #include <algorithm>
 #include <cassert>

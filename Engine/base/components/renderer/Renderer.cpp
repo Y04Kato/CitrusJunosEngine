@@ -1,3 +1,10 @@
+/**
+ * @file Renderer.cpp
+ * @brief 各種パイプラインの描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Renderer.h"
 
 void Renderer::Initialize(){

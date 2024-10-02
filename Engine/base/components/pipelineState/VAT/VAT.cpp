@@ -1,3 +1,10 @@
+/**
+ * @file VAT.cpp
+ * @brief VertexAnimationTextureを行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "VAT.h"
 
 void VAT::ShaderCompile() {

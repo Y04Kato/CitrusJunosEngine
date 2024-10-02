@@ -1,3 +1,10 @@
+/**
+ * @file ImGuiManager.h
+ * @brief ImGuiの生成、その後の管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "DirectXCommon.h"
 #include <imgui/imgui.h>

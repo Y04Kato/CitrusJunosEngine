@@ -1,3 +1,10 @@
+/**
+ * @file Outline.cpp
+ * @brief アウトライン描画を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Outline.h"
 
 void Outline::ShaderCompile() {

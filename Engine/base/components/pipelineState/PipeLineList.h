@@ -1,3 +1,10 @@
+/**
+ * @file PipeLineList.h
+ * @brief 各種パイプラインをまとめた部分
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 
 enum class PipelineType {

@@ -1,3 +1,10 @@
+/**
+ * @file Standard3D.cpp
+ * @brief 基本の3D描画を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Standard3D.h"
 
 void Standard3D::ShaderCompile() {

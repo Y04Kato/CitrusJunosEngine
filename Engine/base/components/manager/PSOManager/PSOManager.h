@@ -1,3 +1,10 @@
+/**
+ * @file PSOManager.h
+ * @brief 各種パイプラインの生成、その後の管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "DirectXCommon.h"
 #include "pipelineState/Standard3D/Standard3D.h"

@@ -1,3 +1,10 @@
+/**
+ * @file WorldTransform.cpp
+ * @brief WorldTransformの初期化及び管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "WorldTransform.h"
 
 void WorldTransform::Initialize(){

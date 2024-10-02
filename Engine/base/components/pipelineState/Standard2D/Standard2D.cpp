@@ -1,3 +1,10 @@
+/**
+ * @file Standard2D.cpp
+ * @brief 基本の2D描画を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Standard2D.h"
 
 void Standard2D::ShaderCompile() {

@@ -1,3 +1,10 @@
+/**
+ * @file WinApp.cpp
+ * @brief Windowsアプリケーションのウィンドウ管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "WinApp.h"
 #pragma comment(lib, "winmm.lib")
 

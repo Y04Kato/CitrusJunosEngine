@@ -1,3 +1,9 @@
+/**
+ * @file FloowCamera.cpp
+ * @brief 指定した対象からオフセットを元にカメラ管理を行う
+ * @author KATO
+ * @date 未記録
+ */
 
 #include "FollowCamera.h"
 #include "GlobalVariables.h"

@@ -1,3 +1,10 @@
+/**
+ * @file IPipeLineStateObject.h
+ * @brief パイプラインの基本的な機能をまとめた継承部分
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "ShaderCompiler.h"
 #include <array>

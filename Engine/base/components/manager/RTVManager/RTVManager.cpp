@@ -1,3 +1,10 @@
+/**
+ * @file RTVManager.cpp
+ * @brief RTVの割り当て、その後の管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "RTVManager.h"
 
 RTVManager* RTVManager::GetInstance(){

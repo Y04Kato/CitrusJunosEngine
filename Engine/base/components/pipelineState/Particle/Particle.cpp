@@ -1,3 +1,10 @@
+/**
+ * @file Particle.cpp
+ * @brief 2DParticle描画を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Particle.h"
 
 void ParticlePSO::ShaderCompile() {

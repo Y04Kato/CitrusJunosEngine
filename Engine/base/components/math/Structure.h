@@ -1,3 +1,10 @@
+/**
+ * @file Structure.h
+ * @brief エンジン内で使用される各種構造体をまとめた部分
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Vector.h"
 #include "Matrix.h"

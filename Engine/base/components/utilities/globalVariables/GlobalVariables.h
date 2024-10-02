@@ -1,3 +1,10 @@
+/**
+ * @file GlobalVariables.h
+ * @brief 各種変数の中身をまとめて一つの.jsonファイルに保存、読み込みを行える機能
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Vector.h"
 #include <json.hpp>

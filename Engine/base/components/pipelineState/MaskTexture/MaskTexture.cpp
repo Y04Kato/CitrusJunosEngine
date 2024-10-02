@@ -1,3 +1,10 @@
+/**
+ * @file MaskTexture.cpp
+ * @brief MaskTextureを行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "MaskTexture.h"
 
 void MaskTexture::ShaderCompile() {
