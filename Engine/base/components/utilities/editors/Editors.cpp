@@ -196,8 +196,6 @@ void Editors::AddGroupName(char* groupName) {
 }
 
 void Editors::SetGroupName(char* groupName) {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-
 	decisionGroupName_ = groupName;
 	objCount_ = 0;
 

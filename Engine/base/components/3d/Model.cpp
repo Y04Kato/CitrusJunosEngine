@@ -69,7 +69,7 @@ void Model::SkinningInitialize(const ModelData modeldata, const uint32_t texture
 
 	modelData_ = modeldata;
 	modelData_.textureIndex = texture;
-	animation_ = LoadAnimationFile(modeldata.directoryPath,modeldata.filename);
+	animation_ = LoadAnimationFile(modeldata.directoryPath, modeldata.filename);
 	skeleton_ = CreateSkeleton(modelData_.rootNode);
 
 	CreateVartexData();
@@ -125,7 +125,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
 	}
 
-	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1,&vertexBufferView_);
+	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	//形状を設定。PS0にせっていしているものとはまた別
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -228,25 +228,25 @@ void Model::Finalize() {
 
 }
 
-Model* Model::CreateModel(const std::string& directoryPath, const std::string& filename) {
-	Model* model = new Model();
+std::unique_ptr <Model> Model::CreateModel(const std::string& directoryPath, const std::string& filename) {
+	std::unique_ptr <Model> model = std::make_unique <Model>();
 	model->Initialize(directoryPath, filename);
 	return model;
 }
 
-Model* Model::CreateModel(const ModelData modeldata, const uint32_t texture) {
-	Model* model = new Model();
+std::unique_ptr <Model> Model::CreateModel(const ModelData modeldata, const uint32_t texture) {
+	std::unique_ptr <Model> model = std::make_unique <Model>();
 	model->Initialize(modeldata, texture);
 	return model;
 }
 
-Model* Model::CreateSkinningModel(const std::string& directoryPath, const std::string& filename) {
-	Model* model = new Model();
+std::unique_ptr <Model> Model::CreateSkinningModel(const std::string& directoryPath, const std::string& filename) {
+	std::unique_ptr <Model> model = std::make_unique <Model>();
 	model->SkinningInitialize(directoryPath, filename);
 	return model;
 }
-Model* Model::CreateSkinningModel(const ModelData modeldata, const uint32_t texture) {
-	Model* model = new Model();
+std::unique_ptr <Model> Model::CreateSkinningModel(const ModelData modeldata, const uint32_t texture) {
+	std::unique_ptr <Model> model = std::make_unique <Model>();
 	model->SkinningInitialize(modeldata, texture);
 	return model;
 }
@@ -348,7 +348,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
 			}
 			else {
-				
+
 			}
 		}
 	}

@@ -63,6 +63,7 @@ void GlobalVariables::Update() {
 			}
 			else if (std::holds_alternative<std::string>(item.value)) {
 				std::string* ptr = std::get_if<std::string>(&item.value);
+				ImGui::Text("ItemName %c", ptr);
 			}
 		}
 

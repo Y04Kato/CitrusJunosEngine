@@ -89,8 +89,8 @@ void CreateSprite::Finalize() {
 
 }
 
-CreateSprite* CreateSprite::CreateSpriteFromTexture(Vector2 size, uint32_t textureIndex) {
-	CreateSprite* sprite = new CreateSprite();
+std::unique_ptr <CreateSprite> CreateSprite::CreateSpriteFromTexture(Vector2 size, uint32_t textureIndex) {
+	std::unique_ptr <CreateSprite> sprite = std::make_unique <CreateSprite>();
 	sprite->Initialize(size, textureIndex);
 	return sprite;
 }

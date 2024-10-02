@@ -35,11 +35,11 @@ SoundData Audio::SoundLoad(const char* filename) {
 	MFCreateMediaType(&pMFMediaType);
 	pMFMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
 	pMFMediaType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
-	pMFSourceReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, pMFMediaType);
+	pMFSourceReader->SetCurrentMediaType((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, pMFMediaType);
 
 	pMFMediaType->Release();
 	pMFMediaType = nullptr;
-	pMFSourceReader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, &pMFMediaType);
+	pMFSourceReader->GetCurrentMediaType((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM, &pMFMediaType);
 
 	WAVEFORMATEX* waveFormat{ nullptr };
 	MFCreateWaveFormatExFromMFMediaType(pMFMediaType, &waveFormat, nullptr);
@@ -51,7 +51,7 @@ SoundData Audio::SoundLoad(const char* filename) {
 		IMFSample* pMFSample{ nullptr };
 		DWORD dwStreamFlags{ 0 };
 		pMFSourceReader->ReadSample(
-			MF_SOURCE_READER_FIRST_AUDIO_STREAM,
+			(DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM,
 			0, nullptr,
 			&dwStreamFlags, nullptr,
 			&pMFSample);

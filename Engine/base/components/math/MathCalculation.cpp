@@ -269,11 +269,11 @@ Vector3 extractEulerAnglesFromRotationMatrix(const Matrix4x4& rotationMatrix) {
 	float m00 = rotationMatrix.m[0][0];
 	float m01 = rotationMatrix.m[0][1];
 	float m02 = rotationMatrix.m[0][2];
-	float m10 = rotationMatrix.m[1][0];
-	float m11 = rotationMatrix.m[1][1];
+	//float m10 = rotationMatrix.m[1][0];
+	//float m11 = rotationMatrix.m[1][1];
 	float m12 = rotationMatrix.m[1][2];
-	float m20 = rotationMatrix.m[2][0];
-	float m21 = rotationMatrix.m[2][1];
+	//float m20 = rotationMatrix.m[2][0];
+	//float m21 = rotationMatrix.m[2][1];
 	float m22 = rotationMatrix.m[2][2];
 
 	//Yaw角度の計算

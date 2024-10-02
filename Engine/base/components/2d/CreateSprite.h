@@ -18,7 +18,7 @@ public:
 	void Draw(const EulerTransform& transform, const EulerTransform& uvTransform, const Vector4& material);
 	void Finalize();
 
-	static CreateSprite* CreateSpriteFromTexture(Vector2 size, uint32_t textureIndex);
+	static std::unique_ptr <CreateSprite> CreateSpriteFromTexture(Vector2 size, uint32_t textureIndex);
 
 	//サイズ変更
 	void SetSize(Vector2 size);

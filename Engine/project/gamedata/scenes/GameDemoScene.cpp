@@ -89,9 +89,12 @@ void GameDemoScene::Initialize() {
 	}
 
 	//objモデル
-	model_[0].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
-	model_[1].reset(Model::CreateModel("project/gamedata/resources/AnimatedCube", "AnimatedCube.gltf"));
-	model_[2].reset(Model::CreateModel("project/gamedata/resources/terrain", "terrain.obj"));
+	for (int i = 0; i < 3; i++) {
+		model_[i] = std::make_unique <Model>();
+	}
+	model_[0]->CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf");
+	model_[1]->CreateModel("project/gamedata/resources/AnimatedCube", "AnimatedCube.gltf");
+	model_[2]->CreateModel("project/gamedata/resources/terrain", "terrain.obj");
 	for (int i = 0; i < 3; i++) {
 		worldTransformModel_[i].Initialize();
 		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
@@ -107,7 +110,8 @@ void GameDemoScene::Initialize() {
 	skyBox_->SetDirectionalLightFlag(true, 3);
 
 	//VAT
-	modelVAT_.reset(Model::CreateModel("project/gamedata/resources/vatSphere", "VAT_mesh.fbx"));
+	modelVAT_ = std::make_unique <Model>();
+	modelVAT_->Model::CreateModel("project/gamedata/resources/vatSphere", "VAT_mesh.fbx");
 	worldTransformModelVAT_.Initialize();
 	modelMaterialVAT_ = { 1.0f,1.0f,1.0f,1.0f };
 	vatData_.VATTime = 1.0f;
@@ -644,8 +648,8 @@ void GameDemoScene::Finalize() {
 }
 
 void GameDemoScene::ApplyGlobalVariables() {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	const char* groupName = "GameDemoScene";
+	//GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	//const char* groupName = "GameDemoScene";
 
 }
 
