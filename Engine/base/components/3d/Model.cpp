@@ -228,25 +228,25 @@ void Model::Finalize() {
 
 }
 
-std::unique_ptr <Model> Model::CreateModel(const std::string& directoryPath, const std::string& filename) {
-	std::unique_ptr <Model> model = std::make_unique <Model>();
+Model* Model::CreateModel(const std::string& directoryPath, const std::string& filename) {
+	Model* model = new Model();
 	model->Initialize(directoryPath, filename);
 	return model;
 }
 
-std::unique_ptr <Model> Model::CreateModel(const ModelData modeldata, const uint32_t texture) {
-	std::unique_ptr <Model> model = std::make_unique <Model>();
+Model* Model::CreateModel(const ModelData modeldata, const uint32_t texture) {
+	Model* model = new Model();
 	model->Initialize(modeldata, texture);
 	return model;
 }
 
-std::unique_ptr <Model> Model::CreateSkinningModel(const std::string& directoryPath, const std::string& filename) {
-	std::unique_ptr <Model> model = std::make_unique <Model>();
+Model* Model::CreateSkinningModel(const std::string& directoryPath, const std::string& filename) {
+	Model* model = new Model();
 	model->SkinningInitialize(directoryPath, filename);
 	return model;
 }
-std::unique_ptr <Model> Model::CreateSkinningModel(const ModelData modeldata, const uint32_t texture) {
-	std::unique_ptr <Model> model = std::make_unique <Model>();
+Model* Model::CreateSkinningModel(const ModelData modeldata, const uint32_t texture) {
+	Model* model = new Model();
 	model->SkinningInitialize(modeldata, texture);
 	return model;
 }

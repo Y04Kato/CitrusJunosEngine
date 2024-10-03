@@ -28,15 +28,15 @@ public:
 	//通常のモデルや、KeyFrameアニメーションに対応した関数
 	void Initialize(const std::string& directoryPath, const std::string& filename);//ディレクトリパスを引数にイニシャライズ
 	void Initialize(const ModelData modeldata, const uint32_t texture);//既に読み込み済みのモデルを引数にイニシャライズ
-	static std::unique_ptr <Model> CreateModel(const std::string& directoryPath, const std::string& filename);//ディレクトリパスを引数にモデルを生成する
-	static std::unique_ptr <Model> CreateModel(const ModelData modeldata, const uint32_t texture);//既に読み込み済みのモデルを引数にモデルを生成する
+	static Model* CreateModel(const std::string& directoryPath, const std::string& filename);//ディレクトリパスを引数にモデルを生成する
+	static Model* CreateModel(const ModelData modeldata, const uint32_t texture);//既に読み込み済みのモデルを引数にモデルを生成する
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material);//通常描画
 
 	//Skinningモデル専用の関数
 	void SkinningInitialize(const std::string& directoryPath, const std::string& filename);//ディレクトリパスを引数にイニシャライズ
 	void SkinningInitialize(const ModelData modeldata,const uint32_t texture);//既に読み込み済みのモデルを引数にイニシャライズ
-	static std::unique_ptr <Model> CreateSkinningModel(const std::string& directoryPath, const std::string& filename);//ディレクトリパスを引数にモデルを生成する
-	static std::unique_ptr <Model> CreateSkinningModel(const ModelData modeldata, const uint32_t texture);//既に読み込み済みのモデルを引数にモデルを生成する
+	static Model* CreateSkinningModel(const std::string& directoryPath, const std::string& filename);//ディレクトリパスを引数にモデルを生成する
+	static Model* CreateSkinningModel(const ModelData modeldata, const uint32_t texture);//既に読み込み済みのモデルを引数にモデルを生成する
 	void SkinningDraw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, const Vector4& material);//Skinning専用描画
 
 	void Finalize();
