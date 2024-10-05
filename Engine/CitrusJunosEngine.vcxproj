@@ -206,6 +206,7 @@
     <ClCompile Include="base\CJEngine.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp" />
+    <ClCompile Include="project\gamedata\baseCharacter\boss\Boss.cpp" />
     <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp" />
     <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp" />
     <ClCompile Include="project\gamedata\explosion\explosion.cpp" />
@@ -482,6 +483,7 @@
     </ClInclude>
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h" />
+    <ClInclude Include="project\gamedata\baseCharacter\boss\Boss.h" />
     <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h" />
     <ClInclude Include="project\gamedata\baseCharacter\player\Player.h" />
     <ClInclude Include="project\gamedata\explosion\explosion.h" />

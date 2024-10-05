@@ -10,18 +10,18 @@ void GameTitleScene::Initialize() {
 	//テクスチャの初期化と読み込み
 	textureManager_ = TextureManager::GetInstance();
 
+	//テクスチャ読み込み
 	pageAll_ = textureManager_->Load("project/gamedata/resources/paper.png");
 	start_ = textureManager_->Load("project/gamedata/resources/ui/pressSpace.png");
 	title_ = textureManager_->Load("project/gamedata/resources/ui/title.png");
 	tutorial_ = textureManager_->Load("project/gamedata/resources/ui/tutorial.png");
-
 	skyboxTex_ = textureManager_->Load("project/gamedata/resources/vz_empty_space_cubemap_ue.dds");
 
 	//Audioの初期化
 	audio_ = Audio::GetInstance();
 	soundData1_ = audio_->SoundLoad("project/gamedata/resources/system.mp3");
 
-	//UIの初期化
+	//Spriteの初期化
 	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
 	SpriteuvTransform_ = {
@@ -55,8 +55,6 @@ void GameTitleScene::Initialize() {
 	sprite_[4]->SetTextureInitialSize();
 	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sceneCount_ = 0;
-
 	//プレイヤーの初期化
 	player_ = std::make_unique<Player>();
 	playerModel_.reset(Model::CreateModel("project/gamedata/resources/player", "player.obj"));
@@ -65,12 +63,12 @@ void GameTitleScene::Initialize() {
 	player_->SetScale(Vector3{ 5.0f,5.0f,5.0f });
 
 	//パーティクルの初期化
-	testEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
-	testEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
-	testEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
-	testEmitter_.count = 5;
-	testEmitter_.frequency = 0.2f;//0.5秒ごとに発生
-	testEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
+	particleEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
+	particleEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
+	particleEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	particleEmitter_.count = 5;
+	particleEmitter_.frequency = 0.2f;//0.5秒ごとに発生
+	particleEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
 
 	accelerationField.acceleration = { 10.0f,15.0f,10.0f };
 	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
@@ -79,23 +77,24 @@ void GameTitleScene::Initialize() {
 	particleResourceNum_ = textureManager_->Load("project/gamedata/resources/circle.png");
 
 	particle_ = std::make_unique <CreateParticle>();
-	particle_->Initialize(100, testEmitter_, accelerationField, particleResourceNum_);
+	particle_->Initialize(100, particleEmitter_, accelerationField, particleResourceNum_);
 	particle_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	//ステージの初期化
+	//各種モデル座標
+	for (int i = 0; i < 3; i++) {
+		worldModels_[i].Initialize();
+	}
+	worldModels_[1].translation_.num[1] = 12.0f;
+	worldModels_[1].translation_.num[2] = 150.0f;
+
+	//ステージモデルの初期化
 	stage_[0].reset(Model::CreateModel("project/gamedata/resources/GarageMain", "GarageMain.obj"));
 	stage_[1].reset(Model::CreateModel("project/gamedata/resources/GarageDoor", "GarageDoor.gltf"));
 	stage_[0]->SetDirectionalLightFlag(true, 3);
 	stage_[1]->SetDirectionalLightFlag(true, 3);
-	stage_[1]->SetAnimationTime(animationTimer_);
-	for (int i = 0; i < 3; i++) {
-		world_[i].Initialize();
-	}
+	stage_[1]->SetAnimationTime(stageAnimationTimer_);
 
-	world_[1].translation_.num[1] = 12.0f;
-	world_[1].translation_.num[2] = 150.0f;
-
-	//
+	//SkyBox
 	skyBox_ = std::make_unique <CreateSkyBox>();
 	skyBox_->Initialize();
 	worldTransformSkyBox_.Initialize();
@@ -103,10 +102,11 @@ void GameTitleScene::Initialize() {
 	skyBoxMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	skyBox_->SetDirectionalLightFlag(true, 3);
 
-	// デバッグカメラの初期化
+	//デバッグカメラの初期化
 	debugCamera_ = DebugCamera::GetInstance();
 	debugCamera_->initialize();
 
+	//ViewProjectionの初期化
 	viewProjection_.Initialize();
 
 	//ライトの初期化
@@ -115,16 +115,11 @@ void GameTitleScene::Initialize() {
 }
 
 void GameTitleScene::Update() {
-	//SPACEで次のページへ
-	if (input_->TriggerKey(DIK_SPACE) && sceneCount_ < 2) {
-		sceneCount_++;
-		audio_->SoundPlayWave(soundData1_, 0.5f, false);
-	}
-
 	XINPUT_STATE joyState;
 	Input::GetInstance()->GetJoystickState(0, joyState);
-	//Aボタンで次のページへ
-	if (input_->TriggerAButton(joyState) && sceneCount_ < 2) {
+
+	//SPACE or Aボタンで次のページへ
+	if (input_->TriggerKey(DIK_SPACE) && sceneCount_ < 2 || input_->TriggerAButton(joyState) && sceneCount_ < 2) {
 		sceneCount_++;
 		audio_->SoundPlayWave(soundData1_, 0.5f, false);
 	}
@@ -132,7 +127,6 @@ void GameTitleScene::Update() {
 	//Playerの更新
 	player_->UpdateView();
 	player_->SetViewProjection(&viewProjection_);
-
 
 	//SkyBox更新
 	worldTransformSkyBox_.UpdateMatrix();
@@ -147,7 +141,7 @@ void GameTitleScene::Update() {
 	directionalLights_->SetTarget(directionalLight_);
 	pointLights_->SetTarget(pointLight_);
 
-	//UI点滅用
+	//UIフェード用
 	if (changeAlpha_ == false) {
 		spriteAlpha_ -= 8;
 		if (spriteAlpha_ <= 0) {
@@ -162,45 +156,48 @@ void GameTitleScene::Update() {
 	}
 
 	//各カウントの処理
-	if (sceneCount_ == 0) {
+	if (sceneCount_ == 0) {//タイトル
 		debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
 		player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
-		fadeAlpha_ -= 4;
-		if (fadeAlpha_ <= 0) {
-			fadeAlpha_ = 0;
+		
+		//フェード明け
+		fadeAlphaBG_ -= 4;
+		if (fadeAlphaBG_ <= 0) {
+			fadeAlphaBG_ = 0;
 		}
 	}
-	if (sceneCount_ == 1) {
+	if (sceneCount_ == 1) {//ルール説明
 		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,-29.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
-		fadeAlpha_ -= 4;
 		player_->SetVelocity({ 0.0f,0.0f,0.0f });
-		if (fadeAlpha_ <= 0) {
-			fadeAlpha_ = 0;
-		}
 	}
-	if (sceneCount_ == 2) {
+	if (sceneCount_ == 2) {//ゲームスタート
 		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,20.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
-		fadeAlpha_ += 4;
 		player_->SetVelocity({ 0.0f,0.0f,2.0f });
-		//フェードしてゲームシーンへ
-		if (fadeAlpha_ >= 256) {
+		
+		//フェード開始
+		fadeAlphaBG_ += 4;
+		//フェード終わりにゲームシーンへ
+		if (fadeAlphaBG_ >= 256) {
+			//各種初期化
 			sceneCount_ = 0;
-			fadeAlpha_ = 256;
-			animationTimer_ = 1.0f;
+			fadeAlphaBG_ = 256;
+			stageAnimationTimer_ = 1.0f;
 			player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
+
+			//ゲームシーンへ
 			sceneNo = GAME_SCENE;
 		}
 	}
 
-	//アニメーション開始
+	//モデルアニメーション開始
 	if (sceneCount_ >= 1) {
-		animationTimer_ += 1.0f;
+		stageAnimationTimer_ += 1.0f;
 	}
-	stage_[1]->SetAnimationTime(animationTimer_);
+	stage_[1]->SetAnimationTime(stageAnimationTimer_);
 
 	//ワールド座標更新
 	for (int i = 0; i < 3; i++) {
-		world_[i].UpdateMatrix();
+		worldModels_[i].UpdateMatrix();
 	}
 
 	//カメラとビュープロジェクション更新
@@ -220,7 +217,7 @@ void GameTitleScene::Update() {
 	if (input_->TriggerKey(DIK_1)) {
 		sceneNo = DEBUG_SCENE;
 	}
-#endif // _DEBUG
+#endif //_DEBUG
 
 }
 
@@ -242,8 +239,8 @@ void GameTitleScene::Draw() {
 	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
 
 	player_->Draw(viewProjection_);
-	stage_[0]->Draw(world_[0], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
-	stage_[1]->Draw(world_[1], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
+	stage_[0]->Draw(worldModels_[0], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
+	stage_[1]->Draw(worldModels_[1], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
 #pragma endregion
 
 #pragma region パーティクル描画
@@ -272,7 +269,7 @@ void GameTitleScene::DrawUI() {
 			sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 		}
 	}
-	sprite_[4]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlpha_ / 256.0f });
+	sprite_[4]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlphaBG_ / 256.0f });
 
 #pragma endregion
 }

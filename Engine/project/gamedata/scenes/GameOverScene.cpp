@@ -75,16 +75,16 @@ void GameOverScene::Update() {
 	}
 
 	if (sceneCount_ == 0) {
-		fadeAlpha_ -= 4;
-		if (fadeAlpha_ <= 0) {
-			fadeAlpha_ = 0;
+		fadeAlphaBG_ -= 4;
+		if (fadeAlphaBG_ <= 0) {
+			fadeAlphaBG_ = 0;
 		}
 	}
 	if (sceneCount_ == 1) {
-		fadeAlpha_ += 4;
-		if (fadeAlpha_ >= 256) {
+		fadeAlphaBG_ += 4;
+		if (fadeAlphaBG_ >= 256) {
 			sceneCount_ = 0;
-			fadeAlpha_ = 256;
+			fadeAlphaBG_ = 256;
 			sceneNo = TITLE_SCENE;
 		}
 	}
@@ -108,7 +108,7 @@ void GameOverScene::DrawUI() {
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 	sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 1.0f,1.0f,1.0f,spriteAlpha_ / 256.0f });
 	sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
-	sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlpha_ / 256.0f });
+	sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlphaBG_ / 256.0f });
 #pragma endregion
 }
 

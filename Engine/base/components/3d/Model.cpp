@@ -115,14 +115,14 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 		Vector3 scale = CalculateValue(rootNodeAnimation.scale.keyframes, animationTime_);
 		Matrix4x4 localM = MakeQuatAffineMatrix(scale, MakeRotateMatrix(rotate), translate);
 
-		world_ = worldTransform;
-		world_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
-		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+		worldModels_ = worldTransform;
+		worldModels_.constMap->matWorld = Multiply(localM, Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_));
+		worldModels_.constMap->inverseTranspose = Inverse(Transpose(worldModels_.constMap->matWorld));
 	}
 	else {
-		world_ = worldTransform;
-		world_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
-		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
+		worldModels_ = worldTransform;
+		worldModels_.constMap->matWorld = Multiply(modelData_.rootNode.localMatrix, worldTransform.matWorld_);
+		worldModels_.constMap->inverseTranspose = Inverse(Transpose(worldModels_.constMap->matWorld));
 	}
 
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -132,7 +132,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, world_.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, worldModels_.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 
@@ -192,7 +192,7 @@ void Model::SkinningDraw(const WorldTransform& worldTransform, const ViewProject
 
 	animationTime_ += 1.0f / 60.0f;//時間を進める
 	animationTime_ = std::fmod(animationTime_, animation_.duration);//最後までいったらリピート再生
-	world_ = worldTransform;
+	worldModels_ = worldTransform;
 	ApplyAnimation(skeleton_, animation_, animationTime_);
 	Update(skeleton_, skinCluster_);
 
@@ -208,7 +208,7 @@ void Model::SkinningDraw(const WorldTransform& worldTransform, const ViewProject
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, world_.constBuff_->GetGPUVirtualAddress());
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, worldModels_.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 

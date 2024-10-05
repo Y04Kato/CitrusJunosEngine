@@ -72,7 +72,7 @@ private:
 
 	int lightNum_;
 
-	WorldTransform world_;
+	WorldTransform worldModels_;
 	float size_ = 0.1f;
 
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;

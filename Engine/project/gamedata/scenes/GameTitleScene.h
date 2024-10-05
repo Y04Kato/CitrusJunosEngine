@@ -38,7 +38,6 @@ private:
 	EulerTransform spriteTransform_;
 	EulerTransform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
-	float fadeAlpha_ = 0.0f;
 
 	//テクスチャ
 	uint32_t pageAll_;
@@ -46,9 +45,10 @@ private:
 	uint32_t title_;
 	uint32_t tutorial_;
 
-	//UI点滅用
-	bool changeAlpha_ = false;
-	float spriteAlpha_ = 256.0f;
+	//各種フェード用
+	bool changeAlpha_ = false;//アルファ加算か減算か
+	float spriteAlpha_ = 256.0f;//UI用フェードアルファ
+	float fadeAlphaBG_ = 0.0f;//BG用フェードアルファ
 
 	//シーン内の演出遷移用カウント
 	int sceneCount_ = 0;
@@ -57,15 +57,19 @@ private:
 	Audio* audio_;
 	SoundData soundData1_;
 
-	//自機
-	WorldTransform world_[3];
-	std::unique_ptr<Player> player_;
-	std::unique_ptr<Model> playerModel_;
+	//ViewProjection
 	ViewProjection viewProjection_;
 
-	//ステージ
+	//自機とモデル座標
+	WorldTransform worldModels_[3];
+
+	//自機
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<Model> playerModel_;
+
+	//ステージモデル
 	std::unique_ptr<Model> stage_[2];
-	float animationTimer_ = 1.0f;//アニメーション用のタイマー
+	float stageAnimationTimer_ = 1.0f;//アニメーション用のタイマー
 
 	//SkyBox
 	std::unique_ptr <CreateSkyBox> skyBox_;
@@ -78,7 +82,7 @@ private:
 
 	//Particle
 	std::unique_ptr<CreateParticle> particle_;
-	Emitter testEmitter_{};
+	Emitter particleEmitter_{};
 	AccelerationField accelerationField;
 	uint32_t particleResourceNum_;
 

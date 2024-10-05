@@ -15,7 +15,7 @@ void GamePlayScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	soundData1_ = audio_->SoundLoad("project/gamedata/resources/CraftsmansForge.mp3");
 	soundData2_ = audio_->SoundLoad("project/gamedata/resources/metal.mp3");
-	//音声再生
+	//音声再生(BGM)
 	audio_->SoundPlayWave(soundData1_, 0.1f, true);
 
 	// デバッグカメラの初期化
@@ -24,30 +24,23 @@ void GamePlayScene::Initialize() {
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
-	//モデルの初期化と読み込み
+	//Playerモデルの初期化と読み込み
 	player_ = std::make_unique<Player>();
 	playerModel_.reset(Model::CreateModel("project/gamedata/resources/player", "player.obj"));
 	playerModel_->SetDirectionalLightFlag(true, 3);
 	player_->Initialize(playerModel_.get());
 
-	//
+	//フォローカメラ初期化
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
-	followCamera_->SetTarget(&player_->GetWorldTransformPlayer());
+	followCamera_->SetTarget(&player_->GetWorldTransformPlayer());//カメラをPlayerにセット
 
-	//
+	//Enemyモデルの初期化と読み込み
 	enemyModel_.reset(Model::CreateModel("project/gamedata/resources/enemy", "enemy.obj"));
 	enemyModel_->SetDirectionalLightFlag(true, 2);
 
-	//
-	ground_ = std::make_unique<Ground>();
+	//Skyboxモデルの初期化と読み込み
 	skyboxTex_ = textureManager_->Load("project/gamedata/resources/vz_empty_space_cubemap_ue.dds");
-	groundModel_.reset(Model::CreateModel("project/gamedata/resources/floor", "Floor.obj"));
-	groundModel_->SetDirectionalLightFlag(true, 4);
-	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
-	groundModel_->SetEnvironmentTexture(skyboxTex_);
-
-	//
 	skyBox_ = std::make_unique <CreateSkyBox>();
 	skyBox_->Initialize();
 	worldTransformSkyBox_.Initialize();
@@ -55,23 +48,32 @@ void GamePlayScene::Initialize() {
 	skyBoxMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	skyBox_->SetDirectionalLightFlag(true, 3);
 
-	//
+	//groundモデルの初期化と読み込み
+	groundModel_.reset(Model::CreateModel("project/gamedata/resources/floor", "Floor.obj"));
+	groundModel_->SetDirectionalLightFlag(true, 4);
+	groundModel_->SetEnvironmentTexture(skyboxTex_);
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
+
+	//旗モデルの初期化と読み込み
 	for (int i = 0; i < 4; i++) {
 		flagModel_[i].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
 		flagModel_[i]->SetDirectionalLightFlag(true, 3);
-		world_[i].Initialize();
-		world_[i].scale_ = { 1.5f,1.5f,1.5f };
-		world_[i].rotation_.num[1] = 30.0f;
+		worldModels_[i].Initialize();
+		worldModels_[i].scale_ = { 1.5f,1.5f,1.5f };
+		worldModels_[i].rotation_.num[1] = 30.0f;
 	}
-	world_[0].translation_ = { -30.0f,0.0f,25.0f };
-	world_[1].translation_ = { -30.0f,0.0f,-35.0f };
-	world_[2].translation_ = { 30.0f,0.0f,25.0f };
-	world_[3].translation_ = { 30.0f,0.0f,-35.0f };
+	//マップ端に旗を設置(自動化予定)
+	worldModels_[0].translation_ = { -30.0f,0.0f,25.0f };
+	worldModels_[1].translation_ = { -30.0f,0.0f,-35.0f };
+	worldModels_[2].translation_ = { 30.0f,0.0f,25.0f };
+	worldModels_[3].translation_ = { 30.0f,0.0f,-35.0f };
 
-	//
+	//Blockモデルの読み込み
 	ObjModelData_ = playerModel_->LoadModelFile("project/gamedata/resources/block", "block.obj");
 	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
 
+	//エディターの初期化
 	editors_ = Editors::GetInstance();
 	editors_->Initialize();
 	editors_->SetModels(ObjModelData_, ObjTexture_);
@@ -83,7 +85,7 @@ void GamePlayScene::Initialize() {
 	move2_ = textureManager_->Load("project/gamedata/resources/ui/move2.png");
 	move3_ = textureManager_->Load("project/gamedata/resources/ui/move3.png");
 
-	//UIの初期化
+	//Spriteの初期化
 	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
 	SpriteuvTransform_ = {
@@ -117,7 +119,7 @@ void GamePlayScene::Initialize() {
 	sprite_[4]->SetTextureInitialSize();
 	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	//パーティクルの初期化
+	//Playerパーティクルの初期化
 	playerEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
 	playerEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
 	playerEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
@@ -135,7 +137,7 @@ void GamePlayScene::Initialize() {
 	playerParticle_->Initialize(100, playerEmitter_, playerAccelerationField_, playerParticleResource_);
 	playerParticle_->SetColor(Vector4{ 1.0f,1.0f,1.0f,1.0f });
 
-	//
+	//接触時パーティションの初期化
 	collisionEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
 	collisionEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
 	collisionEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
@@ -206,14 +208,18 @@ void GamePlayScene::Update() {
 
 	//フェード用
 	if (isfadeIn_ == false) {
-		fadeAlpha_ -= 4;
-		if (fadeAlpha_ <= 0) {
-			fadeAlpha_ = 0;
+		fadeAlphaBG_ -= 4;
+		if (fadeAlphaBG_ <= 0) {
+			fadeAlphaBG_ = 0;
 		}
 	}
 	else if (isfadeIn_ == true && isGameclear_ == true) {//ゲームクリア時
-		fadeAlpha_ += 4;
-		if (fadeAlpha_ >= 256) {
+		//フェード開始
+		fadeAlphaBG_ += 4;
+
+		//フェード終わりにゲームクリア処理
+		if (fadeAlphaBG_ >= 256) {
+			//各種初期化処理
 			isGameStart_ = true;
 			isfadeIn_ = false;
 			isGameclear_ = false;
@@ -224,10 +230,13 @@ void GamePlayScene::Update() {
 		}
 	}
 	else if (isfadeIn_ == true && isGameover_ == true) {//ゲームオーバー時
-		fadeAlpha_ += 4;
+		//フェードと閾値減算開始
+		fadeAlphaBG_ += 4;
 		maskData_.maskThreshold -= 0.02f;
-		if (fadeAlpha_ >= 256) {
-			isGameStart_ = true;
+
+		//フェード終わりにゲームオーバー処理
+		if (fadeAlphaBG_ >= 256) {
+			//生き残っている敵を全て削除
 			for (Enemy* enemy : enemys_) {
 				enemy->SetisDead();
 			}
@@ -239,6 +248,9 @@ void GamePlayScene::Update() {
 				}
 				return false;
 				});
+
+			//各種初期化処理
+			isGameStart_ = true;
 			isfadeIn_ = false;
 			isGameover_ = false;
 			directionalLight_.intensity = 1.0f;
@@ -248,30 +260,28 @@ void GamePlayScene::Update() {
 		}
 	}
 
+	//Jsonデータ読み込み
 	ApplyGlobalVariables();
+
 	//PostEffect更新
 	postEffect_->SetMaskData(maskData_);
 
 	//プレイヤー更新
 	player_->SetViewProjection(&viewProjection_);
-	if (isEditorMode_ == false) {
+	if (isEditorMode_ == false && isBirdseyeMode_ == false) {//エディターモード時はPlayerを止める
 		player_->Update();
 	}
+	else if (isBirdseyeMode_ == true) {
+		player_->UpdateView();
+	}
 
-	world_[4].translation_ = player_->GetWorldTransform().translation_;
-
+	//旗座標更新
 	for (int i = 0; i < 4; i++) {
-		world_[i].UpdateMatrix();
+		worldModels_[i].UpdateMatrix();
 	}
 
 	//Edirots更新
 	editors_->Update();
-#ifdef _DEBUG
-	ImGui::Begin("PlayScene");
-	ImGui::Checkbox("isEditorMode", &isEditorMode_);
-	ImGui::DragFloat3("", viewProjection_.rotation_.num);
-	ImGui::End();
-#endif // _DEBUG
 
 	//ライト更新
 	directionalLights_->SetTarget(directionalLight_);
@@ -320,7 +330,7 @@ void GamePlayScene::Update() {
 
 	if (explosionTimer_ <= 0 && isExplosion_ == true) {
 		isExplosion_ = false;
-		if (isEditorMode_ == false) {
+		if (isBirdseyeMode_ == false) {
 			debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });
 		}
 		else {
@@ -330,45 +340,42 @@ void GamePlayScene::Update() {
 		}
 	}
 
+	//カメラ切り替え処理
 	if (input_->TriggerKey(DIK_E)) {
-		if (isEditorMode_ == false) {
-			debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, 0.05f);
-			isEditorMode_ = true;
-
-			debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });
-			debugCamera_->Update();
-
-			viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
-			viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
-			viewProjection_.UpdateMatrix();
+		if (isBirdseyeMode_ == false) {//Player視点 → 俯瞰視点
+			debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
+			debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, cameraMoveSpeed_);
+			isBirdseyeMode_ = true;
 		}
-		else {
-			debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, 0.05f);
+		else {//俯瞰視点 → Player視点
+			debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, cameraMoveSpeed_);
 
 			cameraChange_ = true;
 		}
 	}
 
+	//カメラ切り替え処理開始
 	if (cameraChange_ == true) {
 		cameraChangeTimer_++;
 	}
 
-	if (cameraChangeTimer_ >= 25) {
+	//カメラ切り替え処理終了
+	if (cameraChangeTimer_ >= cameraChangeMaxTimer_) {
 		debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
 		cameraChangeTimer_ = 0;
 		cameraChange_ = false;
-		isEditorMode_ = false;
+		isBirdseyeMode_ = false;
 	}
 
 	//カメラの更新
-	if (isEditorMode_ == false) {
+	if (isBirdseyeMode_ == false) {//俯瞰モードでなければ
 		followCamera_->Update();
 		viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
 		viewProjection_.matView = followCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 		viewProjection_.TransferMatrix();
 	}
-	else {
+	else {//俯瞰モードなら
 		debugCamera_->Update();
 
 		viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
@@ -378,6 +385,12 @@ void GamePlayScene::Update() {
 
 	//当たり判定処理
 	CollisionConclusion();
+
+	//
+	ImGui::Begin("PlayScene");
+	ImGui::Checkbox("isEditorMode", &isEditorMode_);
+	ImGui::DragFloat3("", viewProjection_.rotation_.num);
+	ImGui::End();
 }
 
 void GamePlayScene::Draw() {
@@ -411,7 +424,7 @@ void GamePlayScene::Draw() {
 #pragma region 3DSkinningオブジェクト描画
 	CJEngine_->renderer_->Draw(PipelineType::Skinning);
 	for (int i = 0; i < 4; i++) {
-		flagModel_[i]->SkinningDraw(world_[i], viewProjection_, Vector4{ 1.0f,1.0f,1.0f,1.0f });
+		flagModel_[i]->SkinningDraw(worldModels_[i], viewProjection_, Vector4{ 1.0f,1.0f,1.0f,1.0f });
 	}
 
 #pragma endregion
@@ -444,7 +457,7 @@ void GamePlayScene::DrawUI() {
 		sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 	}
 
-	sprite_[4]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlpha_ / 256.0f });
+	sprite_[4]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlphaBG_ / 256.0f });
 
 #pragma endregion
 }
@@ -472,19 +485,27 @@ void GamePlayScene::ApplyGlobalVariables() {
 }
 
 void GamePlayScene::GameStartProcessing() {
+	//Player初期化
 	player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
 	player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
 	player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
 
+	//ライト初期化
 	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.5f };
 	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
 
+	//
 	maskData_.maskThreshold = 1.0f;
 	postEffect_->SetMaskTexture(noiseTexture_);
 
+	//カメラ初期化
+	followCamera_->SetCamera(player_->GetWorldTransform().translation_, player_->GetWorldTransform().rotation_);
 	debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
+	debugCamera_->Update();
+	isBirdseyeMode_ = false;
 	isEditorMode_ = false;
 
+	//エディター、ステージ読み込み
 	editors_->SetModels(ObjModelData_, ObjTexture_);
 	editors_->SetGroupName((char*)"DemoStage");
 
@@ -494,6 +515,7 @@ void GamePlayScene::GameStartProcessing() {
 		SetEnemy(pos);
 	}
 
+	//開始時フラグを無効化
 	isGameStart_ = false;
 }
 
