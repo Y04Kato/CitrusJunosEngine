@@ -1,3 +1,10 @@
+/**
+ * @file Smoothing.cpp
+ * @brief Smoothingを行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Smoothing.h"
 
 void Smoothing::ShaderCompile() {

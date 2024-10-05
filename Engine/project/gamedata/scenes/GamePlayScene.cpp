@@ -467,8 +467,8 @@ void GamePlayScene::Finalize() {
 }
 
 void GamePlayScene::ApplyGlobalVariables() {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	const char* groupName = "GamePlayScene";
+	//GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	//const char* groupName = "GamePlayScene";
 }
 
 void GamePlayScene::GameStartProcessing() {

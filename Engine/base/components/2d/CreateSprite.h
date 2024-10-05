@@ -1,3 +1,10 @@
+/**
+ * @file CreateSprite.h
+ * @brief 2DSpriteの初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "DirectXCommon.h"
 #include "CJEngine.h"
@@ -11,7 +18,7 @@ public:
 	void Draw(const EulerTransform& transform, const EulerTransform& uvTransform, const Vector4& material);
 	void Finalize();
 
-	static CreateSprite* CreateSpriteFromTexture(Vector2 size, uint32_t textureIndex);
+	static std::unique_ptr <CreateSprite> CreateSpriteFromTexture(Vector2 size, uint32_t textureIndex);
 
 	//サイズ変更
 	void SetSize(Vector2 size);

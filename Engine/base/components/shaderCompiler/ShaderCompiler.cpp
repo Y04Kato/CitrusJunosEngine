@@ -1,3 +1,10 @@
+/**
+ * @file ShaderCompiler.cpp
+ * @brief 各種.hlslShaderの読み込みを行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "ShaderCompiler.h"
 
 ShaderCompiler* ShaderCompiler::GetInstance(){

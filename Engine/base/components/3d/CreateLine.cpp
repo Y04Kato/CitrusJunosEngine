@@ -1,3 +1,10 @@
+/**
+ * @file CreateLine.cpp
+ * @brief 3Dで2点を結ぶ線の初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "CreateLine.h"
 #include "CJEngine.h"
 

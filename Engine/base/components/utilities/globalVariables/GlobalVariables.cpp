@@ -1,3 +1,10 @@
+/**
+ * @file GlobalVariables.cpp
+ * @brief 各種変数の中身をまとめて一つの.jsonファイルに保存、読み込みを行える機能
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "GlobalVariables.h"
 #include "CJEngine.h"
 #include <fstream>
@@ -56,6 +63,7 @@ void GlobalVariables::Update() {
 			}
 			else if (std::holds_alternative<std::string>(item.value)) {
 				std::string* ptr = std::get_if<std::string>(&item.value);
+				ImGui::Text("ItemName %c", ptr);
 			}
 		}
 

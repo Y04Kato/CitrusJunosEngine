@@ -1,3 +1,9 @@
+/**
+ * @file Input.cpp
+ * @brief キー入力及びマウス操作、コントローラー入力の初期化及び管理を行う
+ * @author KATO
+ * @date 未記録
+ */
 
 #include "Input.h"
 #define XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE  7849

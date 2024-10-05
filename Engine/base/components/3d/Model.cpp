@@ -1,3 +1,10 @@
+/**
+ * @file Model.cpp
+ * @brief .objや.fbx、.gltfを使用したモデルの初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Model.h"
 
 void Model::Initialize(const std::string& directoryPath, const std::string& filename) {
@@ -62,7 +69,7 @@ void Model::SkinningInitialize(const ModelData modeldata, const uint32_t texture
 
 	modelData_ = modeldata;
 	modelData_.textureIndex = texture;
-	animation_ = LoadAnimationFile(modeldata.directoryPath,modeldata.filename);
+	animation_ = LoadAnimationFile(modeldata.directoryPath, modeldata.filename);
 	skeleton_ = CreateSkeleton(modelData_.rootNode);
 
 	CreateVartexData();
@@ -118,7 +125,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 		world_.constMap->inverseTranspose = Inverse(Transpose(world_.constMap->matWorld));
 	}
 
-	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1,&vertexBufferView_);
+	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	//形状を設定。PS0にせっていしているものとはまた別
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -341,7 +348,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
 			}
 			else {
-				
+
 			}
 		}
 	}

@@ -1,3 +1,10 @@
+/**
+ * @file CollisionManager.cpp
+ * @brief Colliderに登録された全てを管理する
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "CollisionManager.h"
 
 CollisionManager* CollisionManager::GetInstance() {

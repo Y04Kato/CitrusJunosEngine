@@ -1,3 +1,10 @@
+/**
+ * @file WorldTransform.h
+ * @brief WorldTransformの初期化及び管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "DirectXCommon.h"
 #include "MathCalculation.h"

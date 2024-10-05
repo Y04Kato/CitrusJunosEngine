@@ -1,3 +1,10 @@
+/**
+ * @file Editors.h
+ * @brief エンジン内でレベルエディットを行い、.jsonとして保存の出来るレベルエディター機能
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "WorldTransform.h"
 #include "ViewProjection.h"
@@ -21,6 +28,7 @@ public:
 
 	void Initialize();
 
+	//そのグループで描画するモデルを割り当てる関数
 	void SetModels(ModelData ObjModelData, uint32_t ObjTexture);
 
 	void Update();
@@ -32,17 +40,25 @@ public:
 	void ApplyGlobalVariables();
 	void SetGlobalVariables();
 
+	//オブジェクトを一つ生成する関数
 	void SetObject(EulerTransform trans, const std::string& name, const std::string& type);
 
+	//グループの追加
 	void AddGroupName(char* groupName);
 
+	//グループを選択
 	void SetGroupName(char* groupName);
 
+	//現在のグループ内のオブジェクトが接触した際の処理
 	void Hitobj(Obj o);
 
+	//現在のグループのオブジェクト数を得る
 	int GetObjCount() { return objCount_; }
 
+	//現在のグループにオブジェクトデータを割り当てる
 	void SetObj(std::list<Obj> obj) { objects_ = obj; }
+
+	//現在のグループのオブジェクトデータを得る
 	std::list<Obj> GetObj() { return objects_; }
 
 	//Key1でTRANSLATE、key2でROTATE、key3でSCALE

@@ -1,3 +1,10 @@
+/**
+ * @file Iscene.h
+ * @brief 各種シーンをまとめる
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 
 //シーン一覧、シーン追加時はここに追加する

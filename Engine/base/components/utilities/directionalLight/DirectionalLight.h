@@ -1,3 +1,10 @@
+/**
+ * @file DirectionalLigh.h
+ * @brief DirectionalLight用の各種設定を一元管理する
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Input.h"
 #include "WorldTransform.h"

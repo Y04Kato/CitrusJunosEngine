@@ -1,3 +1,10 @@
+/**
+ * @file GrayScale.cpp
+ * @brief GrayScale(単色化)を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Grayscale.h"
 
 void Grayscale::ShaderCompile() {

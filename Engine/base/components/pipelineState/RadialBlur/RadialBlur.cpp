@@ -1,3 +1,10 @@
+/**
+ * @file RadialBlur.cpp
+ * @brief RadialBlurを行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "RadialBlur.h"
 
 void RadialBlur::ShaderCompile() {

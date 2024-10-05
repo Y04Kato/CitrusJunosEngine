@@ -1,3 +1,10 @@
+/**
+ * @file Collider.h
+ * @brief Collider機能
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Vector.h"
 #include "WorldTransform.h"

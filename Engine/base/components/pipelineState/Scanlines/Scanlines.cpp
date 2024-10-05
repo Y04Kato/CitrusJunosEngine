@@ -1,3 +1,10 @@
+/**
+ * @file Scanlines.cpp
+ * @brief Scanlineを行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Scanlines.h"
 
 void Scanlines::ShaderCompile() {

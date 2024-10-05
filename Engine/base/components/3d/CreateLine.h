@@ -1,3 +1,10 @@
+/**
+ * @file CreateLine.h
+ * @brief 3Dで2点を結ぶ線の初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "DirectXCommon.h"
 #include "WorldTransform.h"

@@ -1,3 +1,10 @@
+/**
+ * @file Skinning.cpp
+ * @brief Skinningアニメーション描画を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Skinning.h"
 
 void Skinning::ShaderCompile() {

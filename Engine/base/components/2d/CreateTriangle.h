@@ -1,3 +1,10 @@
+/**
+ * @file CreateTriangle.h
+ * @brief 2D三角形の初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "DirectXCommon.h"
 #include "WorldTransform.h"

@@ -1,3 +1,10 @@
+/**
+ * @file SkyBox.cpp
+ * @brief .ddsを使用したSkyBox描画を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "SkyBox.h"
 
 void SkyBox::ShaderCompile() {

@@ -1,3 +1,10 @@
+/**
+ * @file CreateTriangle.cpp
+ * @brief 2D三角形の初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "CreateTriangle.h"
 #include "CJEngine.h"
 #include <assert.h>

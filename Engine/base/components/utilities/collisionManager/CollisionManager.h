@@ -1,3 +1,10 @@
+/**
+ * @file CollisionManager.h
+ * @brief Colliderに登録された全てを管理する
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Collider.h"
 #include <list>

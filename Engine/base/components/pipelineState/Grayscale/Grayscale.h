@@ -1,3 +1,10 @@
+/**
+ * @file GrayScale.h
+ * @brief GrayScale(単色化)を行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "IPipelineStateObject.h"
 #include "PSOManager/PSOManager.h"

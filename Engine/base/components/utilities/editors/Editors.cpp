@@ -1,3 +1,10 @@
+/**
+ * @file Editors.cpp
+ * @brief エンジン内でレベルエディットを行い、.jsonとして保存の出来るレベルエディター機能
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Editors.h"
 
 Editors* Editors::GetInstance() {
@@ -189,8 +196,6 @@ void Editors::AddGroupName(char* groupName) {
 }
 
 void Editors::SetGroupName(char* groupName) {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-
 	decisionGroupName_ = groupName;
 	objCount_ = 0;
 

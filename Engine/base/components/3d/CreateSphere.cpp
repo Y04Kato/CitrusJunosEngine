@@ -1,3 +1,10 @@
+/**
+ * @file CreateSphere.cpp
+ * @brief 頂点を指定した上で球体の初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "CreateSphere.h"
 #include "CJEngine.h"
 #include<cmath>

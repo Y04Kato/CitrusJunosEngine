@@ -1,3 +1,10 @@
+/**
+ * @file PSOManager.cpp
+ * @brief 各種パイプラインの生成、その後の管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "PSOManager.h"
 
 PSOManager* PSOManager::GetInstance(){

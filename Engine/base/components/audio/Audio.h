@@ -1,3 +1,10 @@
+/**
+ * @file Audio.h
+ * @brief サウンド関係の初期化及び管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include <xaudio2.h>
 #pragma comment(lib,"xaudio2.lib")
@@ -18,15 +25,15 @@
 struct SoundData {
 	//波形フォーマット
 	WAVEFORMATEX wfex;
-	//バッファの先頭アドレス
-	BYTE* pBuffer;
+	//バッファの先頭アドレス（スマートポインタ化）
+	std::unique_ptr<BYTE[]> pBuffer;
 	//バッファのサイズ
 	unsigned int bufferSize;
 };
 
 //再生中の音声データ
 struct PlaySoundData {
-	SoundData* soundData = {};
+	SoundData* soundData = nullptr;
 	IXAudio2SourceVoice* sourceVoice = nullptr;
 };
 

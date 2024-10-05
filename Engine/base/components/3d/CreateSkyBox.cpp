@@ -1,3 +1,10 @@
+/**
+ * @file CreateSkyBox.cpp
+ * @brief .ddsを使用したSkyBoxの初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "CreateSkyBox.h"
 #include "CJEngine.h"
 

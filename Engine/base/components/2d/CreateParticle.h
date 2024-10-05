@@ -1,3 +1,10 @@
+/**
+ * @file CreateParticle.h
+ * @brief 2DParticleの初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "CJEngine.h"
 #include "DirectXCommon.h"

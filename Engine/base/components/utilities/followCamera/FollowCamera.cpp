@@ -1,3 +1,9 @@
+/**
+ * @file FloowCamera.cpp
+ * @brief 指定した対象からオフセットを元にカメラ管理を行う
+ * @author KATO
+ * @date 未記録
+ */
 
 #include "FollowCamera.h"
 #include "GlobalVariables.h"
@@ -85,4 +91,11 @@ void FollowCamera::ShakeCamera(int shakePower, int dividePower) {
 
 	viewprojection_.UpdateViewMatrix();
 	viewprojection_.TransferMatrix();
+}
+
+void FollowCamera::SetCamera(Vector3 translation, Vector3 rotation) {
+	viewprojection_.translation_ = translation;
+	viewprojection_.rotation_ = rotation;
+
+	viewprojection_.UpdateMatrix();
 }

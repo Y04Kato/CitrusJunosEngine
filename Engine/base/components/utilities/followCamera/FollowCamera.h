@@ -1,3 +1,10 @@
+/**
+ * @file FloowCamera.h
+ * @brief 指定した対象からオフセットを元にカメラ管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Input.h"
 #include "WorldTransform.h"
@@ -17,6 +24,9 @@ public:
 	void ApplyGlobalVariables();
 
 	void ShakeCamera(int shakePower, int dividePower);
+
+	//カメラの場所決め
+	void SetCamera(Vector3 translation, Vector3 rotation);
 
 private:
 	ViewProjection viewprojection_;

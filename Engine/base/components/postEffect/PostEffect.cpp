@@ -1,3 +1,10 @@
+/**
+ * @file PostEffect.cpp
+ * @brief ポストエフェクトの初期化及び描画を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "PostEffect.h"
 
 PostEffect* PostEffect::GetInstance() {

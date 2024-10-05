@@ -1,3 +1,10 @@
+/**
+ * @file Gaussian.cpp
+ * @brief ぼかしを行う為のパイプライン
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Gaussian.h"
 
 void Gaussian::ShaderCompile() {

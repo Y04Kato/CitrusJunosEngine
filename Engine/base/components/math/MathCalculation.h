@@ -1,3 +1,10 @@
+/**
+ * @file MathCalculation.h
+ * @brief 数学系の関数や演算子をまとめた部分
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Structure.h"
 #include <assert.h>
@@ -20,6 +27,9 @@ float Distance(const Vector3& v1, const Vector3& v2);
 
 float Lerp(float a, float b, float t);
 float LerpShortAngle(float a, float b, float t);
+
+//回転角度を -180度～180度の範囲に正規化する関数
+float NormalizeAngle(float angle);
 
 #pragma endregion
 

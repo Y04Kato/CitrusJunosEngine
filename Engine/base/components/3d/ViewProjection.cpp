@@ -1,3 +1,10 @@
+/**
+ * @file ViewProjection.cpp
+ * @brief ViewProjectionの初期化及び管理を行う
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "ViewProjection.h"
 
 void ViewProjection::Initialize() {
