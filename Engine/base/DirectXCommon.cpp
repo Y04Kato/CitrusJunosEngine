@@ -192,7 +192,7 @@ Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHea
 	descriptionHeapDesc.Type = heapType;//レンダーターゲットビュー用
 	descriptionHeapDesc.NumDescriptors = numDescriptors;//ダブルバッファ用に二つ。多くても別にかまわない
 	descriptionHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	HRESULT hr = device_->CreateDescriptorHeap(&descriptionHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	[[maybe_unused]] HRESULT hr = device_->CreateDescriptorHeap(&descriptionHeapDesc, IID_PPV_ARGS(&descriptorHeap));
 	//ディスクリプタヒープが生成失敗の為、起動しない
 	assert(SUCCEEDED(hr));
 	return descriptorHeap;
@@ -362,7 +362,7 @@ Microsoft::WRL::ComPtr <ID3D12Resource> DirectXCommon::CreateDepthStenciltexture
 
 	//resourceの設定
 	Microsoft::WRL::ComPtr <ID3D12Resource> resource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(
+	[[maybe_unused]] HRESULT hr = device->CreateCommittedResource(
 		&heapProperties,//Heapの設定
 		D3D12_HEAP_FLAG_NONE,//Heapの特殊な設定、特になし
 		&resourceDesc,//resourceの設定

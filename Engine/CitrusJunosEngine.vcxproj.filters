@@ -420,9 +420,6 @@
     <ClCompile Include="base\components\utilities\pointLight\PointLight.cpp">
       <Filter>ソース ファイル\base\components\utilities\pointLight</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\scenes\GameDemoScene.cpp">
-      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
-    </ClCompile>
     <ClCompile Include="base\components\3d\CreateLine.cpp">
       <Filter>ソース ファイル\base\components\3d</Filter>
     </ClCompile>
@@ -515,6 +512,30 @@
     </ClCompile>
     <ClCompile Include="externals\imgui\ImGuizmo.cpp">
       <Filter>externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\boss\Boss.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\explosion\explosion.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\ground\Ground.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\DebugScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\GameOverScene.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -706,9 +727,6 @@
     <ClInclude Include="base\components\utilities\pointLight\PointLight.h">
       <Filter>ヘッダー ファイル\base\components\utilities\pointLight</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\scenes\GameDemoScene.h">
-      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
-    </ClInclude>
     <ClInclude Include="externals\imgui\ImGuizmo.h">
       <Filter>externals\imgui</Filter>
     </ClInclude>
@@ -813,6 +831,30 @@
     </ClInclude>
     <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h">
       <Filter>ヘッダー ファイル\base\components\shaderCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\boss\Boss.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\player\Player.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\explosion\explosion.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\ground\Ground.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\DebugScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\GameOverScene.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
