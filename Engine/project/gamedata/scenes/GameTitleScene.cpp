@@ -94,6 +94,40 @@ void GameTitleScene::Initialize() {
 	stage_[1]->SetDirectionalLightFlag(true, 3);
 	stage_[1]->SetAnimationTime(stageAnimationTimer_);
 
+	//
+	for (int i = 0; i < modelMaxCount_; i++) {
+		model_[i] = std::make_unique <Model>();
+	}
+	model_[0].reset(playerModel_.get());
+	model_[1].reset(Model::CreateModel("project/gamedata/resources/chest", "chest.obj"));
+	model_[2].reset(Model::CreateModel("project/gamedata/resources/chest", "chest.obj"));
+	posterModelData_ = playerModel_->LoadModelFile("project/gamedata/resources/poster", "poster.obj");
+	posterTexture1_ = textureManager_->Load("project/gamedata/resources/poster/poster1.png");
+	model_[3].reset(Model::CreateModel(posterModelData_,posterTexture1_));
+	for (int i = 0; i < modelMaxCount_; i++) {
+		worldTransformModel_[i].Initialize();
+		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
+		model_[i]->SetDirectionalLightFlag(true, 3);
+	}
+	worldTransformModel_[0].translation_ = { -29.0f,1.0f,79.0f };
+	worldTransformModel_[0].rotation_ = { -0.7f,0.0f,-0.25f };
+	worldTransformModel_[0].scale_ = { 5.0f,5.0f,5.0f };
+	modelMaterial_[0] = { 1.0f,1.0f,1.0f,1.0f };
+
+	worldTransformModel_[1].translation_ = { -50.0f,0.0f,41.0f };
+	worldTransformModel_[1].rotation_ = { 0.0f,-1.15f,0.0f };
+	worldTransformModel_[1].scale_ = { 2.0f,2.0f,2.0f };
+	modelMaterial_[1] = { 0.5f,0.25f,0.1f,1.0f };
+
+	worldTransformModel_[2].translation_ = { 30.0f,0.0f,95.0f };
+	worldTransformModel_[2].rotation_ = { 0.0f,0.35f,0.0f };
+	worldTransformModel_[2].scale_ = { 2.0f,2.0f,2.0f };
+	modelMaterial_[2] = { 0.9f,0.6f,0.4f,1.0f };
+
+	worldTransformModel_[3].translation_ = { 69.0f,13.0f,149.0f };
+	worldTransformModel_[3].rotation_ = { 0.0f,-1.65f,0.0f };
+	worldTransformModel_[3].scale_ = { 1.0f,10.0f,9.0f };
+
 	//SkyBox
 	skyBox_ = std::make_unique <CreateSkyBox>();
 	skyBox_->Initialize();
@@ -130,6 +164,11 @@ void GameTitleScene::Update() {
 
 	//SkyBox更新
 	worldTransformSkyBox_.UpdateMatrix();
+
+	//
+	for (int i = 0; i < modelMaxCount_; i++) {
+		worldTransformModel_[i].UpdateMatrix();
+	}
 	
 	//Particle更新
 	particle_->Update();
@@ -183,6 +222,7 @@ void GameTitleScene::Update() {
 			fadeAlphaBG_ = 256;
 			stageAnimationTimer_ = 1.0f;
 			player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
+			debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
 
 			//ゲームシーンへ
 			sceneNo = GAME_SCENE;
@@ -210,13 +250,16 @@ void GameTitleScene::Update() {
 	ImGui::Begin("TitleScene");
 	ImGui::Text("SceneCount : %d", sceneCount_);
 	ImGui::Text("DebugScene:1 key");
+	ImGui::DragFloat3("Translate", worldTransformModel_[3].translation_.num, 0.05f);
+	ImGui::DragFloat3("Rotate", worldTransformModel_[3].rotation_.num, 0.05f);
+	ImGui::DragFloat3("Scale", worldTransformModel_[3].scale_.num, 0.05f);
 	ImGui::End();
 
 #ifdef _DEBUG
 	//DebugSceneへ
-	if (input_->TriggerKey(DIK_1)) {
-		sceneNo = DEBUG_SCENE;
-	}
+	//if (input_->TriggerKey(DIK_1)) {
+	//	sceneNo = DEBUG_SCENE;
+	//}
 #endif //_DEBUG
 
 }
@@ -241,6 +284,11 @@ void GameTitleScene::Draw() {
 	player_->Draw(viewProjection_);
 	stage_[0]->Draw(worldModels_[0], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
 	stage_[1]->Draw(worldModels_[1], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
+	for (int i = 0; i < modelMaxCount_; i++) {
+		model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
+	}
+
+
 #pragma endregion
 
 #pragma region パーティクル描画

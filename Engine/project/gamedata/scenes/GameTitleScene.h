@@ -71,6 +71,14 @@ private:
 	std::unique_ptr<Model> stage_[2];
 	float stageAnimationTimer_ = 1.0f;//アニメーション用のタイマー
 
+	//
+	static const int modelMaxCount_ = 4;
+	std::unique_ptr<Model> model_[modelMaxCount_];
+	WorldTransform worldTransformModel_[modelMaxCount_];
+	Vector4 modelMaterial_[modelMaxCount_];
+	ModelData posterModelData_;
+	uint32_t posterTexture1_;
+
 	//SkyBox
 	std::unique_ptr <CreateSkyBox> skyBox_;
 	WorldTransform worldTransformSkyBox_;

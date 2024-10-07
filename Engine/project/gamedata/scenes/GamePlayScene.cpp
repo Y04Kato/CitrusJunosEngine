@@ -357,6 +357,7 @@ void GamePlayScene::Update() {
 	}
 
 	//カメラの更新
+	debugCamera_->Update();
 	if (isBirdseyeMode_ == false) {//俯瞰モードでなければ
 		followCamera_->Update();
 		viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
@@ -365,8 +366,6 @@ void GamePlayScene::Update() {
 		viewProjection_.TransferMatrix();
 	}
 	else {//俯瞰モードなら
-		debugCamera_->Update();
-
 		viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
 		viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 		viewProjection_.UpdateMatrix();
