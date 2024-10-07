@@ -11,26 +11,24 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
-	void SetWorldTransform(const WorldTransform& worldTransform) { worldTransformBase_ = worldTransform; }
+	void SetWorldTransformBase(const WorldTransform& worldTransform) { worldTransformBase_ = worldTransform; }
+	void SetWorldTransformFloor(const WorldTransform& worldTransform) { worldTransformFloor_ = worldTransform; }
 
 	void ExplosionFlagTrue();
 
-	static const int Max = 10;
 private:
-	Input* input_;
-	Model* model_[Max];
-	EulerTransform transform_[Max];
-	WorldTransform worldTransformBase_;
-	WorldTransform worldTransform_[Max];
-	Vector4 modelMaterial_;
+    Input* input_;
+    Model* model_;
+    std::vector<Model*> models_;//破片を動的に追加
+    std::vector<WorldTransform> worldTransforms_;//各破片のWorldTransform
+    std::vector <Vector3> velocities_;
 
-	bool startFlag = false;
-	bool testFlag = true;
-	bool drawFlag = false;
-	float time_ = 0.0f;
-	float bounceSpeed_ = 0.0f;
-	float acceleration_ = -0.1f;
+    WorldTransform worldTransformBase_;//破壊発生地点のWorldTransform
+    WorldTransform worldTransformFloor_;//地面のWorldTransform
+    Vector4 modelMaterial_;
 
-	Audio* audio_;
-	SoundData soundData1_;
+    float acceleration_ = -0.1f;
+
+    Audio* audio_;
+    SoundData soundData1_;
 };

@@ -1,5 +1,4 @@
 #include "GamePlayScene.h"
-#include "components/utilities/globalVariables/GlobalVariables.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -169,14 +168,7 @@ void GamePlayScene::Initialize() {
 	explosion_->Initialize();
 	explosionTimer_ = 10;
 	isExplosion_ = false;
-
-	//
-	GlobalVariables* globalVariables{};
-	globalVariables = GlobalVariables::GetInstance();
-
-	const char* groupName = "GamePlayScene";
-	GlobalVariables::GetInstance()->CreateGroup(groupName);
-	globalVariables->AddItem(groupName, "Test", 90);
+	explosion_->SetWorldTransformFloor(ground_->GetWorldTransform());
 
 	srand((unsigned int)time(NULL));
 
@@ -259,9 +251,6 @@ void GamePlayScene::Update() {
 			sceneNo = OVER_SCENE;
 		}
 	}
-
-	//Jsonデータ読み込み
-	ApplyGlobalVariables();
 
 	//PostEffect更新
 	postEffect_->SetMaskData(maskData_);
@@ -479,11 +468,6 @@ void GamePlayScene::Finalize() {
 	editors_->Finalize();
 }
 
-void GamePlayScene::ApplyGlobalVariables() {
-	//GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	//const char* groupName = "GamePlayScene";
-}
-
 void GamePlayScene::GameStartProcessing() {
 	//Player初期化
 	player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
@@ -628,7 +612,6 @@ void GamePlayScene::CollisionConclusion() {
 
 				collisionParticle_->SetTranslate(MidPoint(enemy1->GetWorldTransform().translation_, enemy2->GetWorldTransform().translation_));
 				collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-				audio_->SoundPlayWave(soundData2_, 0.1f, false);
 			}
 		}
 	}
@@ -681,7 +664,7 @@ void GamePlayScene::CollisionConclusion() {
 
 					editors_->Hitobj(obj);
 					if (obj.durability <= 1) {
-						explosion_->SetWorldTransform(obj.world);
+						explosion_->SetWorldTransformBase(obj.world);
 						isExplosion_ = true;
 						explosion_->ExplosionFlagTrue();
 						explosionTimer_ = 10;
@@ -689,7 +672,6 @@ void GamePlayScene::CollisionConclusion() {
 
 					collisionParticle_->SetTranslate(closestPoint);
 					collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-					audio_->SoundPlayWave(soundData2_, 0.1f, false);
 				}
 			}
 		}
@@ -746,7 +728,7 @@ void GamePlayScene::CollisionConclusion() {
 
 						editors_->Hitobj(obj);
 						if (obj.durability == 0) {
-							explosion_->SetWorldTransform(obj.world);
+							explosion_->SetWorldTransformBase(obj.world);
 							isExplosion_ = true;
 							explosion_->ExplosionFlagTrue();
 							explosionTimer_ = 10;
@@ -754,7 +736,6 @@ void GamePlayScene::CollisionConclusion() {
 
 						collisionParticle_->SetTranslate(closestPoint);
 						collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
-						audio_->SoundPlayWave(soundData2_, 0.1f, false);
 					}
 				}
 			}

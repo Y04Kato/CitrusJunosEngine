@@ -32,8 +32,6 @@ public:
 	void DrawPostEffect() override;
 	void Finalize() override;
 
-	void ApplyGlobalVariables();
-
 	//ゲーム開始時の処理
 	void GameStartProcessing();
 
