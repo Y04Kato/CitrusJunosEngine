@@ -55,6 +55,10 @@ void GameTitleScene::Initialize() {
 	sprite_[4]->SetTextureInitialSize();
 	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
 
+	//シーン遷移
+	transition_ = Transition::GetInstance();
+	transition_->Initialize();
+
 	//プレイヤーの初期化
 	player_ = std::make_unique<Player>();
 	playerModel_.reset(Model::CreateModel("project/gamedata/resources/player", "player.obj"));
@@ -158,6 +162,9 @@ void GameTitleScene::Update() {
 		audio_->SoundPlayWave(soundData1_, 0.5f, false);
 	}
 
+	//
+	transition_->Update();
+
 	//Playerの更新
 	player_->UpdateView();
 	player_->SetViewProjection(&viewProjection_);
@@ -210,7 +217,7 @@ void GameTitleScene::Update() {
 		player_->SetVelocity({ 0.0f,0.0f,0.0f });
 	}
 	if (sceneCount_ == 2) {//ゲームスタート
-		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,20.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
+		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,50.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
 		player_->SetVelocity({ 0.0f,0.0f,2.0f });
 		
 		//フェード開始
@@ -318,6 +325,9 @@ void GameTitleScene::DrawUI() {
 		}
 	}
 	sprite_[4]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlphaBG_ / 256.0f });
+
+	//
+	transition_->Draw();
 
 #pragma endregion
 }

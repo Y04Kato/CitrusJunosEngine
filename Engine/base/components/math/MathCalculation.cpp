@@ -474,6 +474,21 @@ Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframe, float
 
 #pragma endregion
 
+#pragma region Vector4
+Vector4 MultiplyMatrixVector(const Matrix4x4& matrix, const Vector4& vector) {
+    Vector4 result;
+
+    //行列の各行とベクトルを掛け合わせる
+    result.num[0] = matrix.m[0][0] * vector.num[0] + matrix.m[0][1] * vector.num[1] + matrix.m[0][2] * vector.num[2] + matrix.m[0][3] * vector.num[3];
+    result.num[1] = matrix.m[1][0] * vector.num[0] + matrix.m[1][1] * vector.num[1] + matrix.m[1][2] * vector.num[2] + matrix.m[1][3] * vector.num[3];
+    result.num[2] = matrix.m[2][0] * vector.num[0] + matrix.m[2][1] * vector.num[1] + matrix.m[2][2] * vector.num[2] + matrix.m[2][3] * vector.num[3];
+    result.num[3] = matrix.m[3][0] * vector.num[0] + matrix.m[3][1] * vector.num[1] + matrix.m[3][2] * vector.num[2] + matrix.m[3][3] * vector.num[3];
+
+    return result;
+}
+
+#pragma endregion
+
 #pragma region Matrix4x4
 Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2) { return Add(m1, m2); }
 Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2) { return Subtruct(m1, m2); }

@@ -16,6 +16,7 @@
 #include "components/utilities/collisionManager/CollisionConfig.h"
 
 #include "baseCharacter/player/Player.h"
+#include "transition/transition.h"
 
 class GameTitleScene :public Iscene {
 public:
@@ -32,6 +33,10 @@ private:
 	Input* input_ = nullptr;
 
 	TextureManager* textureManager_;
+
+	//Audio
+	Audio* audio_;
+	SoundData soundData1_;
 
 	//Sprite
 	std::unique_ptr <CreateSprite> sprite_[5];
@@ -53,9 +58,8 @@ private:
 	//シーン内の演出遷移用カウント
 	int sceneCount_ = 0;
 
-	//Audio
-	Audio* audio_;
-	SoundData soundData1_;
+	//シーン遷移
+	Transition* transition_;
 
 	//ViewProjection
 	ViewProjection viewProjection_;

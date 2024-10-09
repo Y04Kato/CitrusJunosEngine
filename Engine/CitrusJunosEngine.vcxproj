@@ -219,6 +219,7 @@
     <ClCompile Include="base\components\manager\SceneManager\SceneManager.cpp" />
     <ClCompile Include="base\components\utilities\collisionManager\CollisionManager.cpp" />
     <ClCompile Include="base\components\utilities\globalVariables\GlobalVariables.cpp" />
+    <ClCompile Include="project\gamedata\transition\transition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\BoxFilter.PS.hlsl">
@@ -500,6 +501,7 @@
     <ClInclude Include="base\components\utilities\collisionManager\CollisionManager.h" />
     <ClInclude Include="base\components\utilities\globalVariables\GlobalVariables.h" />
     <ClInclude Include="project\gamedata\resources\resource.h" />
+    <ClInclude Include="project\gamedata\transition\transition.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

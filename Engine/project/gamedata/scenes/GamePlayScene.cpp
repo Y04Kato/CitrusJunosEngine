@@ -166,8 +166,6 @@ void GamePlayScene::Initialize() {
 	//Explosion
 	explosion_ = new Explosion();
 	explosion_->Initialize();
-	explosionTimer_ = 10;
-	isExplosion_ = false;
 	explosion_->SetWorldTransformFloor(ground_->GetWorldTransform());
 
 	srand((unsigned int)time(NULL));
@@ -313,14 +311,20 @@ void GamePlayScene::Update() {
 	explosion_->Update();
 
 	if (isExplosion_ == true) {
-		explosionTimer_--;
-		debugCamera_->ShakeCamera(10,5);
+		explosionTimer_++;
+		if (isBirdseyeMode_ == false) {
+			followCamera_->ShakeCamera(10, 5);
+		}
+		else {
+			debugCamera_->ShakeCamera(10, 5);
+		}
 	}
 
-	if (explosionTimer_ <= 0 && isExplosion_ == true) {
+	if (explosionTimer_ >= explosionMaxTimer_ && isExplosion_ == true) {
 		isExplosion_ = false;
+		explosionTimer_ = 0;
 		if (isBirdseyeMode_ == false) {
-			debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });
+			debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });	
 		}
 		else {
 			debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);

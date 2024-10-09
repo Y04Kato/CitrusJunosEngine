@@ -126,6 +126,11 @@ Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframe, float
 
 #pragma endregion
 
+#pragma region Vector4
+Vector4 MultiplyMatrixVector(const Matrix4x4& matrix, const Vector4& vector);
+
+#pragma endregion
+
 #pragma region Matrix4x4
 //演算子オーバーロード
 Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2);

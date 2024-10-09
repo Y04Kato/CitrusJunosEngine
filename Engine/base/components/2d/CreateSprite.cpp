@@ -188,3 +188,37 @@ void CreateSprite::SetTextureIndex(uint32_t textureIndex) {
 	index_ = textureIndex;
 	AdjustTextureSize();
 }
+
+Vector2 CreateSprite::GetWorldPositionFromPoint(const EulerTransform& transform, Vector2 point) {
+	// Spriteのローカル座標における指定ポイントの座標を計算
+	float left = (0.0f - anchor_.num[0]) * size_.num[0];
+	float right = (1.0f - anchor_.num[0]) * size_.num[0];
+	float top = (0.0f - anchor_.num[1]) * size_.num[1];
+	float bottom = (1.0f - anchor_.num[1]) * size_.num[1];
+
+	if (isFlipX_) {
+		left = -left;
+		right = -right;
+	}
+	if (isFlipY_) {
+		top = -top;
+		bottom = -bottom;
+	}
+
+	// ローカル座標系でのポイントの位置
+	Vector4 localPosition = {
+		left + point.num[0] * (right - left),   // X座標
+		top + point.num[1] * (bottom - top),    // Y座標
+		0.0f,                                   // Z座標は0
+		1.0f                                    // W (座標変換のためのホモジニアス座標)
+	};
+
+	// アフィン変換行列を生成 (スケール、回転、平行移動)
+	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+
+	// ワールド座標に変換
+	Vector4 worldPosition = MultiplyMatrixVector(worldMatrix, localPosition);
+
+	// Vector4 -> Vector2 (X, Y座標のみ使用)
+	return { worldPosition.num[0], worldPosition.num[1] };
+}

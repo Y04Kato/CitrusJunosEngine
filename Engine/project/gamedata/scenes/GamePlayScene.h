@@ -159,6 +159,7 @@ private:
 
 	//Explosion
 	Explosion* explosion_;
-	float explosionTimer_;
-	bool isExplosion_;
+	const int explosionMaxTimer_ = 30;
+	int explosionTimer_ = 0;
+	bool isExplosion_ = false;
 };
