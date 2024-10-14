@@ -113,11 +113,6 @@ void GamePlayScene::Initialize() {
 	sprite_[3]->SetTextureInitialSize();
 	sprite_[3]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[4] = std::make_unique <CreateSprite>();
-	sprite_[4]->Initialize(Vector2{ 100.0f,100.0f }, background_);
-	sprite_[4]->SetTextureInitialSize();
-	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
-
 	//Playerパーティクルの初期化
 	playerEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
 	playerEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
@@ -170,6 +165,9 @@ void GamePlayScene::Initialize() {
 
 	srand((unsigned int)time(NULL));
 
+	//シーン遷移
+	transition_ = Transition::GetInstance();
+
 	//ライト
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
@@ -185,33 +183,26 @@ void GamePlayScene::Update() {
 	}
 
 	//敵を全員倒した時
-	if (enemyAliveCount_ == 0 && isfadeIn_ == false) {
+	if (enemyAliveCount_ == 0) {
+		if (isGameclear_ == false) {
+			transition_->SceneEnd();
+		}
 		isGameclear_ = true;
-		isfadeIn_ = true;
 	}
 
 	//プレイヤーがゲームオーバーになった時
-	if (player_->isGameover() && isfadeIn_ == false) {
-		isGameover_ = true;
-		isfadeIn_ = true;
-	}
-
-	//フェード用
-	if (isfadeIn_ == false) {
-		fadeAlphaBG_ -= 4;
-		if (fadeAlphaBG_ <= 0) {
-			fadeAlphaBG_ = 0;
+	if (player_->isGameover()) {
+		if (isGameover_ == false) {
+			transition_->SceneEnd();
 		}
+		isGameover_ = true;
 	}
-	else if (isfadeIn_ == true && isGameclear_ == true) {//ゲームクリア時
-		//フェード開始
-		fadeAlphaBG_ += 4;
 
-		//フェード終わりにゲームクリア処理
-		if (fadeAlphaBG_ >= 256) {
+	if (isGameclear_ == true) {//ゲームクリア時
+		//遷移終わりにゲームクリア処理
+		if (transition_->GetIsSceneEnd_() == false) {
 			//各種初期化処理
 			isGameStart_ = true;
-			isfadeIn_ = false;
 			isGameclear_ = false;
 			directionalLight_.intensity = 1.0f;
 			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
@@ -219,13 +210,10 @@ void GamePlayScene::Update() {
 			sceneNo = CLEAR_SCENE;
 		}
 	}
-	else if (isfadeIn_ == true && isGameover_ == true) {//ゲームオーバー時
-		//フェードと閾値減算開始
-		fadeAlphaBG_ += 4;
+	else if (isGameover_ == true) {//ゲームオーバー時
 		maskData_.maskThreshold -= 0.02f;
-
-		//フェード終わりにゲームオーバー処理
-		if (fadeAlphaBG_ >= 256) {
+		//遷移終わりにゲームオーバー処理
+		if (transition_->GetIsSceneEnd_() == false) {
 			//生き残っている敵を全て削除
 			for (Enemy* enemy : enemys_) {
 				enemy->SetisDead();
@@ -241,7 +229,6 @@ void GamePlayScene::Update() {
 
 			//各種初期化処理
 			isGameStart_ = true;
-			isfadeIn_ = false;
 			isGameover_ = false;
 			directionalLight_.intensity = 1.0f;
 			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
@@ -309,6 +296,9 @@ void GamePlayScene::Update() {
 
 	//Explosion更新
 	explosion_->Update();
+
+	//
+	transition_->Update();
 
 	if (isExplosion_ == true) {
 		explosionTimer_++;
@@ -449,7 +439,8 @@ void GamePlayScene::DrawUI() {
 		sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 	}
 
-	sprite_[4]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlphaBG_ / 256.0f });
+	//
+	transition_->Draw();
 
 #pragma endregion
 }
@@ -501,6 +492,9 @@ void GamePlayScene::GameStartProcessing() {
 		Vector3 pos = FindValidPosition();
 		SetEnemy(pos);
 	}
+
+	//シーン遷移
+	transition_->SceneStart();
 
 	//開始時フラグを無効化
 	isGameStart_ = false;

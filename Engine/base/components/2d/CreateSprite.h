@@ -39,7 +39,7 @@ public:
 	void SetTextureIndex(uint32_t textureIndex);
 
 	//指定したポイントのワールド座標を返す
-	Vector2 GetWorldPositionFromPoint(const EulerTransform& transform, Vector2 point);
+	Vector2 GetLocalPosition(const Vector2& localPoint, const EulerTransform& transform);
 
 	Vector2* GetSize() { return &size_; }
 	Vector2* GetTextureLeftTop() { return &textureLeftTop_; }

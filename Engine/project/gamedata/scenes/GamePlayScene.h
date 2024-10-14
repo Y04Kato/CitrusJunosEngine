@@ -22,6 +22,7 @@
 #include "baseCharacter/player/Player.h"
 #include "baseCharacter/enemy/Enemy.h"
 #include "explosion/explosion.h"
+#include "transition/transition.h"
 
 class GamePlayScene :public Iscene {
 public:
@@ -117,7 +118,7 @@ private:
 	const int collisionParticleOccursNum_ = 10;
 
 	//Sprite
-	std::unique_ptr <CreateSprite> sprite_[5];
+	std::unique_ptr <CreateSprite> sprite_[4];
 	EulerTransform spriteTransform_;
 	EulerTransform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
@@ -128,10 +129,6 @@ private:
 	uint32_t move2_;
 	uint32_t move3_;
 	uint32_t skyboxTex_;
-
-	//Fade
-	float fadeAlphaBG_ = 256.0f;
-	bool isfadeIn_ = false;
 
 	//Other
 	bool isGameStart_ = true;//ゲームスタート時の処理
@@ -162,4 +159,7 @@ private:
 	const int explosionMaxTimer_ = 30;
 	int explosionTimer_ = 0;
 	bool isExplosion_ = false;
+
+	//シーン遷移
+	Transition* transition_;
 };

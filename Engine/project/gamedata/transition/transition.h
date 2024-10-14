@@ -17,6 +17,9 @@ public:
 	//シーン終わり用
 	void SceneEnd();
 
+	bool GetIsSceneStart_() { return isSceneStart_; }
+	bool GetIsSceneEnd_() { return isSceneEnd_; }
+
 	Transition(const Transition& obj) = delete;
 	Transition& operator=(const Transition& obj) = delete;
 private:
@@ -45,4 +48,10 @@ private:
 
 	EulerTransform spriteUVTransform_;
 	EulerTransform allSpriteTransform_;//全てのspriteを同時に動かす用
+
+	//シーン開始/終了フラグ
+	bool isSceneStart_ = false;
+	bool isSceneEnd_ = false;
+
+	float transitionSpeed_ = 20.0f;
 };

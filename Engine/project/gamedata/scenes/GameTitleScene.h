@@ -27,6 +27,9 @@ public:
 	void DrawPostEffect() override;
 	void Finalize() override;
 
+	//ゲーム開始時の処理
+	void GameStartProcessing();
+
 private:
 	CitrusJunosEngine* CJEngine_;
 
@@ -39,7 +42,7 @@ private:
 	SoundData soundData1_;
 
 	//Sprite
-	std::unique_ptr <CreateSprite> sprite_[5];
+	std::unique_ptr <CreateSprite> sprite_[4];
 	EulerTransform spriteTransform_;
 	EulerTransform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
@@ -53,7 +56,6 @@ private:
 	//各種フェード用
 	bool changeAlpha_ = false;//アルファ加算か減算か
 	float spriteAlpha_ = 256.0f;//UI用フェードアルファ
-	float fadeAlphaBG_ = 0.0f;//BG用フェードアルファ
 
 	//シーン内の演出遷移用カウント
 	int sceneCount_ = 0;
@@ -97,6 +99,9 @@ private:
 	Emitter particleEmitter_{};
 	AccelerationField accelerationField;
 	uint32_t particleResourceNum_;
+
+	//Other
+	bool isGameStart_ = false;//ゲームスタート時の処理
 
 	//ライト
 	DirectionalLights* directionalLights_;

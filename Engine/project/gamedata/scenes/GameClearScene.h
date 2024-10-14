@@ -6,6 +6,8 @@
 #include "components/2d/CreateSprite.h"
 #include "components/audio/Audio.h"
 
+#include "transition/transition.h"
+
 class GameClearScene :public Iscene {
 public:
 	void Initialize() override;
@@ -15,6 +17,9 @@ public:
 	void DrawPostEffect() override;
 	void Finalize() override;
 
+	//ゲーム開始時の処理
+	void GameStartProcessing();
+
 private:
 	CitrusJunosEngine* CJEngine_;
 
@@ -22,13 +27,12 @@ private:
 
 	TextureManager* textureManager_;
 
-	std::unique_ptr <CreateSprite> sprite_[4];
+	std::unique_ptr <CreateSprite> sprite_[3];
 	EulerTransform spriteTransform_;
 	EulerTransform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
 
 	float spriteAlpha_ = 256.0f;
-	float fadeAlphaBG_ = 256.0f;
 
 	uint32_t pageAll_;
 	uint32_t start_;
@@ -40,4 +44,10 @@ private:
 
 	Audio* audio_;
 	SoundData soundData1_;
+
+	//シーン遷移
+	Transition* transition_;
+
+	//Other
+	bool isGameStart_ = true;//ゲームスタート時の処理
 };

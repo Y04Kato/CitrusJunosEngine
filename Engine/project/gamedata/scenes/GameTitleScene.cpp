@@ -50,11 +50,6 @@ void GameTitleScene::Initialize() {
 	sprite_[3]->SetTextureInitialSize();
 	sprite_[3]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[4] = std::make_unique <CreateSprite>();
-	sprite_[4]->Initialize(Vector2{ 100.0f,100.0f }, pageAll_);
-	sprite_[4]->SetTextureInitialSize();
-	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
-
 	//シーン遷移
 	transition_ = Transition::GetInstance();
 	transition_->Initialize();
@@ -156,10 +151,18 @@ void GameTitleScene::Update() {
 	XINPUT_STATE joyState;
 	Input::GetInstance()->GetJoystickState(0, joyState);
 
+	//ステージ初期設定
+	if (isGameStart_ == true) {
+		GameStartProcessing();
+	}
+
 	//SPACE or Aボタンで次のページへ
 	if (input_->TriggerKey(DIK_SPACE) && sceneCount_ < 2 || input_->TriggerAButton(joyState) && sceneCount_ < 2) {
 		sceneCount_++;
 		audio_->SoundPlayWave(soundData1_, 0.5f, false);
+		if (sceneCount_ == 2) {
+			transition_->SceneEnd();
+		}
 	}
 
 	//
@@ -205,12 +208,7 @@ void GameTitleScene::Update() {
 	if (sceneCount_ == 0) {//タイトル
 		debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
 		player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
-		
-		//フェード明け
-		fadeAlphaBG_ -= 4;
-		if (fadeAlphaBG_ <= 0) {
-			fadeAlphaBG_ = 0;
-		}
+
 	}
 	if (sceneCount_ == 1) {//ルール説明
 		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,-29.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
@@ -220,14 +218,12 @@ void GameTitleScene::Update() {
 		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,50.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
 		player_->SetVelocity({ 0.0f,0.0f,2.0f });
 		
-		//フェード開始
-		fadeAlphaBG_ += 4;
-		//フェード終わりにゲームシーンへ
-		if (fadeAlphaBG_ >= 256) {
+		//トランジション終わりにゲームシーンへ
+		if (transition_->GetIsSceneEnd_() == false) {
 			//各種初期化
 			sceneCount_ = 0;
-			fadeAlphaBG_ = 256;
 			stageAnimationTimer_ = 1.0f;
+			isGameStart_ = true;
 			player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
 			debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
 
@@ -256,18 +252,19 @@ void GameTitleScene::Update() {
 	//
 	ImGui::Begin("TitleScene");
 	ImGui::Text("SceneCount : %d", sceneCount_);
-	ImGui::Text("DebugScene:1 key");
+	if (ImGui::Button("DebugScene")) {
+		sceneNo = DEBUG_SCENE;
+	}
+	if (ImGui::Button("SceneStart")) {
+		transition_->SceneStart();
+	}
+	if (ImGui::Button("SceneEnd")) {
+		transition_->SceneEnd();
+	}
 	ImGui::DragFloat3("Translate", worldTransformModel_[3].translation_.num, 0.05f);
 	ImGui::DragFloat3("Rotate", worldTransformModel_[3].rotation_.num, 0.05f);
 	ImGui::DragFloat3("Scale", worldTransformModel_[3].scale_.num, 0.05f);
 	ImGui::End();
-
-#ifdef _DEBUG
-	//DebugSceneへ
-	//if (input_->TriggerKey(DIK_1)) {
-	//	sceneNo = DEBUG_SCENE;
-	//}
-#endif //_DEBUG
 
 }
 
@@ -324,7 +321,6 @@ void GameTitleScene::DrawUI() {
 			sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 		}
 	}
-	sprite_[4]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 0.0f,0.0f,0.0f,fadeAlphaBG_ / 256.0f });
 
 	//
 	transition_->Draw();
@@ -346,4 +342,10 @@ void GameTitleScene::DrawPostEffect() {
 
 void GameTitleScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
+}
+
+void GameTitleScene::GameStartProcessing() {
+	transition_->SceneStart();
+
+	isGameStart_ = false;
 }

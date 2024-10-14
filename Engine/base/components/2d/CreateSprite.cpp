@@ -189,36 +189,46 @@ void CreateSprite::SetTextureIndex(uint32_t textureIndex) {
 	AdjustTextureSize();
 }
 
-Vector2 CreateSprite::GetWorldPositionFromPoint(const EulerTransform& transform, Vector2 point) {
-	// Spriteのローカル座標における指定ポイントの座標を計算
+Vector2 CreateSprite::GetLocalPosition(const Vector2& localPoint, const EulerTransform& transform) {
+	// スプライトのアンカーを基準に、ローカル座標の範囲を計算
 	float left = (0.0f - anchor_.num[0]) * size_.num[0];
 	float right = (1.0f - anchor_.num[0]) * size_.num[0];
 	float top = (0.0f - anchor_.num[1]) * size_.num[1];
 	float bottom = (1.0f - anchor_.num[1]) * size_.num[1];
 
+	// X軸とY軸の反転を考慮
 	if (isFlipX_) {
-		left = -left;
-		right = -right;
+		std::swap(left, right);
 	}
 	if (isFlipY_) {
-		top = -top;
-		bottom = -bottom;
+		std::swap(top, bottom);
 	}
 
-	// ローカル座標系でのポイントの位置
-	Vector4 localPosition = {
-		left + point.num[0] * (right - left),   // X座標
-		top + point.num[1] * (bottom - top),    // Y座標
-		0.0f,                                   // Z座標は0
-		1.0f                                    // W (座標変換のためのホモジニアス座標)
-	};
+	// 指定されたローカル座標に基づいて座標を計算
+	float x = left + (right - left) * localPoint.num[0];
+	float y = top + (bottom - top) * localPoint.num[1];
 
-	// アフィン変換行列を生成 (スケール、回転、平行移動)
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	// ローカル座標をベクトルに変換
+	Vector3 localPos = { x, y, 0.0f };
 
-	// ワールド座標に変換
-	Vector4 worldPosition = MultiplyMatrixVector(worldMatrix, localPosition);
+	// スケールを適用
+	localPos.num[0] *= transform.scale.num[0];
+	localPos.num[1] *= transform.scale.num[1];
 
-	// Vector4 -> Vector2 (X, Y座標のみ使用)
-	return { worldPosition.num[0], worldPosition.num[1] };
+	// Z軸回転を適用
+	float rotationZ = transform.rotate.num[2];
+	float cosTheta = cosf(rotationZ);
+	float sinTheta = sinf(rotationZ);
+	float rotatedX = localPos.num[0] * cosTheta - localPos.num[1] * sinTheta;
+	float rotatedY = localPos.num[0] * sinTheta + localPos.num[1] * cosTheta;
+	localPos.num[0] = rotatedX;
+	localPos.num[1] = rotatedY;
+
+	// 平行移動を適用
+	localPos.num[0] += transform.translate.num[0];
+	localPos.num[1] += transform.translate.num[1];
+
+	// 2D座標として返す
+	return { localPos.num[0], localPos.num[1] };
 }
+
