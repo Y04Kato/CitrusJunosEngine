@@ -21,9 +21,13 @@ void Player::Update() {
 	worldTransform_.TransferMatrix();
 	worldTransform2_.TransferMatrix();
 
+	//移動フラグがTrueなら移動操作を行えるように
 	if (isMove_ == true) {
 		Move();
 	}
+
+	//移動減衰
+	MoveAttenuation();
 
 	structSphere_.center = worldTransform_.GetWorldPos();
 
@@ -159,7 +163,9 @@ void Player::Move() {
 			}
 		}
 	}
+}
 
+void Player::MoveAttenuation() {
 	//加速度減衰処理
 	const float kGravityAcceleration = 0.01f;
 

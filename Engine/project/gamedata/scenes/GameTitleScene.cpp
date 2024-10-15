@@ -163,9 +163,6 @@ void GameTitleScene::Update() {
 	if (input_->TriggerKey(DIK_SPACE) && sceneCount_ < 2 || input_->TriggerAButton(joyState) && sceneCount_ < 2) {
 		sceneCount_++;
 		audio_->SoundPlayWave(soundData1_, 0.5f, false);
-		if (sceneCount_ == 2) {
-			transition_->SceneEnd();
-		}
 	}
 
 	//
@@ -218,9 +215,13 @@ void GameTitleScene::Update() {
 	if (sceneCount_ == 2) {//ゲームスタート
 		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,50.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
 		player_->SetVelocity({ 0.0f,0.0f,2.0f });
+
+		if (player_->GetWorldTransform().translation_.num[2] == 50.0f) {
+			transition_->SceneEnd();
+		}
 		
 		//トランジション終わりにゲームシーンへ
-		if (transition_->GetIsSceneEnd_() == false) {
+		if (transition_->GetIsSceneEnd_() == false && player_->GetWorldTransform().translation_.num[2] >= 50.0f) {
 			//各種初期化
 			sceneCount_ = 0;
 			stageAnimationTimer_ = 1.0f;

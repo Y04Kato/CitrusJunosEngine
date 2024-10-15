@@ -49,7 +49,9 @@ void FollowCamera::Update() {
 		}
 	}
 
-	viewprojection_.rotation_ = target_->rotation_;
+	if (target_) {
+		viewprojection_.rotation_ = target_->rotation_;
+	}
 
 	viewprojection_.UpdateViewMatrix();
 	viewprojection_.TransferMatrix();
@@ -63,7 +65,7 @@ void FollowCamera::Reset() {
 	}
 	destinationAngleY_ = viewprojection_.rotation_.num[1];
 
-	Vector3 offset = { 0.0f,2.0f,-10.0f };
+	Vector3 offset = { 0.0f,3.5f,-20.0f };
 
 	Matrix4x4 rotateMatrix = MakeRotateMatrix(viewprojection_.rotation_);
 
@@ -85,17 +87,22 @@ void FollowCamera::ApplyGlobalVariables() {
 }
 
 void FollowCamera::ShakeCamera(int shakePower, int dividePower) {
-	viewprojection_.translation_.num[0] += (rand() % shakePower - shakePower / 2 + rand() / (float)RAND_MAX) / dividePower;
-	viewprojection_.translation_.num[1] += (rand() % shakePower - shakePower / 2 + rand() / (float)RAND_MAX) / dividePower;
-	viewprojection_.translation_.num[2] += (rand() % shakePower - shakePower / 2 + rand() / (float)RAND_MAX) / dividePower;
+	//ランダムなシェイクを加える
+	viewprojection_.translation_.num[0] += (rand() % shakePower - shakePower / 2 + static_cast<float>(rand()) / RAND_MAX) / dividePower;
+	viewprojection_.translation_.num[1] += (rand() % shakePower - shakePower / 2 + static_cast<float>(rand()) / RAND_MAX) / dividePower;
+	viewprojection_.translation_.num[2] += (rand() % shakePower - shakePower / 2 + static_cast<float>(rand()) / RAND_MAX) / dividePower;
 
+	//ビュー行列を更新
 	viewprojection_.UpdateViewMatrix();
 	viewprojection_.TransferMatrix();
 }
 
 void FollowCamera::SetCamera(Vector3 translation, Vector3 rotation) {
+	//カメラの位置と回転を設定
 	viewprojection_.translation_ = translation;
 	viewprojection_.rotation_ = rotation;
 
-	viewprojection_.UpdateMatrix();
+	//ビュー行列を更新
+	viewprojection_.UpdateViewMatrix();
+	viewprojection_.TransferMatrix();
 }

@@ -12,13 +12,20 @@ class Player : public BaseCharacter {
 public:
 	void Initialize(Model* model) override;
 
+	//通常のUpdate
 	void Update() override;
 
+	//ユーザー操作や判定のないプレビューだけのUpdate
 	void UpdateView();
 
+	//描画
 	void Draw(const ViewProjection& viewProjection) override;
 
+	//移動操作
 	void Move();
+
+	//移動速度減衰
+	void MoveAttenuation();
 
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 	const WorldTransform& GetWorldTransformPlayer() { return worldTransform2_; }

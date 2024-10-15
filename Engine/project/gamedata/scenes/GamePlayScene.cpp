@@ -192,7 +192,7 @@ void GamePlayScene::Update() {
 
 	//プレイヤーがゲームオーバーになった時
 	if (player_->isGameover()) {
-		if (isGameover_ == false) {
+		if (maskData_.maskThreshold <= 0.1f && maskData_.maskThreshold >= 0.05f) {
 			transition_->SceneEnd();
 		}
 		isGameover_ = true;
@@ -213,7 +213,7 @@ void GamePlayScene::Update() {
 	else if (isGameover_ == true) {//ゲームオーバー時
 		maskData_.maskThreshold -= 0.02f;
 		//遷移終わりにゲームオーバー処理
-		if (transition_->GetIsSceneEnd_() == false) {
+		if (transition_->GetIsSceneEnd_() == false && maskData_.maskThreshold <= 0.0f) {
 			//生き残っている敵を全て削除
 			for (Enemy* enemy : enemys_) {
 				enemy->SetisDead();
@@ -353,8 +353,8 @@ void GamePlayScene::Update() {
 
 	//カメラの更新
 	debugCamera_->Update();
+	followCamera_->Update();
 	if (isBirdseyeMode_ == false) {//俯瞰モードでなければ
-		followCamera_->Update();
 		viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
 		viewProjection_.matView = followCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
@@ -479,6 +479,8 @@ void GamePlayScene::GameStartProcessing() {
 
 	//カメラ初期化
 	followCamera_->SetCamera(player_->GetWorldTransform().translation_, player_->GetWorldTransform().rotation_);
+	followCamera_->Update();
+
 	debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
 	debugCamera_->Update();
 	isBirdseyeMode_ = false;
