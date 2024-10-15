@@ -298,7 +298,7 @@ void GamePlayScene::Update() {
 	//Explosion更新
 	explosion_->Update();
 
-	//
+	//Transition更新
 	transition_->Update();
 
 	if (isExplosion_ == true) {
