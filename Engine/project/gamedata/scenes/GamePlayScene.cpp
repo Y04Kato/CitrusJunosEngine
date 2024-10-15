@@ -666,7 +666,7 @@ void GamePlayScene::CollisionConclusion() {
 					if (obj.durability <= 1) {
 						explosion_->SetWorldTransformBase(obj.world);
 						isExplosion_ = true;
-						explosion_->ExplosionFlagTrue();
+						explosion_->ExplosionFlagTrue(obj.material);
 						explosionTimer_ = 10;
 					}
 
@@ -730,7 +730,7 @@ void GamePlayScene::CollisionConclusion() {
 						if (obj.durability == 0) {
 							explosion_->SetWorldTransformBase(obj.world);
 							isExplosion_ = true;
-							explosion_->ExplosionFlagTrue();
+							explosion_->ExplosionFlagTrue(obj.material);
 							explosionTimer_ = 10;
 						}
 
