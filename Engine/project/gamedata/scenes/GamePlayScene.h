@@ -39,6 +39,9 @@ public:
 	//当たり判定まとめ
 	void CollisionConclusion();
 
+	//接触時の音量計算
+	void ContactVolume(Vector3 velocity);
+
 	//敵の配置
 	void SetEnemy(Vector3 pos);
 

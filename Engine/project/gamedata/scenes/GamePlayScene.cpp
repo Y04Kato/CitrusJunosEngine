@@ -547,17 +547,8 @@ void GamePlayScene::CollisionConclusion() {
 				enemy->SetWorldTransform(eSphere.center);
 			}
 
-			//接触速度に基づく音量の調整
-			float collisionSpeed = Length(player_->GetVelocity());
-			float maxSpeed = 0.95f;//最大速度の仮定
-			float minVolume = 0.0005f;//最小音量
-			float maxVolume = 0.12f;//最大音量
-
-			//速度に基づく音量の計算 (速度が最大時には maxVolume、速度が0の時には minVolume)
-			float volume = minVolume + (maxVolume - minVolume) * (collisionSpeed / maxSpeed);
-			volume = std::clamp(volume, minVolume, maxVolume);//音量の範囲を制限
-
-			audio_->SoundPlayWave(soundData2_, volume, false);
+			//衝突音を再生
+			ContactVolume(player_->GetVelocity());
 
 			//反発処理
 			std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, player_->GetVelocity(), 1.0f, enemy->GetVelocity(), repulsionCoefficient_, Normalize(player_->GetWorldTransform().GetWorldPos() - enemy->GetWorldTransform().GetWorldPos()));
@@ -579,7 +570,7 @@ void GamePlayScene::CollisionConclusion() {
 			StructSphere eSphere2 = enemy2->GetStructSphere();
 
 			if (IsCollision(eSphere1, eSphere2)) {
-				// 押し戻しの処理
+				//押し戻しの処理
 				Vector3 direction = eSphere2.center - eSphere1.center;
 				float distance = Length(direction);
 				float overlap = eSphere1.radius + eSphere2.radius - distance;
@@ -593,17 +584,8 @@ void GamePlayScene::CollisionConclusion() {
 					enemy2->SetWorldTransform(eSphere2.center);
 				}
 
-				//接触速度に基づく音量の調整
-				float collisionSpeed = Length(enemy1->GetVelocity());
-				float maxSpeed = 0.95f;//最大速度の仮定
-				float minVolume = 0.0005f;//最小音量
-				float maxVolume = 0.12f;//最大音量
-
-				//速度に基づく音量の計算 (速度が最大時には maxVolume、速度が0の時には minVolume)
-				float volume = minVolume + (maxVolume - minVolume) * (collisionSpeed / maxSpeed);
-				volume = std::clamp(volume, minVolume, maxVolume);//音量の範囲を制限
-
-				audio_->SoundPlayWave(soundData2_, volume, false);
+				//衝突音を再生
+				ContactVolume(enemy1->GetVelocity());
 
 				//反発処理
 				std::pair<Vector3, Vector3> pair = ComputeCollisionVelocities(1.0f, enemy1->GetVelocity(), 1.0f, enemy2->GetVelocity(), repulsionCoefficient_, Normalize(enemy1->GetWorldTransform().GetWorldPos() - enemy2->GetWorldTransform().GetWorldPos()));
@@ -646,17 +628,8 @@ void GamePlayScene::CollisionConclusion() {
 						player_->SetWorldTransform(pSphere.center);
 					}
 
-					//接触速度に基づく音量の調整
-					float collisionSpeed = Length(player_->GetVelocity());
-					float maxSpeed = 0.95f;//最大速度の仮定
-					float minVolume = 0.0005f;//最小音量
-					float maxVolume = 0.12f;//最大音量
-
-					//速度に基づく音量の計算 (速度が最大時には maxVolume、速度が0の時には minVolume)
-					float volume = minVolume + (maxVolume - minVolume) * (collisionSpeed / maxSpeed);
-					volume = std::clamp(volume, minVolume, maxVolume);//音量の範囲を制限
-
-					audio_->SoundPlayWave(soundData2_, volume, false);
+					//衝突音を再生
+					ContactVolume(player_->GetVelocity());
 
 					//反発処理
 					Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(pSphere, player_->GetVelocity(), objOBB, repulsionCoefficient_);
@@ -710,17 +683,8 @@ void GamePlayScene::CollisionConclusion() {
 							enemy->SetWorldTransform(eSphere.center);
 						}
 
-						//接触速度に基づく音量の調整
-						float collisionSpeed = Length(enemy->GetVelocity());
-						float maxSpeed = 0.95f;//最大速度の仮定
-						float minVolume = 0.0005f;//最小音量
-						float maxVolume = 0.12f;//最大音量
-
-						//速度に基づく音量の計算 (速度が最大時には maxVolume、速度が0の時には minVolume)
-						float volume = minVolume + (maxVolume - minVolume) * (collisionSpeed / maxSpeed);
-						volume = std::clamp(volume, minVolume, maxVolume);//音量の範囲を制限
-
-						audio_->SoundPlayWave(soundData2_, volume, false);
+						//衝突音を再生
+						ContactVolume(enemy->GetVelocity());
 
 						//反発処理
 						Vector3 velocity = ComputeSphereVelocityAfterCollisionWithOBB(eSphere, enemy->GetVelocity(), objOBB, repulsionCoefficient_);
@@ -741,6 +705,20 @@ void GamePlayScene::CollisionConclusion() {
 			}
 		}
 	}
+}
+
+void GamePlayScene::ContactVolume(Vector3 velocity) {
+	//接触速度に基づく音量の調整
+	float collisionSpeed = Length(velocity);
+	float maxSpeed = 0.95f;//最大速度の仮定
+	float minVolume = 0.0005f;//最小音量
+	float maxVolume = 0.12f;//最大音量
+
+	//速度に基づく音量の計算 (速度が最大時には maxVolume、速度が0の時には minVolume)
+	float volume = minVolume + (maxVolume - minVolume) * (collisionSpeed / maxSpeed);
+	volume = std::clamp(volume, minVolume, maxVolume);//音量の範囲を制限
+
+	audio_->SoundPlayWave(soundData2_, volume, false);
 }
 
 void GamePlayScene::SetEnemy(Vector3 pos) {
