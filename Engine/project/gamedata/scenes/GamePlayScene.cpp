@@ -36,7 +36,7 @@ void GamePlayScene::Initialize() {
 
 	//Enemyモデルの初期化と読み込み
 	enemyModel_.reset(Model::CreateModel("project/gamedata/resources/enemy", "enemy.obj"));
-	enemyModel_->SetDirectionalLightFlag(true, 2);
+	enemyModel_->SetDirectionalLightFlag(true, 3);
 
 	//Skyboxモデルの初期化と読み込み
 	skyboxTex_ = textureManager_->Load("project/gamedata/resources/vz_empty_space_cubemap_ue.dds");
@@ -242,11 +242,12 @@ void GamePlayScene::Update() {
 
 	//プレイヤー更新
 	player_->SetViewProjection(&viewProjection_);
+	player_->Update();
 	if (isEditorMode_ == false && isBirdseyeMode_ == false) {//エディターモード時はPlayerを止める
-		player_->Update();
+		player_->SetIsMove(true);
 	}
 	else if (isBirdseyeMode_ == true) {
-		player_->UpdateView();
+		player_->SetIsMove(false);
 	}
 
 	//旗座標更新
@@ -469,8 +470,8 @@ void GamePlayScene::GameStartProcessing() {
 	player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
 
 	//ライト初期化
-	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.5f };
-	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
+	directionalLight_ = { { 1.0f, 0.8f, 0.6f, 1.0f },{0.0f,-1.0f,0.0f},0.5f };
+	pointLight_ = { {1.0f,0.8f,0.6f,1.0f},{0.0f,0.0f,0.0f},0.5f ,10.0f,7.0f };
 
 	//
 	maskData_.maskThreshold = 1.0f;

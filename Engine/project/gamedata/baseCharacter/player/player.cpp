@@ -21,7 +21,9 @@ void Player::Update() {
 	worldTransform_.TransferMatrix();
 	worldTransform2_.TransferMatrix();
 
-	Move();
+	if (isMove_ == true) {
+		Move();
+	}
 
 	structSphere_.center = worldTransform_.GetWorldPos();
 

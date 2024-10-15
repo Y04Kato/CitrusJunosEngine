@@ -173,7 +173,10 @@ void Editors::SetObject(EulerTransform transform, const std::string& name, const
 	obj.world.rotation_ = transform.rotate;
 	obj.world.scale_ = transform.scale;
 
-	obj.material = { 1.0f,1.0f,1.0f,1.0f };
+	std::mt19937 randomEngine(seedGenerator());
+	std::uniform_real_distribution<float> distColor(0.5f, 1.0f);
+
+	obj.material = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
 
 	obj.name = name;
 

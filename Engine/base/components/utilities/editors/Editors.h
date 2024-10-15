@@ -10,6 +10,7 @@
 #include "ViewProjection.h"
 #include "ImGuiManager.h"
 #include "Model.h"
+#include <random>
 
 #include "components/utilities/globalVariables/GlobalVariables.h"
 
@@ -88,4 +89,7 @@ private:
 
 	//trueでguiに直接数字を打ち込めるようにする
 	bool isDirectInputMode_ = false;
+
+	//Other
+	std::random_device seedGenerator;
 };

@@ -145,6 +145,9 @@ void GameTitleScene::Initialize() {
 	//ライトの初期化
 	directionalLights_ = DirectionalLights::GetInstance();
 	pointLights_ = PointLights::GetInstance();
+
+	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.2f };
+	pointLight_ = { {1.0f,0.8f,0.6f,1.0f},{player_->GetWorldTransform().translation_.num[0],4.6f,player_->GetWorldTransform().translation_.num[2]},0.15f ,1000.0f,0.1f };
 }
 
 void GameTitleScene::Update() {
@@ -185,8 +188,6 @@ void GameTitleScene::Update() {
 	particle_->SetTranslate(player_->GetWorldTransform().translation_);
 
 	//ライト更新
-	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.2f };
-	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{player_->GetWorldTransform().translation_.num[0],4.6f,player_->GetWorldTransform().translation_.num[2]},0.2f ,10.0f,1.0f };
 	directionalLights_->SetTarget(directionalLight_);
 	pointLights_->SetTarget(pointLight_);
 
@@ -261,9 +262,11 @@ void GameTitleScene::Update() {
 	if (ImGui::Button("SceneEnd")) {
 		transition_->SceneEnd();
 	}
-	ImGui::DragFloat3("Translate", worldTransformModel_[3].translation_.num, 0.05f);
-	ImGui::DragFloat3("Rotate", worldTransformModel_[3].rotation_.num, 0.05f);
-	ImGui::DragFloat3("Scale", worldTransformModel_[3].scale_.num, 0.05f);
+	ImGui::DragFloat3("LightColor", pointLight_.color.num, 1.0f);
+	ImGui::DragFloat3("lightPosition", pointLight_.position.num, 0.1f);
+	ImGui::DragFloat("lightIntensity", &pointLight_.intensity, 0.1f, 0.0f, 1.0f);
+	ImGui::DragFloat("lightRadius", &pointLight_.radius, 0.1f, 0.0f, 10.0f);
+	ImGui::DragFloat("lightDecay", &pointLight_.decay, 0.1f, 0.0f, 10.0f);
 	ImGui::End();
 
 }
@@ -346,6 +349,9 @@ void GameTitleScene::Finalize() {
 
 void GameTitleScene::GameStartProcessing() {
 	transition_->SceneStart();
+
+	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},0.2f };
+	pointLight_ = { {1.0f,0.8f,0.6f,1.0f},{player_->GetWorldTransform().translation_.num[0],4.6f,player_->GetWorldTransform().translation_.num[2]},0.15f ,1000.0f,0.1f };
 
 	isGameStart_ = false;
 }

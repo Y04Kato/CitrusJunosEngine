@@ -42,6 +42,9 @@ public:
 	Vector3 GetVelocity() { return velocity_; }
 	void SetVelocity(const Vector3 velocity);
 
+	bool GetIsMove() { return isMove_; }
+	void SetIsMove(const bool isMove) { isMove_ = isMove; }
+
 	int GetMoveMode() { return moveMode_; }
 
 	bool GetIsMoveFlag() { return moveFlag_; }
@@ -74,4 +77,6 @@ private:
 	const int moveCountMax_ = 60;//次に行動可能になるまでの時間
 	int moveCount_ = 0;//行動入力可能までのタイマー
 	const int keyboardAdditionalInputsTimerMax_ = 10;//キーボード時限定、追加入力受付時間
+
+	bool isMove_ = true;//行動可能フラグ
 };
