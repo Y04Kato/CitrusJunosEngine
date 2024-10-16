@@ -113,12 +113,21 @@ Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 //射影
 Vector3 Project(const Vector3& v, const Vector3 n);
 
+//速度から回転を求める
+Vector3 ComputeRotationFromVelocity(const Vector3& velocity, float rotationMultiplier);
+
 //OBBのorientation[3]を算出
 std::tuple<Vector3, Vector3, Vector3> ComputeRotationMatrix(const Vector3& rotate);
 
 //衝突＆反発
+//2つの速度を持つ物体が衝突した時の反発
 std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector3& velocity1, float mass2, const Vector3& velocity2, float coefficientOfRestitution, const Vector3& normal);
+
+//obbは反発せず、Sphereだけ反発する処理
 Vector3 ComputeSphereVelocityAfterCollisionWithOBB(const StructSphere& sphere, const Vector3& sphereVelocity, const OBB& obb, float restitution);
+
+//Sphereは反発せず、obbだけ反発する処理
+Vector3 ComputeVelocitiesAfterCollisionWithOBB(const StructSphere& sphere, const Vector3& sphereVelocity, float sphereMass, const OBB& obb, const Vector3& obbVelocity, float obbMass, float restitution);
 
 //任意の時刻の値を取得する
 Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time);

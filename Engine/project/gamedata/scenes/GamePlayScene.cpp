@@ -315,7 +315,7 @@ void GamePlayScene::Update() {
 		isExplosion_ = false;
 		explosionTimer_ = 0;
 		if (isBirdseyeMode_ == false) {
-			debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });	
+			debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });
 		}
 		else {
 			debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
@@ -702,6 +702,45 @@ void GamePlayScene::CollisionConclusion() {
 						collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
 					}
 				}
+			}
+		}
+	}
+
+	//プレイヤーと破片の当たり判定
+	for (size_t i = 0; i < explosion_->GetFragments().size(); ++i) {
+		OBB fragmentOBB;
+		WorldTransform fragmentTransform = explosion_->GetFragmentTransform(i);
+		fragmentOBB = CreateOBBFromEulerTransform(EulerTransform(
+			fragmentTransform.scale_, fragmentTransform.rotation_, fragmentTransform.translation_
+		));
+
+		if (IsCollision(fragmentOBB, pSphere)) {
+			//破片の反発処理
+			Vector3 velocity = ComputeVelocitiesAfterCollisionWithOBB(pSphere, player_->GetVelocity(), 1.0f, fragmentOBB, explosion_->GetFragmentVelocity(i), 1.0f, repulsionCoefficient_);
+			velocity.num[1] = 1.0f;//上方向への反発を調整
+			explosion_->SetFragmentVelocity(i, velocity * 0.5f);
+			explosion_->SetAngularVelocitie(i, ComputeRotationFromVelocity(velocity * 0.5, 0.5f));
+		}
+	}
+
+	//エネミーと破片の当たり判定
+	for (Enemy* enemy : enemys_) {
+		StructSphere eSphere;
+		eSphere = enemy->GetStructSphere();
+
+		for (size_t i = 0; i < explosion_->GetFragments().size(); ++i) {
+			OBB fragmentOBB;
+			WorldTransform fragmentTransform = explosion_->GetFragmentTransform(i);
+			fragmentOBB = CreateOBBFromEulerTransform(EulerTransform(
+				fragmentTransform.scale_, fragmentTransform.rotation_, fragmentTransform.translation_
+			));
+
+			if (IsCollision(fragmentOBB, eSphere)) {
+				//破片の反発処理
+				Vector3 velocity = ComputeVelocitiesAfterCollisionWithOBB(eSphere, enemy->GetVelocity(), 1.0f, fragmentOBB, explosion_->GetFragmentVelocity(i), 1.0f, repulsionCoefficient_);
+				velocity.num[1] = 1.0f;//上方向への反発を調整
+				explosion_->SetFragmentVelocity(i, velocity * 0.5f);
+				explosion_->SetAngularVelocitie(i, ComputeRotationFromVelocity(velocity * 0.5, 0.5f));
 			}
 		}
 	}

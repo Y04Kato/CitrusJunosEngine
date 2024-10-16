@@ -16,6 +16,16 @@ public:
 
 	void ExplosionFlagTrue(Vector4 material);
 
+    // 破片にアクセスするためのゲッター
+    const std::vector<WorldTransform>& GetFragments() const { return worldTransforms_; }
+    const WorldTransform& GetFragmentTransform(size_t index) const { return worldTransforms_[index]; }
+    const Vector3& GetFragmentVelocity(size_t index) const { return velocities_[index]; }
+
+    // 破片の位置と速度を設定するセッター
+    void SetFragmentPosition(size_t index, const Vector3& position) { worldTransforms_[index].translation_ = position; }
+    void SetFragmentVelocity(size_t index, const Vector3& velocity) { velocities_[index] = velocity; }
+    void SetAngularVelocitie(size_t index, const Vector3& velocity) { angularVelocities_[index] = velocity; }
+
 private:
     Input* input_;
     Model* model_;

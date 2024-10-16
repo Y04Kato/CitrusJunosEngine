@@ -362,6 +362,24 @@ Vector3 Project(const Vector3& v, const Vector3 n) {
 	return ScalarMultiply(n, dotProduct / ontoLengthSquared);
 }
 
+Vector3 ComputeRotationFromVelocity(const Vector3& velocity, float rotationMultiplier) {
+	//速度がほぼゼロの場合、回転を行わない
+	if (Length(velocity) < 0.0001f) {
+		return Vector3{ 0.0f, 0.0f, 0.0f }; // 回転しないベクトル（0のベクトル）
+	}
+
+	//速度ベクトルを正規化して回転軸を求める
+	Vector3 rotationAxis = Normalize(velocity);
+
+	//速度の大きさに比例した回転角度を計算（ラジアン）
+	float angle = Length(velocity) * rotationMultiplier;
+
+	//回転ベクトルを計算 (回転軸に回転角度を掛ける)
+	Vector3 rotationVector = rotationAxis * angle;
+
+	return rotationVector;
+}
+
 std::tuple<Vector3, Vector3, Vector3> ComputeRotationMatrix(const Vector3& rotate) {
 	Vector3 result[3];
 
@@ -432,6 +450,44 @@ Vector3 ComputeSphereVelocityAfterCollisionWithOBB(const StructSphere& sphere, c
 	return newSphereVelocity;
 }
 
+Vector3 ComputeVelocitiesAfterCollisionWithOBB(const StructSphere& sphere,const Vector3& sphereVelocity, float sphereMass, const OBB& obb, const Vector3& obbVelocity, float obbMass, float restitution) {
+	//最近接点を計算
+	Vector3 closestPoint = obb.center;
+	Vector3 d = sphere.center - obb.center;
+
+	for (int i = 0; i < 3; ++i) {
+		float dist = Dot(d, obb.orientation[i]);
+		dist = std::fmax(-obb.size.num[i], std::fmin(dist, obb.size.num[i]));
+		closestPoint += obb.orientation[i] * dist;
+	}
+
+	//衝突法線を計算
+	Vector3 collisionNormal = Normalize(sphere.center - closestPoint);
+
+	//球とOBBの相対速度を計算
+	Vector3 relativeVelocity = sphereVelocity - obbVelocity;
+
+	//衝突法線方向の速度を分解
+	float velocityAlongNormal = Dot(relativeVelocity, collisionNormal);
+
+	//衝突していない場合は処理を行わない
+	if (velocityAlongNormal > 0) return obbVelocity;
+
+	//運動量保存と反発係数を考慮して反発後の速度を計算
+	float invMassSphere = (sphereMass > 0) ? 1.0f / sphereMass : 0.0f;
+	float invMassOBB = (obbMass > 0) ? 1.0f / obbMass : 0.0f;
+
+	float impulseMagnitude = -(1.0f + restitution) * velocityAlongNormal /
+		(invMassSphere + invMassOBB);
+
+	Vector3 impulse = impulseMagnitude * collisionNormal;
+
+	//衝突後のOBBの速度を計算して返す
+	Vector3 newObbVelocity = obbVelocity - impulse * invMassOBB;
+	return newObbVelocity;
+}
+
+
 Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time) {
 	assert(!keyframe.empty());//キーがない物は返す値がないのでダメ
 	if (keyframe.size() == 1 || time <= keyframe[0].time) {
@@ -476,15 +532,15 @@ Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframe, float
 
 #pragma region Vector4
 Vector4 MultiplyMatrixVector(const Matrix4x4& matrix, const Vector4& vector) {
-    Vector4 result;
+	Vector4 result;
 
-    //行列の各行とベクトルを掛け合わせる
-    result.num[0] = matrix.m[0][0] * vector.num[0] + matrix.m[0][1] * vector.num[1] + matrix.m[0][2] * vector.num[2] + matrix.m[0][3] * vector.num[3];
-    result.num[1] = matrix.m[1][0] * vector.num[0] + matrix.m[1][1] * vector.num[1] + matrix.m[1][2] * vector.num[2] + matrix.m[1][3] * vector.num[3];
-    result.num[2] = matrix.m[2][0] * vector.num[0] + matrix.m[2][1] * vector.num[1] + matrix.m[2][2] * vector.num[2] + matrix.m[2][3] * vector.num[3];
-    result.num[3] = matrix.m[3][0] * vector.num[0] + matrix.m[3][1] * vector.num[1] + matrix.m[3][2] * vector.num[2] + matrix.m[3][3] * vector.num[3];
+	//行列の各行とベクトルを掛け合わせる
+	result.num[0] = matrix.m[0][0] * vector.num[0] + matrix.m[0][1] * vector.num[1] + matrix.m[0][2] * vector.num[2] + matrix.m[0][3] * vector.num[3];
+	result.num[1] = matrix.m[1][0] * vector.num[0] + matrix.m[1][1] * vector.num[1] + matrix.m[1][2] * vector.num[2] + matrix.m[1][3] * vector.num[3];
+	result.num[2] = matrix.m[2][0] * vector.num[0] + matrix.m[2][1] * vector.num[1] + matrix.m[2][2] * vector.num[2] + matrix.m[2][3] * vector.num[3];
+	result.num[3] = matrix.m[3][0] * vector.num[0] + matrix.m[3][1] * vector.num[1] + matrix.m[3][2] * vector.num[2] + matrix.m[3][3] * vector.num[3];
 
-    return result;
+	return result;
 }
 
 #pragma endregion

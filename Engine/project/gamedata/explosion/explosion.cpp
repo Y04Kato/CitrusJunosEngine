@@ -118,9 +118,7 @@ void Explosion::ExplosionFlagTrue(Vector4 material) {
 
         //ランダムな回転速度を設定
         Vector3 initialAngularVelocity;
-        initialAngularVelocity.num[0] = (rand() / (float)RAND_MAX) * 0.1f;
-        initialAngularVelocity.num[1] = (rand() / (float)RAND_MAX) * 0.1f;
-        initialAngularVelocity.num[2] = (rand() / (float)RAND_MAX) * 0.1f;
+        initialAngularVelocity = ComputeRotationFromVelocity(initialVelocity, 0.5f);
         angularVelocities_.push_back(initialAngularVelocity);
 
         //現在の時間を記録
