@@ -691,7 +691,7 @@ void GamePlayScene::CollisionConclusion() {
 						enemy->SetVelocity(velocity);
 
 						editors_->Hitobj(obj);
-						if (obj.durability == 0) {
+						if (obj.durability <= 1) {
 							explosion_->SetWorldTransformBase(obj.world);
 							isExplosion_ = true;
 							explosion_->ExplosionFlagTrue(obj.material);
