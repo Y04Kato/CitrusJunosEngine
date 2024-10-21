@@ -83,10 +83,12 @@ void GamePlayScene::Initialize() {
 	move1_ = textureManager_->Load("project/gamedata/resources/ui/move1.png");
 	move2_ = textureManager_->Load("project/gamedata/resources/ui/move2.png");
 	move3_ = textureManager_->Load("project/gamedata/resources/ui/move3.png");
+	purpose_ = textureManager_->Load("project/gamedata/resources/ui/purpose.png");
 
 	//Spriteの初期化
 	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+	spriteTransformTest_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-1.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
 	SpriteuvTransform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
@@ -112,6 +114,11 @@ void GamePlayScene::Initialize() {
 	sprite_[3]->Initialize(Vector2{ 100.0f,100.0f }, move3_);
 	sprite_[3]->SetTextureInitialSize();
 	sprite_[3]->SetAnchor(Vector2{ 0.5f,0.5f });
+
+	sprite_[4] = std::make_unique <CreateSprite>();
+	sprite_[4]->Initialize(Vector2{ 100.0f,100.0f }, purpose_);
+	sprite_[4]->SetTextureInitialSize();
+	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
 
 	//Playerパーティクルの初期化
 	playerEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
@@ -181,193 +188,149 @@ void GamePlayScene::Update() {
 	if (isGameStart_ == true) {
 		GameStartProcessing();
 	}
-
-	//敵を全員倒した時
-	if (enemyAliveCount_ == 0) {
-		if (isGameclear_ == false) {
-			transition_->SceneEnd();
-		}
-		isGameclear_ = true;
+	else if (isGameEntry_ == true) {
+		GameEntryProcessing();
 	}
+	else {
+		GameProcessing();
 
-	//プレイヤーがゲームオーバーになった時
-	if (player_->isGameover()) {
-		if (maskData_.maskThreshold <= 0.1f && maskData_.maskThreshold >= 0.05f) {
-			transition_->SceneEnd();
-		}
-		isGameover_ = true;
-	}
+		GameClearProcessing();
+		GameOverProcessing();
 
-	if (isGameclear_ == true) {//ゲームクリア時
-		//遷移終わりにゲームクリア処理
-		if (transition_->GetIsSceneEnd_() == false) {
-			//各種初期化処理
-			isGameStart_ = true;
-			isGameclear_ = false;
-			directionalLight_.intensity = 1.0f;
-			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
-			editors_->Finalize();
-			sceneNo = CLEAR_SCENE;
+		GamePauseProcessing();
+
+		//PostEffect更新
+		postEffect_->SetMaskData(maskData_);
+
+		//プレイヤー更新
+		player_->SetViewProjection(&viewProjection_);
+		player_->Update();
+		if (isEditorMode_ == false && isBirdseyeMode_ == false) {//エディターモード時はPlayerを止める
+			player_->SetIsMove(true);
 		}
-	}
-	else if (isGameover_ == true) {//ゲームオーバー時
-		maskData_.maskThreshold -= 0.02f;
-		//遷移終わりにゲームオーバー処理
-		if (transition_->GetIsSceneEnd_() == false && maskData_.maskThreshold <= 0.0f) {
-			//生き残っている敵を全て削除
-			for (Enemy* enemy : enemys_) {
-				enemy->SetisDead();
+		else if (isBirdseyeMode_ == true) {
+			player_->SetIsMove(false);
+		}
+
+		//旗座標更新
+		for (int i = 0; i < 4; i++) {
+			worldModels_[i].UpdateMatrix();
+		}
+
+		//Edirots更新
+		editors_->Update();
+
+		//ライト更新
+		directionalLights_->SetTarget(directionalLight_);
+		pointLight_.position.num[0] = player_->GetWorldTransform().GetWorldPos().num[0];
+		pointLight_.position.num[2] = player_->GetWorldTransform().GetWorldPos().num[2];
+		pointLights_->SetTarget(pointLight_);
+
+		//エネミー更新
+		for (Enemy* enemy : enemys_) {
+			enemy->Update();
+		}
+
+		//エネミーが倒されたら削除する
+		enemys_.remove_if([&](Enemy* enemy) {
+			if (enemy->GetisDead()) {
+				delete enemy;
+				enemyAliveCount_--;
+				return true;
 			}
-			enemys_.remove_if([&](Enemy* enemy) {
-				if (enemy->GetisDead()) {
-					delete enemy;
-					enemyAliveCount_--;
-					return true;
-				}
-				return false;
-				});
+			return false;
+			});
 
-			//各種初期化処理
-			isGameStart_ = true;
-			isGameover_ = false;
-			directionalLight_.intensity = 1.0f;
-			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
-			editors_->Finalize();
-			sceneNo = OVER_SCENE;
+		//Ground更新
+		ground_->Update();
+		groundObb_.center = ground_->GetWorldTransform().GetWorldPos();
+		GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), groundObb_.orientation);
+		groundObb_.size = ground_->GetWorldTransform().scale_;
+
+		//SkyBox更新
+		worldTransformSkyBox_.UpdateMatrix();
+
+		//Particle更新
+		playerParticle_->Update();
+		playerParticle_->SetTranslate(player_->GetWorldTransform().translation_);
+
+		collisionParticle_->Update();
+		collisionParticle_->SetAccelerationField(collisionAccelerationField_);
+
+		//Explosion更新
+		explosion_->Update();
+
+		//Transition更新
+		transition_->Update();
+
+		if (isExplosion_ == true) {
+			explosionTimer_++;
+			if (isBirdseyeMode_ == false) {
+				followCamera_->ShakeCamera(10, 5);
+			}
+			else {
+				debugCamera_->ShakeCamera(10, 5);
+			}
 		}
-	}
 
-	//PostEffect更新
-	postEffect_->SetMaskData(maskData_);
+		if (explosionTimer_ >= explosionMaxTimer_ && isExplosion_ == true) {
+			isExplosion_ = false;
+			explosionTimer_ = 0;
+			if (isBirdseyeMode_ == false) {
+				debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });
+			}
+			else {
+				debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
 
-	//プレイヤー更新
-	player_->SetViewProjection(&viewProjection_);
-	player_->Update();
-	if (isEditorMode_ == false && isBirdseyeMode_ == false) {//エディターモード時はPlayerを止める
-		player_->SetIsMove(true);
-	}
-	else if (isBirdseyeMode_ == true) {
-		player_->SetIsMove(false);
-	}
-
-	//旗座標更新
-	for (int i = 0; i < 4; i++) {
-		worldModels_[i].UpdateMatrix();
-	}
-
-	//Edirots更新
-	editors_->Update();
-
-	//ライト更新
-	directionalLights_->SetTarget(directionalLight_);
-	pointLight_.position.num[0] = player_->GetWorldTransform().GetWorldPos().num[0];
-	pointLight_.position.num[2] = player_->GetWorldTransform().GetWorldPos().num[2];
-	pointLights_->SetTarget(pointLight_);
-
-	//エネミー更新
-	for (Enemy* enemy : enemys_) {
-		enemy->Update();
-	}
-
-	//エネミーが倒されたら削除する
-	enemys_.remove_if([&](Enemy* enemy) {
-		if (enemy->GetisDead()) {
-			delete enemy;
-			enemyAliveCount_--;
-			return true;
+				cameraChange_ = true;
+			}
 		}
-		return false;
-		});
 
-	//Ground更新
-	ground_->Update();
-	groundObb_.center = ground_->GetWorldTransform().GetWorldPos();
-	GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), groundObb_.orientation);
-	groundObb_.size = ground_->GetWorldTransform().scale_;
+		//カメラ切り替え処理
+		if (input_->TriggerKey(DIK_E)) {
+			if (isBirdseyeMode_ == false) {//Player視点 → 俯瞰視点
+				debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
+				debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, cameraMoveSpeed_);
+				isBirdseyeMode_ = true;
+			}
+			else {//俯瞰視点 → Player視点
+				debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, cameraMoveSpeed_);
 
-	//SkyBox更新
-	worldTransformSkyBox_.UpdateMatrix();
-
-	//Particle更新
-	playerParticle_->Update();
-	playerParticle_->SetTranslate(player_->GetWorldTransform().translation_);
-
-	collisionParticle_->Update();
-	collisionParticle_->SetAccelerationField(collisionAccelerationField_);
-
-	//Explosion更新
-	explosion_->Update();
-
-	//Transition更新
-	transition_->Update();
-
-	if (isExplosion_ == true) {
-		explosionTimer_++;
-		if (isBirdseyeMode_ == false) {
-			followCamera_->ShakeCamera(10, 5);
+				cameraChange_ = true;
+			}
 		}
-		else {
-			debugCamera_->ShakeCamera(10, 5);
-		}
-	}
 
-	if (explosionTimer_ >= explosionMaxTimer_ && isExplosion_ == true) {
-		isExplosion_ = false;
-		explosionTimer_ = 0;
-		if (isBirdseyeMode_ == false) {
-			debugCamera_->SetCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f });
+		//カメラ切り替え処理開始
+		if (cameraChange_ == true) {
+			cameraChangeTimer_++;
 		}
-		else {
+
+		//カメラ切り替え処理終了
+		if (cameraChangeTimer_ >= cameraChangeMaxTimer_) {
 			debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
-
-			cameraChange_ = true;
+			cameraChangeTimer_ = 0;
+			cameraChange_ = false;
+			isBirdseyeMode_ = false;
 		}
-	}
 
-	//カメラ切り替え処理
-	if (input_->TriggerKey(DIK_E)) {
-		if (isBirdseyeMode_ == false) {//Player視点 → 俯瞰視点
-			debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
-			debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, cameraMoveSpeed_);
-			isBirdseyeMode_ = true;
+		//カメラの更新
+		debugCamera_->Update();
+		followCamera_->Update();
+		if (isBirdseyeMode_ == false) {//俯瞰モードでなければ
+			viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
+			viewProjection_.matView = followCamera_->GetViewProjection().matView;
+			viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+			viewProjection_.TransferMatrix();
 		}
-		else {//俯瞰視点 → Player視点
-			debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, cameraMoveSpeed_);
-
-			cameraChange_ = true;
+		else {//俯瞰モードなら
+			viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
+			viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
+			viewProjection_.UpdateMatrix();
 		}
-	}
 
-	//カメラ切り替え処理開始
-	if (cameraChange_ == true) {
-		cameraChangeTimer_++;
+		//当たり判定処理
+		CollisionConclusion();
 	}
-
-	//カメラ切り替え処理終了
-	if (cameraChangeTimer_ >= cameraChangeMaxTimer_) {
-		debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
-		cameraChangeTimer_ = 0;
-		cameraChange_ = false;
-		isBirdseyeMode_ = false;
-	}
-
-	//カメラの更新
-	debugCamera_->Update();
-	followCamera_->Update();
-	if (isBirdseyeMode_ == false) {//俯瞰モードでなければ
-		viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
-		viewProjection_.matView = followCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
-		viewProjection_.TransferMatrix();
-	}
-	else {//俯瞰モードなら
-		viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
-		viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
-		viewProjection_.UpdateMatrix();
-	}
-
-	//当たり判定処理
-	CollisionConclusion();
 
 	//
 	ImGui::Begin("PlayScene");
@@ -430,14 +393,20 @@ void GamePlayScene::DrawUI() {
 #pragma region 前景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
-	if (player_->GetMoveMode() == 0) {
-		sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+	if (isGameEntry_ == false) {
+		if (player_->GetMoveMode() == 0) {
+			sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+		}
+		if (player_->GetMoveMode() == 1) {
+			sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+		}
+		if (player_->GetMoveMode() == 2) {
+			sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+		}
 	}
-	if (player_->GetMoveMode() == 1) {
-		sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
-	}
-	if (player_->GetMoveMode() == 2) {
-		sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+
+	if (isGameEntry_ == true && entryCount_ == 1) {
+		sprite_[4]->Draw(spriteTransformTest_, SpriteuvTransform_, spriteMaterial_);
 	}
 
 	//
@@ -478,7 +447,8 @@ void GamePlayScene::GameStartProcessing() {
 	postEffect_->SetMaskTexture(noiseTexture_);
 
 	//カメラ初期化
-	followCamera_->SetCamera(player_->GetWorldTransform().translation_, player_->GetWorldTransform().rotation_);
+	followCamera_->SetTarget(&ground_->GetWorldTransformRotate());//カメラをGroundにセット
+	followCamera_->SetOffset({ 0.0f,20.0f,-100.0f });
 	followCamera_->Update();
 
 	debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
@@ -501,6 +471,205 @@ void GamePlayScene::GameStartProcessing() {
 
 	//開始時フラグを無効化
 	isGameStart_ = false;
+
+	//開始演出フラグを有効化
+	isGameEntry_ = true;
+	entryCount_ = 0;
+}
+
+void GamePlayScene::GameEntryProcessing() {
+	if (entryCount_ == 0) {
+		startCameraChangeTimer_++;
+		if (startCameraChangeTimer_ >= 120) {
+			startCameraChangeTimer_ = 0;
+			entryCount_ = 1;
+
+		}
+
+		followCamera_->Update();
+		viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
+		viewProjection_.matView = followCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
+	}
+
+	if (entryCount_ == 1) {
+		spriteTransformTest_.scale.num[0] += 0.02f;
+		spriteTransformTest_.scale.num[1] += 0.02f;
+		spriteTransformTest_.scale.num[2] += 0.02f;
+
+		spriteTransformTest_.rotate.num[2] += 0.02f;
+
+		if (spriteTransformTest_.scale.num[0] >= 1.0f) {
+			spriteTransformTest_.scale = { 1.0f,1.0f,1.0f };
+			spriteTransformTest_.rotate.num[2] = 0.0f;
+
+			startCameraChangeTimer_++;
+			if (startCameraChangeTimer_ >= 60) {
+				startCameraChangeTimer_ = 0;
+				entryCount_ = 2;
+
+			}
+		}
+
+		followCamera_->Update();
+		viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
+		viewProjection_.matView = followCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
+	}
+	
+	if (entryCount_ == 2) {
+		followCamera_->SetTarget(&player_->GetWorldTransformPlayer());
+		followCamera_->SetOffset({ 0.0f,3.5f,-20.0f });
+		debugCamera_->Update();
+
+		debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, 0.1f);
+
+		startCameraChangeTimer_++;
+		if (startCameraChangeTimer_ >= 50) {
+			startCameraChangeTimer_ = 0;
+			entryCount_ = 0;
+			isGameEntry_ = false;
+
+		}
+
+		//カメラの更新
+		followCamera_->Update();
+		viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
+		viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
+		viewProjection_.UpdateMatrix();
+	}
+
+	//PostEffect更新
+	postEffect_->SetMaskData(maskData_);
+
+	//プレイヤー更新
+	player_->SetViewProjection(&viewProjection_);
+	player_->Update();
+	player_->SetIsMove(false);
+
+	//旗座標更新
+	for (int i = 0; i < 4; i++) {
+		worldModels_[i].UpdateMatrix();
+	}
+
+	//Edirots更新
+	editors_->Update();
+
+	//ライト更新
+	directionalLights_->SetTarget(directionalLight_);
+	pointLight_.position.num[0] = player_->GetWorldTransform().GetWorldPos().num[0];
+	pointLight_.position.num[2] = player_->GetWorldTransform().GetWorldPos().num[2];
+	pointLights_->SetTarget(pointLight_);
+
+	//エネミー更新
+	for (Enemy* enemy : enemys_) {
+		enemy->Update();
+	}
+
+	//エネミーが倒されたら削除する
+	enemys_.remove_if([&](Enemy* enemy) {
+		if (enemy->GetisDead()) {
+			delete enemy;
+			enemyAliveCount_--;
+			return true;
+		}
+		return false;
+		});
+
+	//Ground更新
+	ground_->Update();
+	groundObb_.center = ground_->GetWorldTransform().GetWorldPos();
+	GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), groundObb_.orientation);
+	groundObb_.size = ground_->GetWorldTransform().scale_;
+
+	//SkyBox更新
+	worldTransformSkyBox_.UpdateMatrix();
+
+	//Particle更新
+	playerParticle_->Update();
+	playerParticle_->SetTranslate(player_->GetWorldTransform().translation_);
+
+	collisionParticle_->Update();
+	collisionParticle_->SetAccelerationField(collisionAccelerationField_);
+
+	//Explosion更新
+	explosion_->Update();
+
+	//Transition更新
+	transition_->Update();
+
+	//当たり判定処理
+	CollisionConclusion();
+}
+
+void GamePlayScene::GameProcessing() {
+
+}
+
+void GamePlayScene::GamePauseProcessing() {
+
+}
+
+void GamePlayScene::GameClearProcessing() {
+	//敵を全員倒した時
+	if (enemyAliveCount_ == 0) {
+		if (isGameclear_ == false) {
+			transition_->SceneEnd();
+		}
+		isGameclear_ = true;
+	}
+
+	if (isGameclear_ == true) {
+		//遷移終わりにゲームクリア処理
+		if (transition_->GetIsSceneEnd_() == false) {
+			//各種初期化処理
+			isGameStart_ = true;
+			isGameclear_ = false;
+			directionalLight_.intensity = 1.0f;
+			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
+			editors_->Finalize();
+			sceneNo = CLEAR_SCENE;
+		}
+	}
+}
+
+void GamePlayScene::GameOverProcessing() {
+	//プレイヤーがゲームオーバーになった時
+	if (player_->isGameover()) {
+		if (maskData_.maskThreshold <= 0.1f && maskData_.maskThreshold >= 0.05f) {
+			transition_->SceneEnd();
+		}
+		isGameover_ = true;
+	}
+
+	if (isGameover_ == true) {
+		maskData_.maskThreshold -= 0.02f;
+		//遷移終わりにゲームオーバー処理
+		if (transition_->GetIsSceneEnd_() == false && maskData_.maskThreshold <= 0.0f) {
+			//生き残っている敵を全て削除
+			for (Enemy* enemy : enemys_) {
+				enemy->SetisDead();
+			}
+			enemys_.remove_if([&](Enemy* enemy) {
+				if (enemy->GetisDead()) {
+					delete enemy;
+					enemyAliveCount_--;
+					return true;
+				}
+				return false;
+				});
+
+			//各種初期化処理
+			isGameStart_ = true;
+			isGameover_ = false;
+			directionalLight_.intensity = 1.0f;
+			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
+			editors_->Finalize();
+			sceneNo = OVER_SCENE;
+		}
+	}
 }
 
 void GamePlayScene::CollisionConclusion() {

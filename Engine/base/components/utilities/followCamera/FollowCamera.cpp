@@ -24,7 +24,7 @@ void FollowCamera::Update() {
 	ApplyGlobalVariables();
 
 	if (target_) {
-		Vector3 offset = { 0.0f,3.5f,-20.0f };
+		Vector3 offset = offset_;
 
 		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewprojection_.rotation_);
 
@@ -65,7 +65,7 @@ void FollowCamera::Reset() {
 	}
 	destinationAngleY_ = viewprojection_.rotation_.num[1];
 
-	Vector3 offset = { 0.0f,3.5f,-20.0f };
+	Vector3 offset = offset_;
 
 	Matrix4x4 rotateMatrix = MakeRotateMatrix(viewprojection_.rotation_);
 

@@ -36,6 +36,21 @@ public:
 	//ゲーム開始時の処理
 	void GameStartProcessing();
 
+	//ゲーム開始時の演出処理
+	void GameEntryProcessing();
+
+	//ゲーム中の処理
+	void GameProcessing();
+
+	//ポーズ中の処理
+	void GamePauseProcessing();
+
+	//ゲームクリア時の処理
+	void GameClearProcessing();
+
+	//ゲームオーバー時の処理
+	void GameOverProcessing();
+
 	//当たり判定まとめ
 	void CollisionConclusion();
 
@@ -70,6 +85,7 @@ private:
 	DebugCamera* debugCamera_;
 	std::unique_ptr<FollowCamera> followCamera_;
 	int cameraChangeTimer_ = 0;//カメラ切り替えの時間
+	int startCameraChangeTimer_ = 0;//スタート演出カメラ切り替えの時間
 	const int cameraChangeMaxTimer_ = 35;//カメラ切り替えの終了時間
 	const float cameraMoveSpeed_ = 0.01f;//MoveCameraの移動速度
 	bool cameraChange_ = false;//カメラの切り替えが終わっているか否か
@@ -121,8 +137,9 @@ private:
 	const int collisionParticleOccursNum_ = 10;
 
 	//Sprite
-	std::unique_ptr <CreateSprite> sprite_[4];
+	std::unique_ptr <CreateSprite> sprite_[5];
 	EulerTransform spriteTransform_;
+	EulerTransform spriteTransformTest_;
 	EulerTransform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
 
@@ -132,9 +149,12 @@ private:
 	uint32_t move2_;
 	uint32_t move3_;
 	uint32_t skyboxTex_;
+	uint32_t purpose_;
 
 	//Other
 	bool isGameStart_ = true;//ゲームスタート時の処理
+	bool isGameEntry_ = true;//ゲームスタート演出の処理
+	int entryCount_ = 0;//スタート演出のカウント
 	bool isGameover_ = false;//ゲームオーバー時の処理
 	bool isGameclear_ = false;//ゲームクリア時の処理
 

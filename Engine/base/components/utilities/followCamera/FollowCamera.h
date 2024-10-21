@@ -28,6 +28,9 @@ public:
 	//カメラの場所決め
 	void SetCamera(Vector3 translation, Vector3 rotation);
 
+	//offsetを設定
+	void SetOffset(Vector3 offset) { offset_ = offset; }
+
 private:
 	ViewProjection viewprojection_;
 	const WorldTransform* target_ = nullptr;
@@ -38,4 +41,6 @@ private:
 	float destinationAngleY_ = 0.0f;
 
 	float latency = 0.1f;
+
+	Vector3 offset_ = { 0.0f,3.5f,-20.0f };
 };

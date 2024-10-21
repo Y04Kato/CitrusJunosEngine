@@ -13,8 +13,10 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 	
 	WorldTransform& GetWorldTransform() { return worldTransform_; }
+	WorldTransform& GetWorldTransformRotate() { return worldTransformRotate_; }
 
 private:
 	WorldTransform worldTransform_;
+	WorldTransform worldTransformRotate_;
 	Model* groundModel_;
 };
