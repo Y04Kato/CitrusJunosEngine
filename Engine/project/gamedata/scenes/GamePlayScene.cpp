@@ -513,7 +513,7 @@ void GamePlayScene::GameEntryProcessing() {
 				followCamera_->SetOffset({ 0.0f,3.5f,-20.0f });
 				followCamera_->Update();
 				
-				debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, 0.03f);
+				debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, 0.02f);
 			}
 			else {
 				debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
@@ -530,7 +530,7 @@ void GamePlayScene::GameEntryProcessing() {
 	
 	if (entryCount_ == 2) {
 		startCameraChangeTimer_++;
-		if (startCameraChangeTimer_ >= 50) {
+		if (startCameraChangeTimer_ >= 20) {
 			startCameraChangeTimer_ = 0;
 			entryCount_ = 0;
 			isGameEntry_ = false;
