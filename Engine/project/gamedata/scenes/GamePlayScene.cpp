@@ -184,82 +184,89 @@ void GamePlayScene::Initialize() {
 }
 
 void GamePlayScene::Update() {
-	//ステージ初期設定
-	if (isGameStart_ == true) {
-		GameStartProcessing();
-	}
-	else if (isGameEntry_ == true) {
-		GameEntryProcessing();
-	}
-	else {
-		GameClearProcessing();
-		GameOverProcessing();
-
-		GameProcessing();
-
+	if (isGamePause_ == true) {//ポーズ
 		GamePauseProcessing();
 	}
-
-	//PostEffect更新
-	postEffect_->SetMaskData(maskData_);
-
-	//プレイヤー更新
-	player_->SetViewProjection(&viewProjection_);
-	player_->Update();
-
-	//旗座標更新
-	for (int i = 0; i < 4; i++) {
-		worldModels_[i].UpdateMatrix();
-	}
-
-	//Edirots更新
-	editors_->Update();
-
-	//ライト更新
-	directionalLights_->SetTarget(directionalLight_);
-	pointLight_.position.num[0] = player_->GetWorldTransform().GetWorldPos().num[0];
-	pointLight_.position.num[2] = player_->GetWorldTransform().GetWorldPos().num[2];
-	pointLights_->SetTarget(pointLight_);
-
-	//エネミー更新
-	for (Enemy* enemy : enemys_) {
-		enemy->Update();
-	}
-
-	//エネミーが倒されたら削除する
-	enemys_.remove_if([&](Enemy* enemy) {
-		if (enemy->GetisDead()) {
-			delete enemy;
-			enemyAliveCount_--;
-			return true;
+	else {
+		if (isGameStart_ == true) {//ステージ初期設定
+			GameStartProcessing();
 		}
-		return false;
-		});
+		else if (isGameEntry_ == true) {//ステージ開始演出
+			GameEntryProcessing();
+		}
+		else {//ゲームプレイ
+			GameClearProcessing();
+			GameOverProcessing();
 
-	//Ground更新
-	ground_->Update();
-	groundObb_.center = ground_->GetWorldTransform().GetWorldPos();
-	GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), groundObb_.orientation);
-	groundObb_.size = ground_->GetWorldTransform().scale_;
+			GameProcessing();
+		}
 
-	//SkyBox更新
-	worldTransformSkyBox_.UpdateMatrix();
+		//ゲームをポーズ
+		if (input_->TriggerKey(DIK_Q)) {
+			isGamePause_ = true;
+		}
 
-	//Particle更新
-	playerParticle_->Update();
-	playerParticle_->SetTranslate(player_->GetWorldTransform().translation_);
+		//PostEffect更新
+		postEffect_->SetMaskData(maskData_);
 
-	collisionParticle_->Update();
-	collisionParticle_->SetAccelerationField(collisionAccelerationField_);
+		//プレイヤー更新
+		player_->SetViewProjection(&viewProjection_);
+		player_->Update();
 
-	//Explosion更新
-	explosion_->Update();
+		//旗座標更新
+		for (int i = 0; i < 4; i++) {
+			worldModels_[i].UpdateMatrix();
+		}
 
-	//Transition更新
-	transition_->Update();
+		//Edirots更新
+		editors_->Update();
 
-	//当たり判定処理
-	CollisionConclusion();
+		//ライト更新
+		directionalLights_->SetTarget(directionalLight_);
+		pointLight_.position.num[0] = player_->GetWorldTransform().GetWorldPos().num[0];
+		pointLight_.position.num[2] = player_->GetWorldTransform().GetWorldPos().num[2];
+		pointLights_->SetTarget(pointLight_);
+
+		//エネミー更新
+		for (Enemy* enemy : enemys_) {
+			enemy->Update();
+		}
+
+		//エネミーが倒されたら削除する
+		enemys_.remove_if([&](Enemy* enemy) {
+			if (enemy->GetisDead()) {
+				delete enemy;
+				enemyAliveCount_--;
+				return true;
+			}
+			return false;
+			});
+
+		//Ground更新
+		ground_->Update();
+		groundObb_.center = ground_->GetWorldTransform().GetWorldPos();
+		GetOrientations(MakeRotateXYZMatrix(ground_->GetWorldTransform().rotation_), groundObb_.orientation);
+		groundObb_.size = ground_->GetWorldTransform().scale_;
+
+		//SkyBox更新
+		worldTransformSkyBox_.UpdateMatrix();
+
+		//Particle更新
+		playerParticle_->Update();
+		playerParticle_->SetTranslate(player_->GetWorldTransform().translation_);
+
+		collisionParticle_->Update();
+		collisionParticle_->SetAccelerationField(collisionAccelerationField_);
+
+		//Explosion更新
+		explosion_->Update();
+
+		//Transition更新
+		transition_->Update();
+
+		//当たり判定処理
+		CollisionConclusion();
+	}
 
 	//
 	ImGui::Begin("PlayScene");
@@ -343,11 +350,17 @@ void GamePlayScene::DrawUI() {
 }
 
 void GamePlayScene::DrawPostEffect() {
-	CJEngine_->renderer_->Draw(PipelineType::Vignette);
-	if (isGameover_ == true) {
+	if (isGamePause_ == true) {//ポーズ
+		CJEngine_->renderer_->Draw(PipelineType::Gaussian);
+	}
+	else {//ゲームプレイ
+		CJEngine_->renderer_->Draw(PipelineType::Vignette);
+	}
+
+	if (isGameover_ == true) {//ゲームオーバーなら
 		CJEngine_->renderer_->Draw(PipelineType::MaskTexture);
 	}
-	if (isGameclear_ == true) {
+	if (isGameclear_ == true) {//ゲームクリアなら
 		CJEngine_->renderer_->Draw(PipelineType::RadialBlur);
 	}
 }
@@ -382,6 +395,7 @@ void GamePlayScene::GameStartProcessing() {
 	debugCamera_->Update();
 	isBirdseyeMode_ = false;
 	isEditorMode_ = false;
+	isGamePause_ = false;
 
 	//エディター、ステージ読み込み
 	editors_->SetModels(ObjModelData_, ObjTexture_);
@@ -536,7 +550,10 @@ void GamePlayScene::GameProcessing() {
 }
 
 void GamePlayScene::GamePauseProcessing() {
-
+	//ゲームポーズを解除
+	if (input_->TriggerKey(DIK_Q)) {
+		isGamePause_ = false;
+	}
 }
 
 void GamePlayScene::GameClearProcessing() {
