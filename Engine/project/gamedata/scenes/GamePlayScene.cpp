@@ -509,6 +509,15 @@ void GamePlayScene::GameEntryProcessing() {
 				startCameraChangeTimer_ = 0;
 				entryCount_ = 2;
 
+				followCamera_->SetTarget(&player_->GetWorldTransformPlayer());
+				followCamera_->SetOffset({ 0.0f,3.5f,-20.0f });
+				followCamera_->Update();
+				
+				debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, 0.03f);
+			}
+			else {
+				debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
+				debugCamera_->Update();
 			}
 		}
 
@@ -520,12 +529,6 @@ void GamePlayScene::GameEntryProcessing() {
 	}
 	
 	if (entryCount_ == 2) {
-		followCamera_->SetTarget(&player_->GetWorldTransformPlayer());
-		followCamera_->SetOffset({ 0.0f,3.5f,-20.0f });
-		debugCamera_->Update();
-
-		debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, 0.1f);
-
 		startCameraChangeTimer_++;
 		if (startCameraChangeTimer_ >= 50) {
 			startCameraChangeTimer_ = 0;
@@ -536,6 +539,8 @@ void GamePlayScene::GameEntryProcessing() {
 
 		//カメラの更新
 		followCamera_->Update();
+
+		debugCamera_->Update();
 		viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
 		viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 		viewProjection_.UpdateMatrix();
