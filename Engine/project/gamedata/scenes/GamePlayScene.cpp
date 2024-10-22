@@ -469,6 +469,9 @@ void GamePlayScene::GameStartProcessing() {
 	//シーン遷移
 	transition_->SceneStart();
 
+	//
+	spriteTransformTest_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-1.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+
 	//開始時フラグを無効化
 	isGameStart_ = false;
 
