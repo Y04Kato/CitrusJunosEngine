@@ -59,9 +59,6 @@ void DebugCamera::Update() {
 	ImGui::DragFloat3("translation", viewProjection_.translation_.num, 0.1f);
 	ImGui::End();
 
-	movingStartTranslate_ = viewProjection_.translation_;
-	movingStartRotate_ = viewProjection_.rotation_;
-
 	if (isMovingCamera == true) {
 		timer_ += timerCountr_;
 		movingEndTranslate_.num[0] += movingSpeed_.num[0];
@@ -103,9 +100,13 @@ void DebugCamera::SetCamera(Vector3 translation, Vector3 rotation) {
 	viewProjection_.rotation_ = rotation;
 
 	viewProjection_.UpdateMatrix();
+	isMovingCamera = false;
 }
 
 void DebugCamera::MovingCamera(Vector3 translation, Vector3 rotation, float timerSpeed) {
+	movingStartTranslate_ = viewProjection_.translation_;
+	movingStartRotate_ = viewProjection_.rotation_;
+
 	timer_ = 0.0f;
 	timerCountr_ = timerSpeed;
 	movingEndTranslate_ = translation;

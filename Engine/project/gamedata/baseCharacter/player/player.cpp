@@ -42,6 +42,7 @@ void Player::Update() {
 	if (worldTransform_.translation_.num[1] < -10.0f) {
 		gameOver = true;
 		moveMode_ = 0;
+		worldTransform2_.rotation_ = { 0.0f,0.0f,0.0f };
 	}
 	if (!isHitOnFloor || worldTransform_.GetWorldPos().num[1] < 0.0f) {
 		IsFallStart();
