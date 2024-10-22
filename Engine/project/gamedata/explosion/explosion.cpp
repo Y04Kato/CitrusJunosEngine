@@ -1,8 +1,9 @@
 #include "explosion.h"
 
-void Explosion::Initialize() {
+void Explosion::Initialize(ModelData ObjModelData, uint32_t ObjTexture) {
     input_ = Input::GetInstance();
-    model_ = Model::CreateModel("project/gamedata/resources/block", "block.obj");
+    ObjModelData_ = ObjModelData;
+    ObjTexture_ = ObjTexture;
     worldTransformBase_.Initialize();
     audio_ = Audio::GetInstance();
     soundData1_ = audio_->SoundLoad("project/gamedata/resources/break.mp3");
@@ -101,7 +102,9 @@ void Explosion::ExplosionFlagTrue(Vector4 material) {
 
     //新しい破片を生成
     for (int i = 0; i < 10; i++) {
-        models_.push_back(model_);
+        Model* newModel = Model::CreateModel(ObjModelData_, ObjTexture_);
+        newModel->SetDirectionalLightFlag(true, 3);
+        models_.push_back(newModel);
 
         WorldTransform newWorldTransform;
         newWorldTransform.Initialize();

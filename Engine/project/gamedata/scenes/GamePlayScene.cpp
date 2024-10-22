@@ -88,7 +88,7 @@ void GamePlayScene::Initialize() {
 	//Spriteの初期化
 	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
 	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
-	spriteTransformTest_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-1.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+	spriteTransform4_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-2.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
 	SpriteuvTransform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
@@ -167,7 +167,7 @@ void GamePlayScene::Initialize() {
 
 	//Explosion
 	explosion_ = new Explosion();
-	explosion_->Initialize();
+	explosion_->Initialize(ObjModelData_, ObjTexture_);
 	explosion_->SetWorldTransformFloor(ground_->GetWorldTransform());
 
 	srand((unsigned int)time(NULL));
@@ -333,7 +333,7 @@ void GamePlayScene::DrawUI() {
 			sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 		}
 
-		sprite_[4]->Draw(spriteTransformTest_, SpriteuvTransform_, spriteMaterial_);
+		sprite_[4]->Draw(spriteTransform4_, SpriteuvTransform_, spriteMaterial_);
 	}
 
 	//
@@ -398,7 +398,7 @@ void GamePlayScene::GameStartProcessing() {
 
 	//Sprite
 	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f - 300.0f,0.0f} };
-	spriteTransformTest_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-1.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+	spriteTransform4_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-1.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
 
 	//開始時フラグを無効化
 	isGameStart_ = false;
@@ -429,15 +429,17 @@ void GamePlayScene::GameEntryProcessing() {
 	}
 	//目標を提示しつつ回る
 	if (entryCount_ == 1) {
-		spriteTransformTest_.scale.num[0] += 0.02f;
-		spriteTransformTest_.scale.num[1] += 0.02f;
-		spriteTransformTest_.scale.num[2] += 0.02f;
+		//Spriteを回しつつ拡大する
+		spriteTransform4_.scale.num[0] += 0.02f;
+		spriteTransform4_.scale.num[1] += 0.02f;
+		spriteTransform4_.scale.num[2] += 0.02f;
 
-		spriteTransformTest_.rotate.num[2] += 0.02f;
+		spriteTransform4_.rotate.num[2] += 0.02f;
 
-		if (spriteTransformTest_.scale.num[0] >= 1.0f) {
-			spriteTransformTest_.scale = { 1.0f,1.0f,1.0f };
-			spriteTransformTest_.rotate.num[2] = 0.0f;
+		//最大値になったら
+		if (spriteTransform4_.scale.num[0] >= 1.0f) {
+			spriteTransform4_.scale = { 1.0f,1.0f,1.0f };
+			spriteTransform4_.rotate.num[2] = 0.0f;
 
 			startCameraChangeTimer_++;
 			if (startCameraChangeTimer_ >= 60) {
@@ -473,8 +475,8 @@ void GamePlayScene::GameEntryProcessing() {
 		}
 
 		spriteTransform_.translate = Lerp(spriteTransform_.translate, Vector3{ 1280.0f / 2.0f,720.0f / 2.0f,0.0f }, 0.1f);
-		spriteTransformTest_.translate = Lerp(spriteTransformTest_.translate, Vector3{ 1063.0f,62.0f,0.0f }, 0.1f);
-		spriteTransformTest_.scale = Lerp(spriteTransformTest_.scale, Vector3{ 0.38f,0.38f,1.0f }, 0.1f);
+		spriteTransform4_.translate = Lerp(spriteTransform4_.translate, Vector3{ 1063.0f,62.0f,0.0f }, 0.1f);
+		spriteTransform4_.scale = Lerp(spriteTransform4_.scale, Vector3{ 0.38f,0.38f,1.0f }, 0.1f);
 
 		//カメラの更新
 		followCamera_->Update();

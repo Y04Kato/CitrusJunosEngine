@@ -139,7 +139,7 @@ private:
 	//Sprite
 	std::unique_ptr <CreateSprite> sprite_[5];
 	EulerTransform spriteTransform_;
-	EulerTransform spriteTransformTest_;
+	EulerTransform spriteTransform4_;//sprite_[4]のゲーム開始演出用
 	EulerTransform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
 

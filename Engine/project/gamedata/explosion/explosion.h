@@ -7,7 +7,7 @@
 
 class Explosion {
 public:
-	void Initialize();
+	void Initialize(ModelData ObjModelData, uint32_t ObjTexture);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
@@ -28,7 +28,9 @@ public:
 
 private:
     Input* input_;
-    Model* model_;
+    ModelData ObjModelData_;
+    uint32_t ObjTexture_;
+
     std::vector<Model*> models_;//破片を動的に追加
     std::vector<WorldTransform> worldTransforms_;//各破片のWorldTransform
     std::vector <Vector3> velocities_;
