@@ -17,6 +17,7 @@ public:
 
 	void Update();
 
+	//カメラを指定した強さでシェイクする
 	void ShakeCamera(int shakePower, int dividePower);
 
 	//カメラの場所決め

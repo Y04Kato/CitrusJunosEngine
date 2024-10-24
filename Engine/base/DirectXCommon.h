@@ -34,7 +34,10 @@ public:
 
 	void Initialization(const wchar_t* title, int32_t backBufferWidth = WinApp::GetInstance()->GetClientWidth(), int32_t backBufferHeight = WinApp::GetInstance()->GetClientHeight());
 
+	//各種描画準備
 	void PreDraw();
+
+	//各種描画終了後、コマンドを実行
 	void PostDraw();
 
 	void Finalize();
@@ -55,10 +58,13 @@ public:
 	Microsoft::WRL::ComPtr <IDXGISwapChain4> GetSwapChain() { return swapChain_; }
 	DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc()const { return swapChainDesc_; }
 
-	//Create
+	//バッファーリソースの生成
 	static Microsoft::WRL::ComPtr <ID3D12Resource> CreateBufferResource(Microsoft::WRL::ComPtr<ID3D12Device> device, size_t sizeInBytes);
 	
+	//デスクリプターヒープの生成
 	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+	
+	//デプスステンシルテクスチャリソースの生成
 	Microsoft::WRL::ComPtr <ID3D12Resource> CreateDepthStenciltextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height);
 
 
@@ -111,6 +117,7 @@ private:
 	UINT64 fenceValue_;
 	HANDLE fenceEvent_;
 
+	//バリア
 	D3D12_RESOURCE_BARRIER barrier_{};
 
 	HRESULT hr_;
@@ -121,6 +128,7 @@ private:
 
 	std::chrono::steady_clock::time_point reference_;
 
+	//画面サイズ
 	int32_t backBufferWidth_;
 	int32_t backBufferHeight_;
 
@@ -136,18 +144,25 @@ private:
 	Microsoft::WRL::ComPtr <ID2D1SolidColorBrush> pBlackBrush_;
 
 private:
+	//DXGIDeviceの生成
 	void CreateDXGIDevice();
 
+	//SwapChainの生成
 	void CreateSwapChain();
 
+	//コマンドキューやリストの生成
 	void CreateCommand();
 
+	//レンダーターゲットの生成
 	void CreateFinalRenderTargets();
 
+	//フェンスの生成
 	void CreateFence();
 
+	//デプスステンシルの生成
 	void CreateDepthStensil();
 
+	//DescriptorHeapに渡す描画設定の生成
 	void CreateViewport();
 	void CreateScissor();
 
@@ -155,10 +170,12 @@ private:
 	void InitializeFixFPS();
 	void UpdateFixFPS();
 
+	//テキスト描画機能(作成中)
 	void InitializeTextFactory();
 	void CreateTextRenderTargets();
 	void CreateTextVertex();
 
+	//DirectX11用のDXGIDeviceの生成
 	void InitializeDXGIDevice11();
 };
 

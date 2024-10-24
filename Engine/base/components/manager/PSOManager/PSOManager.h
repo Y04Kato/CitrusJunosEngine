@@ -34,9 +34,13 @@ public:
 
 	void Initialize();
 
+	//現在のルートシグネイチャーを取得する
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> GetRootSignature(PipelineType Type) { return Pipeline_[Type].rootSignature.Get(); }
+	
+	//現在のパイプラインステートを取得する
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> GetPipelineState(PipelineType Type) { return Pipeline_[Type].graphicsPipelineState.Get(); }
 
+	//パイプラインを追加する
 	void AddPipeline(PipelineStateObject Pipeline, PipelineType Type) {
 		Pipeline_[Type] = Pipeline;
 	}

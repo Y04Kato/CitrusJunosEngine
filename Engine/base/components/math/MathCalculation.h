@@ -40,7 +40,7 @@ Vector2 operator-(const Vector2&, const Vector2&);
 Vector2 operator*(float k, const Vector2& v);
 Vector2 operator*(const Vector2& v, float k);
 
-//Vector2の計算
+//Vector2の基本計算
 Vector2 Add(const Vector2& v1, const Vector2& v2);
 Vector2 Subtruct(const Vector2& v1, const Vector2& v2);
 Vector2 Multiply(float scalar, const Vector2& v);
@@ -65,7 +65,7 @@ Vector3 operator+=(Vector3&, Vector3&);
 Vector3 operator+=(Vector3&, const Vector3&);
 Vector3 operator-=(const Vector3&, const Vector3&);
 
-//Vector3の計算
+//Vector3の基本計算
 Vector3 Add(const Vector3& v1, const Vector3& v2);
 Vector3 Subtruct(const Vector3& v1, const Vector3& v2);
 Vector3 Multiply(float scalar, const Vector3& v);
@@ -91,6 +91,7 @@ void GetOrientations(const Matrix4x4& m, Vector3 orientations[3]);
 
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
+//fromからtoへの向きを得る
 float Angle(Vector3 from, Vector3 to);
 
 Vector3 matrixToEulerAngles(const Matrix4x4 mat);
@@ -116,7 +117,7 @@ Vector3 Project(const Vector3& v, const Vector3 n);
 //OBBのorientation[3]を算出
 std::tuple<Vector3, Vector3, Vector3> ComputeRotationMatrix(const Vector3& rotate);
 
-//衝突＆反発
+//反発量を得る
 std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector3& velocity1, float mass2, const Vector3& velocity2, float coefficientOfRestitution, const Vector3& normal);
 Vector3 ComputeSphereVelocityAfterCollisionWithOBB(const StructSphere& sphere, const Vector3& sphereVelocity, const OBB& obb, float restitution);
 
@@ -135,11 +136,9 @@ Matrix4x4 operator+=(Matrix4x4 m1, Matrix4x4 m2);
 Matrix4x4 operator-=(Matrix4x4& m1, const Matrix4x4& m2);
 Matrix4x4 operator*=(Matrix4x4& m1, const Matrix4x4& m2);
 
-//行列の加法
+//行列の基本計算
 Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
-//行列の減法
 Matrix4x4 Subtruct(const Matrix4x4& m1, const Matrix4x4& m2);
-//行列の積
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 
 //X軸回転行列
@@ -204,6 +203,7 @@ Quaternion operator-(const Quaternion& q1, const Quaternion& q2);
 Quaternion operator*(const float t, const Quaternion& q);
 Quaternion operator/(const Quaternion& q, const float t);
 
+//クォータニオンの生成
 Vector4 MakeQuaternion(Vector3 axis, float radian);
 
 //任意軸回転を表すQuaternionの生成
@@ -253,6 +253,7 @@ EulerTransform operator-(const EulerTransform& v1, const EulerTransform& v2);
 //EulerTransformからOBBを算出
 OBB CreateOBBFromEulerTransform(const EulerTransform& transform);
 
+//各種接触判定処理
 bool IsCollision(const AABB& aabb, const StructSphere& sphere);
 bool IsCollision(const AABB& aabb, const Vector3& point);
 bool IsCollision(const AABB& aabb, const Segment& segment);

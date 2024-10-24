@@ -39,12 +39,12 @@ public:
 		CreatePipelineStateObject();
 	}
 
-	virtual void ShaderCompile() = 0;
-	virtual void CreateRootSignature() = 0;
-	virtual void CreateInputLayOut() = 0;
-	virtual void CreateBlendState() = 0;
-	virtual void CreateRasterizarState() = 0;
-	virtual void CreatePipelineStateObject() = 0;
+	virtual void ShaderCompile() = 0;//シェーダーを読み込む
+	virtual void CreateRootSignature() = 0;//ルートシグネイチャーの設定
+	virtual void CreateInputLayOut() = 0;//インプットレイアウトの設定
+	virtual void CreateBlendState() = 0;//ブレンドの設定
+	virtual void CreateRasterizarState() = 0;//何処まで描画するかの設定
+	virtual void CreatePipelineStateObject() = 0;//パイプラインステートオブジェクトを生成する
 
 	PipelineStateObject GetPSO() { return PipelineStateObject_; }
 

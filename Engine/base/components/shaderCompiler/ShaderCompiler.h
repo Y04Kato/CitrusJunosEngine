@@ -14,6 +14,7 @@ public:
 	static ShaderCompiler* GetInstance();
 
 	void Initialize();
+	//指定されたhlslシェーダーをコンパイルする
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
 private:

@@ -16,13 +16,16 @@ public:
 
 	void Update();
 
+	//カメラの追従対象を指定
 	void SetTarget(const WorldTransform* target);
 	const ViewProjection& GetViewProjection() { return viewprojection_; }
 
+	//追従の解除
 	void Reset();
 
 	void ApplyGlobalVariables();
 
+	//カメラを指定した強さでシェイクする
 	void ShakeCamera(int shakePower, int dividePower);
 
 	//カメラの場所決め

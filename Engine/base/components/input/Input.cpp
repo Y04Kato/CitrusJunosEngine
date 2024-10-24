@@ -99,7 +99,7 @@ bool Input::ReleaseKey(BYTE keyNumber)const {
 	}
 }
 
-bool Input::pushMouse(uint32_t Mousebutton) {
+bool Input::TriggerMouse(uint32_t Mousebutton) {
 	if (mouse_.rgbButtons[Mousebutton] != 0 && preMouse_.rgbButtons[Mousebutton] == 0) {
 		return true;
 	}

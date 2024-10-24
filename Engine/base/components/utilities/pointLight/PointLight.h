@@ -18,6 +18,7 @@ public:
 
 	void Update();
 
+	//今使われているライトの設定をゲームシーンから得る
 	void SetTarget(const PointLight& pointLight) { pointLight_ = pointLight; }
 	const PointLight& GetPointLight() { return pointLight_; }
 

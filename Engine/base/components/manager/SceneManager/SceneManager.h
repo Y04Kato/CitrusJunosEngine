@@ -25,6 +25,7 @@
 
 class SceneManager {
 public:
+	//エンジンとゲーム一連の処理を全て行う
 	void Run();
 
 	void Initialize();

@@ -39,14 +39,16 @@ public:
 
 	void Update();
 
-	bool TriggerKey(BYTE keyNumber) const;
-	bool PressKey(BYTE keyNumber)const;
-	bool ReleaseKey(BYTE keyNumber)const;
+	bool TriggerKey(BYTE keyNumber) const;//キーを押した瞬間
+	bool PressKey(BYTE keyNumber)const;//キー押している間
+	bool ReleaseKey(BYTE keyNumber)const;//キーを離した瞬間
 
-	bool pushMouse(uint32_t Mousebutton);
+	bool TriggerMouse(uint32_t Mousebutton);//マウスボタンを押した瞬間
 
+	//コントローラー入力の取得
 	bool GetJoystickState(int32_t stickNo, XINPUT_STATE& out);
 
+	//各種コントローラーボタンを押している間
 	bool PushLTrigger(XINPUT_STATE& out);
 	bool PushRTrigger(XINPUT_STATE& out);
 	bool PushLSHOULDER(XINPUT_STATE& out);
@@ -56,16 +58,19 @@ public:
 	bool PushXButton(XINPUT_STATE& out);
 	bool PushYButton(XINPUT_STATE& out);
 
+	//各種コントローラーボタンを押した瞬間
 	bool TriggerAButton(XINPUT_STATE& out);
 	bool TriggerBButton(XINPUT_STATE& out);
 	bool TriggerXButton(XINPUT_STATE& out);
 	bool TriggerYButton(XINPUT_STATE& out);
 
+	//マウスカーソルの表示、非表示操作
 	void ViewCursor();
 	void HideCursor();
 	void ToggleCursor();
 	bool GetToggleCursor() { return toggleCursor_; }
 
+	//マウスのローカル座標の取得
 	MousePosition GetMousePosition() {
 		return m_Position_;
 	}
@@ -86,9 +91,9 @@ private:
 	DIMOUSESTATE2 preMouse_;
 	Microsoft::WRL::ComPtr<IDirectInputDevice8> mouseInput_ = nullptr;
 	MousePosition m_Position_ = { {0.0f,0.0f},0.0f };
-	Vector2 MousePos();
-	Vector2 MouseVelocity();
-	float MouseScroll();
+	Vector2 MousePos();//マウスのローカル座標取得
+	Vector2 MouseVelocity();//マウスの移動量取得
+	float MouseScroll();//マウスのスクロール量取得
 	bool toggleCursor_ = true;
 
 	//コントローラー

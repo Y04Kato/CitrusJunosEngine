@@ -36,6 +36,7 @@ public:
 	//ラインの太さ
 	void SetLineThickness(float thickness) { size_ = thickness; };
 
+	//環境マップ用テクスチャの設定
 	void SetEnvironmentTexture(const uint32_t& envTex) { environmentTexture_ = envTex; isSetEnviromentTexture_ = true; }
 
 private:

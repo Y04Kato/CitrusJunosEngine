@@ -18,6 +18,7 @@ public:
 
 	void Update();
 
+	//今使われているライトの設定をゲームシーンから得る
 	void SetTarget(const DirectionalLight& directionalLight) { directionalLight_ = directionalLight; }
 	const DirectionalLight& GetDirectionalLight() { return directionalLight_; }
 

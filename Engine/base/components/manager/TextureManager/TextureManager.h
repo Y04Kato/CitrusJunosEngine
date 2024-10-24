@@ -17,6 +17,7 @@ public:
 	void Initialize();
 	static TextureManager* GetInstance();
 	static const int maxtex = 256;
+	//現在のSRVハンドルを得る
 	const D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(uint32_t textureHandle);
 
 	//テクスチャの読み込み、0番はwhiteがInitialize時に入っているので1番から割り当て開始
@@ -30,9 +31,12 @@ public:
 
 	Microsoft::WRL::ComPtr <ID3D12Resource> GetTextureBuffer(uint32_t index)const { return textureResource_[index].Get(); }
 
+	//テクスチャの割り当て番地を得る
 	uint32_t GetTextureIndex() { return textureIndex_; }
+	//テクスチャの割り当て番地を手動設定する
 	void SetTextureIndex(uint32_t textureIndex);
 
+	//各種ディスクリプターのサイズを得る
 	uint32_t GetDescriptorSizeSRV() { return descriptorSizeSRV; }
 	uint32_t GetDescriptorSizeRTV() { return descriptorSizeRTV; }
 	uint32_t GetDescriptorSizeDSV() { return descriptorSizeDSV; }
@@ -52,6 +56,7 @@ private:
 
 	uint32_t textureIndex_;
 
+	//テクスチャリソースを生成する
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(Microsoft::WRL::ComPtr <ID3D12Device> device, const DirectX::TexMetadata& metadata);
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr <ID3D12Resource> texture, const DirectX::ScratchImage& mipImages, uint32_t index);
 	DirectX::ScratchImage  LoadTexture(const std::string& filePath);
