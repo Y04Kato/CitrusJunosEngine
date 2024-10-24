@@ -11,9 +11,9 @@
 
 class CollisionManager {
 public:
-	void AddCollider(Collider* collider) { colliders_.push_back(collider); }
-	void ClearColliders() { colliders_.clear(); }
-	void CheckAllCollision();
+	void AddCollider(Collider* collider) { colliders_.push_back(collider); }//コライダーの追加
+	void ClearColliders() { colliders_.clear(); }//全てのコライダーをリセット
+	void CheckAllCollision();//全てのコライダーを検証する
 	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 
 	static CollisionManager* GetInstance();

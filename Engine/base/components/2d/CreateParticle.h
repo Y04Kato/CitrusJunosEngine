@@ -23,20 +23,35 @@ public:
 	void Finalize();
 	void Draw(const ViewProjection& viewProjection);
 
+	//新しいパーティクルを指定地点に発生させる
 	Particle MakeNewParticle(std::mt19937& randomEngine, const EulerTransform transform);
+	
+	//エミッターの設定を基に、パーティクルを発生させる
 	std::list<Particle> Emission(const Emitter& emitter, std::mt19937& randomEngine);
 
+	//エミッターの設定
 	void SetEmitter(const Emitter& emitter) {
 		emitter_.count = emitter.count;
 		emitter_.frequency = emitter.frequency;
 		emitter_.transform = emitter.transform;
 	};
+	
+	//パーティクルの流れる方向を設定
 	void SetAccelerationField(const AccelerationField& accelerationField) { accelerationField_ = accelerationField; };
+	
+	//ビルボードを行うか否か(視点に方向を向くか否か)
 	void SetisBillBoard(const bool isBillBoard) { isBillBoard_ = isBillBoard; };
+	
+	//パーティクルカラーの手動設定
 	void SetisColor(const bool isColor) { isColor_ = isColor; };
+	
 	//Velocityをランダムにするか否かFalseでOFF、True+1以上ならランダムな値に値を掛ける
 	void SetisVelocity(const bool isVelocity, const float boost) { isVelocity_ = isVelocity; velocityBoost_ = boost; };
+	
+	//パーティクル発生座標のみを設定
 	void SetTranslate(Vector3 transform) { emitter_.transform.translate = transform; }
+	
+	//パーティクル発生頻度のみを設定
 	void SetFrequency(float frequency) { emitter_.frequency = frequency; }
 
 	//パーティクルの色をランダムから指定した色に変更出来る
@@ -53,6 +68,7 @@ public:
 
 	int GetkNumMaxInstance() { return kNumMaxInstance_; }
 
+	//指定した数、1回だけパーティクルを生成する
 	void OccursOnlyOnce(int occursNum);
 
 private:

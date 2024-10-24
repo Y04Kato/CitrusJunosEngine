@@ -49,8 +49,10 @@ struct WorldTransform {
 	/// </summary>
 	void TransferMatrix();
 
+	//全部まとめて更新
 	void UpdateMatrix();
 
+	//クォータニオンの更新
 	void  UpdateQuaternionMatrix();
 
 	Vector3 GetWorldPos();

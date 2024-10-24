@@ -22,6 +22,7 @@ public:
 
 	void Initialize(const std::string& directoryPath, const std::string& filename);
 
+	//読み込んだレベルデータを得る
 	LevelData* GetLevelData() { return levelData_; }
 
 	LevelDataLoader(const LevelDataLoader& obj) = delete;

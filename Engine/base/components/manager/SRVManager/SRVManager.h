@@ -18,8 +18,10 @@ class SRVManager{
 public:
 	static SRVManager* GetInstance();
 
+	//空いているSRVのディスクリプターハンドルを取得
 	DESCRIPTERHANDLE GetDescriptorHandle();
 	
+	//現在のSRVの数を取得
 	uint32_t GetSRVValue();
 
 	uint32_t descriptorSizeSRV;

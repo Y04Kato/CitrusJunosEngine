@@ -12,6 +12,8 @@
 class RTVManager{
 public:
 	static RTVManager* GetInstance();
+
+	//空いているRTVのディスクリプターハンドルを取得
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDescriptorHandle();
 
 	uint32_t descriptorSizeRTV;

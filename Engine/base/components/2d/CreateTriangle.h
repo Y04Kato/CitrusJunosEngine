@@ -23,6 +23,7 @@ public:
 
 	void Finalize();
 
+	//環境マップ用テクスチャの設定
 	void SetEnvironmentTexture(const uint32_t& envTex) { environmentTexture_ = envTex; isSetEnviromentTexture_ = true; }
 
 private:

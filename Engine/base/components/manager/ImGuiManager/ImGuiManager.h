@@ -17,8 +17,8 @@ class ImGuiManager {
 public:
 	static ImGuiManager* GetInstance();
 	void Initialize(WinApp* winApp, DirectXCommon* dxCommon);
-	void Begin();
-	void End();
+	void Begin();//ImGuiのフレーム描画準備
+	void End();//描画の受付を終了する
 	void Draw();
 	void Finalize();
 private:
