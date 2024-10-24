@@ -1,3 +1,10 @@
+/**
+ * @file Boss.h
+ * @brief プレイヤーを倒す為に動くボスを管理
+ * @author KATO
+ * @date 2024/10/11
+ */
+
 #pragma once
 #include "baseCharacter/BaseCharacter.h"
 

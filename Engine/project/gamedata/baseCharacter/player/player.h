@@ -1,3 +1,10 @@
+/**
+ * @file Player.h
+ * @brief プレイヤーが操作を行う自機を管理する
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Input.h"
 #include "Model.h"

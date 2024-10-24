@@ -1,8 +1,8 @@
 /**
- * @file transition.cpp
+ * @file Transition.cpp
  * @brief トランジションを行うクラス
  * @author KATO
- * @date 未記録
+ * @date 2024/10/12
  */
 
 #include "transition.h"

@@ -28,8 +28,8 @@
 #include "ground/Ground.h"
 #include "baseCharacter/player/Player.h"
 #include "baseCharacter/enemy/Enemy.h"
-#include "explosion/explosion.h"
-#include "transition/transition.h"
+#include "explosion/Explosion.h"
+#include "transition/Transition.h"
 
 class GamePlayScene :public Iscene {
 public:

@@ -1,3 +1,10 @@
+/**
+ * @file Ground.h
+ * @brief ゲームシーンでの床を管理
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Model.h"
 #include "worldTransform.h"

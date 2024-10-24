@@ -1,3 +1,10 @@
+/**
+ * @file Boss.cpp
+ * @brief プレイヤーを倒す為に動くボスを管理
+ * @author KATO
+ * @date 2024/10/11
+ */
+
 #include "Boss.h"
 #include <cassert>
 #define _USE_MATH_DEFINES

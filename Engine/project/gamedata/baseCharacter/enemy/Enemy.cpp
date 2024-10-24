@@ -1,3 +1,10 @@
+/**
+ * @file Enemy.cpp
+ * @brief プレイヤーの邪魔となる敵を管理
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Enemy.h"
 #include <cassert>
 #define _USE_MATH_DEFINES

@@ -13,7 +13,7 @@
 #include "components/2d/CreateSprite.h"
 #include "components/audio/Audio.h"
 
-#include "transition/transition.h"
+#include "transition/Transition.h"
 
 class GameOverScene :public Iscene {
 public:

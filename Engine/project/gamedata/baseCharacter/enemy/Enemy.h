@@ -1,3 +1,10 @@
+/**
+ * @file Enemy.h
+ * @brief プレイヤーの邪魔となる敵を管理
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Input.h"
 #include "Model.h"

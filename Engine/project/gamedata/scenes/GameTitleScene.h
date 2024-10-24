@@ -23,7 +23,7 @@
 #include "components/utilities/collisionManager/CollisionConfig.h"
 
 #include "baseCharacter/player/Player.h"
-#include "transition/transition.h"
+#include "transition/Transition.h"
 
 class GameTitleScene :public Iscene {
 public:

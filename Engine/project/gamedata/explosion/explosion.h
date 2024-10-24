@@ -1,3 +1,10 @@
+/**
+ * @file Explosion.h
+ * @brief ゲームシーンでの破壊演出を管理
+ * @author KATO
+ * @date 2024/10/12
+ */
+
 #pragma once
 #include "components/input/Input.h"
 #include "components/3d/WorldTransform.h"

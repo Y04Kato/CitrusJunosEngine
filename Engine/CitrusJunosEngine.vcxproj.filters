@@ -525,7 +525,7 @@
     <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\explosion\explosion.cpp">
+    <ClCompile Include="project\gamedata\explosion\Explosion.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="project\gamedata\ground\Ground.cpp">
@@ -537,7 +537,7 @@
     <ClCompile Include="project\gamedata\scenes\GameOverScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\transition\transition.cpp">
+    <ClCompile Include="project\gamedata\transition\Transition.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -847,7 +847,7 @@
     <ClInclude Include="project\gamedata\baseCharacter\player\Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\explosion\explosion.h">
+    <ClInclude Include="project\gamedata\explosion\Explosion.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="project\gamedata\ground\Ground.h">
@@ -859,7 +859,7 @@
     <ClInclude Include="project\gamedata\scenes\GameOverScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\transition\transition.h">
+    <ClInclude Include="project\gamedata\transition\Transition.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

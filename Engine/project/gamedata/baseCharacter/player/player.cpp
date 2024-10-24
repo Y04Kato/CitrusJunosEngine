@@ -1,3 +1,10 @@
+/**
+ * @file Player.cpp
+ * @brief プレイヤーが操作を行う自機を管理する
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "Player.h"
 #include <cassert>
 #define _USE_MATH_DEFINES

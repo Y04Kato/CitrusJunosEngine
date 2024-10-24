@@ -1,3 +1,10 @@
+/**
+ * @file Ground.cpp
+ * @brief ゲームシーンでの床を管理
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "ground.h"
 
 void Ground::Initialize(Model* model, Vector3 translation, Vector3 scale) {

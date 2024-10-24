@@ -1,4 +1,11 @@
-#include "explosion.h"
+/**
+ * @file Explosion.cpp
+ * @brief ゲームシーンでの破壊演出を管理
+ * @author KATO
+ * @date 2024/10/12
+ */
+
+#include "Explosion.h"
 
 void Explosion::Initialize(ModelData ObjModelData, uint32_t ObjTexture) {
     input_ = Input::GetInstance();

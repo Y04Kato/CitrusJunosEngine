@@ -209,7 +209,7 @@
     <ClCompile Include="project\gamedata\baseCharacter\boss\Boss.cpp" />
     <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp" />
     <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp" />
-    <ClCompile Include="project\gamedata\explosion\explosion.cpp" />
+    <ClCompile Include="project\gamedata\explosion\Explosion.cpp" />
     <ClCompile Include="project\gamedata\ground\Ground.cpp" />
     <ClCompile Include="project\gamedata\scenes\DebugScene.cpp" />
     <ClCompile Include="project\gamedata\scenes\GameClearScene.cpp" />
@@ -219,7 +219,7 @@
     <ClCompile Include="base\components\manager\SceneManager\SceneManager.cpp" />
     <ClCompile Include="base\components\utilities\collisionManager\CollisionManager.cpp" />
     <ClCompile Include="base\components\utilities\globalVariables\GlobalVariables.cpp" />
-    <ClCompile Include="project\gamedata\transition\transition.cpp" />
+    <ClCompile Include="project\gamedata\transition\Transition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\BoxFilter.PS.hlsl">
@@ -487,7 +487,7 @@
     <ClInclude Include="project\gamedata\baseCharacter\boss\Boss.h" />
     <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h" />
     <ClInclude Include="project\gamedata\baseCharacter\player\Player.h" />
-    <ClInclude Include="project\gamedata\explosion\explosion.h" />
+    <ClInclude Include="project\gamedata\explosion\Explosion.h" />
     <ClInclude Include="project\gamedata\ground\Ground.h" />
     <ClInclude Include="project\gamedata\scenes\DebugScene.h" />
     <ClInclude Include="project\gamedata\scenes\GameClearScene.h" />
@@ -501,7 +501,7 @@
     <ClInclude Include="base\components\utilities\collisionManager\CollisionManager.h" />
     <ClInclude Include="base\components\utilities\globalVariables\GlobalVariables.h" />
     <ClInclude Include="project\gamedata\resources\resource.h" />
-    <ClInclude Include="project\gamedata\transition\transition.h" />
+    <ClInclude Include="project\gamedata\transition\Transition.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
