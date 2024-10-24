@@ -1,3 +1,10 @@
+/**
+ * @file GameOverScene.h
+ * @brief ゲームオーバーシーンを管理
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Iscene.h"
 #include "CJEngine.h"

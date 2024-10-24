@@ -1,3 +1,10 @@
+/**
+ * @file DebugScene.cpp
+ * @brief ゲームの動作テストを行うシーンを管理
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "DebugScene.h"
 
 void DebugScene::Initialize() {

@@ -1,3 +1,10 @@
+/**
+ * @file DebugScene.h
+ * @brief ゲームの動作テストを行うシーンを管理
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "Iscene.h"
 #include "components/audio/Audio.h"

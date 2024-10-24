@@ -1,5 +1,5 @@
 /**
- * @file GamePlayScene.h
+ * @file GamePlayScene.cpp
  * @brief ゲームシーンを管理
  * @author KATO
  * @date 未記録
