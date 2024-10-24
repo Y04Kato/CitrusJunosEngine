@@ -1,3 +1,10 @@
+/**
+ * @file GamePlayScene.h
+ * @brief ゲームシーンを管理
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "GamePlayScene.h"
 #include <stdlib.h>
 #include <time.h>

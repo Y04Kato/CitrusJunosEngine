@@ -1,3 +1,10 @@
+/**
+ * @file transition.cpp
+ * @brief トランジションを行うクラス
+ * @author KATO
+ * @date 未記録
+ */
+
 #include "transition.h"
 
 Transition* Transition::GetInstance() {

@@ -1,3 +1,10 @@
+/**
+ * @file transition.h
+ * @brief トランジションを行うクラス
+ * @author KATO
+ * @date 未記録
+ */
+
 #pragma once
 #include "components/2d/CreateSprite.h"
 
