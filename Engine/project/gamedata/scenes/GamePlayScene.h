@@ -146,7 +146,7 @@ private:
 	//Sprite
 	std::unique_ptr <CreateSprite> sprite_[5];
 	EulerTransform spriteTransform_;
-	EulerTransform spriteTransformTest_;
+	EulerTransform spriteTransform4_;//sprite_[4]のゲーム開始演出用
 	EulerTransform SpriteuvTransform_;
 	Vector4 spriteMaterial_;
 
@@ -159,11 +159,12 @@ private:
 	uint32_t purpose_;
 
 	//Other
-	bool isGameStart_ = true;//ゲームスタート時の処理
-	bool isGameEntry_ = true;//ゲームスタート演出の処理
+	bool isGameStart_ = true;//ゲームスタート時のフラグ
+	bool isGameEntry_ = false;//ゲームスタート演出のフラグ
 	int entryCount_ = 0;//スタート演出のカウント
-	bool isGameover_ = false;//ゲームオーバー時の処理
-	bool isGameclear_ = false;//ゲームクリア時の処理
+	bool isGameover_ = false;//ゲームオーバー時のフラグ
+	bool isGameclear_ = false;//ゲームクリア時のフラグ
+	bool isGamePause_ = false;//ゲームポーズフラグ
 
 	//押し戻しの倍率
 	float pushbackMultiplier_ = 2.0f;
