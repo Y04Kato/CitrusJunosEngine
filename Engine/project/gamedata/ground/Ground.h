@@ -19,7 +19,10 @@ public:
 	
 	void Draw(const ViewProjection& viewProjection);
 	
+	//床の座標設定
 	WorldTransform& GetWorldTransform() { return worldTransform_; }
+
+	//ステージ鑑賞用の座標設定
 	WorldTransform& GetWorldTransformRotate() { return worldTransformRotate_; }
 
 private:

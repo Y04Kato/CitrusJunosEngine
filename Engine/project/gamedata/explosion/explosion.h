@@ -18,17 +18,19 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
+    //発生地点と床の座標を設定する
 	void SetWorldTransformBase(const WorldTransform& worldTransform) { worldTransformBase_ = worldTransform; }
 	void SetWorldTransformFloor(const WorldTransform& worldTransform) { worldTransformFloor_ = worldTransform; }
 
+    //設定を基に爆発させる
 	void ExplosionFlagTrue(Vector4 material);
 
-    // 破片にアクセスするためのゲッター
+    //破片にアクセスするためのゲッター
     const std::vector<WorldTransform>& GetFragments() const { return worldTransforms_; }
     const WorldTransform& GetFragmentTransform(size_t index) const { return worldTransforms_[index]; }
     const Vector3& GetFragmentVelocity(size_t index) const { return velocities_[index]; }
 
-    // 破片の位置と速度を設定するセッター
+    //破片の位置と速度を設定するセッター
     void SetFragmentPosition(size_t index, const Vector3& position) { worldTransforms_[index].translation_ = position; }
     void SetFragmentVelocity(size_t index, const Vector3& velocity) { velocities_[index] = velocity; }
     void SetAngularVelocitie(size_t index, const Vector3& velocity) { angularVelocities_[index] = velocity; }

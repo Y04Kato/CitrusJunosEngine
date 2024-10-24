@@ -41,26 +41,34 @@ public:
 	//落下処理
 	void IsFallStart();
 
+	//スケールの設定
 	void SetScale(const Vector3 scale) { worldTransform_.scale_ = scale; }
 
+	//座標の設定
 	void SetObjectPos(const WorldTransform& worldtransform);
 
 	bool isHitOnFloor;
 
+	//ゲームオーバーか否か
 	bool isGameover() { return gameOver; }
 
+	//当たり判定用のSphereを得る
 	StructSphere GetStructSphere() { return structSphere_; }
 
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
+	//移動量を得る、設定する
 	Vector3 GetVelocity() { return velocity_; }
 	void SetVelocity(const Vector3 velocity);
 
+	//移動可能か否かの設定
 	bool GetIsMove() { return isMove_; }
 	void SetIsMove(const bool isMove) { isMove_ = isMove; }
 
+	//現在の移動モードの設定
 	int GetMoveMode() { return moveMode_; }
 
+	//移動クールダウンの設定
 	bool GetIsMoveFlag() { return moveFlag_; }
 
 private:

@@ -23,22 +23,28 @@ public:
 
 	void Draw(const ViewProjection& viewProjection) override;
 
+	//移動処理
 	void Move();
 
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 	void SetWorldTransform(const Vector3 translation);
 
+	//落下処理
 	void IsFallStart();
 
+	//座標の設定
 	void SetObjectPos(const WorldTransform& worldtransform);
 
 	bool isHitOnFloor = false;
 
+	//生死フラグ
 	bool GetisDead() { return isDead_; }
 	void SetisDead() { isDead_ = true; }
 
+	//当たり判定用のSphereを得る
 	StructSphere GetStructSphere() { return structSphere_; }
 
+	//移動量を得る、設定する
 	Vector3 GetVelocity() { return velocity_; }
 	void SetVelocity(const Vector3 velocity);
 
