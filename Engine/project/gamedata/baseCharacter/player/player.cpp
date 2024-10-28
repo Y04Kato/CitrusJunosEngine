@@ -86,9 +86,15 @@ void Player::UpdateView() {
 	structSphere_.radius = 1.5f;
 
 	worldTransform_.translation_ += velocity_;
-	worldTransform_.rotation_.num[1] += 1.0f;
+	if (worldTransform_.rotation_.num[0] == 0.0f && worldTransform_.rotation_.num[2] == 0.0f) {
+		worldTransform_.rotation_.num[1] += 1.0f;
+	}
 
 	worldTransform_.UpdateMatrix();
+
+	ImGui::Begin("player");
+	ImGui::DragFloat3("rotate", &worldTransform_.rotation_.num[0]);
+	ImGui::End();
 }
 
 void Player::Draw(const ViewProjection& viewProjection) {

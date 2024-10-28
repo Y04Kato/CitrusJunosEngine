@@ -11,8 +11,11 @@
 #include "components/input/Input.h"
 #include "TextureManager.h"
 #include "components/2d/CreateSprite.h"
+#include "components/3d/ViewProjection.h"
 #include "components/audio/Audio.h"
+#include "components/debugcamera/DebugCamera.h"
 
+#include "baseCharacter/player/Player.h"
 #include "transition/Transition.h"
 
 class GameOverScene :public Iscene {
@@ -52,9 +55,21 @@ private:
 	Audio* audio_;
 	SoundData soundData1_;
 
+	//自機
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<Model> playerModel_;
+
+	//ViewProjection
+	ViewProjection viewProjection_;
+
+	//Camera
+	DebugCamera* debugCamera_;
+
 	//シーン遷移
 	Transition* transition_;
 
 	//Other
 	bool isGameStart_ = true;//ゲームスタート時の処理
+	const int sceneChangeMaxTime_ = 120;
+	int sceneChangeTimer_ = 0;
 };

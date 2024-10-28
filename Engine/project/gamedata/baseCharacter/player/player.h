@@ -37,6 +37,7 @@ public:
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 	const WorldTransform& GetWorldTransformPlayer() { return worldTransform2_; }
 	void SetWorldTransform(const Vector3 translation);
+	void SetRotate(const Vector3 rotate) { worldTransform_.rotation_ = rotate; }
 
 	//落下処理
 	void IsFallStart();
