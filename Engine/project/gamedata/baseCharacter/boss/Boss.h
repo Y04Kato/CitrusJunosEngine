@@ -16,8 +16,17 @@ public:
 
 	void Draw(const ViewProjection& viewProjection) override;
 
-	WorldTransform& GetWorldTransform() { return worldTransform_; }
+	//バイクの玩具で引く攻撃
+	void Attack1();
+
+	//独楽を撃ちだす攻撃
+	void Attack2();
+
+	WorldTransform GetWorldTransform() { return worldTransform_; }
+	void SetWorldTransform(const Vector3 translation) { worldTransform_.translation_ = translation; }
 
 protected:
-
+	const int maxHP_ = 10;//最大体力
+	const int faseChangePoint_ = 5;//体力がこの値以下になったらフェイズ2へ
+	int hp_ = maxHP_;//現在体力
 };
