@@ -493,6 +493,8 @@ void GamePlayScene::GameEntryProcessing() {
 			entryCount_ = 0;
 			isGameEntry_ = false;
 
+			//Playerを動けるように
+			player_->SetIsMove(true);
 		}
 
 		spriteTransform_.translate = Lerp(spriteTransform_.translate, Vector3{ 1280.0f / 2.0f,720.0f / 2.0f,0.0f }, 0.1f);
@@ -510,20 +512,23 @@ void GamePlayScene::GameEntryProcessing() {
 }
 
 void GamePlayScene::GameProcessing() {
-	//Playerを動けるように
-	player_->SetIsMove(true);
-
 	//カメラ切り替え処理
 	if (input_->TriggerKey(DIK_E)) {
 		if (isBirdseyeMode_ == false) {//Player視点 → 俯瞰視点
 			debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
 			debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, cameraMoveSpeed_);
 			isBirdseyeMode_ = true;
+
+			//Playerを動けないように
+			player_->SetIsMove(false);
 		}
 		else {//俯瞰視点 → Player視点
 			debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, cameraMoveSpeed_);
 
 			cameraChange_ = true;
+
+			//Playerを動けるように
+			player_->SetIsMove(true);
 		}
 	}
 

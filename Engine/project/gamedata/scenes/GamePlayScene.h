@@ -94,7 +94,7 @@ private:
 	int cameraChangeTimer_ = 0;//カメラ切り替えの時間
 	int startCameraChangeTimer_ = 0;//スタート演出カメラ切り替えの時間
 	const int cameraChangeMaxTimer_ = 35;//カメラ切り替えの終了時間
-	const float cameraMoveSpeed_ = 0.01f;//MoveCameraの移動速度
+	const float cameraMoveSpeed_ = 0.05f;//MoveCameraの移動速度
 	bool cameraChange_ = false;//カメラの切り替えが終わっているか否か
 	bool isBirdseyeMode_ = false;//俯瞰視点か否か
 
