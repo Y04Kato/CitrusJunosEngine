@@ -366,6 +366,15 @@
     <ClCompile Include="base\components\debugCamera\DebugCamera.cpp">
       <Filter>ソース ファイル\base\components\debugCamera</Filter>
     </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\GameTitleScene.cpp">
+      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\GamePlayScene.cpp">
+      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\GameClearScene.cpp">
+      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
+    </ClCompile>
     <ClCompile Include="base\components\utilities\collisionManager\CollisionManager.cpp">
       <Filter>ソース ファイル\base\components\utilities\collisionManager</Filter>
     </ClCompile>
@@ -504,7 +513,31 @@
     <ClCompile Include="externals\imgui\ImGuizmo.cpp">
       <Filter>externals\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\boss\Boss.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\explosion\Explosion.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\ground\Ground.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="project\gamedata\scenes\DebugScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\GameOverScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\transition\Transition.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -633,6 +666,15 @@
     </ClInclude>
     <ClInclude Include="base\components\debugCamera\DebugCamera.h">
       <Filter>ヘッダー ファイル\base\components\debugCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\GameTitleScene.h">
+      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\GamePlayScene.h">
+      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\GameClearScene.h">
+      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
     </ClInclude>
     <ClInclude Include="base\components\utilities\collisionManager\Collider.h">
       <Filter>ヘッダー ファイル\base\components\utilities\collisionManager</Filter>
@@ -793,7 +835,31 @@
     <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h">
       <Filter>ヘッダー ファイル\base\components\shaderCompiler</Filter>
     </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\boss\Boss.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\player\Player.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\explosion\Explosion.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\ground\Ground.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="project\gamedata\scenes\DebugScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\GameOverScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\transition\Transition.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -18,6 +18,10 @@
 #include "postEffect/PostEffect.h"
 
 //sceneInclude
+#include "GameTitleScene.h"
+#include "GamePlayScene.h"
+#include "GameClearScene.h"
+#include "GameOverScene.h"
 #include "DebugScene.h"
 
 class SceneManager {

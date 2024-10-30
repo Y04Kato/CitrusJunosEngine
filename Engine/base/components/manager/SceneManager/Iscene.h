@@ -9,6 +9,10 @@
 
 //シーン一覧、シーン追加時はここに追加する
 enum SCENE {
+	TITLE_SCENE,
+	GAME_SCENE,
+	CLEAR_SCENE,
+	OVER_SCENE,
 	DEBUG_SCENE,
 	SCENE_MAX
 };
