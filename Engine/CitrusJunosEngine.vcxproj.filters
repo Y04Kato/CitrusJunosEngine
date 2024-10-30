@@ -384,9 +384,6 @@
     <ClCompile Include="base\components\2d\CreateTriangle.cpp">
       <Filter>ソース ファイル\base\components\2d</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\3d\Model.cpp">
-      <Filter>ソース ファイル\base\components\3d</Filter>
-    </ClCompile>
     <ClCompile Include="base\components\3d\WorldTransform.cpp">
       <Filter>ソース ファイル\base\components\3d</Filter>
     </ClCompile>
@@ -494,9 +491,6 @@
     </ClCompile>
     <ClCompile Include="base\components\shaderCompiler\ShaderCompiler.cpp">
       <Filter>ソース ファイル\base\components\ShaderComplier</Filter>
-    </ClCompile>
-    <ClCompile Include="base\components\utilities\editors\Editors.cpp">
-      <Filter>ソース ファイル\base\components\utilities\editors</Filter>
     </ClCompile>
     <ClCompile Include="base\components\utilities\levelDataLoader\LevelDataLoader.cpp">
       <Filter>ソース ファイル\base\components\utilities\LevelDataLoader</Filter>
@@ -658,9 +652,6 @@
     <ClInclude Include="base\components\2d\CreateTriangle.h">
       <Filter>ヘッダー ファイル\base\components\2d</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\3d\Model.h">
-      <Filter>ヘッダー ファイル\base\components\3d</Filter>
-    </ClInclude>
     <ClInclude Include="base\components\3d\WorldTransform.h">
       <Filter>ヘッダー ファイル\base\components\3d</Filter>
     </ClInclude>
@@ -780,9 +771,6 @@
     </ClInclude>
     <ClInclude Include="base\components\renderer\Renderer.h">
       <Filter>ヘッダー ファイル\base\components\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="base\components\utilities\editors\Editors.h">
-      <Filter>ヘッダー ファイル\base\components\utilities\editors</Filter>
     </ClInclude>
     <ClInclude Include="base\components\utilities\levelDataLoader\LevelDataLoader.h">
       <Filter>ヘッダー ファイル\base\components\utilities\levelDataLoader</Filter>

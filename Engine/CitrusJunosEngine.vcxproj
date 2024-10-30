@@ -182,7 +182,6 @@
     <ClCompile Include="base\components\shaderCompiler\ShaderCompiler.cpp" />
     <ClCompile Include="base\components\utilities\convertString\ConvertString.cpp" />
     <ClCompile Include="base\components\utilities\directionalLight\DirectionalLight.cpp" />
-    <ClCompile Include="base\components\utilities\editors\Editors.cpp" />
     <ClCompile Include="base\components\utilities\followCamera\FollowCamera.cpp" />
     <ClCompile Include="base\components\utilities\levelDataLoader\LevelDataLoader.cpp" />
     <ClCompile Include="base\components\utilities\pointLight\PointLight.cpp" />
@@ -190,7 +189,6 @@
     <ClCompile Include="base\components\2d\CreateTriangle.cpp" />
     <ClCompile Include="base\components\3d\CreateSphere.cpp" />
     <ClCompile Include="base\components\2d\CreateSprite.cpp" />
-    <ClCompile Include="base\components\3d\Model.cpp" />
     <ClCompile Include="base\components\debugCamera\DebugCamera.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\ImGuizmo.cpp" />
@@ -442,7 +440,6 @@
     <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h" />
     <ClInclude Include="base\components\utilities\convertString\ConvertString.h" />
     <ClInclude Include="base\components\utilities\directionalLight\DirectionalLight.h" />
-    <ClInclude Include="base\components\utilities\editors\Editors.h" />
     <ClInclude Include="base\components\utilities\followCamera\FollowCamera.h" />
     <ClInclude Include="base\components\utilities\levelDataLoader\LevelData.h" />
     <ClInclude Include="base\components\utilities\levelDataLoader\LevelDataLoader.h" />
@@ -451,7 +448,6 @@
     <ClInclude Include="base\components\2d\CreateTriangle.h" />
     <ClInclude Include="base\components\3d\CreateSphere.h" />
     <ClInclude Include="base\components\2d\CreateSprite.h" />
-    <ClInclude Include="base\components\3d\Model.h" />
     <ClInclude Include="base\components\debugCamera\DebugCamera.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
