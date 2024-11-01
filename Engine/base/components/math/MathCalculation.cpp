@@ -64,6 +64,12 @@ float NormalizeAngle(float angle) {
 	return angle;
 }
 
+float DistanceSquared(const Vector3& a, const Vector3& b) {
+	return (a.num[0] - b.num[0]) * (a.num[0] - b.num[0]) +
+		(a.num[1] - b.num[1]) * (a.num[1] - b.num[1]) +
+		(a.num[2] - b.num[2]) * (a.num[2] - b.num[2]);
+}
+
 #pragma endregion
 
 #pragma region Vector2
@@ -1405,4 +1411,41 @@ bool IsCollision(const StructSphere& sphere1, const StructSphere& sphere2) {
 	else {
 		return false;
 	}
+}
+
+bool IsCollision(const StructSphere& sphere, const StructCylinder& cylinder) {
+    //円柱の高さ方向の単位ベクトルを計算
+    Vector3 cylinderAxis = {
+        cylinder.topCenter.num[0] - cylinder.bottomCenter.num[0],
+        cylinder.topCenter.num[1] - cylinder.bottomCenter.num[1],
+        cylinder.topCenter.num[2] - cylinder.bottomCenter.num[2]
+    };
+    float heightSquared = DistanceSquared(cylinder.topCenter, cylinder.bottomCenter);
+    float height = std::sqrt(heightSquared);
+    Vector3 unitAxis = { cylinderAxis.num[0] / height, cylinderAxis.num[1] / height, cylinderAxis.num[2] / height };
+
+    //円柱の高さ方向に射影
+    Vector3 sphereToCylinderBase = {
+        sphere.center.num[0] - cylinder.bottomCenter.num[0],
+        sphere.center.num[1] - cylinder.bottomCenter.num[1],
+        sphere.center.num[2] - cylinder.bottomCenter.num[2]
+    };
+    float projLength = sphereToCylinderBase.num[0] * unitAxis.num[0] +
+                       sphereToCylinderBase.num[1] * unitAxis.num[1] +
+                       sphereToCylinderBase.num[2] * unitAxis.num[2];
+    
+    //円柱の高さ方向での位置を制限
+    projLength = std::fmax(0.0f, std::fmin(projLength, height));
+
+    //最も近い点を計算
+    Vector3 closestPointOnCylinder = {
+        cylinder.bottomCenter.num[0] + projLength * unitAxis.num[0],
+        cylinder.bottomCenter.num[1] + projLength * unitAxis.num[1],
+        cylinder.bottomCenter.num[2] + projLength * unitAxis.num[2]
+    };
+
+    //Sphereの中心と円柱の最も近い点との距離
+    float distSquared = DistanceSquared(sphere.center, closestPointOnCylinder);
+    float radiusSum = sphere.radius + cylinder.radius;
+    return distSquared <= radiusSum * radiusSum;
 }

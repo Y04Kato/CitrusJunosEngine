@@ -31,6 +31,9 @@ float LerpShortAngle(float a, float b, float t);
 //回転角度を -180度～180度の範囲に正規化する関数
 float NormalizeAngle(float angle);
 
+//ベクトルの距離の2乗を計算
+float DistanceSquared(const Vector3& a, const Vector3& b);
+
 #pragma endregion
 
 #pragma region Vector2
@@ -276,3 +279,5 @@ bool IsCollision(const OBB& obb, const StructSphere& sphere);
 bool IsCollision(const OBB& obb, const Segment& segment);
 
 bool IsCollision(const StructSphere& sphere1, const StructSphere& sphere2);
+
+bool IsCollision(const StructSphere& sphere, const StructCylinder& cylinder);
