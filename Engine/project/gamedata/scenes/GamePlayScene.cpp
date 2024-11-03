@@ -386,6 +386,7 @@ void GamePlayScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 	audio_->SoundUnload(&soundData2_);
 
+	boss_->Finalize();
 	editors_->Finalize();
 }
 
@@ -423,6 +424,8 @@ void GamePlayScene::GameStartProcessing() {
 		Vector3 pos = FindValidPosition();
 		SetEnemy(pos);
 	}
+
+	boss_->Reset();
 
 	//シーン遷移
 	transition_->SceneStart();
@@ -579,8 +582,8 @@ void GamePlayScene::GamePauseProcessing() {
 }
 
 void GamePlayScene::GameClearProcessing() {
-	//敵を全員倒した時
-	if (enemyAliveCount_ == 0) {
+	//ボスのHPが0になった時
+	if (boss_->GetisDead() == true) {
 		if (isGameclear_ == false) {
 			transition_->SceneEnd();
 		}
@@ -615,23 +618,14 @@ void GamePlayScene::GameOverProcessing() {
 		//遷移終わりにゲームオーバー処理
 		if (transition_->GetIsSceneEnd_() == false && maskData_.maskThreshold <= 0.0f) {
 			//生き残っている敵を全て削除
-			for (Enemy* enemy : enemys_) {
-				enemy->SetisDead();
-			}
-			enemys_.remove_if([&](Enemy* enemy) {
-				if (enemy->GetisDead()) {
-					delete enemy;
-					enemyAliveCount_--;
-					return true;
-				}
-				return false;
-				});
+			enemys_.clear();
 
 			//各種初期化処理
 			isGameStart_ = true;
 			isGameover_ = false;
 			directionalLight_.intensity = 1.0f;
 			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
+			boss_->Finalize();
 			editors_->Finalize();
 			sceneNo = OVER_SCENE;
 		}
@@ -887,8 +881,8 @@ void GamePlayScene::CollisionConclusion() {
 		bCylinder.radius = body.world.scale_.num[0];//X軸方向のスケールが円柱の半径
 
 		//ローカル空間での円柱の上端と下端の位置
-		Vector3 localTopCenter{ 0, 0.5f, 0 };//上端は Y=0.5 の位置と仮定
-		Vector3 localBottomCenter{ 0, -0.5f, 0 };//下端は Y=-0.5 の位置と仮定
+		Vector3 localTopCenter{ 0, 0.5f, 0 };
+		Vector3 localBottomCenter{ 0, -0.5f, 0 };
 
 		//スケールを適用（Y軸方向のスケールを高さに反映）
 		localTopCenter = localTopCenter * body.world.scale_.num[1];//Y軸方向のスケール
@@ -977,8 +971,8 @@ void GamePlayScene::CollisionConclusion() {
 			bCylinder.radius = body.world.scale_.num[0];//X軸方向のスケールが円柱の半径
 
 			//ローカル空間での円柱の上端と下端の位置
-			Vector3 localTopCenter{ 0, 0.5f, 0 };//上端は Y=0.5 の位置と仮定
-			Vector3 localBottomCenter{ 0, -0.5f, 0 };//下端は Y=-0.5 の位置と仮定
+			Vector3 localTopCenter{ 0, 0.5f, 0 };
+			Vector3 localBottomCenter{ 0, -0.5f, 0 };
 
 			//スケールを適用（Y軸方向のスケールを高さに反映）
 			localTopCenter = localTopCenter * body.world.scale_.num[1];//Y軸方向のスケール
@@ -1052,6 +1046,8 @@ void GamePlayScene::CollisionConclusion() {
 				Vector3 velocity = ComputeSphereVelocityAfterCollisionWithCylinder(eSphere, enemy->GetVelocity(), bCylinder, repulsionCoefficient_);
 				enemy->SetVelocity(velocity);
 
+				boss_->HitBody(body);
+
 				collisionParticle_->SetTranslate(closestPointOnCylinder);
 				collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
 			}
@@ -1108,6 +1104,27 @@ bool GamePlayScene::IsValidPosition(const Vector3 pos) {
 		OBB objOBB;
 		objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
 		if (IsCollision(objOBB, sphere)) {
+			return false;
+		}
+	}
+	for (Body body : boss_->GetBody()) {
+		StructCylinder bCylinder;
+		//スケール成分を使って半径を計算 (X軸方向のスケールを円柱の半径に使用する)
+		bCylinder.radius = body.world.scale_.num[0];//X軸方向のスケールが円柱の半径
+
+		//ローカル空間での円柱の上端と下端の位置
+		Vector3 localTopCenter{ 0, 0.5f, 0 };
+		Vector3 localBottomCenter{ 0, -0.5f, 0 };
+
+		//スケールを適用（Y軸方向のスケールを高さに反映）
+		localTopCenter = localTopCenter * body.world.scale_.num[1];//Y軸方向のスケール
+		localBottomCenter = localBottomCenter * body.world.scale_.num[1];//Y軸方向のスケール
+
+		//平行移動を適用
+		bCylinder.topCenter = localTopCenter + body.world.translation_;
+		bCylinder.bottomCenter = localBottomCenter + body.world.translation_;
+
+		if (IsCollision(sphere, bCylinder)) {
 			return false;
 		}
 	}

@@ -36,7 +36,7 @@ void Boss::Initialize(Model* model) {
 	for (int i = 0; i < maxHP_ - 1; i++) {
 		Vector4 color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
 		bodyTransform_.translate.num[1] = bodyTransform_.scale.num[1] * (float)i + bodyTransform_.scale.num[1] / 2.0f;
-		SpawnBody(bodyTransform_, color);
+		SpawnBody(bodyTransform_, color, i);
 	}
 }
 
@@ -46,7 +46,7 @@ void Boss::Update() {
 	bikeWorld_.TransferMatrix();
 
 	//HPが0になったら死亡フラグをTrueにする
-	if (hp_ <= 0) {
+	if (hp_ <= 1) {
 		isDead_ = true;
 	}
 
@@ -68,10 +68,25 @@ void Boss::Update() {
 		body.world.UpdateMatrix();
 	}
 
+	bodys_.remove_if([&](Body& body) {
+		if (body.durability <= 0) {
+			return true;
+		}
+		return false;
+		});
+
+	if (isHit_ == true) {
+		hitTimer_--;
+		if (hitTimer_ <= 0) {
+			isHit_ = false;
+		}
+	}
+
 	ImGui::Begin("Boss");
 	ImGui::DragFloat3("translate", worldTransform_.translation_.num);
 	ImGui::DragFloat3("rotate", worldTransform_.rotation_.num);
 	ImGui::DragFloat3("scale", worldTransform_.scale_.num);
+	ImGui::DragInt("hp", &hp_);
 	ImGui::End();
 }
 
@@ -85,6 +100,10 @@ void Boss::Draw(const ViewProjection& viewProjection) {
 	}
 }
 
+void Boss::Finalize() {
+	bodys_.clear();
+}
+
 void Boss::Attack1() {
 
 }
@@ -93,17 +112,53 @@ void Boss::Attack2() {
 
 }
 
-void Boss::SpawnBody(EulerTransform transform, Vector4 color) {
-	Body block;
-	block.model.Initialize(bodyModelData_, bodyTexture_);
-	block.model.SetDirectionalLightFlag(true, 3);
-	block.world.Initialize();
+void Boss::SpawnBody(EulerTransform transform, Vector4 color, int num) {
+	Body body
+		;
+	body.model.Initialize(bodyModelData_, bodyTexture_);
+	body.model.SetDirectionalLightFlag(true, 3);
+	body.world.Initialize();
 
-	block.world.translation_ = transform.translate;
-	block.world.rotation_ = transform.rotate;
-	block.world.scale_ = transform.scale;
+	body.world.translation_ = transform.translate;
+	body.world.rotation_ = transform.rotate;
+	body.world.scale_ = transform.scale;
 
-	block.material = color;
+	body.material = color;
 
-	bodys_.push_back(block);
+	body.num = num;
+
+	body.durability = 1;
+
+	bodys_.push_back(body);
+}
+
+void Boss::HitBody(Body b) {
+	for (Body& body : bodys_) {
+		if (body.num == b.num && isHit_ == false) {
+			body.durability--;
+			hp_ -= 1;
+			isHit_ = true;
+			hitTimer_ = coolTime_;
+			for (Body& body2 : bodys_) {
+				body2.world.translation_.num[1] -= body2.world.scale_.num[1];
+			}
+		}
+	}
+}
+
+void Boss::Reset() {
+	hp_ = maxHP_;
+
+	bodyTransform_.translate = { 0.0f,0.0f,0.0f };
+	bodyTransform_.rotate = { 0.0f,0.0f,0.0f };
+	bodyTransform_.scale = { 2.0f,2.0f,2.0f };
+
+	std::mt19937 randomEngine(seedGenerator());
+	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+
+	for (int i = 0; i < maxHP_ - 1; i++) {
+		Vector4 color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
+		bodyTransform_.translate.num[1] = bodyTransform_.scale.num[1] * (float)i + bodyTransform_.scale.num[1] / 2.0f;
+		SpawnBody(bodyTransform_, color, i);
+	}
 }

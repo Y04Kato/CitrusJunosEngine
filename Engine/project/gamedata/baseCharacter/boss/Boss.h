@@ -13,6 +13,8 @@ struct Body {
 	Model model;
 	WorldTransform world;
 	Vector4 material;
+	int num;
+	int durability;
 };
 
 class Boss : public BaseCharacter {
@@ -22,6 +24,8 @@ public:
 	void Update() override;
 
 	void Draw(const ViewProjection& viewProjection) override;
+
+	void Finalize();
 
 	//バイクの玩具で引く攻撃
 	void Attack1();
@@ -36,10 +40,16 @@ public:
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 	void SetWorldTransform(const Vector3 translation) { worldTransform_.translation_ = translation; }
 
-	void SpawnBody(EulerTransform transform, Vector4 color);
+	void SpawnBody(EulerTransform transform, Vector4 color , int num);
 
 	//Bodyのリストを得る
 	std::list<Body> GetBody() { return bodys_; }
+
+	//現在のグループ内のオブジェクトが接触した際の処理
+	void HitBody(Body b);
+
+	//ゲーム再スタート処理
+	void Reset();
 
 protected:
 	TextureManager* textureManager_;
@@ -58,6 +68,11 @@ protected:
 
 	//生死フラグ
 	bool isDead_ = false;
+
+	//
+	bool isHit_ = false;
+	const int coolTime_ = 30;//被弾のクールタイム
+	int hitTimer_ = coolTime_;//現在のクールタイム
 
 	//攻撃に関するモノ
 	const int resetTime_ = 180;//攻撃のクールタイム
