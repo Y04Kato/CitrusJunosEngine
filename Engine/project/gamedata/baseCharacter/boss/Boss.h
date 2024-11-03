@@ -38,6 +38,9 @@ public:
 
 	void SpawnBody(EulerTransform transform, Vector4 color);
 
+	//Bodyのリストを得る
+	std::list<Body> GetBody() { return bodys_; }
+
 protected:
 	TextureManager* textureManager_;
 

@@ -391,7 +391,7 @@ void GamePlayScene::Finalize() {
 
 void GamePlayScene::GameStartProcessing() {
 	//Player初期化
-	player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
+	player_->SetWorldTransform(Vector3{ 0.0f,0.2f,-20.0f });
 	player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
 	player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
 
@@ -481,7 +481,7 @@ void GamePlayScene::GameEntryProcessing() {
 				followCamera_->SetOffset({ 0.0f,3.5f,-20.0f });
 				followCamera_->Update();
 
-				debugCamera_->MovingCamera({ 0.0f,4.9f,-20.0f }, followCamera_->GetViewProjection().rotation_, 0.01f);
+				debugCamera_->MovingCamera({ 0.0f,4.9f,-40.0f }, followCamera_->GetViewProjection().rotation_, 0.01f);
 			}
 			else {
 				debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
@@ -877,6 +877,93 @@ void GamePlayScene::CollisionConclusion() {
 				explosion_->SetFragmentVelocity(i, velocity * 0.5f);
 				explosion_->SetAngularVelocitie(i, ComputeRotationFromVelocity(velocity * 0.5, 0.5f));
 			}
+		}
+	}
+
+	//プレイヤーと敵Bodyの当たり判定
+	for (Body body : boss_->GetBody()) {
+		StructCylinder bCylinder;
+		//スケール成分を使って半径を計算 (X軸方向のスケールを円柱の半径に使用する)
+		bCylinder.radius = body.world.scale_.num[0];//X軸方向のスケールが円柱の半径
+
+		//ローカル空間での円柱の上端と下端の位置
+		Vector3 localTopCenter{ 0, 0.5f, 0 };//上端は Y=0.5 の位置と仮定
+		Vector3 localBottomCenter{ 0, -0.5f, 0 };//下端は Y=-0.5 の位置と仮定
+
+		//スケールを適用（Y軸方向のスケールを高さに反映）
+		localTopCenter = localTopCenter * body.world.scale_.num[1];//Y軸方向のスケール
+		localBottomCenter = localBottomCenter * body.world.scale_.num[1];//Y軸方向のスケール
+
+		//平行移動を適用
+		bCylinder.topCenter = localTopCenter + body.world.translation_;
+		bCylinder.bottomCenter = localBottomCenter + body.world.translation_;
+
+		if (IsCollision(pSphere, bCylinder)) {
+			//円柱の高さ方向の単位ベクトルを計算
+			Vector3 cylinderAxis = {
+				bCylinder.topCenter.num[0] - bCylinder.bottomCenter.num[0],
+				bCylinder.topCenter.num[1] - bCylinder.bottomCenter.num[1],
+				bCylinder.topCenter.num[2] - bCylinder.bottomCenter.num[2]
+			};
+			float heightSquared = DistanceSquared(bCylinder.topCenter, bCylinder.bottomCenter);
+			float height = std::sqrt(heightSquared);
+			Vector3 unitAxis = { cylinderAxis.num[0] / height, cylinderAxis.num[1] / height, cylinderAxis.num[2] / height };
+
+			//球の中心を円柱の高さ方向に投影して最も近い点を取得
+			Vector3 sphereToCylinderBase = {
+				pSphere.center.num[0] - bCylinder.bottomCenter.num[0],
+				pSphere.center.num[1] - bCylinder.bottomCenter.num[1],
+				pSphere.center.num[2] - bCylinder.bottomCenter.num[2]
+			};
+			float projLength = sphereToCylinderBase.num[0] * unitAxis.num[0] +
+				sphereToCylinderBase.num[1] * unitAxis.num[1] +
+				sphereToCylinderBase.num[2] * unitAxis.num[2];
+
+			//円柱の高さ範囲に限定
+			projLength = std::fmax(0.0f, std::fmin(projLength, height));
+
+			//円柱上で球に最も近い点
+			Vector3 closestPointOnCylinder = {
+				bCylinder.bottomCenter.num[0] + projLength * unitAxis.num[0],
+				bCylinder.bottomCenter.num[1] + projLength * unitAxis.num[1],
+				bCylinder.bottomCenter.num[2] + projLength * unitAxis.num[2]
+			};
+
+			//球の中心と円柱の最も近い点の距離ベクトル
+			Vector3 direction = {
+				pSphere.center.num[0] - closestPointOnCylinder.num[0],
+				pSphere.center.num[1] - closestPointOnCylinder.num[1],
+				pSphere.center.num[2] - closestPointOnCylinder.num[2]
+			};
+			float distance = Length(direction);
+
+			//球が円柱と重なっているかを確認
+			float overlap = pSphere.radius + bCylinder.radius - distance;
+
+			if (overlap > 0.0f) {
+				//押し戻しの量を計算
+				Vector3 correction = Normalize(direction);
+				correction.num[0] *= overlap * pushbackMultiplier_;
+				correction.num[1] *= overlap * pushbackMultiplier_;
+				correction.num[2] *= overlap * pushbackMultiplier_;
+
+				//球を押し戻し
+				pSphere.center.num[0] += correction.num[0];
+				pSphere.center.num[1] += correction.num[1];
+				pSphere.center.num[2] += correction.num[2];
+
+				player_->SetWorldTransform(pSphere.center);
+			}
+
+			//衝突音を再生
+			ContactVolume(player_->GetVelocity());
+
+			//反発処理
+			Vector3 velocity = ComputeSphereVelocityAfterCollisionWithCylinder(pSphere, player_->GetVelocity(), bCylinder, repulsionCoefficient_);
+			player_->SetVelocity(velocity);
+
+			collisionParticle_->SetTranslate(closestPointOnCylinder);
+			collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
 		}
 	}
 }

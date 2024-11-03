@@ -132,6 +132,9 @@ Vector3 ComputeSphereVelocityAfterCollisionWithOBB(const StructSphere& sphere, c
 //Sphereは反発せず、obbだけ反発する処理
 Vector3 ComputeVelocitiesAfterCollisionWithOBB(const StructSphere& sphere, const Vector3& sphereVelocity, float sphereMass, const OBB& obb, const Vector3& obbVelocity, float obbMass, float restitution);
 
+//cylinderは反発せず、Sphereだけ反発する処理
+Vector3 ComputeSphereVelocityAfterCollisionWithCylinder(const StructSphere& sphere, const Vector3& sphereVelocity, const StructCylinder& cylinder, float restitution);
+
 //任意の時刻の値を取得する
 Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time);
 Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframe, float time);

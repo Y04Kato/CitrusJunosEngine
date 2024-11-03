@@ -493,6 +493,70 @@ Vector3 ComputeVelocitiesAfterCollisionWithOBB(const StructSphere& sphere,const 
 	return newObbVelocity;
 }
 
+Vector3 ComputeSphereVelocityAfterCollisionWithCylinder(const StructSphere& sphere, const Vector3& sphereVelocity, const StructCylinder& cylinder, float restitution) {
+	//円柱の高さ方向の単位ベクトルを計算
+	Vector3 cylinderAxis = {
+		cylinder.topCenter.num[0] - cylinder.bottomCenter.num[0],
+		cylinder.topCenter.num[1] - cylinder.bottomCenter.num[1],
+		cylinder.topCenter.num[2] - cylinder.bottomCenter.num[2]
+	};
+
+	float height = Length(cylinderAxis);
+	Vector3 unitAxis = {
+		cylinderAxis.num[0] / height,
+		cylinderAxis.num[1] / height,
+		cylinderAxis.num[2] / height
+	};
+
+	//球の中心を円柱の高さ方向に投影して最も近い点を計算
+	Vector3 sphereToCylinderBase = {
+		sphere.center.num[0] - cylinder.bottomCenter.num[0],
+		sphere.center.num[1] - cylinder.bottomCenter.num[1],
+		sphere.center.num[2] - cylinder.bottomCenter.num[2]
+	};
+	float projLength = sphereToCylinderBase.num[0] * unitAxis.num[0] +
+		sphereToCylinderBase.num[1] * unitAxis.num[1] +
+		sphereToCylinderBase.num[2] * unitAxis.num[2];
+
+	//円柱の高さ範囲に限定
+	projLength = std::fmax(0.0f, std::fmin(projLength, height));
+
+	//円柱上の球に最も近い点
+	Vector3 closestPointOnCylinder = {
+		cylinder.bottomCenter.num[0] + projLength * unitAxis.num[0],
+		cylinder.bottomCenter.num[1] + projLength * unitAxis.num[1],
+		cylinder.bottomCenter.num[2] + projLength * unitAxis.num[2]
+	};
+
+	//円柱の円周上の最近接点を計算
+	Vector3 toSphere = {
+		sphere.center.num[0] - closestPointOnCylinder.num[0],
+		sphere.center.num[1] - closestPointOnCylinder.num[1],
+		sphere.center.num[2] - closestPointOnCylinder.num[2]
+	};
+	float distToSphere = Length(toSphere);
+
+	//円周上の最近接点が円柱の半径外にある場合は、円柱の表面上に移動
+	if (distToSphere > cylinder.radius) {
+		Vector3 radialDirection = Normalize(toSphere);
+		closestPointOnCylinder.num[0] += radialDirection.num[0] * cylinder.radius;
+		closestPointOnCylinder.num[1] += radialDirection.num[1] * cylinder.radius;
+		closestPointOnCylinder.num[2] += radialDirection.num[2] * cylinder.radius;
+	}
+
+	//衝突法線を計算
+	Vector3 collisionNormal = Normalize(sphere.center - closestPointOnCylinder);
+
+	//速度を衝突面法線方向とその他に分解
+	Vector3 velocityNormal = Project(sphereVelocity, collisionNormal);
+	Vector3 velocityTangent = sphereVelocity - velocityNormal;
+
+	//反発係数を考慮して新しい速度を計算
+	Vector3 newVelocityNormal = -restitution * velocityNormal;
+	Vector3 newSphereVelocity = newVelocityNormal + velocityTangent;
+
+	return newSphereVelocity;
+}
 
 Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time) {
 	assert(!keyframe.empty());//キーがない物は返す値がないのでダメ

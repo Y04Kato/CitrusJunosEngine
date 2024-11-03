@@ -18,23 +18,24 @@ void Boss::Initialize(Model* model) {
 	BaseCharacter::Initialize(model);
 
 	//バイクのモデル追加
-	bikeModel_.reset(Model::CreateModel("project/gamedata/resources/bike", "bike.gltf"));
+	bikeModel_.reset(Model::CreateModel("project/gamedata/resources/bike", "bike.obj"));
 	bikeModel_->SetDirectionalLightFlag(true, 3);
 
 	bikeWorld_.Initialize();
 
-	bodyModelData_ = model_->LoadModelFile("project/gamedata/resources/cylinder", "Cylinder.gltf");
+	bodyModelData_ = model_->LoadModelFile("project/gamedata/resources/cylinder", "Cylinder.obj");
 	bodyTexture_ = textureManager_->Load(bodyModelData_.material.textureFilePath);
 
 	bodyTransform_.translate = { 0.0f,0.0f,0.0f };
 	bodyTransform_.rotate = { 0.0f,0.0f,0.0f };
-	bodyTransform_.scale = { 1.0f,1.0f,1.0f };
+	bodyTransform_.scale = { 2.0f,2.0f,2.0f };
 
 	std::mt19937 randomEngine(seedGenerator());
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 
 	for (int i = 0; i < maxHP_ - 1; i++) {
 		Vector4 color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
+		bodyTransform_.translate.num[1] = bodyTransform_.scale.num[1] * (float)i + bodyTransform_.scale.num[1] / 2.0f;
 		SpawnBody(bodyTransform_, color);
 	}
 }
@@ -76,8 +77,8 @@ void Boss::Update() {
 
 void Boss::Draw(const ViewProjection& viewProjection) {
 	//3Dモデルを描画
-	model_->Draw(worldTransform_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
-	bikeModel_->Draw(bikeWorld_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
+	//model_->Draw(worldTransform_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
+	//bikeModel_->Draw(bikeWorld_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
 
 	for (Body& body : bodys_) {
 		body.model.Draw(body.world, viewProjection, body.material);

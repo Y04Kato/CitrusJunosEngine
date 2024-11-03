@@ -89,9 +89,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib;assimp-vc143-mtd.lib;zlibstaticd.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib;assimp-vc143-mtd.lib</AdditionalDependencies>
       <AdditionalOptions>/ignore:4049 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\build\lib\Debug;%(AdditionalLibraryDirectories);$(ProjectDir)externals\zlib\debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
@@ -116,8 +116,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib;assimp-vc143-mt.lib;zlib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\build\lib\Release;%(AdditionalLibraryDirectories);$(ProjectDir)externals\zlib\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib;assimp-vc143-mt.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
