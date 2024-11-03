@@ -28,6 +28,7 @@
 #include "ground/Ground.h"
 #include "baseCharacter/player/Player.h"
 #include "baseCharacter/enemy/Enemy.h"
+#include "baseCharacter/boss/Boss.h"
 #include "explosion/Explosion.h"
 #include "transition/Transition.h"
 
@@ -106,6 +107,10 @@ private:
 	Emitter playerEmitter_{};
 	AccelerationField playerAccelerationField_;
 	uint32_t playerParticleResource_;
+
+	//Boss
+	std::unique_ptr<Boss> boss_;
+	std::unique_ptr<Model> bossModel_;
 
 	//Enemy
 	std::list<Enemy*> enemys_;

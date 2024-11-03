@@ -41,6 +41,12 @@ void GamePlayScene::Initialize() {
 	followCamera_->Initialize();
 	followCamera_->SetTarget(&player_->GetWorldTransformPlayer());//カメラをPlayerにセット
 
+	//Bossモデルの初期化と読み込み
+	boss_ = std::make_unique<Boss>();
+	bossModel_.reset(Model::CreateModel("project/gamedata/resources/hand", "hand.gltf"));
+	bossModel_->SetDirectionalLightFlag(true, 3);
+	boss_->Initialize(bossModel_.get());
+
 	//Enemyモデルの初期化と読み込み
 	enemyModel_.reset(Model::CreateModel("project/gamedata/resources/enemy", "enemy.obj"));
 	enemyModel_->SetDirectionalLightFlag(true, 3);
@@ -220,6 +226,9 @@ void GamePlayScene::Update() {
 		player_->SetViewProjection(&viewProjection_);
 		player_->Update();
 
+		//ボス更新
+		boss_->Update();
+
 		//旗座標更新
 		for (int i = 0; i < 4; i++) {
 			worldModels_[i].UpdateMatrix();
@@ -300,6 +309,7 @@ void GamePlayScene::Draw() {
 	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
 
 	player_->Draw(viewProjection_);
+	boss_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
 	explosion_->Draw(viewProjection_);
 	for (Enemy* enemy : enemys_) {

@@ -66,6 +66,12 @@ void Boss::Update() {
 	for (Body& body : bodys_) {
 		body.world.UpdateMatrix();
 	}
+
+	ImGui::Begin("Boss");
+	ImGui::DragFloat3("translate", worldTransform_.translation_.num);
+	ImGui::DragFloat3("rotate", worldTransform_.rotation_.num);
+	ImGui::DragFloat3("scale", worldTransform_.scale_.num);
+	ImGui::End();
 }
 
 void Boss::Draw(const ViewProjection& viewProjection) {
