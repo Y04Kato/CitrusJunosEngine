@@ -59,6 +59,9 @@ public:
 	//ゲームオーバー時の処理
 	void GameOverProcessing();
 
+	//ステージのリセット処理
+	void StageReset();
+
 	//当たり判定まとめ
 	void CollisionConclusion();
 
@@ -171,6 +174,7 @@ private:
 	int entryCount_ = 0;//スタート演出のカウント
 	bool isGameover_ = false;//ゲームオーバー時のフラグ
 	bool isGameclear_ = false;//ゲームクリア時のフラグ
+	bool isGameEnd_ = false;//ゲームリセット時のフラグ
 	bool isGamePause_ = false;//ゲームポーズフラグ
 
 	//押し戻しの倍率

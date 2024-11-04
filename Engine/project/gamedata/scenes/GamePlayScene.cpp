@@ -283,12 +283,12 @@ void GamePlayScene::Update() {
 		//Explosion更新
 		explosion_->Update();
 
-		//Transition更新
-		transition_->Update();
-
 		//当たり判定処理
 		CollisionConclusion();
 	}
+
+	//Transition更新
+	transition_->Update();
 
 	//
 	ImGui::Begin("PlayScene");
@@ -593,6 +593,21 @@ void GamePlayScene::GamePauseProcessing() {
 	if (input_->TriggerKey(DIK_Q)) {
 		isGamePause_ = false;
 	}
+
+	//Eを押したとき
+	if (input_->TriggerKey(DIK_E) && isGameEnd_ == false) {
+		transition_->SceneEnd();
+		isGameEnd_ = true;
+	}
+
+	if (isGameEnd_ == true) {
+		//遷移終わりにゲーム終了処理
+		if (transition_->GetIsSceneEnd_() == false) {
+			//各種初期化処理
+			StageReset();
+			sceneNo = TITLE_SCENE;
+		}
+	}
 }
 
 void GamePlayScene::GameClearProcessing() {
@@ -607,17 +622,8 @@ void GamePlayScene::GameClearProcessing() {
 	if (isGameclear_ == true) {
 		//遷移終わりにゲームクリア処理
 		if (transition_->GetIsSceneEnd_() == false) {
-			//生き残っている敵を全て削除
-			enemys_.clear();
-
 			//各種初期化処理
-			isGameStart_ = true;
-			isGameclear_ = false;
-			directionalLight_.intensity = 1.0f;
-			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
-			boss_->Finalize();
-			editors_->Finalize();
-			explosion_->Finalize();
+			StageReset();
 			sceneNo = CLEAR_SCENE;
 		}
 	}
@@ -636,20 +642,29 @@ void GamePlayScene::GameOverProcessing() {
 		maskData_.maskThreshold -= 0.02f;
 		//遷移終わりにゲームオーバー処理
 		if (transition_->GetIsSceneEnd_() == false && maskData_.maskThreshold <= 0.0f) {
-			//生き残っている敵を全て削除
-			enemys_.clear();
-
 			//各種初期化処理
-			isGameStart_ = true;
-			isGameover_ = false;
-			directionalLight_.intensity = 1.0f;
-			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
-			boss_->Finalize();
-			editors_->Finalize();
-			explosion_->Finalize();
+			StageReset();
 			sceneNo = OVER_SCENE;
 		}
 	}
+}
+
+void GamePlayScene::StageReset() {
+	//生き残っている敵を全て削除
+	enemys_.clear();
+
+	//各種初期化処理
+	isGameStart_ = true;
+	isGameover_ = false;
+	isGameclear_ = false;
+	isGameEnd_ = false;
+	isGamePause_ = false;
+	isEditorMode_ = false;
+	directionalLight_.intensity = 1.0f;
+	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
+	boss_->Finalize();
+	editors_->Finalize();
+	explosion_->Finalize();
 }
 
 void GamePlayScene::CollisionConclusion() {
