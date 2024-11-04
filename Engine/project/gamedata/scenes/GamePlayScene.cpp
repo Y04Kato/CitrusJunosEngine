@@ -97,6 +97,7 @@ void GamePlayScene::Initialize() {
 	move2_ = textureManager_->Load("project/gamedata/resources/ui/move2.png");
 	move3_ = textureManager_->Load("project/gamedata/resources/ui/move3.png");
 	purpose_ = textureManager_->Load("project/gamedata/resources/ui/purpose.png");
+	pause_ = textureManager_->Load("project/gamedata/resources/ui/pause.png");
 
 	//Spriteの初期化
 	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
@@ -132,6 +133,11 @@ void GamePlayScene::Initialize() {
 	sprite_[4]->Initialize(Vector2{ 100.0f,100.0f }, purpose_);
 	sprite_[4]->SetTextureInitialSize();
 	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
+
+	sprite_[5] = std::make_unique <CreateSprite>();
+	sprite_[5]->Initialize(Vector2{ 100.0f,100.0f }, pause_);
+	sprite_[5]->SetTextureInitialSize();
+	sprite_[5]->SetAnchor(Vector2{ 0.5f,0.5f });
 
 	//Playerパーティクルの初期化
 	playerEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
@@ -212,11 +218,11 @@ void GamePlayScene::Update() {
 			GameOverProcessing();
 
 			GameProcessing();
-		}
 
-		//ゲームをポーズ
-		if (input_->TriggerKey(DIK_Q)) {
-			isGamePause_ = true;
+			//ゲームをポーズ
+			if (input_->TriggerKey(DIK_Q)) {
+				isGamePause_ = true;
+			}
 		}
 
 		//PostEffect更新
@@ -287,7 +293,7 @@ void GamePlayScene::Update() {
 	//
 	ImGui::Begin("PlayScene");
 	ImGui::Checkbox("isEditorMode", &isEditorMode_);
-	ImGui::DragFloat3("", viewProjection_.translation_.num);
+	ImGui::DragFloat3("", player_->GetVelocity().num);
 	ImGui::End();
 }
 
@@ -347,17 +353,23 @@ void GamePlayScene::DrawUI() {
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 	if (isGameEntry_ == true && entryCount_ >= 1 || isGameEntry_ == false) {
-		if (player_->GetMoveMode() == 0) {
-			sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
-		}
-		if (player_->GetMoveMode() == 1) {
-			sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
-		}
-		if (player_->GetMoveMode() == 2) {
-			sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
-		}
+		if (isGamePause_ == false) {
+			if (player_->GetMoveMode() == 0) {
+				sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+			}
+			if (player_->GetMoveMode() == 1) {
+				sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+			}
+			if (player_->GetMoveMode() == 2) {
+				sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+			}
 
-		sprite_[4]->Draw(spriteTransform4_, SpriteuvTransform_, spriteMaterial_);
+			sprite_[4]->Draw(spriteTransform4_, SpriteuvTransform_, spriteMaterial_);
+		}
+	}
+
+	if (isGamePause_ == true) {
+		sprite_[5]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
 	}
 
 	//
@@ -386,6 +398,8 @@ void GamePlayScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 	audio_->SoundUnload(&soundData2_);
 
+	enemys_.clear();
+	explosion_->Finalize();
 	boss_->Finalize();
 	editors_->Finalize();
 }
@@ -593,12 +607,17 @@ void GamePlayScene::GameClearProcessing() {
 	if (isGameclear_ == true) {
 		//遷移終わりにゲームクリア処理
 		if (transition_->GetIsSceneEnd_() == false) {
+			//生き残っている敵を全て削除
+			enemys_.clear();
+
 			//各種初期化処理
 			isGameStart_ = true;
 			isGameclear_ = false;
 			directionalLight_.intensity = 1.0f;
 			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
+			boss_->Finalize();
 			editors_->Finalize();
+			explosion_->Finalize();
 			sceneNo = CLEAR_SCENE;
 		}
 	}
@@ -627,6 +646,7 @@ void GamePlayScene::GameOverProcessing() {
 			pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
 			boss_->Finalize();
 			editors_->Finalize();
+			explosion_->Finalize();
 			sceneNo = OVER_SCENE;
 		}
 	}
@@ -1042,11 +1062,25 @@ void GamePlayScene::CollisionConclusion() {
 				//衝突音を再生
 				ContactVolume(enemy->GetVelocity());
 
+				bool isBreakCylinder = false;
+				float combinedSpeed = std::abs(enemy->GetVelocity().num[0]) + std::abs(enemy->GetVelocity().num[2]);
+				if (combinedSpeed >= bodyBreakSpeed_) {
+					isBreakCylinder = true;
+				}
+
+
 				//反発処理
 				Vector3 velocity = ComputeSphereVelocityAfterCollisionWithCylinder(eSphere, enemy->GetVelocity(), bCylinder, repulsionCoefficient_);
 				enemy->SetVelocity(velocity);
 
-				boss_->HitBody(body);
+				if (isBreakCylinder == true) {
+					explosion_->SetWorldTransformBase(body.world);
+					isExplosion_ = true;
+					explosion_->ExplosionFlagTrue(body.material);
+					explosionTimer_ = 10;
+
+					boss_->HitBody(body);
+				}
 
 				collisionParticle_->SetTranslate(closestPointOnCylinder);
 				collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);

@@ -111,6 +111,7 @@ private:
 	//Boss
 	std::unique_ptr<Boss> boss_;
 	std::unique_ptr<Model> bossModel_;
+	const float bodyBreakSpeed_ = 0.6f;//衝突時の壊れる為に必要な速度
 
 	//Enemy
 	std::list<Enemy*> enemys_;
@@ -149,7 +150,7 @@ private:
 	const int collisionParticleOccursNum_ = 10;
 
 	//Sprite
-	std::unique_ptr <CreateSprite> sprite_[5];
+	std::unique_ptr <CreateSprite> sprite_[6];
 	EulerTransform spriteTransform_;
 	EulerTransform spriteTransform4_;//sprite_[4]のゲーム開始演出用
 	EulerTransform SpriteuvTransform_;
@@ -162,6 +163,7 @@ private:
 	uint32_t move3_;
 	uint32_t skyboxTex_;
 	uint32_t purpose_;
+	uint32_t pause_;
 
 	//Other
 	bool isGameStart_ = true;//ゲームスタート時のフラグ

@@ -104,6 +104,15 @@ void Explosion::Draw(const ViewProjection& viewProjection) {
     }
 }
 
+void Explosion::Finalize() {
+    models_.clear();
+    worldTransforms_.clear();
+    velocities_.clear();
+    modelMaterials_.clear();
+    angularVelocities_.clear();
+    creationTimes_.clear();
+}
+
 void Explosion::ExplosionFlagTrue(Vector4 material) {
     audio_->SoundPlayWave(soundData1_, 0.1f, false);
 

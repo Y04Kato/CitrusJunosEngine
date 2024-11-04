@@ -68,13 +68,6 @@ void Boss::Update() {
 		body.world.UpdateMatrix();
 	}
 
-	bodys_.remove_if([&](Body& body) {
-		if (body.durability <= 0) {
-			return true;
-		}
-		return false;
-		});
-
 	if (isHit_ == true) {
 		hitTimer_--;
 		if (hitTimer_ <= 0) {
@@ -96,7 +89,9 @@ void Boss::Draw(const ViewProjection& viewProjection) {
 	//bikeModel_->Draw(bikeWorld_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
 
 	for (Body& body : bodys_) {
-		body.model.Draw(body.world, viewProjection, body.material);
+		if (body.durability >= 1) {
+			body.model.Draw(body.world, viewProjection, body.material);
+		}
 	}
 }
 
@@ -148,6 +143,7 @@ void Boss::HitBody(Body b) {
 
 void Boss::Reset() {
 	hp_ = maxHP_;
+	isDead_ = false;
 
 	bodyTransform_.translate = { 0.0f,0.0f,0.0f };
 	bodyTransform_.rotate = { 0.0f,0.0f,0.0f };

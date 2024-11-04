@@ -17,6 +17,7 @@ public:
 	void Initialize(ModelData ObjModelData, uint32_t ObjTexture);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
+    void Finalize();
 
     //発生地点と床の座標を設定する
 	void SetWorldTransformBase(const WorldTransform& worldTransform) { worldTransformBase_ = worldTransform; }
