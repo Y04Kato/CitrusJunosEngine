@@ -39,6 +39,9 @@ vc143.pdb/
 libGU.dll
 libSOP.dll
 
+!Engine/externals/assimp/debug
+!Engine/externals/assimp/release
+
 !Engine/externals/zlib/debug
 !Engine/externals/zlib/release
 
