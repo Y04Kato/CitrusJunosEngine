@@ -26,36 +26,38 @@ void FollowCamera::Update() {
 	if (target_) {
 		Vector3 offset = offset_;
 
-		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewprojection_.rotation_);
-
+		// ターゲットの回転行列を取得してカメラに適用
+		Matrix4x4 rotateMatrix = MakeRotateMatrix(target_->rotation_);
 		offset = TransformNormal(offset, rotateMatrix);
 
-		Vector3 worldTranslate = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
-
+		// ターゲットの位置を取得して線形補間を適用
+		Vector3 worldTranslate = { target_->matWorld_.m[3][0], target_->matWorld_.m[3][1], target_->matWorld_.m[3][2] };
 		interTarget_ = Lerp(interTarget_, worldTranslate, latency);
 
+		// カメラの位置を更新
 		viewprojection_.translation_ = interTarget_ + offset;
+
+		// カメラの回転をターゲットの回転と同期
+		viewprojection_.rotation_ = target_->rotation_;
 	}
 
+	// コントローラー入力による回転処理（不要であれば削除）
 	XINPUT_STATE joystate;
-
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kRotateSpeed = 0.04f;
-
-		destinationAngleY_ += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
+		float targetAngleY = destinationAngleY_ + (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
+		destinationAngleY_ = Lerp(destinationAngleY_, targetAngleY, latency);
 
 		if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB) {
 			destinationAngleY_ = 0.0f;
 		}
 	}
 
-	if (target_) {
-		viewprojection_.rotation_ = target_->rotation_;
-	}
-
+	// ビュー行列を更新
 	viewprojection_.UpdateViewMatrix();
 	viewprojection_.TransferMatrix();
 }
+
 
 void FollowCamera::Reset() {
 	if (target_) {
