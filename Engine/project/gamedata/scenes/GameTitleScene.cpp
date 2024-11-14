@@ -162,97 +162,103 @@ void GameTitleScene::Update() {
 	Input::GetInstance()->GetJoystickState(0, joyState);
 
 	//ステージ初期設定
-	if (isGameStart_) {
+	if (isGameStart_ == true) {
 		GameStartProcessing();
 	}
 
-	//SPACEキーまたはAボタンで次のページへ移行
-	if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerAButton(joyState)) && sceneCount_ < 2) {
+	//SPACE or Aボタンで次のページへ
+	if (input_->TriggerKey(DIK_SPACE) && sceneCount_ < 2 || input_->TriggerAButton(joyState) && sceneCount_ < 2) {
 		sceneCount_++;
 		audio_->SoundPlayWave(soundData1_, 0.5f, false);
 	}
 
-	//トランジションの更新
+	//
 	transition_->Update();
 
-	//プレイヤー、スカイボックス、モデルの更新
+	//Playerの更新
 	player_->UpdateView();
 	player_->SetViewProjection(&viewProjection_);
+
+	//SkyBox更新
 	worldTransformSkyBox_.UpdateMatrix();
 
+	//
 	for (int i = 0; i < modelMaxCount_; i++) {
 		worldTransformModel_[i].UpdateMatrix();
 	}
-
-	//パーティクルの更新
+	
+	//Particle更新
 	particle_->Update();
 	particle_->SetTranslate(player_->GetWorldTransform().translation_);
 
-	//ライトの更新
+	//ライト更新
 	directionalLights_->SetTarget(directionalLight_);
 	pointLights_->SetTarget(pointLight_);
 
-	//UIのフェード効果
-	if (!changeAlpha_) {
+	//UIフェード用
+	if (changeAlpha_ == false) {
 		spriteAlpha_ -= 8;
 		if (spriteAlpha_ <= 0) {
 			changeAlpha_ = true;
 		}
 	}
-	else {
+	else if (changeAlpha_ == true) {
 		spriteAlpha_ += 8;
 		if (spriteAlpha_ >= 256) {
 			changeAlpha_ = false;
 		}
 	}
 
-	//シーンごとの処理
+	//各カウントの処理
 	if (sceneCount_ == 0) {//タイトル
-		debugCamera_->SetCamera(Vector3{ 26.7f, 10.7f, -28.8f }, Vector3{ 0.0f, -0.3f, 0.0f });
-		player_->SetWorldTransform(Vector3{ 0.0f, 1.0f, 0.0f });
+		debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
+		player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
+
 	}
-	else if (sceneCount_ == 1) {//ルール説明
-		debugCamera_->MovingCamera(Vector3{ 0.0f, 10.7f, -29.0f }, Vector3{ 0.0f, 0.0f, 0.0f }, 0.05f);
-		player_->SetVelocity({ 0.0f, 0.0f, 0.0f });
+	if (sceneCount_ == 1) {//ルール説明
+		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,-29.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
+		player_->SetVelocity({ 0.0f,0.0f,0.0f });
 	}
-	else if (sceneCount_ == 2) {//ゲームスタート
-		debugCamera_->MovingCamera(Vector3{ 0.0f, 10.7f, 50.0f }, Vector3{ 0.0f, 0.0f, 0.0f }, 0.05f);
-		player_->SetVelocity({ 0.0f, 0.0f, 2.0f });
+	if (sceneCount_ == 2) {//ゲームスタート
+		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,50.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
+		player_->SetVelocity({ 0.0f,0.0f,2.0f });
 
 		if (player_->GetWorldTransform().translation_.num[2] == 50.0f) {
 			transition_->SceneEnd();
 		}
-
-		//アニメーション終了後にゲームシーンへ遷移
-		if (!transition_->GetIsSceneEnd_() && player_->GetWorldTransform().translation_.num[2] >= 50.0f) {
-			//ゲームシーンの初期化
+		
+		//トランジション終わりにゲームシーンへ
+		if (transition_->GetIsSceneEnd_() == false && player_->GetWorldTransform().translation_.num[2] >= 50.0f) {
+			//各種初期化
 			sceneCount_ = 0;
 			stageAnimationTimer_ = 1.0f;
 			isGameStart_ = true;
-			player_->SetWorldTransform(Vector3{ 0.0f, 1.0f, 0.0f });
-			debugCamera_->SetCamera(Vector3{ 26.7f, 10.7f, -28.8f }, Vector3{ 0.0f, -0.3f, 0.0f });
+			player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
+			debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
+
+			//ゲームシーンへ
 			sceneNo = GAME_SCENE;
 		}
 	}
 
-	//シーンカウントが1以上でモデルアニメーション開始
+	//モデルアニメーション開始
 	if (sceneCount_ >= 1) {
 		stageAnimationTimer_ += 1.0f;
 	}
 	stage_[1]->SetAnimationTime(stageAnimationTimer_);
 
-	//ワールド座標の更新
+	//ワールド座標更新
 	for (int i = 0; i < 3; i++) {
 		worldModels_[i].UpdateMatrix();
 	}
 
-	//カメラとビュープロジェクションの更新
+	//カメラとビュープロジェクション更新
 	debugCamera_->Update();
 	viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
 	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 	viewProjection_.UpdateMatrix();
 
-	//ImGui
+	//
 	ImGui::Begin("TitleScene");
 	ImGui::Text("SceneCount : %d", sceneCount_);
 	if (ImGui::Button("DebugScene")) {
@@ -265,11 +271,12 @@ void GameTitleScene::Update() {
 		transition_->SceneEnd();
 	}
 	ImGui::DragFloat3("LightColor", pointLight_.color.num, 1.0f);
-	ImGui::DragFloat3("LightPosition", pointLight_.position.num, 0.1f);
-	ImGui::DragFloat("LightIntensity", &pointLight_.intensity, 0.1f, 0.0f, 1.0f);
-	ImGui::DragFloat("LightRadius", &pointLight_.radius, 0.1f, 0.0f, 10.0f);
-	ImGui::DragFloat("LightDecay", &pointLight_.decay, 0.1f, 0.0f, 10.0f);
+	ImGui::DragFloat3("lightPosition", pointLight_.position.num, 0.1f);
+	ImGui::DragFloat("lightIntensity", &pointLight_.intensity, 0.1f, 0.0f, 1.0f);
+	ImGui::DragFloat("lightRadius", &pointLight_.radius, 0.1f, 0.0f, 10.0f);
+	ImGui::DragFloat("lightDecay", &pointLight_.decay, 0.1f, 0.0f, 10.0f);
 	ImGui::End();
+
 }
 
 void GameTitleScene::Draw() {

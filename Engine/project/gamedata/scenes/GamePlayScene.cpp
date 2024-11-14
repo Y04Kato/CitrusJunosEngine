@@ -405,15 +405,10 @@ void GamePlayScene::Finalize() {
 }
 
 void GamePlayScene::GameStartProcessing() {
-	// プレイヤー初期化
+	//Player初期化
 	player_->SetWorldTransform(Vector3{ 0.0f,0.2f,-20.0f });
 	player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
 	player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
-
-	// ゲームオーバー状態をリセット
-	if (player_->isGameover()) {
-		player_->SetIsGameover(false);
-	}
 
 	//ライト初期化
 	directionalLight_ = { { 1.0f, 0.8f, 0.6f, 1.0f },{0.0f,-1.0f,0.0f},0.5f };
@@ -525,21 +520,21 @@ void GamePlayScene::GameEntryProcessing() {
 			entryCount_ = 0;
 			isGameEntry_ = false;
 
-			// プレイヤーを動けるように
+			//Playerを動けるように
 			player_->SetIsMove(true);
 		}
 
-		// ここでカメラの位置をリセットしてから補間処理を行う
-		followCamera_->Update();
-		viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
-		viewProjection_.matView = followCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
-		viewProjection_.TransferMatrix();
-
-		// スプライトの補間を後で行う
 		spriteTransform_.translate = Lerp(spriteTransform_.translate, Vector3{ 1280.0f / 2.0f,720.0f / 2.0f,0.0f }, 0.1f);
 		spriteTransform4_.translate = Lerp(spriteTransform4_.translate, Vector3{ 1063.0f,62.0f,0.0f }, 0.1f);
 		spriteTransform4_.scale = Lerp(spriteTransform4_.scale, Vector3{ 0.38f,0.38f,1.0f }, 0.1f);
+
+		//カメラの更新
+		followCamera_->Update();
+
+		debugCamera_->Update();
+		viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
+		viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
+		viewProjection_.UpdateMatrix();
 	}
 }
 
@@ -547,21 +542,19 @@ void GamePlayScene::GameProcessing() {
 	//カメラ切り替え処理
 	if (input_->TriggerKey(DIK_E)) {
 		if (isBirdseyeMode_ == false) {//Player視点 → 俯瞰視点
-			//プレイヤーの現在位置に移動
 			debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
-			debugCamera_->MovingCamera(Vector3{ 0.0f, 54.0f, -62.0f }, Vector3{ 0.8f, 0.0f, 0.0f }, cameraMoveSpeed_);
+			debugCamera_->MovingCamera(Vector3{ 0.0f,54.0f,-62.0f }, Vector3{ 0.8f,0.0f,0.0f }, cameraMoveSpeed_);
 			isBirdseyeMode_ = true;
 
-			//プレイヤーを動けないように
+			//Playerを動けないように
 			player_->SetIsMove(false);
 		}
 		else {//俯瞰視点 → Player視点
-			//プレイヤー視点に移行する前に、カメラ位置をスムーズに移動
 			debugCamera_->MovingCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_, cameraMoveSpeed_);
 
 			cameraChange_ = true;
 
-			//プレイヤーを動けるように
+			//Playerを動けるように
 			player_->SetIsMove(true);
 		}
 	}
@@ -573,7 +566,6 @@ void GamePlayScene::GameProcessing() {
 
 	//カメラ切り替え処理終了
 	if (cameraChangeTimer_ >= cameraChangeMaxTimer_) {
-		//カメラの位置と回転を正確に設定
 		debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
 		cameraChangeTimer_ = 0;
 		cameraChange_ = false;
@@ -583,20 +575,17 @@ void GamePlayScene::GameProcessing() {
 	//カメラの更新
 	debugCamera_->Update();
 	followCamera_->Update();
-
-	//俯瞰モードでない場合、followCameraを使う
-	if (isBirdseyeMode_ == false) {
+	if (isBirdseyeMode_ == false) {//俯瞰モードでなければ
 		viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
 		viewProjection_.matView = followCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 		viewProjection_.TransferMatrix();
 	}
-	else {//俯瞰モードの場合、debugCameraを使用
+	else {//俯瞰モードなら
 		viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
 		viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 		viewProjection_.UpdateMatrix();
 	}
-
 }
 
 void GamePlayScene::GamePauseProcessing() {
