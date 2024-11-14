@@ -55,6 +55,7 @@ public:
 
 	//ゲームオーバーか否か
 	bool isGameover() { return gameOver; }
+	void SetIsGameover(const bool isGameover) { gameOver = isGameover; }
 
 	//当たり判定用のSphereを得る
 	StructSphere GetStructSphere() { return structSphere_; }

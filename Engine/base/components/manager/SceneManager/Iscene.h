@@ -19,8 +19,6 @@
 #include "components/3d/Model.h"
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/followCamera/FollowCamera.h"
-#include "components/utilities/collisionManager/CollisionManager.h"
-#include "components/utilities/collisionManager/CollisionConfig.h"
 #include "postEffect/PostEffect.h"
 #include "editors/Editors.h"
 
