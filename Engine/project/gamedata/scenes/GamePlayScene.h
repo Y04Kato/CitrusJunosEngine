@@ -7,23 +7,6 @@
 
 #pragma once
 #include "Iscene.h"
-#include "components/audio/Audio.h"
-#include "components/input/Input.h"
-#include "components/3d/WorldTransform.h"
-#include "components/3d/ViewProjection.h"
-#include "TextureManager.h"
-#include "components/2d/CreateTriangle.h"
-#include "components/2d/CreateSprite.h"
-#include "components/2d/CreateParticle.h"
-#include "components/3d/CreateSphere.h"
-#include "components/3d/CreateSkyBox.h"
-#include "components/3d/Model.h"
-#include "components/debugcamera/DebugCamera.h"
-#include "components/utilities/followCamera/FollowCamera.h"
-#include "components/utilities/collisionManager/CollisionManager.h"
-#include "components/utilities/collisionManager/CollisionConfig.h"
-#include "postEffect/PostEffect.h"
-#include "editors/Editors.h"
 
 #include "ground/Ground.h"
 #include "baseCharacter/player/Player.h"

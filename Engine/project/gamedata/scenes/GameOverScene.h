@@ -7,13 +7,6 @@
 
 #pragma once
 #include "Iscene.h"
-#include "CJEngine.h"
-#include "components/input/Input.h"
-#include "TextureManager.h"
-#include "components/2d/CreateSprite.h"
-#include "components/3d/ViewProjection.h"
-#include "components/audio/Audio.h"
-#include "components/debugcamera/DebugCamera.h"
 
 #include "baseCharacter/player/Player.h"
 #include "transition/Transition.h"
