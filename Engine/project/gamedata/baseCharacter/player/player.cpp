@@ -102,79 +102,68 @@ void Player::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, Vector4{ 1.0f,1.0f,1.0f,1.0f });
 }
 
+Vector3 Player::CalculateForwardVector() {
+	//Y軸の回転（worldTransform2_.rotation_.num[1]）を用いて前方ベクトルを計算
+	float radians = worldTransform2_.rotation_.num[1];
+	return Vector3{ std::sin(radians), 0.0f, std::cos(radians) };
+}
+
 void Player::Move() {
+	//左右の回転処理
 	if (input_->PressKey(DIK_A)) {
-		worldTransform2_.rotation_.num[1] -= 0.1f;
+		worldTransform2_.rotation_.num[1] -= 0.1f;//左回転
 		rotate_.num[0] -= 0.1f;
 	}
 	if (input_->PressKey(DIK_D)) {
-		worldTransform2_.rotation_.num[1] += 0.1f;
+		worldTransform2_.rotation_.num[1] += 0.1f;//右回転
 		rotate_.num[0] += 0.1f;
 	}
 
 	rotate_.num[1] = worldTransform2_.rotation_.num[1];
 
-	if (moveMode_ == 0) {
-		CharacterSpeed_ = 0.5f;
-	}
-	if (moveMode_ == 1) {
-		CharacterSpeed_ = 0.7f;
-	}
-	if (moveMode_ == 2) {
-		CharacterSpeed_ = 0.9f;
+	//移動速度をモードに応じて設定
+	switch (moveMode_) {
+	case 0: CharacterSpeed_ = 0.5f; break;
+	case 1: CharacterSpeed_ = 0.7f; break;
+	case 2: CharacterSpeed_ = 0.9f; break;
 	}
 
-	if (moveFlag_ == true) {
+	if (moveFlag_) {
 		if (input_->TriggerKey(DIK_SPACE)) {
 			moveFlag_ = false;
-			Vector3 direction = Normalize(viewProjection_->translation_ - worldTransform2_.translation_);
-			velocity_ = -(velocity_ + direction * CharacterSpeed_);
+			Vector3 forward = CalculateForwardVector();//前方ベクトルを計算
+			velocity_ = forward * CharacterSpeed_;//前方ベクトルに速度を掛けて移動方向を決定
 		}
 	}
 
-	//加速度のモード変更
+	//加速度モードの変更
 	if (input_->TriggerKey(DIK_W)) {
-		moveMode_++;
-		if (moveMode_ >= 3) {
-			moveMode_ = 0;
-		}
+		moveMode_ = (moveMode_ + 1) % 3;
 	}
 	if (input_->TriggerKey(DIK_S)) {
-		moveMode_--;
-		if (moveMode_ < 0) {
-			moveMode_ = 2;
-		}
+		moveMode_ = (moveMode_ == 0) ? 2 : moveMode_ - 1;
 	}
 
+	//ジョイスティックによる回転処理
 	XINPUT_STATE joystate;
+	if (moveFlag_ && Input::GetInstance()->GetJoystickState(0, joystate)) {
+		if (input_->TriggerAButton(joystate)) {
+			moveFlag_ = false;
 
-	if (moveFlag_ == true) {
-		if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-			if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-				if (input_->TriggerAButton(joystate)) {
-					moveFlag_ = false;
-					
-					//スティックの左右入力に基づいて回転を加算減算
-					float rotationSpeed = 0.1f;//回転速度を調整
-					if (joystate.Gamepad.sThumbLX > 5000) {//右方向入力
-						worldTransform2_.rotation_.num[1] += rotationSpeed;
-						rotate_.num[0] += rotationSpeed;
-					}
-					else if (joystate.Gamepad.sThumbLX < -5000) {//左方向入力
-						worldTransform2_.rotation_.num[1] -= rotationSpeed;
-						rotate_.num[0] -= rotationSpeed;
-					}
-
-				}
-
-				if (input_->TriggerXButton(joystate)) {
-					moveFlag_ = false;
-					moveMode_++;
-					if (moveMode_ >= 3) {
-						moveMode_ = 0;
-					}
-				}
+			float rotationSpeed = 0.1f;
+			if (joystate.Gamepad.sThumbLX > 5000) {//右方向入力
+				worldTransform2_.rotation_.num[1] += rotationSpeed;
+				rotate_.num[0] += rotationSpeed;
 			}
+			else if (joystate.Gamepad.sThumbLX < -5000) {//左方向入力
+				worldTransform2_.rotation_.num[1] -= rotationSpeed;
+				rotate_.num[0] -= rotationSpeed;
+			}
+		}
+
+		if (input_->TriggerXButton(joystate)) {
+			moveFlag_ = false;
+			moveMode_ = (moveMode_ + 1) % 3;
 		}
 	}
 }

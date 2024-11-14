@@ -28,6 +28,9 @@ public:
 	//描画
 	void Draw(const ViewProjection& viewProjection) override;
 
+	//
+	Vector3 CalculateForwardVector();
+
 	//移動操作
 	void Move();
 
