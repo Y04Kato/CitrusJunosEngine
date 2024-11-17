@@ -52,7 +52,15 @@ void GamePlayScene::Initialize() {
 	enemyModel_->SetDirectionalLightFlag(true, 3);
 
 	//Skyboxモデルの初期化と読み込み
+#ifdef _DEBUG
 	skyboxTex_ = textureManager_->Load("project/gamedata/resources/vz_empty_space_cubemap_ue.dds");
+#elif USE_IMGUI
+	skyboxTex_ = textureManager_->Load("project/gamedata/resources/vz_empty_space_cubemap_ue.dds");
+#else
+	skyboxTex_ = textureManager_->Load("project/gamedata/resources/test.dds");
+#endif
+
+
 	skyBox_ = std::make_unique <CreateSkyBox>();
 	skyBox_->Initialize();
 	worldTransformSkyBox_.Initialize();
@@ -142,14 +150,14 @@ void GamePlayScene::Initialize() {
 	//Playerパーティクルの初期化
 	playerEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
 	playerEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
-	playerEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	playerEmitter_.transform.scale = { 0.2f,0.2f,0.2f };
 	playerEmitter_.count = 5;
-	playerEmitter_.frequency = 0.2f;//0.5秒ごとに発生
+	playerEmitter_.frequency = 0.1f;//0.1秒ごとに発生
 	playerEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
 
 	playerAccelerationField_.acceleration = { 15.0f,0.0f,0.0f };
-	playerAccelerationField_.area.min = { -1.0f,-1.0f,-1.0f };
-	playerAccelerationField_.area.max = { 1.0f,1.0f,1.0f };
+	playerAccelerationField_.area.min = { -0.1f,-0.1f,-0.1f };
+	playerAccelerationField_.area.max = { 0.1f,0.1f,0.1f };
 
 	playerParticleResource_ = textureManager_->Load("project/gamedata/resources/circle.png");
 
@@ -412,7 +420,7 @@ void GamePlayScene::GameStartProcessing() {
 
 	//ライト初期化
 	directionalLight_ = { { 1.0f, 0.8f, 0.6f, 1.0f },{0.0f,-1.0f,0.0f},0.5f };
-	pointLight_ = { {1.0f,0.8f,0.6f,1.0f},{0.0f,0.0f,0.0f},0.5f ,10.0f,7.0f };
+	pointLight_ = { {1.0f,0.8f,0.6f,1.0f},{0.0f,0.0f,0.0f},0.2f ,10.0f,7.0f };
 
 	//
 	maskData_.maskThreshold = 1.0f;

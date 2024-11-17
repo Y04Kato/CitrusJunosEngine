@@ -73,7 +73,7 @@ void GameTitleScene::Initialize() {
 	particleEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
 	particleEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
 	particleEmitter_.count = 5;
-	particleEmitter_.frequency = 0.2f;//0.5秒ごとに発生
+	particleEmitter_.frequency = 0.2f;//0.2秒ごとに発生
 	particleEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
 
 	accelerationField.acceleration = { 10.0f,15.0f,10.0f };
