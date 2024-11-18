@@ -47,8 +47,44 @@ void GameClearScene::Initialize() {
 	sprite_[2]->SetTextureInitialSize();
 	sprite_[2]->SetAnchor(Vector2{ 0.5f,0.5f });
 
+	//プレイヤーの初期化
+	player_ = std::make_unique<Player>();
+	playerModel_.reset(Model::CreateModel("project/gamedata/resources/player", "player.obj"));
+	playerModel_->SetDirectionalLightFlag(true, 3);
+	player_->Initialize(playerModel_.get());
+	player_->SetScale(Vector3{ 5.0f,5.0f,5.0f });
+
 	//シーン遷移
 	transition_ = Transition::GetInstance();
+
+	//デバッグカメラの初期化
+	debugCamera_ = DebugCamera::GetInstance();
+
+	//ViewProjectionの初期化
+	viewProjection_.Initialize();
+
+	//パーティクルの初期化
+	particleEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
+	particleEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
+	particleEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	particleEmitter_.count = 5;
+	particleEmitter_.frequency = 0.2f;//0.2秒ごとに発生
+	particleEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
+
+	accelerationField.acceleration = { 1.0f,15.0f,1.0f };
+	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
+	accelerationField.area.max = { 1.0f,1.0f,1.0f };
+
+	particleResourceNum_ = textureManager_->Load("project/gamedata/resources/circle.png");
+
+	particleRight_ = std::make_unique <CreateParticle>();
+	particleRight_->Initialize(100, particleEmitter_, accelerationField, particleResourceNum_);
+
+	particleLeft_ = std::make_unique <CreateParticle>();
+	particleLeft_->Initialize(100, particleEmitter_, accelerationField, particleResourceNum_);
+
+	particleRight_->SetTranslate(particleposRight_);
+	particleLeft_->SetTranslate(particleposLeft_);
 
 	sceneCount_ = 0;
 }
@@ -65,10 +101,11 @@ void GameClearScene::Update() {
 	if (input_->TriggerKey(DIK_SPACE) && sceneCount_ < 1 || input_->TriggerAButton(joyState) && sceneCount_ < 1) {
 		sceneCount_++;
 		audio_->SoundPlayWave(soundData1_, 0.5f, false);
-		if (sceneCount_ == 1) {
-			transition_->SceneEnd();
-		}
 	}
+
+	//Playerの更新
+	player_->UpdateView();
+	player_->SetViewProjection(&viewProjection_);
 
 	transition_->Update();
 
@@ -86,21 +123,76 @@ void GameClearScene::Update() {
 	}
 
 	if (sceneCount_ == 0) {
-		
+
 	}
 	if (sceneCount_ == 1) {
-		if (transition_->GetIsSceneEnd_() == false) {
-			sceneCount_ = 0;
-			isGameStart_ = true;
-			sceneNo = TITLE_SCENE;
+		if (sceneChangeTimer_ >= sceneChangeMaxTime_) {
+			debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,50.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
+			player_->SetVelocity({ 0.0f,0.0f,2.0f });
+
+			if (player_->GetWorldTransform().translation_.num[2] == 50.0f) {
+				transition_->SceneEnd();
+			}
+
+			//トランジション終わりにタイトルシーンへ
+			if (transition_->GetIsSceneEnd_() == false && player_->GetWorldTransform().translation_.num[2] >= 50.0f) {
+				//各種初期化
+				sceneCount_ = 0;
+				isGameStart_ = true;
+				debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
+
+				//タイトルシーンへ
+				sceneNo = TITLE_SCENE;
+			}
+		}
+		else if (sceneChangeTimer_ >= sceneChangeMaxTime_ / 2) {
+			player_->SetRotate(Vector3{ 0.0f,player_->GetWorldTransform().rotation_.num[1],0.0f });
+
+			sceneChangeTimer_++;
+		}
+		else {
+			debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,-29.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
+			player_->SetRotate(Lerp(player_->GetWorldTransform().rotation_, Vector3{ 0.0f,player_->GetWorldTransform().rotation_.num[1],0.0f }, 0.1f));
+			sceneChangeTimer_++;
 		}
 	}
+
+	//カメラとビュープロジェクション更新
+	debugCamera_->Update();
+	viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
+	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
+	viewProjection_.UpdateMatrix();
+
+	//Particle更新
+	particleRight_->Update();
+	particleLeft_->Update();
+
+	ImGui::Begin("GameClearScene");
+	ImGui::Text("SceneCount : %d", sceneCount_);
+	ImGui::DragFloat3("particlePos", particleposRight_.num, 0.1f);
+	ImGui::End();
 }
 
 void GameClearScene::Draw() {
 #pragma region 背景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
+
 	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+
+#pragma endregion
+
+#pragma region 3Dオブジェクト描画
+	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
+
+	player_->Draw(viewProjection_);
+
+#pragma endregion
+
+#pragma region パーティクル描画
+	CJEngine_->renderer_->Draw(PipelineType::Particle);
+
+	particleRight_->Draw(viewProjection_);
+	particleLeft_->Draw(viewProjection_);
 
 #pragma endregion
 
@@ -131,6 +223,13 @@ void GameClearScene::Finalize() {
 
 void GameClearScene::GameStartProcessing() {
 	transition_->SceneStart();
+
+	debugCamera_->SetCamera(Vector3{ 0.0f,10.7f,-29.0f }, Vector3{ 0.0f,0.0f,0.0f });
+	player_->SetWorldTransform(Vector3{ 0.0f,0.0f,0.0f });
+	player_->SetRotate(Vector3{ 0.0f,0.0f,0.0f });
+	player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
+
+	sceneChangeTimer_ = 0;
 
 	isGameStart_ = false;
 }

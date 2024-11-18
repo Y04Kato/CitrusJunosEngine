@@ -8,6 +8,7 @@
 #pragma once
 #include "Iscene.h"
 
+#include "baseCharacter/player/Player.h"
 #include "transition/Transition.h"
 
 class GameClearScene :public Iscene {
@@ -47,9 +48,30 @@ private:
 	Audio* audio_;
 	SoundData soundData1_;
 
+	//自機
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<Model> playerModel_;
+
+	//ViewProjection
+	ViewProjection viewProjection_;
+
+	//Camera
+	DebugCamera* debugCamera_;
+
 	//シーン遷移
 	Transition* transition_;
 
 	//Other
 	bool isGameStart_ = true;//ゲームスタート時の処理
+	const int sceneChangeMaxTime_ = 80;
+	int sceneChangeTimer_ = 0;
+
+	//Particle
+	std::unique_ptr<CreateParticle> particleRight_;
+	std::unique_ptr<CreateParticle> particleLeft_;
+	Emitter particleEmitter_{};
+	AccelerationField accelerationField;
+	uint32_t particleResourceNum_;
+	Vector3 particleposRight_ = { 13.0f,00.0f,0.0f };
+	Vector3 particleposLeft_ = { -13.0f,00.0f,0.0f };
 };
