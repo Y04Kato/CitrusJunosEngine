@@ -70,8 +70,9 @@ private:
 	std::unique_ptr<CreateParticle> particleRight_;
 	std::unique_ptr<CreateParticle> particleLeft_;
 	Emitter particleEmitter_{};
-	AccelerationField accelerationField;
+	AccelerationField accelerationFieldRight;
+	AccelerationField accelerationFieldLeft;
 	uint32_t particleResourceNum_;
-	Vector3 particleposRight_ = { 13.0f,00.0f,0.0f };
-	Vector3 particleposLeft_ = { -13.0f,00.0f,0.0f };
+	Vector3 particleposRight_ = { 13.0f,0.0f,0.0f };
+	Vector3 particleposLeft_ = { -13.0f,0.0f,0.0f };
 };

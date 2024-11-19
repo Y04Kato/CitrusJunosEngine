@@ -71,20 +71,21 @@ void GameClearScene::Initialize() {
 	particleEmitter_.frequency = 0.2f;//0.2秒ごとに発生
 	particleEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
 
-	accelerationField.acceleration = { 1.0f,15.0f,1.0f };
-	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
-	accelerationField.area.max = { 1.0f,1.0f,1.0f };
+	accelerationFieldRight.acceleration = { 1.0f,15.0f,1.0f };
+	accelerationFieldRight.area.min = { 12.0f,-1.0f,-1.0f };
+	accelerationFieldRight.area.max = { 14.0f,1.0f,1.0f };
+
+	accelerationFieldLeft.acceleration = { 1.0f,15.0f,1.0f };
+	accelerationFieldLeft.area.min = { -14.0f,-1.0f,-1.0f };
+	accelerationFieldLeft.area.max = { -12.0f,1.0f,1.0f };
 
 	particleResourceNum_ = textureManager_->Load("project/gamedata/resources/circle.png");
 
 	particleRight_ = std::make_unique <CreateParticle>();
-	particleRight_->Initialize(100, particleEmitter_, accelerationField, particleResourceNum_);
+	particleRight_->Initialize(100, particleEmitter_, accelerationFieldRight, particleResourceNum_);
 
 	particleLeft_ = std::make_unique <CreateParticle>();
-	particleLeft_->Initialize(100, particleEmitter_, accelerationField, particleResourceNum_);
-
-	particleRight_->SetTranslate(particleposRight_);
-	particleLeft_->SetTranslate(particleposLeft_);
+	particleLeft_->Initialize(100, particleEmitter_, accelerationFieldLeft, particleResourceNum_);
 
 	sceneCount_ = 0;
 }
@@ -166,6 +167,9 @@ void GameClearScene::Update() {
 	//Particle更新
 	particleRight_->Update();
 	particleLeft_->Update();
+
+	particleRight_->SetTranslate(particleposRight_);
+	particleLeft_->SetTranslate(particleposLeft_);
 
 	ImGui::Begin("GameClearScene");
 	ImGui::Text("SceneCount : %d", sceneCount_);
