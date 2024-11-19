@@ -52,14 +52,7 @@ void GamePlayScene::Initialize() {
 	enemyModel_->SetDirectionalLightFlag(true, 3);
 
 	//Skyboxモデルの初期化と読み込み
-#ifdef _DEBUG
 	skyboxTex_ = textureManager_->Load("project/gamedata/resources/vz_empty_space_cubemap_ue.dds");
-#elif USE_IMGUI
-	skyboxTex_ = textureManager_->Load("project/gamedata/resources/vz_empty_space_cubemap_ue.dds");
-#else
-	skyboxTex_ = textureManager_->Load("project/gamedata/resources/test.dds");
-#endif
-
 
 	skyBox_ = std::make_unique <CreateSkyBox>();
 	skyBox_->Initialize();
