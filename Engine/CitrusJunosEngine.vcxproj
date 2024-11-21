@@ -99,6 +99,9 @@
       <AdditionalLibraryDirectories>$(ProjectDir)externals\zlib\build\lib\Debug;$(ProjectDir)externals\assimp\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)externals\dlls\*.dll" "$(OutDir)" /i /s /y </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -125,6 +128,9 @@
       <AdditionalLibraryDirectories>$(ProjectDir)externals\zlib\build\lib\Release;$(ProjectDir)externals\assimp\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)externals\dlls\*.dll" "$(OutDir)" /i /s /y </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">
     <ClCompile>
@@ -151,6 +157,9 @@
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\build\lib\Debug;%(AdditionalLibraryDirectories);$(ProjectDir)externals\zlib</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)externals\dlls\*.dll" "$(OutDir)" /i /s /y </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="base\components\2d\CreateParticle.cpp" />

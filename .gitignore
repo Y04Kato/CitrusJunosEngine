@@ -39,6 +39,8 @@ vc143.pdb/
 libGU.dll
 libSOP.dll
 
+imgui.ini
+
 !Engine/externals/assimp/build/lib/Debug
 !Engine/externals/assimp/build/lib/Release
 
