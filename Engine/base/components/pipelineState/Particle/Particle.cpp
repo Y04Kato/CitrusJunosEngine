@@ -154,8 +154,8 @@ void ParticlePSO::CreateBlendState() {
 }
 
 void ParticlePSO::CreateRasterizarState() {
-	//裏面（時計回り）を表示しない
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	//裏面（時計回り）を表示する
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	//三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }

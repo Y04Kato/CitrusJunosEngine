@@ -66,7 +66,7 @@ void GameClearScene::Initialize() {
 	//パーティクルの初期化
 	particleEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
 	particleEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
-	particleEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	particleEmitter_.transform.scale = { 0.5f,0.5f,0.5f };
 	particleEmitter_.count = 5;
 	particleEmitter_.frequency = 0.2f;//0.2秒ごとに発生
 	particleEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
@@ -79,13 +79,15 @@ void GameClearScene::Initialize() {
 	accelerationFieldLeft.area.min = { -14.0f,-1.0f,-1.0f };
 	accelerationFieldLeft.area.max = { -12.0f,1.0f,1.0f };
 
-	particleResourceNum_ = textureManager_->Load("project/gamedata/resources/circle.png");
+	particleResourceNum_ = textureManager_->Load("project/gamedata/resources/transition/baseBox.png");
 
 	particleRight_ = std::make_unique <CreateParticle>();
 	particleRight_->Initialize(100, particleEmitter_, accelerationFieldRight, particleResourceNum_);
+	particleRight_->SetisBillBoard(false);
 
 	particleLeft_ = std::make_unique <CreateParticle>();
 	particleLeft_->Initialize(100, particleEmitter_, accelerationFieldLeft, particleResourceNum_);
+	particleLeft_->SetisBillBoard(false);
 
 	sceneCount_ = 0;
 }

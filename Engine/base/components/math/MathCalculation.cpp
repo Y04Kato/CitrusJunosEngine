@@ -58,6 +58,10 @@ float LerpShortAngle(float a, float b, float t) {
 	return Lerp(a, diff, t);
 }
 
+float DegreesToRadians(float degrees) {
+	return degrees * (float)M_PI / 180.0f;
+}
+
 float NormalizeAngle(float angle) {
 	while (angle > (float)M_PI) angle -= 2.0f * (float)M_PI;
 	while (angle < (float)-M_PI) angle += 2.0f * (float)M_PI;

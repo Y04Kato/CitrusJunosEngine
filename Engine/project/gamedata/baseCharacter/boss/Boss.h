@@ -54,7 +54,7 @@ public:
 protected:
 	TextureManager* textureManager_;
 
-	const int maxHP_ = 4;//最大体力
+	const int maxHP_ = 3;//最大体力
 	const int faseChangePoint_ = 2;//体力がこの値以下になったらフェイズ2へ
 	int hp_ = maxHP_;//現在体力
 

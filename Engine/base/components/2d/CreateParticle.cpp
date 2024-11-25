@@ -84,8 +84,16 @@ void CreateParticle::Draw(const ViewProjection& viewProjection) {
 		(*iterator).currentTime += kDeltaTime;//経過時間を足す
 
 		if (numInstance_ < kNumMaxInstance_) {
-			instancingData_[numInstance_].matWorld = MakeScaleMatrix((*iterator).transform.scale) * billboardMatrix * MakeTranslateMatrix((*iterator).transform.translate);
+			if (isBillBoard_ == true) {
+				instancingData_[numInstance_].matWorld = MakeScaleMatrix((*iterator).transform.scale) * billboardMatrix * MakeTranslateMatrix((*iterator).transform.translate);
+			}
+			else {
+				//ランダム回転の適用
+				Matrix4x4 rotationMatrix = MakeRotateXMatrix((*iterator).transform.rotate.num[0]) * MakeRotateYMatrix((*iterator).transform.rotate.num[1]) * MakeRotateZMatrix((*iterator).transform.rotate.num[2]);
 
+				//ワールド行列の計算
+				instancingData_[numInstance_].matWorld = MakeScaleMatrix((*iterator).transform.scale) * (isBillBoard_ ? billboardMatrix : rotationMatrix) * MakeTranslateMatrix((*iterator).transform.translate);
+			}
 			instancingData_[numInstance_].color = (*iterator).color;
 			float alpha = 1.0f - ((*iterator).currentTime / (*iterator).lifeTime);
 			instancingData_[numInstance_].color.num[3] = alpha;
@@ -194,6 +202,12 @@ Particle CreateParticle::MakeNewParticle(std::mt19937& randomEngine, const Euler
 	else {
 		particles.transform.rotate = transform.rotate;
 	}
+
+	if (isBillBoard_ == false) {
+		Vector3 randomRotate = { DegreesToRadians(distRotate(randomEngine)),DegreesToRadians(distRotate(randomEngine)),DegreesToRadians(distRotate(randomEngine)) };
+		particles.transform.rotate = randomRotate;
+	}
+
 	Vector3 randomTranslate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
 	particles.transform.translate = transform.translate + randomTranslate / 3.0f;
 	if (isVelocity_ == false) {

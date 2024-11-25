@@ -161,7 +161,7 @@ void GamePlayScene::Initialize() {
 	//接触時パーティションの初期化
 	collisionEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
 	collisionEmitter_.transform.rotate = { 0.0f,0.0f,0.0f };
-	collisionEmitter_.transform.scale = { 1.0f,1.0f,1.0f };
+	collisionEmitter_.transform.scale = { 0.5f,0.5f,0.5f };
 	collisionEmitter_.count = 0;
 	collisionEmitter_.frequency = 0.0f;//0.0秒ごとに発生
 	collisionEmitter_.frequencyTime = 0.0f;//発生頻度の時刻
@@ -170,13 +170,14 @@ void GamePlayScene::Initialize() {
 	collisionAccelerationField_.area.min = { -1.0f,-1.0f,-1.0f };
 	collisionAccelerationField_.area.max = { 1.0f,1.0f,1.0f };
 
-	collisionParticleResource_ = textureManager_->Load("project/gamedata/resources/circle.png");
+	collisionParticleResource_ = textureManager_->Load("project/gamedata/resources/hit.png");
 
 	collisionParticle_ = std::make_unique <CreateParticle>();
 	collisionParticle_->Initialize(100, collisionEmitter_, collisionAccelerationField_, collisionParticleResource_);
 	collisionParticle_->SetColor(Vector4{ 1.0f,1.0f,1.0f,1.0f });
 	collisionParticle_->SetisVelocity(true, 10.0f);
 	collisionParticle_->SetLifeTime(3.0f);
+	collisionParticle_->SetisBillBoard(false);
 
 	//PostEffectの読み込み
 	postEffect_ = PostEffect::GetInstance();
