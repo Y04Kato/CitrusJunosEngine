@@ -195,6 +195,7 @@
     <ClCompile Include="base\components\renderer\Renderer.cpp" />
     <ClCompile Include="base\components\shaderCompiler\ShaderCompiler.cpp" />
     <ClCompile Include="base\components\utilities\convertString\ConvertString.cpp" />
+    <ClCompile Include="base\components\utilities\dataReceipt\DataReceipt.cpp" />
     <ClCompile Include="base\components\utilities\directionalLight\DirectionalLight.cpp" />
     <ClCompile Include="base\components\utilities\editors\Editors.cpp" />
     <ClCompile Include="base\components\utilities\followCamera\FollowCamera.cpp" />
@@ -466,6 +467,7 @@
     <ClInclude Include="base\components\renderer\Renderer.h" />
     <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h" />
     <ClInclude Include="base\components\utilities\convertString\ConvertString.h" />
+    <ClInclude Include="base\components\utilities\dataReceipt\DataReceipt.h" />
     <ClInclude Include="base\components\utilities\directionalLight\DirectionalLight.h" />
     <ClInclude Include="base\components\utilities\editors\Editors.h" />
     <ClInclude Include="base\components\utilities\followCamera\FollowCamera.h" />
