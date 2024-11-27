@@ -39,7 +39,7 @@ void Explosion::Update() {
             //範囲外のオブジェクトはY座標が1.0fで止まらず落下を続ける
             worldTransforms_[i].translation_.num[1] += velocities_[i].num[1];
         }
-        else {
+        else {//それ以外(現状想定してない)
             worldTransforms_[i].translation_.num[1] = 1.0f;
         }
 
@@ -51,17 +51,17 @@ void Explosion::Update() {
         worldTransforms_[i].UpdateMatrix();
 
         //速度を減衰させる
-        velocities_[i].num[0] *= 0.98f;
-        velocities_[i].num[1] += acceleration_;
-        velocities_[i].num[2] *= 0.98f;
+        velocities_[i].num[0] *= decelerationFactor_;
+        velocities_[i].num[1] += gravityAcceleration_;
+        velocities_[i].num[2] *= decelerationFactor_;
 
         //回転速度の減衰
-        angularVelocities_[i].num[0] *= 0.95f;
-        angularVelocities_[i].num[1] *= 0.95f;
-        angularVelocities_[i].num[2] *= 0.95f;
+        angularVelocities_[i].num[0] *= rotationalDamping_;
+        angularVelocities_[i].num[1] *= rotationalDamping_;
+        angularVelocities_[i].num[2] *= rotationalDamping_;
 
         //Y座標が-10.0f未満の場合、破片を削除
-        if (worldTransforms_[i].translation_.num[1] < -10.0f) {
+        if (worldTransforms_[i].translation_.num[1] < dropSite_) {
             models_.erase(models_.begin() + i);
             worldTransforms_.erase(worldTransforms_.begin() + i);
             velocities_.erase(velocities_.begin() + i);
@@ -76,12 +76,12 @@ void Explosion::Update() {
         //経過していたら吸い込まれるアニメーションを開始
         if (elapsed >= deleteTime_ - 5 && elapsed < deleteTime_) {
             //徐々に縮小させる
-            worldTransforms_[i].scale_.num[0] *= 0.95f;
-            worldTransforms_[i].scale_.num[1] *= 0.95f;
-            worldTransforms_[i].scale_.num[2] *= 0.95f;
+            worldTransforms_[i].scale_.num[0] *= sizeReduction_;
+            worldTransforms_[i].scale_.num[1] *= sizeReduction_;
+            worldTransforms_[i].scale_.num[2] *= sizeReduction_;
 
             //徐々に地面に近づける
-            worldTransforms_[i].translation_.num[1] -= 0.02f;
+            worldTransforms_[i].translation_.num[1] -= amountApproaching_;
         }
 
         //経過時間が指定秒数以上の場合は削除

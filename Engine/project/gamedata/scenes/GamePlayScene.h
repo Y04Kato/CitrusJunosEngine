@@ -116,8 +116,9 @@ private:
 	Vector4 skyBoxMaterial_;
 
 	//Flag
-	std::unique_ptr<Model> flagModel_[4];
-	WorldTransform worldModels_[4];
+	static const int flagCount_ = 4;
+	std::unique_ptr<Model> flagModel_[flagCount_];
+	WorldTransform flagWorldTransforms_[flagCount_];
 
 	//Editor
 	Editors* editors_;
@@ -136,11 +137,12 @@ private:
 	const int collisionParticleOccursNum_ = 10;
 
 	//Sprite
-	std::unique_ptr <CreateSprite> sprite_[6];
-	EulerTransform spriteTransform_;
-	EulerTransform spriteTransform4_;//sprite_[4]のゲーム開始演出用
-	EulerTransform SpriteuvTransform_;
-	Vector4 spriteMaterial_;
+	std::unique_ptr <CreateSprite> uiSprite_[6];
+	EulerTransform uiSpriteTransform_;
+	EulerTransform uiSpriteuvTransform_;
+	Vector4 uiSpriteMaterial_;
+	EulerTransform uiSpriteTransform4_;//sprite_[4]のみゲーム開始演出用で動く為
+	const float magnificationPower_ = 0.2f;//sprite_[4]の拡大率
 
 	//Texture
 	uint32_t background_;
@@ -155,6 +157,7 @@ private:
 	bool isGameStart_ = true;//ゲームスタート時のフラグ
 	bool isGameEntry_ = false;//ゲームスタート演出のフラグ
 	int entryCount_ = 0;//スタート演出のカウント
+	const float startCameraChangeTime_ = 120.0f;//スタート演出をいつまでやるか
 	bool isGameover_ = false;//ゲームオーバー時のフラグ
 	bool isGameclear_ = false;//ゲームクリア時のフラグ
 	bool isGameEnd_ = false;//ゲームリセット時のフラグ
@@ -178,6 +181,7 @@ private:
 	PostEffect* postEffect_;
 	uint32_t noiseTexture_;
 	MaskData maskData_;
+	const float maskThresholdSpeed_ = 0.02f;
 
 	//Explosion
 	Explosion* explosion_;
@@ -187,4 +191,7 @@ private:
 
 	//シーン遷移
 	Transition* transition_;
+
+	//再帰回数
+	const int maxAttempts_= 100;
 };

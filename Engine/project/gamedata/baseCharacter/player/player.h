@@ -38,7 +38,7 @@ public:
 	void MoveAttenuation();
 
 	WorldTransform GetWorldTransform() { return worldTransform_; }
-	const WorldTransform& GetWorldTransformPlayer() { return worldTransform2_; }
+	const WorldTransform& GetWorldTransformPlayer() { return worldTransformForCameraReference_; }
 	void SetWorldTransform(const Vector3 translation);
 	void SetRotate(const Vector3 rotate) { worldTransform_.rotation_ = rotate; }
 
@@ -50,8 +50,6 @@ public:
 
 	//座標の設定
 	void SetObjectPos(const WorldTransform& worldtransform);
-
-	bool isHitOnFloor;
 
 	//ゲームオーバーか否か
 	bool isGameover() { return gameOver; }
@@ -69,6 +67,10 @@ public:
 	bool GetIsMove() { return isMove_; }
 	void SetIsMove(const bool isMove) { isMove_ = isMove; }
 
+	//接地しているか否かの設定
+	bool GetIsHitOnFloor() { return isHitOnFloor_; }
+	void SetIsHitOnFloor(const bool isHitOnFloor) { isHitOnFloor_ = isHitOnFloor; }
+
 	//現在の移動モードの設定
 	int GetMoveMode() { return moveMode_; }
 
@@ -78,26 +80,51 @@ public:
 private:
 	Input* input_ = nullptr;
 
+	//移動や回転用
 	float moveSpeed_ = 0.5f;
+	const float rotateViewSpeed_ = 1.0f;
+	const float rotateCameraSpeed_ = 0.1f;
 
+	//加速度
 	Vector3 velocity_ = {};
 	Vector3 velocityC_ = {};
 
+	//モードに応じた速度
+	const float lowVelocity_ = 0.5f;
+	const float duringVelocity_ = 0.7f;
+	const float highVelocity_ = 0.9f;
+
+	//減衰量
+	const float movingAttenuation_ = 0.01f;
+	const float gravityAcceleration_ = 0.05f;
+
 	WorldTransform objectPos_;
 
-	WorldTransform worldTransform2_;
-	Vector3 rotate_;
+	//カメラ参照用のWT
+	WorldTransform worldTransformForCameraReference_;
+	Vector3 rotateForCameraReference_;
 
 	bool gameOver = false;
 
+	//当たり判定用
 	StructSphere structSphere_;
+	const float sphereSize_ = 1.5f;
+
+	//接地しているか否か
+	bool isHitOnFloor_;
 
 	const ViewProjection* viewProjection_ = nullptr;
 
 	//0~2で弱~強
 	int moveMode_ = 0;
 
+	//自機の速度
 	float CharacterSpeed_ = 0.5f;
+
+	//何処まで行ったら落下判定になるか
+	const float dropSite_ = 0.0f;
+	//何処まで落ちたらゲームオーバーか
+	const float gameoverSite_ = -10.0f;
 	
 	bool moveFlag_ = true;//行動入力受け付けフラグ
 	const int moveCountMax_ = 60;//次に行動可能になるまでの時間

@@ -29,33 +29,33 @@ void GameTitleScene::Initialize() {
 	soundData1_ = audio_->SoundLoad("project/gamedata/resources/system.mp3");
 
 	//Spriteの初期化
-	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
-	SpriteuvTransform_ = {
+	uiSpriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	uiSpriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+	uiSpriteuvTransform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f},
 	};
 
-	sprite_[0] = std::make_unique <CreateSprite>();
-	sprite_[0]->Initialize(Vector2{ 100.0f,100.0f }, pageAll_);
-	sprite_[0]->SetTextureInitialSize();
-	sprite_[0]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[0] = std::make_unique <CreateSprite>();
+	uiSprite_[0]->Initialize(Vector2{ 100.0f,100.0f }, pageAll_);
+	uiSprite_[0]->SetTextureInitialSize();
+	uiSprite_[0]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[1] = std::make_unique <CreateSprite>();
-	sprite_[1]->Initialize(Vector2{ 100.0f,100.0f }, start_);
-	sprite_[1]->SetTextureInitialSize();
-	sprite_[1]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[1] = std::make_unique <CreateSprite>();
+	uiSprite_[1]->Initialize(Vector2{ 100.0f,100.0f }, start_);
+	uiSprite_[1]->SetTextureInitialSize();
+	uiSprite_[1]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[2] = std::make_unique <CreateSprite>();
-	sprite_[2]->Initialize(Vector2{ 100.0f,100.0f }, title_);
-	sprite_[2]->SetTextureInitialSize();
-	sprite_[2]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[2] = std::make_unique <CreateSprite>();
+	uiSprite_[2]->Initialize(Vector2{ 100.0f,100.0f }, title_);
+	uiSprite_[2]->SetTextureInitialSize();
+	uiSprite_[2]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[3] = std::make_unique <CreateSprite>();
-	sprite_[3]->Initialize(Vector2{ 100.0f,100.0f }, tutorial_);
-	sprite_[3]->SetTextureInitialSize();
-	sprite_[3]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[3] = std::make_unique <CreateSprite>();
+	uiSprite_[3]->Initialize(Vector2{ 100.0f,100.0f }, tutorial_);
+	uiSprite_[3]->SetTextureInitialSize();
+	uiSprite_[3]->SetAnchor(Vector2{ 0.5f,0.5f });
 
 	//シーン遷移
 	transition_ = Transition::GetInstance();
@@ -102,37 +102,37 @@ void GameTitleScene::Initialize() {
 
 	//
 	for (int i = 0; i < modelMaxCount_; i++) {
-		model_[i] = std::make_unique <Model>();
+		bgModel_[i] = std::make_unique <Model>();
 	}
-	model_[0].reset(playerModel_.get());
-	model_[1].reset(Model::CreateModel("project/gamedata/resources/chest", "chest.obj"));
-	model_[2].reset(Model::CreateModel("project/gamedata/resources/chest", "chest.obj"));
+	bgModel_[0].reset(playerModel_.get());
+	bgModel_[1].reset(Model::CreateModel("project/gamedata/resources/chest", "chest.obj"));
+	bgModel_[2].reset(Model::CreateModel("project/gamedata/resources/chest", "chest.obj"));
 	posterModelData_ = playerModel_->LoadModelFile("project/gamedata/resources/poster", "poster.obj");
-	posterTexture1_ = textureManager_->Load("project/gamedata/resources/poster/poster1.png");
-	model_[3].reset(Model::CreateModel(posterModelData_,posterTexture1_));
+	posterTexture_ = textureManager_->Load("project/gamedata/resources/poster/poster1.png");
+	bgModel_[3].reset(Model::CreateModel(posterModelData_,posterTexture_));
 	for (int i = 0; i < modelMaxCount_; i++) {
-		worldTransformModel_[i].Initialize();
-		modelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
-		model_[i]->SetDirectionalLightFlag(true, 3);
+		worldTransformBGModel_[i].Initialize();
+		bgModelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
+		bgModel_[i]->SetDirectionalLightFlag(true, 3);
 	}
-	worldTransformModel_[0].translation_ = { -29.0f,1.0f,79.0f };
-	worldTransformModel_[0].rotation_ = { -0.7f,0.0f,-0.25f };
-	worldTransformModel_[0].scale_ = { 5.0f,5.0f,5.0f };
-	modelMaterial_[0] = { 1.0f,1.0f,1.0f,1.0f };
+	worldTransformBGModel_[0].translation_ = { -29.0f,1.0f,79.0f };
+	worldTransformBGModel_[0].rotation_ = { -0.7f,0.0f,-0.25f };
+	worldTransformBGModel_[0].scale_ = { 5.0f,5.0f,5.0f };
+	bgModelMaterial_[0] = { 1.0f,1.0f,1.0f,1.0f };
 
-	worldTransformModel_[1].translation_ = { -50.0f,0.0f,41.0f };
-	worldTransformModel_[1].rotation_ = { 0.0f,-1.15f,0.0f };
-	worldTransformModel_[1].scale_ = { 2.0f,2.0f,2.0f };
-	modelMaterial_[1] = { 0.5f,0.25f,0.1f,1.0f };
+	worldTransformBGModel_[1].translation_ = { -50.0f,0.0f,41.0f };
+	worldTransformBGModel_[1].rotation_ = { 0.0f,-1.15f,0.0f };
+	worldTransformBGModel_[1].scale_ = { 2.0f,2.0f,2.0f };
+	bgModelMaterial_[1] = { 0.5f,0.25f,0.1f,1.0f };
 
-	worldTransformModel_[2].translation_ = { 30.0f,0.0f,95.0f };
-	worldTransformModel_[2].rotation_ = { 0.0f,0.35f,0.0f };
-	worldTransformModel_[2].scale_ = { 2.0f,2.0f,2.0f };
-	modelMaterial_[2] = { 0.9f,0.6f,0.4f,1.0f };
+	worldTransformBGModel_[2].translation_ = { 30.0f,0.0f,95.0f };
+	worldTransformBGModel_[2].rotation_ = { 0.0f,0.35f,0.0f };
+	worldTransformBGModel_[2].scale_ = { 2.0f,2.0f,2.0f };
+	bgModelMaterial_[2] = { 0.9f,0.6f,0.4f,1.0f };
 
-	worldTransformModel_[3].translation_ = { 69.0f,13.0f,149.0f };
-	worldTransformModel_[3].rotation_ = { 0.0f,-1.65f,0.0f };
-	worldTransformModel_[3].scale_ = { 1.0f,10.0f,9.0f };
+	worldTransformBGModel_[3].translation_ = { 69.0f,13.0f,149.0f };
+	worldTransformBGModel_[3].rotation_ = { 0.0f,-1.65f,0.0f };
+	worldTransformBGModel_[3].scale_ = { 1.0f,10.0f,9.0f };
 
 	//SkyBox
 	skyBox_ = std::make_unique <CreateSkyBox>();
@@ -167,7 +167,7 @@ void GameTitleScene::Update() {
 	}
 
 	//SPACE or Aボタンで次のページへ
-	if (input_->TriggerKey(DIK_SPACE) && sceneCount_ < 2 || input_->TriggerAButton(joyState) && sceneCount_ < 2) {
+	if (input_->TriggerKey(DIK_SPACE) && sceneCount_ < maxSceneCount_ || input_->TriggerAButton(joyState) && sceneCount_ < maxSceneCount_) {
 		sceneCount_++;
 		audio_->SoundPlayWave(soundData1_, 0.5f, false);
 	}
@@ -184,7 +184,7 @@ void GameTitleScene::Update() {
 
 	//
 	for (int i = 0; i < modelMaxCount_; i++) {
-		worldTransformModel_[i].UpdateMatrix();
+		worldTransformBGModel_[i].UpdateMatrix();
 	}
 	
 	//Particle更新
@@ -197,13 +197,13 @@ void GameTitleScene::Update() {
 
 	//UIフェード用
 	if (changeAlpha_ == false) {
-		spriteAlpha_ -= 8;
+		spriteAlpha_ -= fadeSpeed_;
 		if (spriteAlpha_ <= 0) {
 			changeAlpha_ = true;
 		}
 	}
 	else if (changeAlpha_ == true) {
-		spriteAlpha_ += 8;
+		spriteAlpha_ += fadeSpeed_;
 		if (spriteAlpha_ >= 256) {
 			changeAlpha_ = false;
 		}
@@ -223,15 +223,15 @@ void GameTitleScene::Update() {
 		debugCamera_->MovingCamera(Vector3{ 0.0f,10.7f,50.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
 		player_->SetVelocity({ 0.0f,0.0f,2.0f });
 
-		if (player_->GetWorldTransform().translation_.num[2] == 50.0f) {
+		if (player_->GetWorldTransform().translation_.num[2] == transitionStartPoint_) {
 			transition_->SceneEnd();
 		}
 		
 		//トランジション終わりにゲームシーンへ
-		if (transition_->GetIsSceneEnd_() == false && player_->GetWorldTransform().translation_.num[2] >= 50.0f) {
+		if (transition_->GetIsSceneEnd_() == false && player_->GetWorldTransform().translation_.num[2] >= transitionStartPoint_) {
 			//各種初期化
 			sceneCount_ = 0;
-			stageAnimationTimer_ = 1.0f;
+			stageAnimationTimer_ = stageAnimationStartTime_;
 			isGameStart_ = true;
 			player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
 			debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
@@ -243,7 +243,7 @@ void GameTitleScene::Update() {
 
 	//モデルアニメーション開始
 	if (sceneCount_ >= 1) {
-		stageAnimationTimer_ += 1.0f;
+		stageAnimationTimer_ += stageAnimationTime_;
 	}
 	stage_[1]->SetAnimationTime(stageAnimationTimer_);
 
@@ -258,7 +258,7 @@ void GameTitleScene::Update() {
 	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 	viewProjection_.UpdateMatrix();
 
-	//
+	//ImGui
 	ImGui::Begin("TitleScene");
 	ImGui::Text("SceneCount : %d", sceneCount_);
 	if (ImGui::Button("DebugScene")) {
@@ -283,7 +283,7 @@ void GameTitleScene::Draw() {
 #pragma region 背景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
-	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+	uiSprite_[0]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 
 #pragma endregion
 
@@ -300,7 +300,7 @@ void GameTitleScene::Draw() {
 	stage_[0]->Draw(worldModels_[0], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
 	stage_[1]->Draw(worldModels_[1], viewProjection_, Vector4{1.0f,1.0f,1.0f,1.0f});
 	for (int i = 0; i < modelMaxCount_; i++) {
-		model_[i]->Draw(worldTransformModel_[i], viewProjection_, modelMaterial_[i]);
+		bgModel_[i]->Draw(worldTransformBGModel_[i], viewProjection_, bgModelMaterial_[i]);
 	}
 
 
@@ -324,12 +324,12 @@ void GameTitleScene::DrawUI() {
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 	if (sceneCount_ != 2) {
-		sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 1.0f,1.0f,1.0f,spriteAlpha_ / 256.0f });
+		uiSprite_[1]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, Vector4{ 1.0f,1.0f,1.0f,spriteAlpha_ / 256.0f });
 		if (sceneCount_ == 0) {
-			sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+			uiSprite_[2]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 		}
 		if (sceneCount_ == 1) {
-			sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+			uiSprite_[3]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 		}
 	}
 

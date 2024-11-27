@@ -69,18 +69,18 @@ void GamePlayScene::Initialize() {
 	ground_->Initialize(groundModel_.get(), { 0.0f,0.0f,-5.0f }, { 30.0f,1.0f,30.0f });
 
 	//旗モデルの初期化と読み込み
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < flagCount_; i++) {
 		flagModel_[i].reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
 		flagModel_[i]->SetDirectionalLightFlag(true, 3);
-		worldModels_[i].Initialize();
-		worldModels_[i].scale_ = { 1.5f,1.5f,1.5f };
-		worldModels_[i].rotation_.num[1] = 30.0f;
+		flagWorldTransforms_[i].Initialize();
+		flagWorldTransforms_[i].scale_ = { 1.5f,1.5f,1.5f };
+		flagWorldTransforms_[i].rotation_.num[1] = 30.0f;
 	}
 	//マップ端に旗を設置(自動化予定)
-	worldModels_[0].translation_ = { -30.0f,0.0f,25.0f };
-	worldModels_[1].translation_ = { -30.0f,0.0f,-35.0f };
-	worldModels_[2].translation_ = { 30.0f,0.0f,25.0f };
-	worldModels_[3].translation_ = { 30.0f,0.0f,-35.0f };
+	flagWorldTransforms_[0].translation_ = { -30.0f,0.0f,25.0f };
+	flagWorldTransforms_[1].translation_ = { -30.0f,0.0f,-35.0f };
+	flagWorldTransforms_[2].translation_ = { 30.0f,0.0f,25.0f };
+	flagWorldTransforms_[3].translation_ = { 30.0f,0.0f,-35.0f };
 
 	//Blockモデルの読み込み
 	ObjModelData_ = playerModel_->LoadModelFile("project/gamedata/resources/block", "block.obj");
@@ -101,44 +101,44 @@ void GamePlayScene::Initialize() {
 	pause_ = textureManager_->Load("project/gamedata/resources/ui/pause.png");
 
 	//Spriteの初期化
-	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
-	spriteTransform4_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-2.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
-	SpriteuvTransform_ = {
+	uiSpriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	uiSpriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+	uiSpriteTransform4_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-2.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+	uiSpriteuvTransform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f},
 	};
 
-	sprite_[0] = std::make_unique <CreateSprite>();
-	sprite_[0]->Initialize(Vector2{ 100.0f,100.0f }, background_);
-	sprite_[0]->SetTextureInitialSize();
-	sprite_[0]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[0] = std::make_unique <CreateSprite>();
+	uiSprite_[0]->Initialize(Vector2{ 100.0f,100.0f }, background_);
+	uiSprite_[0]->SetTextureInitialSize();
+	uiSprite_[0]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[1] = std::make_unique <CreateSprite>();
-	sprite_[1]->Initialize(Vector2{ 100.0f,100.0f }, move1_);
-	sprite_[1]->SetTextureInitialSize();
-	sprite_[1]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[1] = std::make_unique <CreateSprite>();
+	uiSprite_[1]->Initialize(Vector2{ 100.0f,100.0f }, move1_);
+	uiSprite_[1]->SetTextureInitialSize();
+	uiSprite_[1]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[2] = std::make_unique <CreateSprite>();
-	sprite_[2]->Initialize(Vector2{ 100.0f,100.0f }, move2_);
-	sprite_[2]->SetTextureInitialSize();
-	sprite_[2]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[2] = std::make_unique <CreateSprite>();
+	uiSprite_[2]->Initialize(Vector2{ 100.0f,100.0f }, move2_);
+	uiSprite_[2]->SetTextureInitialSize();
+	uiSprite_[2]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[3] = std::make_unique <CreateSprite>();
-	sprite_[3]->Initialize(Vector2{ 100.0f,100.0f }, move3_);
-	sprite_[3]->SetTextureInitialSize();
-	sprite_[3]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[3] = std::make_unique <CreateSprite>();
+	uiSprite_[3]->Initialize(Vector2{ 100.0f,100.0f }, move3_);
+	uiSprite_[3]->SetTextureInitialSize();
+	uiSprite_[3]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[4] = std::make_unique <CreateSprite>();
-	sprite_[4]->Initialize(Vector2{ 100.0f,100.0f }, purpose_);
-	sprite_[4]->SetTextureInitialSize();
-	sprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[4] = std::make_unique <CreateSprite>();
+	uiSprite_[4]->Initialize(Vector2{ 100.0f,100.0f }, purpose_);
+	uiSprite_[4]->SetTextureInitialSize();
+	uiSprite_[4]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[5] = std::make_unique <CreateSprite>();
-	sprite_[5]->Initialize(Vector2{ 100.0f,100.0f }, pause_);
-	sprite_[5]->SetTextureInitialSize();
-	sprite_[5]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[5] = std::make_unique <CreateSprite>();
+	uiSprite_[5]->Initialize(Vector2{ 100.0f,100.0f }, pause_);
+	uiSprite_[5]->SetTextureInitialSize();
+	uiSprite_[5]->SetAnchor(Vector2{ 0.5f,0.5f });
 
 	//Playerパーティクルの初期化
 	playerEmitter_.transform.translate = { 0.0f,0.0f,0.0f };
@@ -238,8 +238,8 @@ void GamePlayScene::Update() {
 		boss_->Update();
 
 		//旗座標更新
-		for (int i = 0; i < 4; i++) {
-			worldModels_[i].UpdateMatrix();
+		for (int i = 0; i < flagCount_; i++) {
+			flagWorldTransforms_[i].UpdateMatrix();
 		}
 
 		//Edirots更新
@@ -303,7 +303,7 @@ void GamePlayScene::Draw() {
 #pragma region 背景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
-	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+	uiSprite_[0]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 
 #pragma endregion
 
@@ -330,8 +330,8 @@ void GamePlayScene::Draw() {
 
 #pragma region 3DSkinningオブジェクト描画
 	CJEngine_->renderer_->Draw(PipelineType::Skinning);
-	for (int i = 0; i < 4; i++) {
-		flagModel_[i]->SkinningDraw(worldModels_[i], viewProjection_, Vector4{ 1.0f,1.0f,1.0f,1.0f });
+	for (int i = 0; i < flagCount_; i++) {
+		flagModel_[i]->SkinningDraw(flagWorldTransforms_[i], viewProjection_, Vector4{ 1.0f,1.0f,1.0f,1.0f });
 	}
 
 #pragma endregion
@@ -357,21 +357,21 @@ void GamePlayScene::DrawUI() {
 	if (isGameEntry_ == true && entryCount_ >= 1 || isGameEntry_ == false) {
 		if (isGamePause_ == false) {
 			if (player_->GetMoveMode() == 0) {
-				sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+				uiSprite_[1]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 			}
 			if (player_->GetMoveMode() == 1) {
-				sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+				uiSprite_[2]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 			}
 			if (player_->GetMoveMode() == 2) {
-				sprite_[3]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+				uiSprite_[3]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 			}
 
-			sprite_[4]->Draw(spriteTransform4_, SpriteuvTransform_, spriteMaterial_);
+			uiSprite_[4]->Draw(uiSpriteTransform4_, uiSpriteuvTransform_, uiSpriteMaterial_);
 		}
 	}
 
 	if (isGamePause_ == true) {
-		sprite_[5]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+		uiSprite_[5]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 	}
 
 	//
@@ -421,7 +421,7 @@ void GamePlayScene::GameStartProcessing() {
 	postEffect_->SetMaskTexture(noiseTexture_);
 
 	//カメラ初期化
-	followCamera_->SetTarget(&ground_->GetWorldTransformRotate());//カメラをGroundにセット
+	followCamera_->SetTarget(&ground_->GetWorldTransformForCameraReference());//カメラをGroundにセット
 	followCamera_->SetOffset({ 0.0f,20.0f,-100.0f });
 	followCamera_->Update();
 
@@ -447,8 +447,8 @@ void GamePlayScene::GameStartProcessing() {
 	transition_->SceneStart();
 
 	//Sprite
-	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f - 300.0f,0.0f} };
-	spriteTransform4_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-1.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+	uiSpriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f - 300.0f,0.0f} };
+	uiSpriteTransform4_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-1.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
 
 	//開始時フラグを無効化
 	isGameStart_ = false;
@@ -465,7 +465,7 @@ void GamePlayScene::GameEntryProcessing() {
 	//全体を見渡して回る
 	if (entryCount_ == 0) {
 		startCameraChangeTimer_++;
-		if (startCameraChangeTimer_ >= 120) {
+		if (startCameraChangeTimer_ >= startCameraChangeTime_) {
 			startCameraChangeTimer_ = 0;
 			entryCount_ = 1;
 
@@ -480,19 +480,19 @@ void GamePlayScene::GameEntryProcessing() {
 	//目標を提示しつつ回る
 	if (entryCount_ == 1) {
 		//Spriteを回しつつ拡大する
-		spriteTransform4_.scale.num[0] += 0.02f;
-		spriteTransform4_.scale.num[1] += 0.02f;
-		spriteTransform4_.scale.num[2] += 0.02f;
+		uiSpriteTransform4_.scale.num[0] += magnificationPower_;
+		uiSpriteTransform4_.scale.num[1] += magnificationPower_;
+		uiSpriteTransform4_.scale.num[2] += magnificationPower_;
 
-		spriteTransform4_.rotate.num[2] += 0.02f;
+		uiSpriteTransform4_.rotate.num[2] += magnificationPower_;
 
 		//最大値になったら
-		if (spriteTransform4_.scale.num[0] >= 1.0f) {
-			spriteTransform4_.scale = { 1.0f,1.0f,1.0f };
-			spriteTransform4_.rotate.num[2] = 0.0f;
+		if (uiSpriteTransform4_.scale.num[0] >= 1.0f) {
+			uiSpriteTransform4_.scale = { 1.0f,1.0f,1.0f };
+			uiSpriteTransform4_.rotate.num[2] = 0.0f;
 
 			startCameraChangeTimer_++;
-			if (startCameraChangeTimer_ >= 60) {
+			if (startCameraChangeTimer_ >= startCameraChangeTime_ / 2.0f) {
 				startCameraChangeTimer_ = 0;
 				entryCount_ = 2;
 
@@ -517,7 +517,7 @@ void GamePlayScene::GameEntryProcessing() {
 	//自機に近づく
 	if (entryCount_ == 2) {
 		startCameraChangeTimer_++;
-		if (startCameraChangeTimer_ >= 120) {
+		if (startCameraChangeTimer_ >= startCameraChangeTime_) {
 			startCameraChangeTimer_ = 0;
 			entryCount_ = 0;
 			isGameEntry_ = false;
@@ -526,9 +526,9 @@ void GamePlayScene::GameEntryProcessing() {
 			player_->SetIsMove(true);
 		}
 
-		spriteTransform_.translate = Lerp(spriteTransform_.translate, Vector3{ 1280.0f / 2.0f,720.0f / 2.0f,0.0f }, 0.1f);
-		spriteTransform4_.translate = Lerp(spriteTransform4_.translate, Vector3{ 1063.0f,62.0f,0.0f }, 0.1f);
-		spriteTransform4_.scale = Lerp(spriteTransform4_.scale, Vector3{ 0.38f,0.38f,1.0f }, 0.1f);
+		uiSpriteTransform_.translate = Lerp(uiSpriteTransform_.translate, Vector3{ 1280.0f / 2.0f,720.0f / 2.0f,0.0f }, 0.1f);
+		uiSpriteTransform4_.translate = Lerp(uiSpriteTransform4_.translate, Vector3{ 1063.0f,62.0f,0.0f }, 0.1f);
+		uiSpriteTransform4_.scale = Lerp(uiSpriteTransform4_.scale, Vector3{ 0.38f,0.38f,1.0f }, 0.1f);
 
 		//カメラの更新
 		followCamera_->Update();
@@ -641,7 +641,7 @@ void GamePlayScene::GameOverProcessing() {
 	}
 
 	if (isGameover_ == true) {
-		maskData_.maskThreshold -= 0.02f;
+		maskData_.maskThreshold -= maskThresholdSpeed_;
 		//遷移終わりにゲームオーバー処理
 		if (transition_->GetIsSceneEnd_() == false && maskData_.maskThreshold <= 0.0f) {
 			//各種初期化処理
@@ -676,21 +676,21 @@ void GamePlayScene::CollisionConclusion() {
 
 	//プレイヤーと地面の当たり判定
 	if (IsCollision(groundObb_, pSphere)) {
-		player_->isHitOnFloor = true;
+		player_->SetIsHitOnFloor(true);
 		player_->SetObjectPos(ground_->GetWorldTransform());
 	}
 	else {
-		player_->isHitOnFloor = false;
+		player_->SetIsHitOnFloor(false);
 	}
 
 	//エネミーと地面の当たり判定
 	for (Enemy* enemy : enemys_) {
 		if (IsCollision(groundObb_, enemy->GetStructSphere())) {
-			enemy->isHitOnFloor = true;
+			enemy->SetIsHitOnFloor(true);
 			enemy->SetObjectPos(ground_->GetWorldTransform());
 		}
 		else {
-			enemy->isHitOnFloor = false;
+			enemy->SetIsHitOnFloor(false);
 		}
 	}
 
@@ -1135,7 +1135,7 @@ Vector3 GamePlayScene::GenerateRandomPosition() {
 bool GamePlayScene::IsValidPosition(const Vector3 pos) {
 	StructSphere sphere;
 	sphere.center = pos;
-	sphere.radius = 1.5f;
+	sphere.radius = 1.5f;//大きさは仮決め
 
 	StructSphere pSphere;
 	pSphere = player_->GetStructSphere();
@@ -1185,8 +1185,7 @@ bool GamePlayScene::IsValidPosition(const Vector3 pos) {
 }
 
 Vector3 GamePlayScene::FindValidPosition() {
-	const int maxAttempts = 100;
-	for (int i = 0; i < maxAttempts; ++i) {
+	for (int i = 0; i < maxAttempts_; ++i) {
 		Vector3 pos = GenerateRandomPosition();
 		if (IsValidPosition(pos)) {
 			return pos;

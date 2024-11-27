@@ -35,10 +35,10 @@ private:
 	SoundData soundData1_;
 
 	//Sprite
-	std::unique_ptr <CreateSprite> sprite_[4];
-	EulerTransform spriteTransform_;
-	EulerTransform SpriteuvTransform_;
-	Vector4 spriteMaterial_;
+	std::unique_ptr <CreateSprite> uiSprite_[4];
+	EulerTransform uiSpriteTransform_;
+	EulerTransform uiSpriteuvTransform_;
+	Vector4 uiSpriteMaterial_;
 
 	//テクスチャ
 	uint32_t pageAll_;
@@ -49,9 +49,12 @@ private:
 	//各種フェード用
 	bool changeAlpha_ = false;//アルファ加算か減算か
 	float spriteAlpha_ = 256.0f;//UI用フェードアルファ
+	const float fadeSpeed_ = 8.0f;//フェードスピード
 
 	//シーン内の演出遷移用カウント
 	int sceneCount_ = 0;
+	const int maxSceneCount_ = 2;
+	const float transitionStartPoint_ = 50.0f;
 
 	//シーン遷移
 	Transition* transition_;
@@ -68,15 +71,17 @@ private:
 
 	//ステージモデル
 	std::unique_ptr<Model> stage_[2];
+	const float stageAnimationTime_ = 1.0f;//アニメーション時間
+	const float stageAnimationStartTime_ = 1.0f;//アニメーション開始時間
 	float stageAnimationTimer_ = 1.0f;//アニメーション用のタイマー
 
-	//
+	//背景モデル
 	static const int modelMaxCount_ = 4;
-	std::unique_ptr<Model> model_[modelMaxCount_];
-	WorldTransform worldTransformModel_[modelMaxCount_];
-	Vector4 modelMaterial_[modelMaxCount_];
+	std::unique_ptr<Model> bgModel_[modelMaxCount_];
+	WorldTransform worldTransformBGModel_[modelMaxCount_];
+	Vector4 bgModelMaterial_[modelMaxCount_];
 	ModelData posterModelData_;
-	uint32_t posterTexture1_;
+	uint32_t posterTexture_;
 
 	//SkyBox
 	std::unique_ptr <CreateSkyBox> skyBox_;

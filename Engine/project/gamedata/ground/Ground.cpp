@@ -12,16 +12,16 @@ void Ground::Initialize(Model* model, Vector3 translation, Vector3 scale) {
 	worldTransform_.translation_ = translation;
 	worldTransform_.scale_ = scale;
 
-	worldTransformRotate_ = worldTransform_;
+	worldTransformForCameraReference_ = worldTransform_;
 
 	groundModel_ = model;
 }
 
 void Ground::Update() {
-	worldTransformRotate_.rotation_.num[1] += 0.005f;
+	worldTransformForCameraReference_.rotation_.num[1] += rotateCameraSpeed_;
 
 	worldTransform_.UpdateMatrix();
-	worldTransformRotate_.UpdateMatrix();
+	worldTransformForCameraReference_.UpdateMatrix();
 }
 
 void Ground::Draw(const ViewProjection& viewProjection) {

@@ -23,10 +23,12 @@ public:
 	WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	//ステージ鑑賞用の座標設定
-	WorldTransform& GetWorldTransformRotate() { return worldTransformRotate_; }
+	WorldTransform& GetWorldTransformForCameraReference() { return worldTransformForCameraReference_; }
 
 private:
 	WorldTransform worldTransform_;
-	WorldTransform worldTransformRotate_;
+	WorldTransform worldTransformForCameraReference_;
 	Model* groundModel_;
+
+	const float rotateCameraSpeed_ = 0.005f;
 };

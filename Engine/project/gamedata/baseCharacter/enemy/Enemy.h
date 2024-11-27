@@ -35,7 +35,9 @@ public:
 	//座標の設定
 	void SetObjectPos(const WorldTransform& worldtransform);
 
-	bool isHitOnFloor = false;
+	//接地しているか否かの設定
+	bool GetIsHitOnFloor() { return isHitOnFloor_; }
+	void SetIsHitOnFloor(const bool isHitOnFloor) { isHitOnFloor_ = isHitOnFloor; }
 
 	//生死フラグ
 	bool GetisDead() { return isDead_; }
@@ -51,13 +53,26 @@ public:
 private:
 	Input* input_ = nullptr;
 
+	//移動や回転用
+	const float rotateViewSpeed_ = 1.0f;
+
+	//加速度
 	Vector3 velocity_ = {};
+
+	//減衰量
+	const float movingAttenuation_ = 0.01f;
+	const float gravityAcceleration_ = 0.05f;
 
 	WorldTransform objectPos_;
 
 	bool isDead_ = false;
 
+	//当たり判定用
 	StructSphere structSphere_;
+	const float sphereSize_ = 1.5f;
+
+	//接地しているか否か
+	bool isHitOnFloor_;
 
 	const ViewProjection* viewProjection_ = nullptr;
 

@@ -51,8 +51,17 @@ private:
     WorldTransform worldTransformBase_;//破壊発生地点のWorldTransform
     WorldTransform worldTransformFloor_;//地面のWorldTransform
 
+    //加速、減速
+    const float decelerationFactor_ = 0.98f;//横方向
+    const float gravityAcceleration_ = -0.1f;//縦方向
+    const float rotationalDamping_ = 0.95f;//回転用
+    const float sizeReduction_ = 0.95f;//サイズ縮小
+    const float amountApproaching_ = 0.02f;//サイズ縮小時、地面とのズレを修正する量
+
+    //何処まで落ちたら消えるか
+    const float dropSite_ = -10.0f;
+
     //Other
-    float acceleration_ = -0.1f;//重力加速度
     const LONGLONG deleteTime_ = 30;//一度出現したブロックが消えるまでの秒数
 
     Audio* audio_;

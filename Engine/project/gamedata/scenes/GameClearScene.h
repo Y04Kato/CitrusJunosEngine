@@ -30,12 +30,13 @@ private:
 
 	TextureManager* textureManager_;
 
-	std::unique_ptr <CreateSprite> sprite_[3];
-	EulerTransform spriteTransform_;
-	EulerTransform SpriteuvTransform_;
-	Vector4 spriteMaterial_;
+	std::unique_ptr <CreateSprite> uiSprite_[3];
+	EulerTransform uiSpriteTransform_;
+	EulerTransform uiSpriteuvTransform_;
+	Vector4 uiSpriteMaterial_;
 
 	float spriteAlpha_ = 256.0f;
+	const float fadeSpeed_ = 8.0f;//フェードスピード
 
 	uint32_t pageAll_;
 	uint32_t start_;

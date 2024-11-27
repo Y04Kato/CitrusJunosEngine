@@ -60,5 +60,11 @@ private:
 	bool isSceneStart_ = false;
 	bool isSceneEnd_ = false;
 
-	float transitionSpeed_ = 20.0f;
+	//遷移スピード
+	const float transitionSpeed_ = 20.0f;
+
+	//何処まで行ったら各遷移が終了するか
+	const float startTransitionEndPoint_ = 3000.0f;
+	const float endTransitionEndPoint_ = 1430.0f;
+
 };

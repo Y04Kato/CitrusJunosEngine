@@ -24,28 +24,28 @@ void GameClearScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	soundData1_ = audio_->SoundLoad("project/gamedata/resources/system.mp3");
 
-	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
-	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
-	SpriteuvTransform_ = {
+	uiSpriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	uiSpriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+	uiSpriteuvTransform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f},
 	};
 
-	sprite_[0] = std::make_unique <CreateSprite>();
-	sprite_[0]->Initialize(Vector2{ 100.0f,100.0f }, pageAll_);
-	sprite_[0]->SetTextureInitialSize();
-	sprite_[0]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[0] = std::make_unique <CreateSprite>();
+	uiSprite_[0]->Initialize(Vector2{ 100.0f,100.0f }, pageAll_);
+	uiSprite_[0]->SetTextureInitialSize();
+	uiSprite_[0]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[1] = std::make_unique <CreateSprite>();
-	sprite_[1]->Initialize(Vector2{ 100.0f,100.0f }, start_);
-	sprite_[1]->SetTextureInitialSize();
-	sprite_[1]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[1] = std::make_unique <CreateSprite>();
+	uiSprite_[1]->Initialize(Vector2{ 100.0f,100.0f }, start_);
+	uiSprite_[1]->SetTextureInitialSize();
+	uiSprite_[1]->SetAnchor(Vector2{ 0.5f,0.5f });
 
-	sprite_[2] = std::make_unique <CreateSprite>();
-	sprite_[2]->Initialize(Vector2{ 100.0f,100.0f }, game_);
-	sprite_[2]->SetTextureInitialSize();
-	sprite_[2]->SetAnchor(Vector2{ 0.5f,0.5f });
+	uiSprite_[2] = std::make_unique <CreateSprite>();
+	uiSprite_[2]->Initialize(Vector2{ 100.0f,100.0f }, game_);
+	uiSprite_[2]->SetTextureInitialSize();
+	uiSprite_[2]->SetAnchor(Vector2{ 0.5f,0.5f });
 
 	//プレイヤーの初期化
 	player_ = std::make_unique<Player>();
@@ -113,13 +113,13 @@ void GameClearScene::Update() {
 	transition_->Update();
 
 	if (changeAlpha_ == false) {
-		spriteAlpha_ -= 8;
+		spriteAlpha_ -= fadeSpeed_;
 		if (spriteAlpha_ <= 0) {
 			changeAlpha_ = true;
 		}
 	}
 	else if (changeAlpha_ == true) {
-		spriteAlpha_ += 8;
+		spriteAlpha_ += fadeSpeed_;
 		if (spriteAlpha_ >= 256) {
 			changeAlpha_ = false;
 		}
@@ -183,7 +183,7 @@ void GameClearScene::Draw() {
 #pragma region 背景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
-	sprite_[0]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+	uiSprite_[0]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 
 #pragma endregion
 
@@ -212,8 +212,8 @@ void GameClearScene::DrawUI() {
 #pragma region 前景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
-	sprite_[1]->Draw(spriteTransform_, SpriteuvTransform_, Vector4{ 1.0f,1.0f,1.0f,spriteAlpha_ / 256.0f });
-	sprite_[2]->Draw(spriteTransform_, SpriteuvTransform_, spriteMaterial_);
+	uiSprite_[1]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, Vector4{ 1.0f,1.0f,1.0f,spriteAlpha_ / 256.0f });
+	uiSprite_[2]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 
 	transition_->Draw();
 #pragma endregion

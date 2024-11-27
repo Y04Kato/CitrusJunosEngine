@@ -17,7 +17,7 @@ void Enemy::Initialize(Model* model) {
 
 	input_ = Input::GetInstance();
 
-	structSphere_.radius = 1.5f;
+	structSphere_.radius = sphereSize_;
 }
 
 void Enemy::Update() {
@@ -31,16 +31,16 @@ void Enemy::Update() {
 	if (worldTransform_.translation_.num[1] < -10.0f) {//Yが-10以上で
 		isDead_ = true;
 	}
-	if (!isHitOnFloor || worldTransform_.GetWorldPos().num[1] < 0.0f) {//地面と当たっていなければ
+	if (!isHitOnFloor_ || worldTransform_.GetWorldPos().num[1] < 0.0f) {//地面と当たっていなければ
 		IsFallStart();
 	}
 	else {
 		worldTransform_.translation_.num[1] = objectPos_.translation_.num[1] + objectPos_.scale_.num[1] + worldTransform_.scale_.num[1] - 0.6f;
-		velocity_.num[1] = 0.001f;
+		velocity_.num[1] = 0.0f;
 	}
 
 	worldTransform_.translation_ += velocity_;
-	worldTransform_.rotation_.num[1] += 1.0f;
+	worldTransform_.rotation_.num[1] += rotateViewSpeed_;
 
 	worldTransform_.UpdateMatrix();
 }
@@ -52,23 +52,22 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 
 void Enemy::Move() {
 	//加速度減衰処理
-	const float kGravityAcceleration = 0.01f;
 	if (isGravityAccelerationCalc == true) {
 		if (velocity_.num[0] >= 0.01f) {
-			velocity_.num[0] -= kGravityAcceleration;
+			velocity_.num[0] -= movingAttenuation_;
 		}
 		else if (velocity_.num[0] <= -0.01f) {
-			velocity_.num[0] += kGravityAcceleration;
+			velocity_.num[0] += movingAttenuation_;
 		}
 		else {
 			velocity_.num[0] = 0.0f;
 		}
 
 		if (velocity_.num[2] >= 0.01f) {
-			velocity_.num[2] -= kGravityAcceleration;
+			velocity_.num[2] -= movingAttenuation_;
 		}
 		else if (velocity_.num[2] <= -0.01f) {
-			velocity_.num[2] += kGravityAcceleration;
+			velocity_.num[2] += movingAttenuation_;
 		}
 		else {
 			velocity_.num[2] = 0.0f;
@@ -78,8 +77,7 @@ void Enemy::Move() {
 
 void Enemy::IsFallStart() {
 	worldTransform_.translation_.num[1] += velocity_.num[1] / 2;
-	const float kGravityAcceleration = 0.05f;
-	Vector3 accelerationVector = { 0.0f,-kGravityAcceleration,0.0f };
+	Vector3 accelerationVector = { 0.0f,-gravityAcceleration_,0.0f };
 	velocity_.num[1] += accelerationVector.num[1];
 }
 
@@ -87,7 +85,7 @@ void Enemy::SetWorldTransform(const Vector3 translation) {
 	worldTransform_.translation_ = translation;
 	worldTransform_.TransferMatrix();
 	worldTransform_.UpdateMatrix();
-	velocity_.num[1] = 0.001f;
+	velocity_.num[1] = 0.0f;
 	isDead_ = false;
 }
 

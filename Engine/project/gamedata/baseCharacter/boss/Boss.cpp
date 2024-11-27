@@ -46,7 +46,7 @@ void Boss::Update() {
 	bikeWorld_.TransferMatrix();
 
 	//HPが0になったら死亡フラグをTrueにする
-	if (hp_ <= 1) {
+	if (hp_ <= 0) {
 		isDead_ = true;
 	}
 
