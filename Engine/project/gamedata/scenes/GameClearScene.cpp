@@ -231,7 +231,7 @@ void GameClearScene::GameStartProcessing() {
 	transition_->SceneStart();
 
 	debugCamera_->SetCamera(Vector3{ 0.0f,10.7f,-29.0f }, Vector3{ 0.0f,0.0f,0.0f });
-	player_->SetWorldTransform(Vector3{ 0.0f,0.0f,0.0f });
+	player_->SetTranslate(Vector3{ 0.0f,0.0f,0.0f });
 	player_->SetRotate(Vector3{ 0.0f,0.0f,0.0f });
 	player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
 

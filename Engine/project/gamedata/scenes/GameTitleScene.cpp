@@ -212,7 +212,7 @@ void GameTitleScene::Update() {
 	//各カウントの処理
 	if (sceneCount_ == 0) {//タイトル
 		debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
-		player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
+		player_->SetTranslate(Vector3{ 0.0f,1.0f,0.0f });
 
 	}
 	if (sceneCount_ == 1) {//ルール説明
@@ -233,7 +233,7 @@ void GameTitleScene::Update() {
 			sceneCount_ = 0;
 			stageAnimationTimer_ = stageAnimationStartTime_;
 			isGameStart_ = true;
-			player_->SetWorldTransform(Vector3{ 0.0f,1.0f,0.0f });
+			player_->SetTranslate(Vector3{ 0.0f,1.0f,0.0f });
 			debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
 
 			//ゲームシーンへ

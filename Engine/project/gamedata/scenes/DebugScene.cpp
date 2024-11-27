@@ -74,7 +74,7 @@ void DebugScene::Update() {
 	ImGui::Checkbox("isEditorMode", &isEditorMode_);
 
 	if (ImGui::Button("PlayerReset")) {//Player配置をリセット
-		player_->SetWorldTransform(Vector3{ 0.0f,0.2f,0.0f });
+		player_->SetTranslate(Vector3{ 0.0f,0.2f,0.0f });
 		player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
 		player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
 	}
@@ -230,7 +230,7 @@ void DebugScene::Finalize() {
 }
 
 void DebugScene::ResetProcessing() {
-	player_->SetWorldTransform(Vector3{ 10.0f,0.2f,10.0f });
+	player_->SetTranslate(Vector3{ 10.0f,0.2f,10.0f });
 	player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
 	player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
 
@@ -258,21 +258,21 @@ void DebugScene::CollisionConclusion() {
 
 	//プレイヤーと地面の当たり判定
 	if (IsCollision(groundObb_, pSphere)) {
-		player_->isHitOnFloor = true;
+		player_->SetIsHitOnFloor(true);
 		player_->SetObjectPos(ground_->GetWorldTransform());
 	}
 	else {
-		player_->isHitOnFloor = false;
+		player_->SetIsHitOnFloor(false);
 	}
 
 	//エネミーと地面の当たり判定
 	for (Enemy* enemy : enemys_) {
 		if (IsCollision(groundObb_, enemy->GetStructSphere())) {
-			enemy->isHitOnFloor = true;
+			enemy->SetIsHitOnFloor(true);
 			enemy->SetObjectPos(ground_->GetWorldTransform());
 		}
 		else {
-			enemy->isHitOnFloor = false;
+			enemy->SetIsHitOnFloor(false);
 		}
 	}
 
@@ -291,7 +291,7 @@ void DebugScene::CollisionConclusion() {
 				pSphere.center = pSphere.center - correction;
 				eSphere.center = eSphere.center + correction;
 
-				player_->SetWorldTransform(pSphere.center);
+				player_->SetTranslate(pSphere.center);
 				enemy->SetWorldTransform(eSphere.center);
 			}
 
@@ -363,7 +363,7 @@ void DebugScene::CollisionConclusion() {
 				Vector3 correction = Normalize(direction) * overlap * pushbackMultiplierObj_;
 				pSphere.center += correction;
 
-				player_->SetWorldTransform(pSphere.center);
+				player_->SetTranslate(pSphere.center);
 			}
 
 			//反発処理

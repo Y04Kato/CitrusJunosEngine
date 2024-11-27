@@ -206,7 +206,7 @@ void Player::IsFallStart() {
 	velocity_.num[1] += accelerationVector.num[1];
 }
 
-void Player::SetWorldTransform(const Vector3 translation) {
+void Player::SetTranslate(const Vector3 translation) {
 	worldTransform_.translation_ = translation;
 	worldTransform_.TransferMatrix();
 	worldTransform_.UpdateMatrix();

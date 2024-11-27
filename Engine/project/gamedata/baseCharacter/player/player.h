@@ -38,8 +38,10 @@ public:
 	void MoveAttenuation();
 
 	WorldTransform GetWorldTransform() { return worldTransform_; }
-	const WorldTransform& GetWorldTransformPlayer() { return worldTransformForCameraReference_; }
-	void SetWorldTransform(const Vector3 translation);
+	const WorldTransform& GetWorldTransformCameraPlayer() { return worldTransformForCameraReference_; }
+
+	//座標と回転のみ設定
+	void SetTranslate(const Vector3 translation);
 	void SetRotate(const Vector3 rotate) { worldTransform_.rotation_ = rotate; }
 
 	//落下処理

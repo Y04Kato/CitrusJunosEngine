@@ -39,7 +39,7 @@ void GamePlayScene::Initialize() {
 	//フォローカメラ初期化
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
-	followCamera_->SetTarget(&player_->GetWorldTransformPlayer());//カメラをPlayerにセット
+	followCamera_->SetTarget(&player_->GetWorldTransformCameraPlayer());//カメラをPlayerにセット
 
 	//Bossモデルの初期化と読み込み
 	boss_ = std::make_unique<Boss>();
@@ -408,7 +408,7 @@ void GamePlayScene::Finalize() {
 
 void GamePlayScene::GameStartProcessing() {
 	//Player初期化
-	player_->SetWorldTransform(Vector3{ 0.0f,0.2f,-20.0f });
+	player_->SetTranslate(Vector3{ 0.0f,0.2f,-20.0f });
 	player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
 	player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
 
@@ -496,7 +496,7 @@ void GamePlayScene::GameEntryProcessing() {
 				startCameraChangeTimer_ = 0;
 				entryCount_ = 2;
 
-				followCamera_->SetTarget(&player_->GetWorldTransformPlayer());
+				followCamera_->SetTarget(&player_->GetWorldTransformCameraPlayer());
 				followCamera_->SetOffset({ 0.0f,3.5f,-20.0f });
 				followCamera_->Update();
 
@@ -709,7 +709,7 @@ void GamePlayScene::CollisionConclusion() {
 				pSphere.center = pSphere.center - correction;
 				eSphere.center = eSphere.center + correction;
 
-				player_->SetWorldTransform(pSphere.center);
+				player_->SetTranslate(pSphere.center);
 				enemy->SetWorldTransform(eSphere.center);
 			}
 
@@ -791,7 +791,7 @@ void GamePlayScene::CollisionConclusion() {
 						Vector3 correction = Normalize(direction) * overlap * pushbackMultiplierObj_;
 						pSphere.center += correction;
 
-						player_->SetWorldTransform(pSphere.center);
+						player_->SetTranslate(pSphere.center);
 					}
 
 					//衝突音を再生
@@ -983,7 +983,7 @@ void GamePlayScene::CollisionConclusion() {
 				pSphere.center.num[1] += correction.num[1];
 				pSphere.center.num[2] += correction.num[2];
 
-				player_->SetWorldTransform(pSphere.center);
+				player_->SetTranslate(pSphere.center);
 			}
 
 			//衝突音を再生
