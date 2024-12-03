@@ -224,6 +224,7 @@
     <ClCompile Include="project\gamedata\baseCharacter\boss\Boss.cpp" />
     <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp" />
     <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp" />
+    <ClCompile Include="project\gamedata\collisionConclusion\CollisionConclusion.cpp" />
     <ClCompile Include="project\gamedata\explosion\Explosion.cpp" />
     <ClCompile Include="project\gamedata\ground\Ground.cpp" />
     <ClCompile Include="project\gamedata\scenes\DebugScene.cpp" />
@@ -503,6 +504,7 @@
     <ClInclude Include="project\gamedata\baseCharacter\boss\Boss.h" />
     <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h" />
     <ClInclude Include="project\gamedata\baseCharacter\player\Player.h" />
+    <ClInclude Include="project\gamedata\collisionConclusion\CollisionConclusion.h" />
     <ClInclude Include="project\gamedata\explosion\Explosion.h" />
     <ClInclude Include="project\gamedata\ground\Ground.h" />
     <ClInclude Include="project\gamedata\scenes\DebugScene.h" />

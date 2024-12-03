@@ -19,7 +19,7 @@ public:
 	//フレーム開始、描画準備
 	void BeginFrame();
 
-	//フレーム終了、内部コマンドを生成して廟がする
+	//フレーム終了、内部コマンドを生成して描画する
 	void EndFrame();
 
 	void Finalize();

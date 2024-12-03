@@ -45,23 +45,11 @@ public:
 	//ステージのリセット処理
 	void StageReset();
 
-	//当たり判定まとめ
-	void CollisionConclusion();
-
-	//接触時の音量計算
-	void ContactVolume(Vector3 velocity);
-
 	//敵の配置
 	void SetEnemy(Vector3 pos);
 
 	//ランダムな座標を返す
 	Vector3 GenerateRandomPosition();
-
-	//他オブジェクトに接触しているか確認
-	bool IsValidPosition(const Vector3 pos);
-
-	//指定した回数、座標が問題ないか確認し座標を返す
-	Vector3 FindValidPosition();
 
 private:
 	CitrusJunosEngine* CJEngine_;
@@ -129,13 +117,6 @@ private:
 	uint32_t ObjTexture_;
 	std::list<Obj> objects_;
 
-	//CollisionParticle
-	std::unique_ptr<CreateParticle> collisionParticle_;
-	Emitter collisionEmitter_{};
-	AccelerationField collisionAccelerationField_;
-	uint32_t collisionParticleResource_;
-	const int collisionParticleOccursNum_ = 10;
-
 	//Sprite
 	std::unique_ptr <CreateSprite> uiSprite_[6];
 	EulerTransform uiSpriteTransform_;
@@ -162,13 +143,6 @@ private:
 	bool isGameclear_ = false;//ゲームクリア時のフラグ
 	bool isGameEnd_ = false;//ゲームリセット時のフラグ
 	bool isGamePause_ = false;//ゲームポーズフラグ
-
-	//押し戻しの倍率
-	float pushbackMultiplier_ = 2.0f;
-	float pushbackMultiplierObj_ = 1.5f;
-
-	//反発係数
-	float repulsionCoefficient_ = 1.2f;
 
 	//Lights
 	DirectionalLights* directionalLights_;
