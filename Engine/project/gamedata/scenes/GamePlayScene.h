@@ -142,7 +142,7 @@ private:
 	EulerTransform uiSpriteuvTransform_;
 	Vector4 uiSpriteMaterial_;
 	EulerTransform uiSpriteTransform4_;//sprite_[4]のみゲーム開始演出用で動く為
-	const float magnificationPower_ = 0.2f;//sprite_[4]の拡大率
+	const float magnificationPower_ = 0.02f;//sprite_[4]の拡大率
 
 	//Texture
 	uint32_t background_;
