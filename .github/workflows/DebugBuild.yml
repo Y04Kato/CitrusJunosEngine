@@ -8,7 +8,7 @@ on:
 
 env:
   #リポジトリのルートディレクトリを基点としたソリューションのファイルパス
-  SOLUTION_FILE_PATH: project/Engine/CitrusJunosEngine.sln
+  SOLUTION_FILE_PATH: Engine/CitrusJunosEngine.sln
   #VSの構成(Debug/Release)
   CONFIGURATION: Debug
 
