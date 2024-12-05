@@ -69,7 +69,7 @@ protected:
 	//生死フラグ
 	bool isDead_ = false;
 
-	//
+	//被弾関係
 	bool isHit_ = false;
 	const int coolTime_ = 30;//被弾のクールタイム
 	int hitTimer_ = coolTime_;//現在のクールタイム
