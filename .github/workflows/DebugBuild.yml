@@ -1,9 +1,10 @@
-name:DebugBuild:
+name: DebugBuild
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 env:
   #リポジトリのルートディレクトリを基点としたソリューションのファイルパス
@@ -11,15 +12,27 @@ env:
   #VSの構成(Debug/Release)
   CONFIGURATION: Debug
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: windows-2022
 
-  steps:
+    steps:
     - name: Checkout
-      uses: action/checkout@v4
+      uses: actions/checkout@v4
+
+    - name: Install Server-Media-Foundation
+      shell: powershell
+      run: |
+        Install-WindowsFeature Server-Media-Foundation
+
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
-      with: msbuild-architecture: x64
-    - name: build
-      run: msbuild ${{env.SOLUTION_FILE_PATH}} /p:Platform=x64,Configuration=${{env.CONFIGURATION}}
+      with:
+        msbuild-architexture: x64
+
+    - name: Build
+      run: |
+        msbuild ${{env.SOLUTION_FILE_PATH}} /p:Platform=x64,Configuration=${{env.CONFIGURATION}}
