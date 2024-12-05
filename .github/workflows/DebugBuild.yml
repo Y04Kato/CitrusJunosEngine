@@ -1,4 +1,4 @@
-name:DebugBuild
+name:DebugBuild:
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
     runs-on: windows-2022
 
   steps:
-    - name: Checkout:
+    - name: Checkout
       uses: action/checkout@v4
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
