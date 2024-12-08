@@ -120,6 +120,12 @@ private:
 	std::unique_ptr<Model> flagModel_[flagCount_];
 	WorldTransform flagWorldTransforms_[flagCount_];
 
+	//背景モデル
+	static const int modelMaxCount_ = 4;
+	std::unique_ptr<Model> bgModel_[modelMaxCount_];
+	WorldTransform worldTransformBGModel_[modelMaxCount_];
+	Vector4 bgModelMaterial_[modelMaxCount_];
+
 	//Editor
 	Editors* editors_;
 	bool isEditorMode_ = false;

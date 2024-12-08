@@ -82,6 +82,31 @@ void GamePlayScene::Initialize() {
 	flagWorldTransforms_[2].translation_ = { 30.0f,0.0f,25.0f };
 	flagWorldTransforms_[3].translation_ = { 30.0f,0.0f,-35.0f };
 
+	//背景モデル
+	for (int i = 0; i < modelMaxCount_; i++) {
+		bgModel_[i] = std::make_unique <Model>();
+	}
+	bgModel_[0].reset(Model::CreateModel("project/gamedata/resources/bike", "bike.obj"));
+	bgModel_[1].reset(Model::CreateModel("project/gamedata/resources/bike", "bike.obj"));
+	bgModel_[2].reset(Model::CreateModel("project/gamedata/resources/chest", "chest.obj"));
+	bgModel_[3].reset(Model::CreateModel("project/gamedata/resources/chest", "chest.obj"));
+	for (int i = 0; i < modelMaxCount_; i++) {
+		worldTransformBGModel_[i].Initialize();
+		bgModelMaterial_[i] = { 1.0f,1.0f,1.0f,1.0f };
+		bgModel_[i]->SetDirectionalLightFlag(true, 3);
+	}
+	worldTransformBGModel_[0].translation_ = { 61.0f,9.0f,59.0f };
+	worldTransformBGModel_[0].rotation_ = { -0.7f,0.0f,-0.25f };
+
+	worldTransformBGModel_[1].translation_ = { -78.0f,12.0f,11.0f };
+	worldTransformBGModel_[1].rotation_ = { 0.0f,-1.15f,0.2f };
+
+	worldTransformBGModel_[2].translation_ = { 5.0f,8.0f,-90.0f };
+	worldTransformBGModel_[2].rotation_ = { 0.2f,0.35f,0.7f };
+
+	worldTransformBGModel_[3].translation_ = { -59.0f,9.0f,56.0f };
+	worldTransformBGModel_[3].rotation_ = { 0.8f,-1.65f,0.14f };
+
 	//Blockモデルの読み込み
 	ObjModelData_ = playerModel_->LoadModelFile("project/gamedata/resources/block", "block.obj");
 	ObjTexture_ = textureManager_->Load(ObjModelData_.material.textureFilePath);
@@ -242,6 +267,11 @@ void GamePlayScene::Update() {
 			flagWorldTransforms_[i].UpdateMatrix();
 		}
 
+		//背景モデル更新
+		for (int i = 0; i < modelMaxCount_; i++) {
+			worldTransformBGModel_[i].UpdateMatrix();
+		}
+
 		//Edirots更新
 		editors_->Update();
 
@@ -296,6 +326,7 @@ void GamePlayScene::Update() {
 	ImGui::Begin("PlayScene");
 	ImGui::Checkbox("isEditorMode", &isEditorMode_);
 	ImGui::DragFloat3("", player_->GetVelocity().num);
+	ImGui::DragFloat3("BGmodel", worldTransformBGModel_[1].translation_.num);
 	ImGui::End();
 }
 
@@ -322,6 +353,10 @@ void GamePlayScene::Draw() {
 	explosion_->Draw(viewProjection_);
 	for (Enemy* enemy : enemys_) {
 		enemy->Draw(viewProjection_);
+	}
+
+	for (int i = 0; i < modelMaxCount_; i++) {
+		bgModel_[i]->Draw(worldTransformBGModel_[i], viewProjection_, bgModelMaterial_[i]);
 	}
 
 	editors_->Draw(viewProjection_);
