@@ -152,7 +152,7 @@ void Boss::Reset() {
 	std::mt19937 randomEngine(seedGenerator());
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 
-	for (int i = 0; i < maxHP_ - 1; i++) {
+	for (int i = 0; i < maxHP_; i++) {
 		Vector4 color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
 		bodyTransform_.translate.num[1] = bodyTransform_.scale.num[1] * (float)i + bodyTransform_.scale.num[1] / 2.0f;
 		SpawnBody(bodyTransform_, color, i);
