@@ -1,4 +1,5 @@
-#include "DataReceipt.h"
+#include "dataReceipt.h"
+
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -103,7 +104,7 @@ void DataReceipt::receiveLoop() {
 			message_queue_.push(message);
 		}
 
-		queue_cv_.notify_one(); // メッセージが届いたことを通知
+		queue_cv_.notify_one();//メッセージが届いたことを通知
 	}
 }
 
@@ -111,20 +112,21 @@ void DataReceipt::run() {
 	try {
 		start();
 
-		// メインスレッドで受信したメッセージを表示
+		//メインスレッドで受信したメッセージを表示
 		while (is_running_) {
 			std::string message;
 			if (getReceivedMessage(message)) {
-				// 出力を同期する
+				//出力を同期する
 				std::lock_guard<std::mutex> lock_cout(cout_mutex);
 				std::cout << "Received message: " << message << std::endl;
 			}
 
-			// ここで他の処理を加えたり、メッセージを処理したりできます
+			//処理を追加するならここら辺に
+
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
 
-		// 受信を停止
+		//受信を停止
 		stop();
 	}
 	catch (const std::exception& e) {
