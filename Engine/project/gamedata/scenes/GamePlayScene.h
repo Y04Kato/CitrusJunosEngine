@@ -69,6 +69,9 @@ private:
 	ViewProjection viewProjection_;
 	TextureManager* textureManager_;
 
+	//SceneNo
+	SceneNumber* sceneNumber_;
+
 	Audio* audio_;
 	SoundData soundData1_;
 	SoundData soundData2_;

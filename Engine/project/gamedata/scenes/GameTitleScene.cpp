@@ -17,6 +17,9 @@ void GameTitleScene::Initialize() {
 	//テクスチャの初期化と読み込み
 	textureManager_ = TextureManager::GetInstance();
 
+	//SceneNumber
+	sceneNumber_ = SceneNumber::GetInstance();
+
 	//テクスチャ読み込み
 	pageAll_ = textureManager_->Load("project/gamedata/resources/paper.png");
 	start_ = textureManager_->Load("project/gamedata/resources/ui/pressSpace.png");
@@ -237,7 +240,7 @@ void GameTitleScene::Update() {
 			debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
 
 			//ゲームシーンへ
-			sceneNo = GAME_SCENE;
+			sceneNumber_->SetSceneNumber(GAME_SCENE);
 		}
 	}
 
@@ -262,7 +265,7 @@ void GameTitleScene::Update() {
 	ImGui::Begin("TitleScene");
 	ImGui::Text("SceneCount : %d", sceneCount_);
 	if (ImGui::Button("DebugScene")) {
-		sceneNo = DEBUG_SCENE;
+		sceneNumber_->SetSceneNumber(DEBUG_SCENE);
 	}
 	if (ImGui::Button("SceneStart")) {
 		transition_->SceneStart();

@@ -30,6 +30,9 @@ private:
 
 	TextureManager* textureManager_;
 
+	//SceneNo
+	SceneNumber* sceneNumber_;
+
 	//Audio
 	Audio* audio_;
 	SoundData soundData1_;

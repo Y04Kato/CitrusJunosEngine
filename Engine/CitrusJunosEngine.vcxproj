@@ -171,6 +171,7 @@
     <ClCompile Include="base\components\manager\ImGuiManager\ImGuiManager.cpp" />
     <ClCompile Include="base\components\manager\PSOManager\PSOManager.cpp" />
     <ClCompile Include="base\components\manager\RTVManager\RTVManager.cpp" />
+    <ClCompile Include="base\components\manager\SceneManager\SceneNumber.cpp" />
     <ClCompile Include="base\components\manager\SRVManager\SRVManager.cpp" />
     <ClCompile Include="base\components\manager\TextureManager\TextureManager.cpp" />
     <ClCompile Include="base\components\pipelineState\Gaussian\Gaussian.cpp" />
@@ -440,6 +441,7 @@
     <ClInclude Include="base\components\manager\ImGuiManager\ImGuiManager.h" />
     <ClInclude Include="base\components\manager\PSOManager\PSOManager.h" />
     <ClInclude Include="base\components\manager\RTVManager\RTVManager.h" />
+    <ClInclude Include="base\components\manager\SceneManager\SceneNumber.h" />
     <ClInclude Include="base\components\manager\SRVManager\SRVManager.h" />
     <ClInclude Include="base\components\manager\TextureManager\TextureManager.h" />
     <ClInclude Include="base\components\pipelineState\Gaussian\Gaussian.h" />

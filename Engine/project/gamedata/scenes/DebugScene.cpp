@@ -17,6 +17,9 @@ void DebugScene::Initialize() {
 	//TextureManager
 	textureManager_ = TextureManager::GetInstance();
 
+	//SceneNumber
+	sceneNumber_ = SceneNumber::GetInstance();
+
 	//Input
 	input_ = Input::GetInstance();
 
@@ -60,15 +63,15 @@ void DebugScene::Update() {
 	ImGui::Begin("DebugOperate");
 	if (ImGui::Button("TitleScene")) {
 		SceneEndProcessing();
-		sceneNo = TITLE_SCENE;
+		sceneNumber_->SetSceneNumber(TITLE_SCENE);
 	}
 	if (ImGui::Button("GameClearScene")) {
 		SceneEndProcessing();
-		sceneNo = CLEAR_SCENE;
+		sceneNumber_->SetSceneNumber(CLEAR_SCENE);
 	}
 	if (ImGui::Button("GameOverScene")) {
 		SceneEndProcessing();
-		sceneNo = OVER_SCENE;
+		sceneNumber_->SetSceneNumber(OVER_SCENE);
 	}
 	ImGui::Text("CameraReset:Q key");
 	ImGui::Checkbox("isEditorMode", &isEditorMode_);

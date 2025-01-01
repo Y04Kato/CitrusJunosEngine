@@ -10,6 +10,9 @@
 #include "MathCalculation.h"
 #include "renderer/Renderer.h"
 
+#include "Input.h"
+#include "Audio.h"
+
 class CitrusJunosEngine {
 public:
 	static CitrusJunosEngine* GetInstance();
@@ -38,4 +41,7 @@ private:
 	~CitrusJunosEngine() = default;
 
 	static	DirectXCommon* dxCommon_;
+
+	Input* input_ = nullptr;
+	Audio* audio_ = nullptr;
 };

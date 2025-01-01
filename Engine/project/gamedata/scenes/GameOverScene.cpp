@@ -16,6 +16,9 @@ void GameOverScene::Initialize() {
 
 	textureManager_ = TextureManager::GetInstance();
 
+	//SceneNumber
+	sceneNumber_ = SceneNumber::GetInstance();
+
 	pageAll_ = textureManager_->Load("project/gamedata/resources/paper.png");
 	start_ = textureManager_->Load("project/gamedata/resources/ui/pressSpace.png");
 	game_ = textureManager_->Load("project/gamedata/resources/ui/gameover.png");
@@ -119,7 +122,7 @@ void GameOverScene::Update() {
 				debugCamera_->SetCamera(Vector3{ 26.7f,10.7f,-28.8f }, Vector3{ 0.0f,-0.3f,0.0f });
 
 				//タイトルシーンへ
-				sceneNo = TITLE_SCENE;
+				sceneNumber_->SetSceneNumber(TITLE_SCENE);
 			}
 		}
 		else if (sceneChangeTimer_ >= sceneChangeMaxTime_ / 2) {

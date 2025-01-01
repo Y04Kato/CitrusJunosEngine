@@ -14,6 +14,9 @@ void GamePlayScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
 
+	//SceneNumber
+	sceneNumber_ = SceneNumber::GetInstance();
+
 	//Input
 	input_ = Input::GetInstance();
 
@@ -642,7 +645,7 @@ void GamePlayScene::GamePauseProcessing() {
 		if (transition_->GetIsSceneEnd_() == false) {
 			//各種初期化処理
 			StageReset();
-			sceneNo = TITLE_SCENE;
+			sceneNumber_->SetSceneNumber(TITLE_SCENE);
 		}
 	}
 }
@@ -661,7 +664,7 @@ void GamePlayScene::GameClearProcessing() {
 		if (transition_->GetIsSceneEnd_() == false) {
 			//各種初期化処理
 			StageReset();
-			sceneNo = CLEAR_SCENE;
+			sceneNumber_->SetSceneNumber(CLEAR_SCENE);
 		}
 	}
 }
@@ -681,7 +684,7 @@ void GamePlayScene::GameOverProcessing() {
 		if (transition_->GetIsSceneEnd_() == false && maskData_.maskThreshold <= 0.0f) {
 			//各種初期化処理
 			StageReset();
-			sceneNo = OVER_SCENE;
+			sceneNumber_->SetSceneNumber(OVER_SCENE);
 		}
 	}
 }

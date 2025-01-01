@@ -23,6 +23,7 @@
 #include "components/utilities/collisionManager/CollisionConfig.h"
 #include "postEffect/PostEffect.h"
 #include "editors/Editors.h"
+#include "SceneNumber.h"
 
 //シーン一覧、シーン追加時はここに追加する
 enum SCENE {
@@ -47,8 +48,6 @@ public:
 	virtual void DrawPostEffect() = 0;
 
 	virtual void Finalize() = 0;
-
-	static int sceneNo;
 
 	virtual ~Iscene() {};
 };

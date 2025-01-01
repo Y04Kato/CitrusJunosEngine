@@ -38,6 +38,9 @@ private:
 	ViewProjection viewProjection_;
 	TextureManager* textureManager_;
 
+	//SceneNo
+	SceneNumber* sceneNumber_;
+
 	Input* input_ = nullptr;
 
 	Audio* audio_;

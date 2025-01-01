@@ -30,6 +30,9 @@ private:
 
 	TextureManager* textureManager_;
 
+	//SceneNo
+	SceneNumber* sceneNumber_;
+
 	std::unique_ptr <CreateSprite> uiSprite_[3];
 	EulerTransform uiSpriteTransform_;
 	EulerTransform uiSpriteuvTransform_;

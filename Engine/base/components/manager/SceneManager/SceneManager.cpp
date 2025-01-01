@@ -23,13 +23,12 @@ void SceneManager::Initialize() {
 	CJEngine_->Initialize(kWindowTitle, 1280, 720);
 	//DirectX
 	dxCommon_ = DirectXCommon::GetInstance();
+
 	//Audio
 	audio_ = Audio::GetInstance();
-	audio_->Initialize();
 
 	//Input
 	input_ = Input::GetInstance();
-	input_->Initialize();
 
 	//Light
 	directionalLight_ = DirectionalLights::GetInstance();
@@ -59,7 +58,8 @@ void SceneManager::Initialize() {
 	}
 
 	//タイトルシーンから開始
-	Iscene::sceneNo = TITLE_SCENE;
+	sceneNumber_ = SceneNumber::GetInstance();
+	sceneNumber_->Initialize(TITLE_SCENE);
 
 	postEffect_ = PostEffect::GetInstance();
 	postEffect_->Initialize();
@@ -76,22 +76,22 @@ void SceneManager::Update() {
 		postEffect_->PreDraw();
 
 		imGuiManager_->Begin();
-		input_->Update();
+		CJEngine_->Update();
 		GlobalVariables::GetInstance()->Update();
 		directionalLight_->Update();
 		pointLight_->Update();
-		scene_[Iscene::sceneNo]->Update();
-		scene_[Iscene::sceneNo]->Draw();
+		scene_[sceneNumber_->GetSceneNumber()]->Update();
+		scene_[sceneNumber_->GetSceneNumber()]->Draw();
 		imGuiManager_->End();
 
 		CJEngine_->BeginFrame();
 		postEffect_->PreCopy();
 
-		scene_[Iscene::sceneNo]->DrawPostEffect();
+		scene_[sceneNumber_->GetSceneNumber()]->DrawPostEffect();
 
 		postEffect_->Draw();
 
-		scene_[Iscene::sceneNo]->DrawUI();
+		scene_[sceneNumber_->GetSceneNumber()]->DrawUI();
 
 		imGuiManager_->Draw();
 
@@ -112,7 +112,6 @@ void SceneManager::Update() {
 
 void SceneManager::Finalize() {
 	CJEngine_->Finalize();
-	audio_->Finalize();
 	imGuiManager_->Finalize();
 	for (int i = 0; i < SCENE_MAX; i++) {
 		scene_[i]->Finalize();
