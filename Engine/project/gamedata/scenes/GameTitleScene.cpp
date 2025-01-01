@@ -265,6 +265,7 @@ void GameTitleScene::Update() {
 	ImGui::Begin("TitleScene");
 	ImGui::Text("SceneCount : %d", sceneCount_);
 	if (ImGui::Button("DebugScene")) {
+		debugCamera_->SetCamera(Vector3{ 0.0f,0.0f,-20.0f }, Vector3{ 0.0f,0.0f,0.0f });
 		sceneNumber_->SetSceneNumber(DEBUG_SCENE);
 	}
 	if (ImGui::Button("SceneStart")) {
