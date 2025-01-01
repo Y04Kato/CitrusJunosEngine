@@ -322,6 +322,54 @@
     <Filter Include="リソース ファイル\hlsl">
       <UniqueIdentifier>{1c3d9f48-c4b6-4ff9-a5f8-eddbe74c2733}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\base\components\utilities\dataReceipt">
+      <UniqueIdentifier>{51474ece-809e-4c53-af5a-cf98e0626640}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\baseCharactor">
+      <UniqueIdentifier>{a52120d9-4589-4aee-b1fd-14b382e6a362}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\baseCharactor\player">
+      <UniqueIdentifier>{4b769f4f-0dc0-43b8-9f47-a4ac0dda8a9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\baseCharactor\enemy">
+      <UniqueIdentifier>{400af318-8dc3-4057-94c8-808df625cdad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\baseCharactor\boss">
+      <UniqueIdentifier>{79b685e9-c859-46a0-97ff-47567ca96258}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\ground">
+      <UniqueIdentifier>{4ec9c3bc-ba22-46d6-b063-b70335be29f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\transition">
+      <UniqueIdentifier>{23d062c0-b148-471f-8f83-0cd8d423ec88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\project\gamedata\explosion">
+      <UniqueIdentifier>{130206a4-a7bd-45f4-b1fd-60784b457b7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\components\utilities\dataReceipt">
+      <UniqueIdentifier>{3c72526e-f9ee-460a-a607-cb514c77bbdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\baseCharacter">
+      <UniqueIdentifier>{20d1df1f-ce65-4670-8806-e9d8b89bc060}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\baseCharacter\player">
+      <UniqueIdentifier>{e35fbd8a-0652-430a-8441-321a40fd4846}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\baseCharacter\enemy">
+      <UniqueIdentifier>{129cd36b-f9b5-4ab0-92e1-df2525add1ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\baseCharacter\boss">
+      <UniqueIdentifier>{63d5f9cd-9f2c-489e-a39e-59866ecf6e28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\ground">
+      <UniqueIdentifier>{7deb8658-6007-4db1-8a61-87b67f29e8c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\explosion">
+      <UniqueIdentifier>{66560581-af58-4d0e-9c33-6a9cda02bcec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\project\gamedata\transition">
+      <UniqueIdentifier>{d210f35a-e2b7-4e6d-8672-dadffaa25920}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -513,38 +561,38 @@
     <ClCompile Include="externals\imgui\ImGuizmo.cpp">
       <Filter>externals\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="project\gamedata\baseCharacter\boss\Boss.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="project\gamedata\explosion\Explosion.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="project\gamedata\ground\Ground.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="project\gamedata\scenes\DebugScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="project\gamedata\scenes\GameOverScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="project\gamedata\transition\Transition.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="base\components\manager\SceneManager\SceneNumber.cpp">
+      <Filter>ソース ファイル\base\components\manager\SceneManager</Filter>
     </ClCompile>
     <ClCompile Include="base\components\utilities\dataReceipt\DataReceipt.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\base\components\utilities\dataReceipt</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\manager\SceneManager\SceneNumber.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="project\gamedata\scenes\GameOverScene.cpp">
+      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\scenes\DebugScene.cpp">
+      <Filter>ソース ファイル\project\gamedata\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\BaseCharacter.cpp">
+      <Filter>ソース ファイル\project\gamedata\baseCharactor</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\boss\Boss.cpp">
+      <Filter>ソース ファイル\project\gamedata\baseCharactor\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\enemy\Enemy.cpp">
+      <Filter>ソース ファイル\project\gamedata\baseCharactor\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\baseCharacter\player\Player.cpp">
+      <Filter>ソース ファイル\project\gamedata\baseCharactor\player</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\transition\Transition.cpp">
+      <Filter>ソース ファイル\project\gamedata\transition</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\ground\Ground.cpp">
+      <Filter>ソース ファイル\project\gamedata\ground</Filter>
+    </ClCompile>
+    <ClCompile Include="project\gamedata\explosion\Explosion.cpp">
+      <Filter>ソース ファイル\project\gamedata\explosion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -841,38 +889,38 @@
     <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h">
       <Filter>ヘッダー ファイル\base\components\shaderCompiler</Filter>
     </ClInclude>
-    <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="project\gamedata\baseCharacter\boss\Boss.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="project\gamedata\baseCharacter\player\Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="project\gamedata\explosion\Explosion.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="project\gamedata\ground\Ground.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="project\gamedata\scenes\DebugScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="project\gamedata\scenes\GameOverScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="project\gamedata\transition\Transition.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="base\components\manager\SceneManager\SceneNumber.h">
+      <Filter>ヘッダー ファイル\base\components\manager\SceneManager</Filter>
     </ClInclude>
     <ClInclude Include="base\components\utilities\dataReceipt\DataReceipt.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\base\components\utilities\dataReceipt</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\manager\SceneManager\SceneNumber.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="project\gamedata\scenes\DebugScene.h">
+      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\scenes\GameOverScene.h">
+      <Filter>ヘッダー ファイル\project\gamedata\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h">
+      <Filter>ヘッダー ファイル\project\gamedata\baseCharacter\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\player\Player.h">
+      <Filter>ヘッダー ファイル\project\gamedata\baseCharacter\player</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\boss\Boss.h">
+      <Filter>ヘッダー ファイル\project\gamedata\baseCharacter\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h">
+      <Filter>ヘッダー ファイル\project\gamedata\baseCharacter</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\ground\Ground.h">
+      <Filter>ヘッダー ファイル\project\gamedata\ground</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\explosion\Explosion.h">
+      <Filter>ヘッダー ファイル\project\gamedata\explosion</Filter>
+    </ClInclude>
+    <ClInclude Include="project\gamedata\transition\Transition.h">
+      <Filter>ヘッダー ファイル\project\gamedata\transition</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
