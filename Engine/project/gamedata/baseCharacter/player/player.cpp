@@ -55,7 +55,7 @@ void Player::Update() {
 		worldTransformForCameraReference_.rotation_ = { 0.0f,0.0f,0.0f };
 	}
 
-	//落下会し判定
+	//落下開始判定
 	if (!isHitOnFloor_ || worldTransform_.GetWorldPos().num[1] < dropSite_) {
 		IsFallStart();
 	}

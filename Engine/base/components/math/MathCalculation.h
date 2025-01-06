@@ -116,6 +116,9 @@ Vector3 MidPoint(const Vector3& v1, const Vector3& v2);
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
+//Vector3型に対応したクランプ
+Vector3 Clamp(const Vector3& value, const Vector3& min, const Vector3& max);
+
 //射影
 Vector3 Project(const Vector3& v, const Vector3 n);
 
@@ -129,14 +132,29 @@ std::tuple<Vector3, Vector3, Vector3> ComputeRotationMatrix(const Vector3& rotat
 //2つの速度を持つ物体が衝突した時の反発
 std::pair<Vector3, Vector3> ComputeCollisionVelocities(float mass1, const Vector3& velocity1, float mass2, const Vector3& velocity2, float coefficientOfRestitution, const Vector3& normal);
 
-//obbは反発せず、Sphereだけ反発する処理
+//Obbは反発せず、Sphereだけ反発する処理
 Vector3 ComputeSphereVelocityAfterCollisionWithOBB(const StructSphere& sphere, const Vector3& sphereVelocity, const OBB& obb, float restitution);
 
-//Sphereは反発せず、obbだけ反発する処理
+//Sphereは反発せず、Obbだけ反発する処理
 Vector3 ComputeVelocitiesAfterCollisionWithOBB(const StructSphere& sphere, const Vector3& sphereVelocity, float sphereMass, const OBB& obb, const Vector3& obbVelocity, float obbMass, float restitution);
 
-//cylinderは反発せず、Sphereだけ反発する処理
+//Cylinderは反発せず、Sphereだけ反発する処理
 Vector3 ComputeSphereVelocityAfterCollisionWithCylinder(const StructSphere& sphere, const Vector3& sphereVelocity, const StructCylinder& cylinder, float restitution);
+
+//Cylinder、Sphere両方反発する処理
+std::pair<Vector3, Vector3> ComputeSphereCylinderCollision(const StructSphere& sphere, const Vector3& sphereVelocity, float sphereMass, const StructCylinder& cylinder, const Vector3& cylinderVelocity, float cylinderMass, float restitution);
+
+//Cylinder、OBBの反発処理
+std::pair<Vector3, Vector3> ComputeOBBCylinderCollisionVelocities(float obbMass, const Vector3& obbVelocity, const OBB& obb, float cylinderMass, const Vector3& cylinderVelocity, const StructCylinder& cylinder, float coefficientOfRestitution);
+
+//Cylinder同士の反発処理
+std::pair<Vector3, Vector3> ComputeCollisionVelocities(const StructCylinder& cylinder1, const Vector3& velocity1, const StructCylinder& cylinder2, const Vector3& velocity2, float restitution);
+
+//OBBの最近接点を計算
+Vector3 ClosestPointOnOBB(const OBB& obb, const Vector3& point);
+
+//円柱の最近接点を計算
+Vector3 ClosestPointOnCylinder(const StructCylinder& cylinder, const Vector3& point);
 
 //任意の時刻の値を取得する
 Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time);
@@ -287,3 +305,6 @@ bool IsCollision(const OBB& obb, const Segment& segment);
 bool IsCollision(const StructSphere& sphere1, const StructSphere& sphere2);
 
 bool IsCollision(const StructSphere& sphere, const StructCylinder& cylinder);
+bool IsCollision(const AABB& aabb, const StructCylinder& cylinder);
+bool IsCollision(const OBB& obb, const StructCylinder& cylinder);
+bool IsCollision(const StructCylinder& cylinder1, const StructCylinder& cylinder2);

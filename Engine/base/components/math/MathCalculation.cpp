@@ -366,6 +366,14 @@ Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) {
 	return s * ((std::sinf((1.0f - t) * theta) / std::sinf(theta)) * a + (std::sinf(t * theta) / std::sinf(theta)) * b);
 }
 
+Vector3 Clamp(const Vector3& value, const Vector3& min, const Vector3& max) {
+	return {
+		std::fmax(min.num[0], std::fmin(value.num[0], max.num[0])),
+		std::fmax(min.num[1], std::fmin(value.num[1], max.num[1])),
+		std::fmax(min.num[2], std::fmin(value.num[2], max.num[2]))
+	};
+}
+
 Vector3 Project(const Vector3& v, const Vector3 n) {
 	float dotProduct = Dot(v, n);
 	float ontoLengthSquared = Dot(n, n);
@@ -560,6 +568,175 @@ Vector3 ComputeSphereVelocityAfterCollisionWithCylinder(const StructSphere& sphe
 	Vector3 newSphereVelocity = newVelocityNormal + velocityTangent;
 
 	return newSphereVelocity;
+}
+
+std::pair<Vector3, Vector3> ComputeSphereCylinderCollision(const StructSphere& sphere, const Vector3& sphereVelocity, float sphereMass, const StructCylinder& cylinder, const Vector3& cylinderVelocity, float cylinderMass, float restitution) {
+	//円柱の高さ方向の単位ベクトルを計算
+	Vector3 cylinderAxis = {
+		cylinder.topCenter.num[0] - cylinder.bottomCenter.num[0],
+		cylinder.topCenter.num[1] - cylinder.bottomCenter.num[1],
+		cylinder.topCenter.num[2] - cylinder.bottomCenter.num[2]
+	};
+
+	float height = Length(cylinderAxis);
+	Vector3 unitAxis = {
+		cylinderAxis.num[0] / height,
+		cylinderAxis.num[1] / height,
+		cylinderAxis.num[2] / height
+	};
+
+	//球の中心を円柱の高さ方向に投影して最も近い点を計算
+	Vector3 sphereToCylinderBase = {
+		sphere.center.num[0] - cylinder.bottomCenter.num[0],
+		sphere.center.num[1] - cylinder.bottomCenter.num[1],
+		sphere.center.num[2] - cylinder.bottomCenter.num[2]
+	};
+	float projLength = sphereToCylinderBase.num[0] * unitAxis.num[0] +
+		sphereToCylinderBase.num[1] * unitAxis.num[1] +
+		sphereToCylinderBase.num[2] * unitAxis.num[2];
+
+	//円柱の高さ範囲に限定
+	projLength = std::fmax(0.0f, std::fmin(projLength, height));
+
+	//円柱上の球に最も近い点
+	Vector3 closestPointOnCylinder = {
+		cylinder.bottomCenter.num[0] + projLength * unitAxis.num[0],
+		cylinder.bottomCenter.num[1] + projLength * unitAxis.num[1],
+		cylinder.bottomCenter.num[2] + projLength * unitAxis.num[2]
+	};
+
+	//円柱の円周上の最近接点を計算
+	Vector3 toSphere = {
+		sphere.center.num[0] - closestPointOnCylinder.num[0],
+		sphere.center.num[1] - closestPointOnCylinder.num[1],
+		sphere.center.num[2] - closestPointOnCylinder.num[2]
+	};
+	float distToSphere = Length(toSphere);
+
+	//円周上の最近接点が円柱の半径外にある場合は、円柱の表面上に移動
+	if (distToSphere > cylinder.radius) {
+		Vector3 radialDirection = Normalize(toSphere);
+		closestPointOnCylinder.num[0] += radialDirection.num[0] * cylinder.radius;
+		closestPointOnCylinder.num[1] += radialDirection.num[1] * cylinder.radius;
+		closestPointOnCylinder.num[2] += radialDirection.num[2] * cylinder.radius;
+	}
+
+	//衝突法線を計算
+	Vector3 collisionNormal = Normalize(sphere.center - closestPointOnCylinder);
+
+	//速度を衝突面法線方向とその他に分解
+	Vector3 relativeVelocity = sphereVelocity - cylinderVelocity;
+	Vector3 velocityNormal = Project(relativeVelocity, collisionNormal);
+	Vector3 velocityTangent = relativeVelocity - velocityNormal;
+
+	//衝突の運動量保存と反発係数による新しい速度を計算
+	float totalMass = sphereMass + cylinderMass;
+	Vector3 newSphereVelocity = sphereVelocity - (1 + restitution) * (cylinderMass / totalMass) * velocityNormal;
+	Vector3 newCylinderVelocity = cylinderVelocity + (1 + restitution) * (sphereMass / totalMass) * velocityNormal;
+
+	//球と円柱の速度を返す
+	return { newSphereVelocity, newCylinderVelocity };
+}
+
+std::pair<Vector3, Vector3> ComputeOBBCylinderCollisionVelocities(float obbMass, const Vector3& obbVelocity, const OBB& obb, float cylinderMass, const Vector3& cylinderVelocity, const StructCylinder& cylinder, float coefficientOfRestitution) {
+	// 衝突法線を計算
+	Vector3 obbClosestPoint = ClosestPointOnOBB(obb, cylinder.bottomCenter); // OBBの最も近い点を取得
+	Vector3 cylinderClosestPoint = ClosestPointOnCylinder(cylinder, obbClosestPoint); // 円柱の最も近い点を取得
+	Vector3 collisionNormal = Normalize(obbClosestPoint - cylinderClosestPoint);
+
+	// 衝突速度計算
+	Vector3 relativeVelocity = obbVelocity - cylinderVelocity;
+
+	// 当たり判定を満たさない場合、反発は不要
+	if (Dot(relativeVelocity, collisionNormal) >= 0) {
+		return { obbVelocity, cylinderVelocity };
+	}
+
+	// 衝突後の速度を計算
+	return ComputeCollisionVelocities(obbMass, obbVelocity, cylinderMass, cylinderVelocity, coefficientOfRestitution, collisionNormal);
+}
+
+std::pair<Vector3, Vector3> ComputeCollisionVelocities(const StructCylinder& cylinder1, const Vector3& velocity1, const StructCylinder& cylinder2, const Vector3& velocity2, float restitution) {
+	// 両円柱の高さ方向の単位ベクトルを計算
+	Vector3 axis1 = cylinder1.topCenter - cylinder1.bottomCenter;
+	Vector3 axis2 = cylinder2.topCenter - cylinder2.bottomCenter;
+	Vector3 unitAxis1 = Normalize(axis1);
+	Vector3 unitAxis2 = Normalize(axis2);
+
+	// 両円柱の軸がほぼ平行でない場合、衝突処理を行う
+	float dotProduct = Dot(unitAxis1, unitAxis2);
+	if (std::abs(dotProduct) > 0.99f) {
+		// 両円柱の軸がほぼ平行なので、上下の反発処理を行う
+		// 各円柱の中心間のベクトルを計算
+		Vector3 center1ToCenter2 = cylinder2.bottomCenter - cylinder1.bottomCenter;
+
+		// 接触点での反発（上下方向）
+		Vector3 normal = Normalize(center1ToCenter2);
+
+		// 高さ方向での接触
+		float minHeightDist = std::abs(Dot(center1ToCenter2, unitAxis1));
+		if (minHeightDist <= std::fmin(Length(axis1), Length(axis2))) {
+			// 上下方向で接触している場合
+			Vector3 v1n = Project(velocity1, normal); // 下方向への速度成分
+			Vector3 v2n = Project(velocity2, normal); // 下方向への速度成分
+
+			// 上下方向の反発処理: 上下方向の速度を反転して乗っかるだけ
+			v1n = -restitution * v1n;
+			v2n = -restitution * v2n;
+
+			Vector3 newVelocity1 = velocity1 - v1n;
+			Vector3 newVelocity2 = velocity2 - v2n;
+
+			return std::make_pair(newVelocity1, newVelocity2);
+		}
+	}
+
+	// それ以外の場合、衝突がない
+	return std::make_pair(velocity1, velocity2);
+}
+
+//OBBの最近接点を計算
+Vector3 ClosestPointOnOBB(const OBB& obb, const Vector3& point) {
+	Vector3 closestPoint = obb.center;
+
+	// 各軸方向での最近接点を計算
+	for (int i = 0; i < 3; ++i) {
+		Vector3 axis = obb.orientation[i]; // OBBの軸
+		float distance = Dot(point - obb.center, axis);
+
+		// サイズの範囲内に制限
+		distance = std::fmax(-obb.size.num[i], std::fmin(distance, obb.size.num[i]));
+
+		// 最近接点を更新
+		closestPoint = closestPoint + axis * distance;
+	}
+
+	return closestPoint;
+}
+
+//円柱の最近接点を計算
+Vector3 ClosestPointOnCylinder(const StructCylinder& cylinder, const Vector3& point) {
+	Vector3 cylinderAxis = cylinder.topCenter - cylinder.bottomCenter;
+	float height = Length(cylinderAxis);
+	Vector3 unitAxis = Normalize(cylinderAxis);
+
+	// 点を円柱の軸に投影
+	Vector3 toPoint = point - cylinder.bottomCenter;
+	float projLength = Dot(toPoint, unitAxis);
+
+	// 高さ方向に制限
+	projLength = std::fmax(0.0f, std::fmin(projLength, height));
+
+	// 軸上の最近接点
+	Vector3 closestPointOnAxis = cylinder.bottomCenter + unitAxis * projLength;
+
+	// 円柱の表面上の最近接点を計算
+	Vector3 radialVector = point - closestPointOnAxis;
+	if (Length(radialVector) > cylinder.radius) {
+		radialVector = Normalize(radialVector) * cylinder.radius;
+	}
+
+	return closestPointOnAxis + radialVector;
 }
 
 Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframe, float time) {
@@ -1516,4 +1693,82 @@ bool IsCollision(const StructSphere& sphere, const StructCylinder& cylinder) {
     float distSquared = DistanceSquared(sphere.center, closestPointOnCylinder);
     float radiusSum = sphere.radius + cylinder.radius;
     return distSquared <= radiusSum * radiusSum;
+}
+
+bool IsCollision(const AABB& aabb, const StructCylinder& cylinder) {
+	// 円柱の高さ軸の単位ベクトルを計算
+	Vector3 cylinderAxis = cylinder.topCenter - cylinder.bottomCenter;
+	float axisLength = Length(cylinderAxis);
+	Vector3 unitAxis = Normalize(cylinderAxis);
+
+	// AABBの中心と円柱の軸に沿った最も近い点を計算
+	Vector3 aabbCenter = (aabb.min + aabb.max) * 0.5f;
+	Vector3 toAABBCenter = aabbCenter - cylinder.bottomCenter;
+
+	// 円柱の軸に投影
+	float projLength = Dot(toAABBCenter, unitAxis);
+
+	// プロジェクションの範囲を制限（円柱の高さ範囲内）
+	projLength = std::fmax(0.0f, std::fmin(projLength, axisLength));
+
+	// 円柱の軸上の最近接点
+	Vector3 closestPointOnAxis = cylinder.bottomCenter + unitAxis * projLength;
+
+	// AABBの表面に最も近い点を計算
+	Vector3 closestPointOnAABB = Clamp(closestPointOnAxis, aabb.min, aabb.max);
+
+	// 円柱の表面上の最近接点を計算
+	Vector3 toClosest = closestPointOnAxis - closestPointOnAABB;
+	float distanceToAABB = Length(toClosest);
+
+	// 衝突判定: 距離が円柱の半径以下であれば衝突
+	return distanceToAABB <= cylinder.radius;
+}
+
+bool IsCollision(const OBB& obb, const StructCylinder& cylinder) {
+	// OBBのワールド座標系をローカル座標系に変換するための逆行列
+	Matrix4x4 obbWorldInverse = MakeInverseMatrix(MakeRotateMatrixFromOrientations(obb.orientation), obb.center);
+
+	// 円柱の上下端をOBBのローカル空間に変換
+	Vector3 cylinderTopInLocal = cylinder.topCenter * obbWorldInverse;
+	Vector3 cylinderBottomInLocal = cylinder.bottomCenter * obbWorldInverse;
+
+	// ローカル空間の円柱を作成
+	StructCylinder cylinderInLocal = { cylinderTopInLocal, cylinderBottomInLocal, cylinder.radius };
+
+	// OBBをローカル空間ではAABBとして扱う
+	AABB aabbOBBLocal{ .min = -obb.size, .max = obb.size };
+
+	// AABBと円柱の当たり判定を行う
+	return IsCollision(aabbOBBLocal, cylinderInLocal);
+}
+
+bool IsCollision(const StructCylinder& cylinder1, const StructCylinder& cylinder2) {
+	// 両円柱の高さ軸の単位ベクトルを計算
+	Vector3 axis1 = cylinder1.topCenter - cylinder1.bottomCenter;
+	Vector3 axis2 = cylinder2.topCenter - cylinder2.bottomCenter;
+	float height1 = Length(axis1);
+	float height2 = Length(axis2);
+	Vector3 unitAxis1 = Normalize(axis1);
+	Vector3 unitAxis2 = Normalize(axis2);
+
+	// 両円柱の中心間ベクトルを計算
+	Vector3 center1ToCenter2 = cylinder2.bottomCenter - cylinder1.bottomCenter;
+
+	// 両円柱が同じ軸方向に並んでいるか、あるいは軸方向が平行でない場合
+	float dotProduct = Dot(unitAxis1, unitAxis2);
+	if (std::abs(dotProduct) > 0.99f) {
+		// 両円柱の軸がほぼ平行
+		// 高さ方向の最小距離を計算
+		float minHeightDist = std::abs(Dot(center1ToCenter2, unitAxis1));
+
+		// 両円柱の半径の合計
+		float radiusSum = cylinder1.radius + cylinder2.radius;
+
+		// 高さ方向の距離が許容範囲内なら接触
+		return minHeightDist <= std::fmin(height1, height2) && Length(center1ToCenter2) <= radiusSum;
+	}
+
+	// 高さ方向での最も近い位置を求め、円柱の半径を考慮して接触判定
+	return false;
 }

@@ -146,4 +146,37 @@ void Explosion::ExplosionFlagTrue(Vector4 material) {
         //マテリアルカラーを設定
         modelMaterials_.push_back(material);
     }
+
+    // オブジェクトが指定個数を超えた場合、古いオブジェクトをアニメーションして削除
+    if (models_.size() > deleteObjectCount_) {
+        // 最も古いオブジェクトを削除するために、古い順に処理
+        size_t numToDelete = models_.size() - deleteObjectCount_;  // 超過分の数
+
+        for (size_t i = 0; i < numToDelete; i++) {
+            // 古いオブジェクトのインデックス
+            size_t deleteIndex = i;
+
+            // 経過時間を取得してアニメーション開始
+            LONGLONG elapsed = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - creationTimes_[deleteIndex]).count();
+            if (elapsed < deleteTime_) {
+                // 徐々に縮小させる
+                worldTransforms_[deleteIndex].scale_.num[0] *= sizeReduction_;
+                worldTransforms_[deleteIndex].scale_.num[1] *= sizeReduction_;
+                worldTransforms_[deleteIndex].scale_.num[2] *= sizeReduction_;
+
+                // 徐々に地面に近づける
+                worldTransforms_[deleteIndex].translation_.num[1] -= amountApproaching_;
+            }
+
+            // 経過時間が指定秒数以上の場合、削除
+            if (elapsed >= deleteTime_) {
+                models_.erase(models_.begin() + deleteIndex);
+                worldTransforms_.erase(worldTransforms_.begin() + deleteIndex);
+                velocities_.erase(velocities_.begin() + deleteIndex);
+                modelMaterials_.erase(modelMaterials_.begin() + deleteIndex);
+                angularVelocities_.erase(angularVelocities_.begin() + deleteIndex);
+                creationTimes_.erase(creationTimes_.begin() + deleteIndex);
+            }
+        }
+    }
 }

@@ -732,6 +732,33 @@ void GamePlayScene::CollisionConclusion() {
 		}
 	}
 
+	//ボスと地面の当たり判定
+	for (Body body : boss_->GetBody()) {
+		StructCylinder bCylinder;
+		//スケール成分を使って半径を計算 (X軸方向のスケールを円柱の半径に使用する)
+		bCylinder.radius = body.world.scale_.num[0];
+
+		//ローカル空間での円柱の上端と下端の位置
+		Vector3 localTopCenter{ 0, 0.1f, 0 };
+		Vector3 localBottomCenter{ 0, -0.1f, 0 };
+
+		//スケールを適用（Y軸方向のスケールを高さに反映）
+		localTopCenter = localTopCenter * body.world.scale_.num[1];//Y軸方向のスケール
+		localBottomCenter = localBottomCenter * body.world.scale_.num[1];//Y軸方向のスケール
+
+		//平行移動を適用
+		bCylinder.topCenter = localTopCenter + body.world.translation_;
+		bCylinder.bottomCenter = localBottomCenter + body.world.translation_;
+
+		if (IsCollision(groundObb_, bCylinder)) {
+			boss_->SetIsHitOnFloor(true,body);
+			boss_->SetObjectPos(ground_->GetWorldTransform());
+		}
+		else {
+			boss_->SetIsHitOnFloor(false,body);
+		}
+	}
+
 	//プレイヤーとエネミーの当たり判定
 	for (Enemy* enemy : enemys_) {
 		StructSphere eSphere;
@@ -840,12 +867,10 @@ void GamePlayScene::CollisionConclusion() {
 					player_->SetVelocity(velocity);
 
 					editors_->Hitobj(obj);
-					if (obj.durability <= 1) {
-						explosion_->SetWorldTransformBase(obj.world);
-						isExplosion_ = true;
-						explosion_->ExplosionFlagTrue(obj.material);
-						explosionTimer_ = 10;
-					}
+					explosion_->SetWorldTransformBase(obj.world);
+					isExplosion_ = true;
+					explosion_->ExplosionFlagTrue(obj.material);
+					explosionTimer_ = 10;
 
 					collisionParticle_->SetTranslate(closestPoint);
 					collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
@@ -895,12 +920,92 @@ void GamePlayScene::CollisionConclusion() {
 						enemy->SetVelocity(velocity);
 
 						editors_->Hitobj(obj);
-						if (obj.durability <= 1) {
-							explosion_->SetWorldTransformBase(obj.world);
-							isExplosion_ = true;
-							explosion_->ExplosionFlagTrue(obj.material);
-							explosionTimer_ = 10;
+						explosion_->SetWorldTransformBase(obj.world);
+						isExplosion_ = true;
+						explosion_->ExplosionFlagTrue(obj.material);
+						explosionTimer_ = 10;
+
+						collisionParticle_->SetTranslate(closestPoint);
+						collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
+					}
+				}
+			}
+		}
+	}
+
+	//ボスとオブジェクトの当たり判定
+	for (Body body : boss_->GetBody()) {
+		StructCylinder bCylinder;
+		//スケール成分を使って半径を計算 (X軸方向のスケールを円柱の半径に使用する)
+		bCylinder.radius = body.world.scale_.num[0];//X軸方向のスケールが円柱の半径
+
+		//ローカル空間での円柱の上端と下端の位置
+		Vector3 localTopCenter{ 0, 0.5f, 0 };
+		Vector3 localBottomCenter{ 0, -0.5f, 0 };
+
+		//スケールを適用（Y軸方向のスケールを高さに反映）
+		localTopCenter = localTopCenter * body.world.scale_.num[1];//Y軸方向のスケール
+		localBottomCenter = localBottomCenter * body.world.scale_.num[1];//Y軸方向のスケール
+
+		//平行移動を適用
+		bCylinder.topCenter = localTopCenter + body.world.translation_;
+		bCylinder.bottomCenter = localBottomCenter + body.world.translation_;
+		for (Obj obj : editors_->GetObj()) {
+			if (obj.durability > 0) {
+				if (obj.type == "Wall") {
+					OBB objOBB;
+					objOBB = CreateOBBFromEulerTransform(EulerTransform(obj.world.scale_, obj.world.rotation_, obj.world.translation_));
+					if (IsCollision(objOBB, bCylinder)) {
+						//押し戻し処理
+						Vector3 closestPoint = objOBB.center;
+						//Cylinder から OBB の最近接点を計算
+						Vector3 dTop = bCylinder.topCenter - objOBB.center;
+						Vector3 dBottom = bCylinder.bottomCenter - objOBB.center;
+
+						// 上端と下端それぞれについて最近接点を計算
+						for (int i = 0; i < 3; ++i) {
+							// 上端
+							float distTop = Dot(dTop, objOBB.orientation[i]);
+							distTop = std::fmax(-objOBB.size.num[i], std::fmin(distTop, distTop));
+							bCylinder.topCenter += objOBB.orientation[i] * distTop;
+
+							// 下端
+							float distBottom = Dot(dBottom, objOBB.orientation[i]);
+							distBottom = std::fmax(-objOBB.size.num[i], std::fmin(distBottom, distBottom));
+							bCylinder.bottomCenter += objOBB.orientation[i] * distBottom;
 						}
+
+						// 円柱の中心をOBBとの接触に基づき調整
+						Vector3 directionTop = bCylinder.topCenter - closestPoint;
+						Vector3 directionBottom = bCylinder.bottomCenter - closestPoint;
+						float distanceTop = Length(directionTop);
+
+						float overlapTop = bCylinder.radius - distanceTop;
+
+						// 円柱がOBBと接触している場合、押し戻し
+						if (overlapTop > 0.0f) {
+							Vector3 correctionTop = Normalize(directionTop) * overlapTop * pushbackMultiplierObj_;
+							bCylinder.topCenter += correctionTop;
+							Vector3 correctionBottom = Normalize(directionBottom) * overlapTop * pushbackMultiplierObj_;
+							bCylinder.bottomCenter += correctionBottom;
+
+							body.world.translation_ = (bCylinder.topCenter + bCylinder.bottomCenter) * 0.5f;
+							boss_->HitBody(body);
+						}
+
+						//衝突音を再生
+						ContactVolume(body.velocity);
+
+						//反発処理
+						std::pair<Vector3, Vector3> pair = ComputeOBBCylinderCollisionVelocities(1.0f, Vector3{0.0f,0.0f,0.0f}, objOBB, 1.0f, body.velocity, bCylinder, repulsionCoefficient_);
+						body.velocity = pair.second;
+						boss_->HitBody(body);
+
+						editors_->Hitobj(obj);
+						explosion_->SetWorldTransformBase(obj.world);
+						isExplosion_ = true;
+						explosion_->ExplosionFlagTrue(obj.material);
+						explosionTimer_ = 10;
 
 						collisionParticle_->SetTranslate(closestPoint);
 						collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
@@ -945,6 +1050,41 @@ void GamePlayScene::CollisionConclusion() {
 				velocity.num[1] = 1.0f;//上方向への反発を調整
 				explosion_->SetFragmentVelocity(i, velocity * 0.5f);
 				explosion_->SetAngularVelocitie(i, ComputeRotationFromVelocity(velocity * 0.5, 0.5f));
+			}
+		}
+	}
+
+	//ボスと破片の当たり判定
+	for (Body body : boss_->GetBody()) {
+		StructCylinder bCylinder;
+		//スケール成分を使って半径を計算 (X軸方向のスケールを円柱の半径に使用する)
+		bCylinder.radius = body.world.scale_.num[0];//X軸方向のスケールが円柱の半径
+
+		//ローカル空間での円柱の上端と下端の位置
+		Vector3 localTopCenter{ 0, 0.5f, 0 };
+		Vector3 localBottomCenter{ 0, -0.5f, 0 };
+
+		//スケールを適用（Y軸方向のスケールを高さに反映）
+		localTopCenter = localTopCenter * body.world.scale_.num[1];//Y軸方向のスケール
+		localBottomCenter = localBottomCenter * body.world.scale_.num[1];//Y軸方向のスケール
+
+		//平行移動を適用
+		bCylinder.topCenter = localTopCenter + body.world.translation_;
+		bCylinder.bottomCenter = localBottomCenter + body.world.translation_;
+
+		for (size_t i = 0; i < explosion_->GetFragments().size(); ++i) {
+			OBB fragmentOBB;
+			WorldTransform fragmentTransform = explosion_->GetFragmentTransform(i);
+			fragmentOBB = CreateOBBFromEulerTransform(EulerTransform(
+				fragmentTransform.scale_, fragmentTransform.rotation_, fragmentTransform.translation_
+			));
+
+			if (IsCollision(fragmentOBB, bCylinder)) {
+				//破片の反発処理
+				std::pair<Vector3, Vector3> pair = ComputeOBBCylinderCollisionVelocities(1.0f, explosion_->GetFragmentVelocity(i), fragmentOBB, 1.0f, body.velocity, bCylinder, pushbackMultiplier_);
+				pair.second.num[1] = 1.0f;//上方向への反発を調整
+				explosion_->SetFragmentVelocity(i, pair.second);
+				explosion_->SetAngularVelocitie(i, ComputeRotationFromVelocity(pair.second, 0.5f));
 			}
 		}
 	}
@@ -1030,6 +1170,11 @@ void GamePlayScene::CollisionConclusion() {
 			//反発処理
 			Vector3 velocity = ComputeSphereVelocityAfterCollisionWithCylinder(pSphere, player_->GetVelocity(), bCylinder, repulsionCoefficient_);
 			player_->SetVelocity(velocity);
+
+			explosion_->SetWorldTransformBase(body.world);
+			isExplosion_ = true;
+			explosion_->ExplosionFlagTrue(body.material);
+			explosionTimer_ = 10;
 
 			collisionParticle_->SetTranslate(closestPointOnCylinder);
 			collisionParticle_->OccursOnlyOnce(collisionParticleOccursNum_);
@@ -1125,15 +1270,17 @@ void GamePlayScene::CollisionConclusion() {
 
 
 				//反発処理
-				Vector3 velocity = ComputeSphereVelocityAfterCollisionWithCylinder(eSphere, enemy->GetVelocity(), bCylinder, repulsionCoefficient_);
-				enemy->SetVelocity(velocity);
+				std::pair<Vector3, Vector3> pair = ComputeSphereCylinderCollision(eSphere, enemy->GetVelocity(), 1.0f, bCylinder, body.velocity, 1.0f, pushbackMultiplier_);
+				enemy->SetVelocity(pair.first);
+				body.velocity = pair.second * 0.5f;
+				boss_->HitBody(body);
+
+				explosion_->SetWorldTransformBase(body.world);
+				isExplosion_ = true;
+				explosion_->ExplosionFlagTrue(body.material);
+				explosionTimer_ = 10;
 
 				if (isBreakCylinder == true) {
-					explosion_->SetWorldTransformBase(body.world);
-					isExplosion_ = true;
-					explosion_->ExplosionFlagTrue(body.material);
-					explosionTimer_ = 10;
-
 					boss_->HitBody(body);
 				}
 

@@ -63,6 +63,7 @@ private:
 
     //Other
     const LONGLONG deleteTime_ = 30;//一度出現したブロックが消えるまでの秒数
+    const int deleteObjectCount_ = 150;//この数値以上のオブジェクトが出現した際は、古い物から削除する
 
     Audio* audio_;
     SoundData soundData1_;
