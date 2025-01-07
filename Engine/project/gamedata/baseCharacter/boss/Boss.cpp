@@ -29,7 +29,7 @@ void Boss::Initialize(Model* model) {
     bodyTransform_.scale = { 2.0f, 2.0f, 2.0f };
 
     std::mt19937 randomEngine(seedGenerator());
-    std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+    std::uniform_real_distribution<float> distColor(0.5f, 1.0f);
 
     for (int i = 0; i < maxHP_; i++) {
         Vector4 color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
