@@ -10,6 +10,8 @@
 
 #include "dataReceipt/DataReceipt.h"
 
+#include "Receipt3D.h"
+
 class DebugScene :public Iscene {
 public:
 	void Initialize() override;
@@ -62,4 +64,5 @@ private:
 
 	//DataReceipt
 	DataReceipt datareceipt_;
+	std::unique_ptr<Receipt3D> receipt3D_;
 };

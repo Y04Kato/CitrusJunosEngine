@@ -34,12 +34,13 @@ def get_parm_tuple(node, parm_name):
     except hou.OperationFailed:
         return None
 
-# 頂点と法線情報を取得する関数
-def get_vertex_and_normal_info(node):
+# 頂点、法線、ポリゴン情報を取得する関数
+def get_geometry_info(node):
     try:
         geo = node.geometry()
         vertices = []
         normals = []
+        polygons = []
 
         # 頂点情報を取得
         for point in geo.points():
@@ -48,27 +49,28 @@ def get_vertex_and_normal_info(node):
 
         # 法線情報を取得
         if geo.findVertexAttrib("N"):
-            # 頂点属性として法線を取得
             for vertex in geo.iterVertices():
                 normal = vertex.attribValue("N")
                 normals.append((normal[0], normal[1], normal[2]))
         elif geo.findPointAttrib("N"):
-            # ポイント属性として法線を取得
             for point in geo.points():
                 normal = point.attribValue("N")
                 normals.append((normal[0], normal[1], normal[2]))
         elif geo.findPrimAttrib("N"):
-            # プリミティブ属性として法線を取得
             for prim in geo.prims():
                 normal = prim.attribValue("N")
                 normals.append((normal[0], normal[1], normal[2]))
         else:
-            # 法線がない場合、デフォルト値
             normals = [(0.0, 0.0, 0.0)] * len(vertices)
 
-        return vertices, normals
+        # ポリゴン情報を取得
+        for prim in geo.prims():
+            if prim.type() == hou.primType.Polygon:
+                polygons.append([vertex.point().number() + 1 for vertex in prim.vertices()])
+
+        return vertices, normals, polygons
     except AttributeError:
-        return [], []  # Geometryがない場合は空のリスト
+        return [], [], []  # Geometryがない場合は空のリスト
 
 # Transform情報を計算する関数（親ノードの座標を合成）
 def calculate_absolute_transform(node, parent_transform):
@@ -93,12 +95,12 @@ def calculate_absolute_transform(node, parent_transform):
         "Scale": absolute_scale
     }
 
-# 頂点データと法線データを送信する関数
-def send_vertex_and_normal_data():
+# 頂点データ、法線データ、ポリゴンデータを送信する関数
+def send_geometry_data():
     all_nodes = hou.node("/obj").allSubChildren()
     for node in all_nodes:
-        # 頂点情報と法線情報を取得
-        vertices, normals = get_vertex_and_normal_info(node)
+        # 頂点、法線、ポリゴン情報を取得
+        vertices, normals, polygons = get_geometry_info(node)
 
         # 頂点がないノードはスキップ
         if not vertices:
@@ -140,7 +142,8 @@ def send_vertex_and_normal_data():
             f"{transform_info['Scale'][2]:.3f}\n"
         )
         obj_data += "\n".join(f"v {v[0]:.3f} {v[1]:.3f} {v[2]:.3f}" for v in vertices) + "\n"
-        obj_data += "\n".join(f"vn {n[0]:.3f} {n[1]:.3f} {n[2]:.3f}" for n in normals)
+        obj_data += "\n".join(f"vn {n[0]:.3f} {n[1]:.3f} {n[2]:.3f}" for n in normals) + "\n"
+        obj_data += "\n".join("f " + " ".join(map(str, face)) for face in polygons)
 
         # データを送信
         try:
@@ -186,7 +189,7 @@ send_button = QtWidgets.QPushButton("テキストを送信")
 send_button.clicked.connect(partial(send_message, text_editor))
 
 sendNode_button = QtWidgets.QPushButton("シーン情報を送信")
-sendNode_button.clicked.connect(send_vertex_and_normal_data)
+sendNode_button.clicked.connect(send_geometry_data)
 
 start_button = QtWidgets.QPushButton("通信開始")
 start_button.clicked.connect(start_sending)
