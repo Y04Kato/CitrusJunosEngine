@@ -42,6 +42,10 @@ void DebugScene::Initialize() {
 
 	//Lights
 	directionalLights_ = DirectionalLights::GetInstance();
+
+	//DataReceipt
+	datareceipt_.Initialize(50001);
+	datareceipt_.start();
 }
 
 void DebugScene::Update() {
@@ -74,6 +78,15 @@ void DebugScene::Update() {
 	viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
 	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 	viewProjection_.UpdateMatrix();
+
+	//DataReceipt
+	datareceipt_.receiveMessage();
+
+	std::string message;
+	if (datareceipt_.getReceivedMessage(message)) {
+		// メッセージが届いていれば処理する
+		Log(message);
+	}
 
 	//カメラリセット
 	if (input_->TriggerKey(DIK_Q)) {
@@ -120,6 +133,8 @@ void DebugScene::Finalize() {
 	audio_->SoundUnload(&soundData1_);
 
 	editors_->Finalize();
+
+	datareceipt_.stop();
 }
 
 void DebugScene::ResetProcessing() {

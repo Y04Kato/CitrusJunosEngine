@@ -8,6 +8,8 @@
 #pragma once
 #include "Iscene.h"
 
+#include "dataReceipt/DataReceipt.h"
+
 class DebugScene :public Iscene {
 public:
 	void Initialize() override;
@@ -57,4 +59,7 @@ private:
 	//Lights
 	DirectionalLights* directionalLights_;
 	DirectionalLight directionalLight_;
+
+	//DataReceipt
+	DataReceipt datareceipt_;
 };
