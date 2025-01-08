@@ -2,7 +2,6 @@ from PySide2 import QtWidgets, QtCore
 from functools import partial
 import socket
 import threading
-import json
 import hou
 
 # 送信先のIPアドレスとポート番号
@@ -20,19 +19,17 @@ def send_message(message):
     message = message.text()
     if message:
         try:
-            sock.sendto(message.encode('utf-8'), serv_address)  # メッセージを送信
+            sock.sendto(message.encode('utf-8'), serv_address)
             print(f"送信しました: {message}")
         except Exception as e:
             print(f"送信エラー: {e}")
     else:
         print("メッセージが空です。")
 
-# パラメータ値を取得する関数
-def get_parm_tuple(node, parm_name):
-    try:
-        return node.evalParmTuple(parm_name)
-    except hou.OperationFailed:
-        return None
+# ノードが終端ノードかどうかを判定する関数
+def is_terminal_node(node):
+    # ノードに出力接続がない場合は終端ノードと見なす
+    return len(node.outputs()) == 0
 
 # 頂点、法線、ポリゴン情報を取得する関数
 def get_geometry_info(node):
@@ -65,12 +62,11 @@ def get_geometry_info(node):
 
         # ポリゴン情報を取得
         for prim in geo.prims():
-            if prim.type() == hou.primType.Polygon:
-                polygons.append([vertex.point().number() + 1 for vertex in prim.vertices()])
+            polygons.append([vertex.point().number() + 1 for vertex in prim.vertices()])
 
         return vertices, normals, polygons
     except AttributeError:
-        return [], [], []  # Geometryがない場合は空のリスト
+        return [], [], []
 
 # Transform情報を計算する関数（親ノードの座標を合成）
 def calculate_absolute_transform(node, parent_transform):
@@ -89,46 +85,84 @@ def calculate_absolute_transform(node, parent_transform):
         (scale[i] if scale else 1) * parent_transform["Scale"][i]
         for i in range(3)
     )
+    
+    # editノードの場合、変換を適用
+    if node.type().name() == "edit":
+        edit_translate = get_parm_tuple(node, "t")
+        edit_rotate = get_parm_tuple(node, "r")
+        edit_scale = get_parm_tuple(node, "s")
+
+        absolute_translate = tuple(
+            absolute_translate[i] + (edit_translate[i] if edit_translate else 0)
+            for i in range(3)
+        )
+        absolute_rotate = tuple(
+            absolute_rotate[i] + (edit_rotate[i] if edit_rotate else 0)
+            for i in range(3)
+        )
+        absolute_scale = tuple(
+            absolute_scale[i] * (edit_scale[i] if edit_scale else 1)
+            for i in range(3)
+        )
+
     return {
         "Translate": absolute_translate,
         "Rotate": absolute_rotate,
         "Scale": absolute_scale
     }
 
-# 頂点データ、法線データ、ポリゴンデータを送信する関数
-def send_geometry_data():
+# パラメータ値を取得する関数
+def get_parm_tuple(node, parm_name):
+    try:
+        return node.evalParmTuple(parm_name)
+    except hou.OperationFailed:
+        return None
+
+# 親ノードを再帰的にたどり、最終的な絶対変換を計算する関数
+def get_absolute_transform_recursive(node, parent_transform):
+    # 自分自身の変換を取得
+    transform = calculate_absolute_transform(node, parent_transform)
+    
+    # 親ノードがあれば再帰的に親ノードの変換を合成
+    parent = node.parent()
+    if parent:
+        return get_absolute_transform_recursive(parent, transform)
+    else:
+        return transform
+
+# 終端ノードのジオメトリデータを送信する関数
+def send_terminal_node_geometry():
     all_nodes = hou.node("/obj").allSubChildren()
     for node in all_nodes:
-        # 頂点、法線、ポリゴン情報を取得
-        vertices, normals, polygons = get_geometry_info(node)
-
-        # 頂点がないノードはスキップ
-        if not vertices:
+        if not isinstance(node, hou.SopNode):
             continue
 
-        # ノード名（親の名前を含める）
-        node_name = node.name()
-        parent_name = node.parent().name() if node.parent() else None
-        full_name = f"{parent_name}_{node_name}" if parent_name else node_name
+        if not is_terminal_node(node):
+            continue
 
-        # 親ノードのTransform情報を取得
-        parent_node = node.parent()
-        parent_transform = {
+        try:
+            geo = node.geometry()
+        except hou.GeometryPermissionError:
+            print(f"ノード {node.path()} のジオメトリにアクセスできません。")
+            continue
+        except AttributeError:
+            print(f"ノード {node.path()} はジオメトリを持っていません。")
+            continue
+
+        vertices, normals, polygons = get_geometry_info(node)
+        if not vertices:
+            print(f"ノード {node.path()} の頂点データが空です。")
+            continue
+
+        full_name = node.path()
+        
+        # 絶対変換を計算する
+        transform_info = get_absolute_transform_recursive(node, {
             "Translate": (0, 0, 0),
             "Rotate": (0, 0, 0),
             "Scale": (1, 1, 1)
-        }
-        if parent_node is not None:
-            parent_transform = calculate_absolute_transform(parent_node, {
-                "Translate": (0, 0, 0),
-                "Rotate": (0, 0, 0),
-                "Scale": (1, 1, 1)
-            })
+        })
 
-        # Transform情報を計算
-        transform_info = calculate_absolute_transform(node, parent_transform)
-
-        # .obj形式のデータを整形
         obj_data = f"Name: {full_name}\n"
         obj_data += (
             f"Translate {transform_info['Translate'][0]:.3f} "
@@ -145,14 +179,13 @@ def send_geometry_data():
         obj_data += "\n".join(f"vn {n[0]:.3f} {n[1]:.3f} {n[2]:.3f}" for n in normals) + "\n"
         obj_data += "\n".join("f " + " ".join(map(str, face)) for face in polygons)
 
-        # データを送信
         try:
             sock.sendto(obj_data.encode('utf-8'), serv_address)
             print(f"送信しました:\n{obj_data}")
         except Exception as e:
             print(f"送信エラー: {e}")
 
-# 通信を開始
+# 通信の開始と停止
 def start_sending():
     global is_running
     if is_running:
@@ -162,7 +195,6 @@ def start_sending():
         is_running = True
     print("通信スレッドを開始しました。")
 
-# 通信を停止
 def stop_sending():
     global is_running
     if not is_running:
@@ -188,8 +220,8 @@ text_editor = QtWidgets.QLineEdit()
 send_button = QtWidgets.QPushButton("テキストを送信")
 send_button.clicked.connect(partial(send_message, text_editor))
 
-sendNode_button = QtWidgets.QPushButton("シーン情報を送信")
-sendNode_button.clicked.connect(send_geometry_data)
+sendTerminalData_button = QtWidgets.QPushButton("終端ノードデータを送信")
+sendTerminalData_button.clicked.connect(send_terminal_node_geometry)
 
 start_button = QtWidgets.QPushButton("通信開始")
 start_button.clicked.connect(start_sending)
@@ -200,7 +232,7 @@ stop_button.clicked.connect(stop_sending)
 # レイアウトにウィジェットを追加
 v_layout.addWidget(text_editor)
 v_layout.addWidget(send_button)
-v_layout.addWidget(sendNode_button)
+v_layout.addWidget(sendTerminalData_button)
 v_layout.addWidget(start_button)
 v_layout.addWidget(stop_button)
 

@@ -34,6 +34,9 @@ void Receipt3D::ParseLine(const std::string& line) {
 	else if (line.find("vn ") == 0) {
 		ParseNormal(line);
 	}
+	else if (line.find("f ") == 0) {
+		ParsePolygon(line);
+	}
 }
 
 void Receipt3D::ParseTranslate(const std::string& line) {
@@ -154,10 +157,10 @@ void Receipt3D::Finalize() {
 }
 
 ModelData Receipt3D::ConstructModelData() {
-	ModelData modelData; // 構築するModelData
+	ModelData modelData;
 	std::vector<Vector4> positions; // 位置
-	std::vector<Vector3> normals; // 法線
 	std::vector<Vector2> texcoords; // テクスチャ座標
+	std::vector<Vector3> normals;   // 法線
 
 	// 頂点情報を登録
 	for (const auto& vertex : vertices_) {
@@ -169,48 +172,58 @@ ModelData Receipt3D::ConstructModelData() {
 		texcoords.push_back(texcoord);
 	}
 
-	// 法線情報を登録
-	for (const auto& normal : normals_) {
-		Vector3 normalVec = { normal.num[0], normal.num[1], normal.num[2] };
-		normals.push_back(normalVec);
+	// ポリゴンごとの法線を計算
+	std::vector<Vector3> polygonNormals(polygons_.size());
+	for (size_t i = 0; i < polygons_.size(); ++i) {
+		const auto& polygon = polygons_[i];
+		if (polygon.size() < 3) {
+			std::cerr << "Invalid polygon with less than 3 vertices" << std::endl;
+			continue;
+		}
+
+		// ポリゴンの頂点を取得
+		Vector3 v0 = { positions[polygon[0] - 1].num[0], positions[polygon[0] - 1].num[1], positions[polygon[0] - 1].num[2] };
+		Vector3 v1 = { positions[polygon[1] - 1].num[0], positions[polygon[1] - 1].num[1], positions[polygon[1] - 1].num[2] };
+		Vector3 v2 = { positions[polygon[2] - 1].num[0], positions[polygon[2] - 1].num[1], positions[polygon[2] - 1].num[2] };
+
+		// 法線を計算
+		Vector3 edge1 = Subtruct(v1, v0);
+		Vector3 edge2 = Subtruct(v2, v0);
+		Vector3 normal = Normalize(Cross(edge1, edge2));
+		polygonNormals[i] = normal;
 	}
 
 	// ポリゴン情報を登録
 	uint32_t indexOffset = 0;
-	for (const auto& polygon : polygons_) {
-		// 面は三角形限定
-		for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
-			int index = polygon[faceVertex] - 1; // インデックスは1始まりのため、-1
-			if (index >= 0 && index < static_cast<int>(positions.size())) {
-				Vector4 position = positions[index];
-				Vector2 texcoord = texcoords[index];
-				Vector3 normal = normals[index];
-				VertexData vertex = { position, texcoord, normal };
+	for (size_t i = 0; i < polygons_.size(); ++i) {
+		const auto& polygon = polygons_[i];
+		const Vector3& normal = polygonNormals[i];
 
-				// 頂点データを追加
-				modelData.vertices.push_back(vertex);
-				modelData.indices.push_back(indexOffset); // インデックスを登録
-				indexOffset++;
-			}
-			else {
-				// 範囲外の場合のエラーハンドリング（デバッグ用）
+		for (size_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
+			int index = polygon[faceVertex] - 1;
+
+			if (index < 0 || index >= static_cast<int>(positions.size())) {
 				std::cerr << "Index out of range: " << index << std::endl;
+				continue;
 			}
+
+			Vector4 position = positions[index];
+			Vector2 texcoord = texcoords[index];
+
+			VertexData vertex = { position, texcoord, normal };
+			modelData.vertices.push_back(vertex);
+			modelData.indices.push_back(indexOffset++);
 		}
 	}
 
-	// 必要に応じて他のデータを初期化
-	modelData.material = MaterialData{}; // 仮のマテリアルデータ
-	modelData.textureIndex = 0;          // 仮のテクスチャインデックス
-	modelData.rootNode = Node{};         // 仮のルートノード
-	modelData.directoryPath = "";        // ディレクトリパスを空に初期化
-	modelData.filename = "";             // ファイル名を空に初期化
+	modelData.material = MaterialData{};
+	modelData.textureIndex = 0;
+	modelData.rootNode = Node{};
+	modelData.directoryPath = "";
+	modelData.filename = "";
 
 	return modelData;
 }
-
-
-
 
 void Receipt3D::CreateVartexData() {
 	vertexResource_ = dxCommon_->CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexData) * modelData_.vertices.size());

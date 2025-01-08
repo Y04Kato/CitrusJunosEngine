@@ -46,39 +46,6 @@ void DebugScene::Initialize() {
 	//DataReceipt
 	datareceipt_.Initialize(50001);
 	datareceipt_.start();
-
-	std::string objectData =
-		"Name: box_object1_box1\n"
-		"Translate -0.210 0.396 -0.114\n"
-		"Rotate 0.000 0.000 0.000\n"
-		"Scale 1.000 1.000 1.000\n"
-		"v 0.500 -0.500 0.500\n"
-		"v -0.500 -0.500 0.500\n"
-		"v 0.500 0.500 0.500\n"
-		"v -0.500 0.500 0.500\n"
-		"v -0.500 -0.500 -0.500\n"
-		"v 0.500 -0.500 -0.500\n"
-		"v -0.500 0.500 -0.500\n"
-		"v 0.500 0.500 -0.500\n"
-		"vn 0.000 0.000 0.000\n"
-		"vn 0.000 0.000 0.000\n"
-		"vn 0.000 0.000 0.000\n"
-		"vn 0.000 0.000 0.000\n"
-		"vn 0.000 0.000 0.000\n"
-		"vn 0.000 0.000 0.000\n"
-		"vn 0.000 0.000 0.000\n"
-		"vn 0.000 0.000 0.000\n"
-		"f 1 2 4 3\n"
-		"f 5 6 8 7\n"
-		"f 7 8 3 4\n"
-		"f 6 5 2 1\n"
-		"f 6 1 3 8\n"
-		"f 2 5 7 4";
-
-	receipt3D_ = std::make_unique <Receipt3D>();
-	receipt3D_->LoadFromString(objectData);
-	receipt3D_->Initialize();
-	receipt3D_->SetDirectionalLightFlag(false, 0);
 }
 
 void DebugScene::Update() {
@@ -119,6 +86,12 @@ void DebugScene::Update() {
 	if (datareceipt_.getReceivedMessage(message)) {
 		// メッセージが届いていれば処理する
 		Log(message);
+
+		auto receipt3D = std::make_unique<Receipt3D>();
+		receipt3D->LoadFromString(message);
+		receipt3D->Initialize();
+		receipt3D->SetDirectionalLightFlag(false, 0);
+		receipt3DList_.push_back(std::move(receipt3D));
 	}
 
 	//カメラリセット
@@ -138,7 +111,11 @@ void DebugScene::Draw() {
 	//Editors
 	editors_->Draw(viewProjection_);
 
-	receipt3D_->Draw(viewProjection_, { 1.0f,1.0f,1.0f,1.0f });
+	for (const auto& receipt3D : receipt3DList_) {
+		if (receipt3D) {
+			receipt3D->Draw(viewProjection_, { 1.0f,1.0f,1.0f,1.0f });
+		}
+	}
 
 #pragma endregion
 

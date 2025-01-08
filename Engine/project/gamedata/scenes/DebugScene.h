@@ -65,4 +65,6 @@ private:
 	//DataReceipt
 	DataReceipt datareceipt_;
 	std::unique_ptr<Receipt3D> receipt3D_;
+
+	std::list<std::unique_ptr<Receipt3D>> receipt3DList_;
 };
