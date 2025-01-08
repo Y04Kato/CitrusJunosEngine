@@ -13,6 +13,7 @@ DataReceipt::DataReceipt() : port_(0), sock_(INVALID_SOCKET), is_running_(false)
 }
 
 DataReceipt::~DataReceipt() {
+    receipt3DList_.clear();
     stop();
     cleanupWinsock();
 }
@@ -96,6 +97,11 @@ void DataReceipt::receiveMessage() {
         int error = WSAGetLastError();
         if (error == WSAETIMEDOUT) {
             // タイムアウトエラーが発生した場合、フリーズせずに戻る
+            timeoutCount_++;
+            if (timeoutCount_ >= timeoutMaxCount_) {
+                isSceneDataSendEnd_ = true;
+                timeoutCount_ = 0;
+            }
             return;
         }
         std::cerr << "Recvfrom failed with error code: " << error << std::endl;
@@ -111,4 +117,28 @@ void DataReceipt::receiveMessage() {
     }
 
     queue_cv_.notify_one(); // メッセージが届いたことを通知
+
+    if (getReceivedMessage(message)) {
+        // メッセージが届いていれば処理する
+        Log(message);
+
+        if (isSceneDataSendEnd_ == true) {
+            receipt3DList_.clear();
+            isSceneDataSendEnd_ = false;
+        }
+
+        auto receipt3D = std::make_unique<Receipt3D>();
+        receipt3D->LoadFromString(message);
+        receipt3D->Initialize();
+        receipt3D->SetDirectionalLightFlag(false, 0);
+        receipt3DList_.push_back(std::move(receipt3D));
+    }
+}
+
+void DataReceipt::Draw(const ViewProjection& viewProjection) {
+    for (const auto& receipt3D : receipt3DList_) {
+        if (receipt3D) {
+            receipt3D->Draw(viewProjection, { 1.0f,1.0f,1.0f,1.0f });
+        }
+    }
 }

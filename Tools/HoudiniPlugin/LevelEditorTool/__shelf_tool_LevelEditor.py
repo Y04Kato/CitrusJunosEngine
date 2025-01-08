@@ -11,6 +11,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # フラグで送信状態を管理
 is_running = False
+is_periodic_sending = False
 # スレッド同期のためのロック
 lock = threading.Lock()
 
@@ -28,10 +29,9 @@ def send_message(message):
 
 # ノードが終端ノードかどうかを判定する関数
 def is_terminal_node(node):
-    # ノードに出力接続がない場合は終端ノードと見なす
     return len(node.outputs()) == 0
 
-# 頂点、法線、ポリゴン情報を取得する関数
+# ジオメトリ情報を取得する関数
 def get_geometry_info(node):
     try:
         geo = node.geometry()
@@ -39,12 +39,10 @@ def get_geometry_info(node):
         normals = []
         polygons = []
 
-        # 頂点情報を取得
         for point in geo.points():
             position = point.position()
             vertices.append((position.x(), position.y(), position.z()))
 
-        # 法線情報を取得
         if geo.findVertexAttrib("N"):
             for vertex in geo.iterVertices():
                 normal = vertex.attribValue("N")
@@ -60,7 +58,6 @@ def get_geometry_info(node):
         else:
             normals = [(0.0, 0.0, 0.0)] * len(vertices)
 
-        # ポリゴン情報を取得
         for prim in geo.prims():
             polygons.append([vertex.point().number() + 1 for vertex in prim.vertices()])
 
@@ -85,8 +82,7 @@ def calculate_absolute_transform(node, parent_transform):
         (scale[i] if scale else 1) * parent_transform["Scale"][i]
         for i in range(3)
     )
-    
-    # editノードの場合、変換を適用
+
     if node.type().name() == "edit":
         edit_translate = get_parm_tuple(node, "t")
         edit_rotate = get_parm_tuple(node, "r")
@@ -120,10 +116,7 @@ def get_parm_tuple(node, parm_name):
 
 # 親ノードを再帰的にたどり、最終的な絶対変換を計算する関数
 def get_absolute_transform_recursive(node, parent_transform):
-    # 自分自身の変換を取得
     transform = calculate_absolute_transform(node, parent_transform)
-    
-    # 親ノードがあれば再帰的に親ノードの変換を合成
     parent = node.parent()
     if parent:
         return get_absolute_transform_recursive(parent, transform)
@@ -156,7 +149,6 @@ def send_terminal_node_geometry():
 
         full_name = node.path()
         
-        # 絶対変換を計算する
         transform_info = get_absolute_transform_recursive(node, {
             "Translate": (0, 0, 0),
             "Rotate": (0, 0, 0),
@@ -204,10 +196,37 @@ def stop_sending():
         is_running = False
     print("通信停止を要求しました。")
 
+# 定期的送信の開始
+def start_periodic_sending():
+    global is_periodic_sending
+    if is_periodic_sending:
+        print("既に定期送信が開始されています。")
+        return
+    
+    interval = int(periodic_interval_input.text()) * 1000  # 秒をミリ秒に変換
+    if interval <= 0:
+        print("無効な秒数です。")
+        return
+    
+    is_periodic_sending = True
+    periodic_timer.start(interval)
+    print(f"{interval / 1000} 秒ごとに送信を開始しました。")
+
+# 定期的送信の停止
+def stop_periodic_sending():
+    global is_periodic_sending
+    if not is_periodic_sending:
+        print("定期送信は既に停止しています。")
+        return
+    
+    is_periodic_sending = False
+    periodic_timer.stop()
+    print("定期送信停止を要求しました。")
+
 # ダイアログの作成
 dialog = QtWidgets.QWidget()
 dialog.setWindowTitle("レベルエディタ(改良版)")
-dialog.setGeometry(100, 100, 500, 200)
+dialog.setGeometry(100, 100, 500, 300)
 dialog.setParent(hou.qt.mainWindow(), QtCore.Qt.Window)
 
 # レイアウト
@@ -229,6 +248,16 @@ start_button.clicked.connect(start_sending)
 stop_button = QtWidgets.QPushButton("通信停止")
 stop_button.clicked.connect(stop_sending)
 
+# 定期送信関連
+periodic_interval_input = QtWidgets.QLineEdit()
+periodic_interval_input.setPlaceholderText("送信間隔（秒）")
+
+start_periodic_button = QtWidgets.QPushButton("定期送信開始")
+start_periodic_button.clicked.connect(start_periodic_sending)
+
+stop_periodic_button = QtWidgets.QPushButton("定期送信停止")
+stop_periodic_button.clicked.connect(stop_periodic_sending)
+
 # レイアウトにウィジェットを追加
 v_layout.addWidget(text_editor)
 v_layout.addWidget(send_button)
@@ -236,5 +265,14 @@ v_layout.addWidget(sendTerminalData_button)
 v_layout.addWidget(start_button)
 v_layout.addWidget(stop_button)
 
+# 定期送信関連のウィジェット追加
+v_layout.addWidget(periodic_interval_input)
+v_layout.addWidget(start_periodic_button)
+v_layout.addWidget(stop_periodic_button)
+
 dialog.setLayout(v_layout)
 dialog.show()
+
+# 定期送信タイマー
+periodic_timer = QtCore.QTimer()
+periodic_timer.timeout.connect(send_terminal_node_geometry)

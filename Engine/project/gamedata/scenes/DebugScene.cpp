@@ -82,18 +82,6 @@ void DebugScene::Update() {
 	//DataReceipt
 	datareceipt_.receiveMessage();
 
-	std::string message;
-	if (datareceipt_.getReceivedMessage(message)) {
-		// メッセージが届いていれば処理する
-		Log(message);
-
-		auto receipt3D = std::make_unique<Receipt3D>();
-		receipt3D->LoadFromString(message);
-		receipt3D->Initialize();
-		receipt3D->SetDirectionalLightFlag(false, 0);
-		receipt3DList_.push_back(std::move(receipt3D));
-	}
-
 	//カメラリセット
 	if (input_->TriggerKey(DIK_Q)) {
 		debugCamera_->MovingCamera(Vector3{ 0.0f,0.0f,-20.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
@@ -111,11 +99,7 @@ void DebugScene::Draw() {
 	//Editors
 	editors_->Draw(viewProjection_);
 
-	for (const auto& receipt3D : receipt3DList_) {
-		if (receipt3D) {
-			receipt3D->Draw(viewProjection_, { 1.0f,1.0f,1.0f,1.0f });
-		}
-	}
+	datareceipt_.Draw(viewProjection_);
 
 #pragma endregion
 
