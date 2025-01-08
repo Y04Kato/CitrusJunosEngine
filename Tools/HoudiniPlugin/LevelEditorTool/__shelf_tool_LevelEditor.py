@@ -83,23 +83,9 @@ def calculate_absolute_transform(node, parent_transform):
         for i in range(3)
     )
 
+    # Editノードの場合、親のトランスフォームのみ継承
     if node.type().name() == "edit":
-        edit_translate = get_parm_tuple(node, "t")
-        edit_rotate = get_parm_tuple(node, "r")
-        edit_scale = get_parm_tuple(node, "s")
-
-        absolute_translate = tuple(
-            absolute_translate[i] + (edit_translate[i] if edit_translate else 0)
-            for i in range(3)
-        )
-        absolute_rotate = tuple(
-            absolute_rotate[i] + (edit_rotate[i] if edit_rotate else 0)
-            for i in range(3)
-        )
-        absolute_scale = tuple(
-            absolute_scale[i] * (edit_scale[i] if edit_scale else 1)
-            for i in range(3)
-        )
+        return parent_transform
 
     return {
         "Translate": absolute_translate,
@@ -148,18 +134,29 @@ def send_terminal_node_geometry():
             continue
 
         full_name = node.path()
-        
+
+        # ノードのトランスフォームを取得
         transform_info = get_absolute_transform_recursive(node, {
             "Translate": (0, 0, 0),
             "Rotate": (0, 0, 0),
             "Scale": (1, 1, 1)
         })
 
+        # 頂点データをワールド座標系に変換
+        transformed_vertices = [
+            (
+                v[0] * transform_info["Scale"][0] + transform_info["Translate"][0],
+                v[1] * transform_info["Scale"][1] + transform_info["Translate"][1],
+                v[2] * transform_info["Scale"][2] + transform_info["Translate"][2],
+            )
+            for v in vertices
+        ]
+
         obj_data = f"Name: {full_name}\n"
         obj_data += (
             f"Translate {transform_info['Translate'][0]:.3f} "
             f"{transform_info['Translate'][1]:.3f} "
-            f"{transform_info['Translate'][2]:.3f}\n"
+            f"{-transform_info['Translate'][2]:.3f}\n"
             f"Rotate {transform_info['Rotate'][0]:.3f} "
             f"{transform_info['Rotate'][1]:.3f} "
             f"{transform_info['Rotate'][2]:.3f}\n"
@@ -167,7 +164,7 @@ def send_terminal_node_geometry():
             f"{transform_info['Scale'][1]:.3f} "
             f"{transform_info['Scale'][2]:.3f}\n"
         )
-        obj_data += "\n".join(f"v {v[0]:.3f} {v[1]:.3f} {v[2]:.3f}" for v in vertices) + "\n"
+        obj_data += "\n".join(f"v {v[0]:.3f} {v[1]:.3f} {v[2]:.3f}" for v in transformed_vertices) + "\n"
         obj_data += "\n".join(f"vn {n[0]:.3f} {n[1]:.3f} {n[2]:.3f}" for n in normals) + "\n"
         obj_data += "\n".join("f " + " ".join(map(str, face)) for face in polygons)
 
@@ -225,7 +222,7 @@ def stop_periodic_sending():
 
 # ダイアログの作成
 dialog = QtWidgets.QWidget()
-dialog.setWindowTitle("レベルエディタ(改良版)")
+dialog.setWindowTitle("レベルエディタ(仮)")
 dialog.setGeometry(100, 100, 500, 300)
 dialog.setParent(hou.qt.mainWindow(), QtCore.Qt.Window)
 
