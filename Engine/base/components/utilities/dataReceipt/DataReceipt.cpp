@@ -130,7 +130,7 @@ void DataReceipt::receiveMessage() {
         auto receipt3D = std::make_unique<Receipt3D>();
         receipt3D->LoadFromString(message);
         receipt3D->Initialize();
-        receipt3D->SetDirectionalLightFlag(false, 0);
+        receipt3D->SetDirectionalLightFlag(true, 3);
         receipt3DList_.push_back(std::move(receipt3D));
     }
 }

@@ -984,14 +984,34 @@ void GamePlayScene::CollisionConclusion() {
 
 						// 円柱がOBBと接触している場合、押し戻し
 						if (overlapTop > 0.0f) {
+							// 押し戻し量の計算
 							Vector3 correctionTop = Normalize(directionTop) * overlapTop * pushbackMultiplierObj_;
-							bCylinder.topCenter += correctionTop;
 							Vector3 correctionBottom = Normalize(directionBottom) * overlapTop * pushbackMultiplierObj_;
-							bCylinder.bottomCenter += correctionBottom;
 
-							body.world.translation_ = (bCylinder.topCenter + bCylinder.bottomCenter) * 0.5f;
-							boss_->HitBody(body);
+							// 押し戻し適用後の位置を計算
+							Vector3 newTopCenter = bCylinder.topCenter + correctionTop;
+							Vector3 newBottomCenter = bCylinder.bottomCenter + correctionBottom;
+
+							// 押し戻し後の位置で再衝突判定
+							StructCylinder adjustedCylinder = { newTopCenter, newBottomCenter, bCylinder.radius };
+							if (!IsCollision(objOBB, adjustedCylinder)) {
+								// 押し戻しを適用
+								bCylinder.topCenter = newTopCenter;
+								bCylinder.bottomCenter = newBottomCenter;
+
+								// 円柱の中心を更新
+								body.world.translation_ = (bCylinder.topCenter + bCylinder.bottomCenter) * 0.5f;
+								boss_->HitBody(body);
+							}
+							else {
+								// 押し戻し量が不十分な場合、追加の微調整
+								Vector3 minorCorrection = Normalize(correctionTop + correctionBottom) * 0.1f;
+								bCylinder.topCenter += minorCorrection;
+								bCylinder.bottomCenter += minorCorrection;
+								body.world.translation_ = (bCylinder.topCenter + bCylinder.bottomCenter) * 0.5f;
+							}
 						}
+
 
 						//衝突音を再生
 						ContactVolume(body.velocity);
@@ -1243,21 +1263,38 @@ void GamePlayScene::CollisionConclusion() {
 
 				//球が円柱と重なっているかを確認
 				float overlap = eSphere.radius + bCylinder.radius - distance;
-
 				if (overlap > 0.0f) {
-					//押し戻しの量を計算
+					// 押し戻しの量を計算
 					Vector3 correction = Normalize(direction);
 					correction.num[0] *= overlap * pushbackMultiplier_;
 					correction.num[1] *= overlap * pushbackMultiplier_;
 					correction.num[2] *= overlap * pushbackMultiplier_;
 
-					//球を押し戻し
-					eSphere.center.num[0] += correction.num[0];
-					eSphere.center.num[1] += correction.num[1];
-					eSphere.center.num[2] += correction.num[2];
+					// 球を押し戻し
+					Vector3 newSphereCenter = {
+						eSphere.center.num[0] + correction.num[0],
+						eSphere.center.num[1] + correction.num[1],
+						eSphere.center.num[2] + correction.num[2]
+					};
 
-					enemy->SetWorldTransform(eSphere.center);
+					// 押し戻し後の位置で再度衝突をチェック
+					if (!IsCollision(StructSphere{ newSphereCenter, eSphere.radius }, bCylinder)) {
+						// 押し戻しを適用
+						eSphere.center = newSphereCenter;
+						enemy->SetWorldTransform(eSphere.center);
+					}
+					else {
+						// 押し戻し量を微調整して無限ループを回避
+						correction.num[0] *= 0.5f;
+						correction.num[1] *= 0.5f;
+						correction.num[2] *= 0.5f;
+						eSphere.center.num[0] += correction.num[0];
+						eSphere.center.num[1] += correction.num[1];
+						eSphere.center.num[2] += correction.num[2];
+						enemy->SetWorldTransform(eSphere.center);
+					}
 				}
+
 
 				//衝突音を再生
 				ContactVolume(enemy->GetVelocity());

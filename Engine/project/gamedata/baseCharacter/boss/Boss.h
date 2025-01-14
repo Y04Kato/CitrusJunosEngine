@@ -64,7 +64,7 @@ private:
 
     TextureManager* textureManager_;
 
-    const int maxHP_ = 2; // 最大体力
+    const int maxHP_ = 1; // 最大体力
     const int faseChangePoint_ = maxHP_ / 2; // 体力がこの値以下になったらフェイズ2へ
     int hp_ = maxHP_; // 現在体力
 
@@ -92,7 +92,8 @@ private:
     int attackTimer_ = resetTime_; // 現在のクールタイム
     int nowAttackPattern_ = 1; // 次の攻撃内容。各Attack関数の末尾の数字
 
-    // 重力の値
+    //減衰量
+    const float movingAttenuation_ = 0.01f;
     const float gravityAcceleration_ = 0.05f;
 
     // Other

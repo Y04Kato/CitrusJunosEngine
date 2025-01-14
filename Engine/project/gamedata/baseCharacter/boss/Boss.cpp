@@ -178,6 +178,26 @@ void Boss::ApplyPhysics() {
         }
 
         body.world.translation_ += body.velocity;
+    
+        if (body.velocity.num[0] >= 0.01f) {
+            body.velocity.num[0] -= movingAttenuation_;
+        }
+        else if (body.velocity.num[0] <= -0.01f) {
+            body.velocity.num[0] += movingAttenuation_;
+        }
+        else {
+            body.velocity.num[0] = 0.0f;
+        }
+
+        if (body.velocity.num[2] >= 0.01f) {
+            body.velocity.num[2] -= movingAttenuation_;
+        }
+        else if (body.velocity.num[2] <= -0.01f) {
+            body.velocity.num[2] += movingAttenuation_;
+        }
+        else {
+            body.velocity.num[2] = 0.0f;
+        }
     }
 }
 
