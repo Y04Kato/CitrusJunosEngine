@@ -782,6 +782,17 @@ Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframe, float
 #pragma endregion
 
 #pragma region Vector4
+Vector4 operator*(const Vector4& v, float k) { return Multiply(k, v); }
+
+Vector4 Multiply(float scalar, const Vector4& v) {
+	Vector4 returnV;
+	returnV.num[0] = v.num[0] * scalar;
+	returnV.num[1] = v.num[1] * scalar;
+	returnV.num[2] = v.num[2] * scalar;
+	returnV.num[3] = v.num[3] * scalar;
+	return returnV;
+}
+
 Vector4 MultiplyMatrixVector(const Matrix4x4& matrix, const Vector4& vector) {
 	Vector4 result;
 
