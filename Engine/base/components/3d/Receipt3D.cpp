@@ -165,7 +165,7 @@ ModelData Receipt3D::ConstructModelData() {
 	// 頂点情報を登録
 	for (const auto& vertex : vertices_) {
 		Vector4 position = { vertex.num[0], vertex.num[1], vertex.num[2], 1.0f };
-		positions.push_back(position * 6.0f);
+		positions.push_back(position);
 
 		// 仮のテクスチャ座標を登録
 		Vector2 texcoord = { 0.5f, 0.5f }; // 適当な値
