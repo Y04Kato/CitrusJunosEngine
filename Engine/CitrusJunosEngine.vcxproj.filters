@@ -594,6 +594,9 @@
     <ClCompile Include="project\gamedata\explosion\Explosion.cpp">
       <Filter>ソース ファイル\project\gamedata\explosion</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\3d\Receipt3D.cpp">
+      <Filter>ソース ファイル\base\components\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">
@@ -921,6 +924,9 @@
     </ClInclude>
     <ClInclude Include="project\gamedata\transition\Transition.h">
       <Filter>ヘッダー ファイル\project\gamedata\transition</Filter>
+    </ClInclude>
+    <ClInclude Include="base\components\3d\Receipt3D.h">
+      <Filter>ヘッダー ファイル\base\components\3d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
