@@ -465,6 +465,12 @@ void GamePlayScene::GameStartProcessing() {
 
 	debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
 	debugCamera_->Update();
+
+	viewProjection_.translation_ = followCamera_->GetViewProjection().translation_;
+	viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+	viewProjection_.TransferMatrix();
+
 	isBirdseyeMode_ = false;
 	isEditorMode_ = false;
 	isGamePause_ = false;
@@ -702,6 +708,11 @@ void GamePlayScene::StageReset() {
 	isEditorMode_ = false;
 	directionalLight_.intensity = 1.0f;
 	pointLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},1.0f ,5.0f,1.0f };
+	followCamera_->SetTarget(&ground_->GetWorldTransformForCameraReference());//カメラをGroundにセット
+	followCamera_->SetOffset({ 0.0f,20.0f,-100.0f });
+	followCamera_->Update();
+	debugCamera_->SetCamera(followCamera_->GetViewProjection().translation_, followCamera_->GetViewProjection().rotation_);
+	debugCamera_->Update();
 	boss_->Finalize();
 	editors_->Finalize();
 	explosion_->Finalize();

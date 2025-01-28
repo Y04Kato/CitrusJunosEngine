@@ -4,9 +4,9 @@
 #include <thread>
 #include <mutex>
 
-#pragma comment(lib, "wsock32.lib")  // winsock2.lib ではなく winsock32.lib をリンク
+#pragma comment(lib, "wsock32.lib") //winsock2.libは使えないのでwinsock32.lib をリンク
 
-// std::mutex を使って標準出力を同期
+//std::mutexを使って標準出力を同期
 std::mutex cout_mutex;
 
 DataReceipt::DataReceipt() : port_(0), sock_(INVALID_SOCKET), is_running_(false) {
@@ -44,7 +44,7 @@ void DataReceipt::stop() {
 bool DataReceipt::getReceivedMessage(std::string& message) {
     std::unique_lock<std::mutex> lock(queue_mutex_);
 
-    // メッセージが届いていない場合でもブロックしない
+    //メッセージが届いていない場合でもブロックしない
     if (message_queue_.empty()) {
         return false;
     }
@@ -55,14 +55,14 @@ bool DataReceipt::getReceivedMessage(std::string& message) {
 }
 
 void DataReceipt::initializeWinsock() {
-    // Winsock 初期化（winsock.h で使用する方法）
+    //Winsock初期化
     if (WSAStartup(MAKEWORD(1, 1), &wsaData_) != 0) {
         throw std::runtime_error("WSAStartup failed");
     }
 }
 
 void DataReceipt::cleanupWinsock() {
-    WSACleanup();  // Winsock 終了処理
+    WSACleanup();//Winsock終了処理
 }
 
 void DataReceipt::createSocket() {
@@ -82,11 +82,10 @@ void DataReceipt::bindSocket() {
     }
 }
 
-// メッセージ受信を呼び出されるたびに確認
+//メッセージ受信を呼び出されるたびに確認
 void DataReceipt::receiveMessage() {
-    // タイムアウト設定
-    int timeout = 10; // ミリ秒単位でタイムアウト時間を設定
-    setsockopt(sock_, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+    //タイムアウト設定
+    setsockopt(sock_, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeoutMaxTime_, sizeof(timeoutMaxTime_));
 
     char buffer[1024];
     sockaddr_in senderAddr;
@@ -116,10 +115,10 @@ void DataReceipt::receiveMessage() {
         message_queue_.push(message);
     }
 
-    queue_cv_.notify_one(); // メッセージが届いたことを通知
+    queue_cv_.notify_one();//メッセージが届いたことを通知
 
     if (getReceivedMessage(message)) {
-        // メッセージが届いていれば処理する
+        //メッセージが届いていれば処理する
         Log(message);
 
         if (isSceneDataSendEnd_ == true) {

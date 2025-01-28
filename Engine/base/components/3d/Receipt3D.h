@@ -25,12 +25,12 @@ public:
 	Vector3 rotate_;
 	Vector3 scale_;
 
-	// 頂点と法線のリスト
+	//頂点と法線のリスト
 	std::vector<Vector3> vertices_;
 	std::vector<Vector3> normals_;
 	std::vector<std::vector<int>> polygons_;
 
-	// 文字列データの解析
+	//文字列データの解析
 	void LoadFromString(const std::string& data);
 
 	//解析

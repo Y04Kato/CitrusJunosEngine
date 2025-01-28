@@ -40,43 +40,43 @@ void Receipt3D::ParseLine(const std::string& line) {
 }
 
 void Receipt3D::ParseTranslate(const std::string& line) {
-	std::stringstream ss(line.substr(9));  // "Translate " を除いた部分
+	std::stringstream ss(line.substr(9));  //"Translate "を除いた部分
 	ss >> translate_.num[0] >> translate_.num[1] >> translate_.num[2];
 }
 
 void Receipt3D::ParseRotate(const std::string& line) {
-	std::stringstream ss(line.substr(7));  // "Rotate " を除いた部分
+	std::stringstream ss(line.substr(7));  //"Rotate "を除いた部分
 	ss >> rotate_.num[0] >> rotate_.num[1] >> rotate_.num[2];
 }
 
 void Receipt3D::ParseScale(const std::string& line) {
-	std::stringstream ss(line.substr(6));  // "Scale " を除いた部分
+	std::stringstream ss(line.substr(6));  //"Scale "を除いた部分
 	ss >> scale_.num[0] >> scale_.num[1] >> scale_.num[2];
 }
 
 void Receipt3D::ParseVertex(const std::string& line) {
 	Vector3 vertex;
-	std::stringstream ss(line.substr(2));  // "v " を除いた部分
+	std::stringstream ss(line.substr(2));  //"v "を除いた部分
 	ss >> vertex.num[0] >> vertex.num[1] >> vertex.num[2];
 	vertices_.push_back(vertex);
 }
 
 void Receipt3D::ParseNormal(const std::string& line) {
 	Vector3 normal;
-	std::stringstream ss(line.substr(3));  // "vn " を除いた部分
+	std::stringstream ss(line.substr(3));  //"vn "を除いた部分
 	ss >> normal.num[0] >> normal.num[1] >> normal.num[2];
 	normals_.push_back(normal);
 }
 
 void Receipt3D::ParsePolygon(const std::string& line) {
 	std::vector<int> polygon;
-	std::stringstream ss(line.substr(2));  // "f " を除いた部分
+	std::stringstream ss(line.substr(2));  //"f "を除いた部分
 	std::string vertex_data;
 
 	while (ss >> vertex_data) {
 		std::stringstream vertex_ss(vertex_data);
 		std::string index;
-		std::getline(vertex_ss, index, '/');  // 頂点インデックスを取得
+		std::getline(vertex_ss, index, '/');//頂点インデックスを取得
 		polygon.push_back(std::stoi(index));
 	}
 	polygons_.push_back(polygon);
@@ -158,21 +158,21 @@ void Receipt3D::Finalize() {
 
 ModelData Receipt3D::ConstructModelData() {
 	ModelData modelData;
-	std::vector<Vector4> positions; // 位置
-	std::vector<Vector2> texcoords; // テクスチャ座標
-	std::vector<Vector3> normals;   // 法線
+	std::vector<Vector4> positions;//位置
+	std::vector<Vector2> texcoords;//テクスチャ座標
+	std::vector<Vector3> normals;//法線
 
-	// 頂点情報を登録
+	//頂点情報を登録
 	for (const auto& vertex : vertices_) {
 		Vector4 position = { vertex.num[0], vertex.num[1], vertex.num[2], 1.0f };
 		positions.push_back(position);
 
-		// 仮のテクスチャ座標を登録
-		Vector2 texcoord = { 0.5f, 0.5f }; // 適当な値
+		//仮のテクスチャ座標を登録
+		Vector2 texcoord = { 0.5f, 0.5f }; //適当な値
 		texcoords.push_back(texcoord);
 	}
 
-	// ポリゴンごとの法線を計算
+	//ポリゴンごとの法線を計算
 	std::vector<Vector3> polygonNormals(polygons_.size());
 	for (size_t i = 0; i < polygons_.size(); ++i) {
 		const auto& polygon = polygons_[i];
@@ -181,19 +181,19 @@ ModelData Receipt3D::ConstructModelData() {
 			continue;
 		}
 
-		// ポリゴンの頂点を取得
+		//ポリゴンの頂点を取得
 		Vector3 v0 = { positions[polygon[0] - 1].num[0], positions[polygon[0] - 1].num[1], positions[polygon[0] - 1].num[2] };
 		Vector3 v1 = { positions[polygon[1] - 1].num[0], positions[polygon[1] - 1].num[1], positions[polygon[1] - 1].num[2] };
 		Vector3 v2 = { positions[polygon[2] - 1].num[0], positions[polygon[2] - 1].num[1], positions[polygon[2] - 1].num[2] };
 
-		// 法線を計算
+		//法線を計算
 		Vector3 edge1 = Subtruct(v1, v0);
 		Vector3 edge2 = Subtruct(v2, v0);
 		Vector3 normal = Normalize(Cross(edge1, edge2));
 		polygonNormals[i] = normal;
 	}
 
-	// ポリゴン情報を登録
+	//ポリゴン情報を登録
 	uint32_t indexOffset = 0;
 	for (size_t i = 0; i < polygons_.size(); ++i) {
 		const auto& polygon = polygons_[i];
