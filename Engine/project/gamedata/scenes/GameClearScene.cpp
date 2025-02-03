@@ -113,7 +113,7 @@ void GameClearScene::Update() {
 	player_->UpdateView();
 	player_->SetViewProjection(&viewProjection_);
 
-	transition_->Update();
+	transition_->SceneChangeUpdate();
 
 	if (changeAlpha_ == false) {
 		spriteAlpha_ -= fadeSpeed_;

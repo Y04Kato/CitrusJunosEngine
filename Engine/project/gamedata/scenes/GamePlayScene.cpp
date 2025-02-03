@@ -251,6 +251,7 @@ void GamePlayScene::Update() {
 
 			//ゲームをポーズ
 			if (input_->TriggerKey(DIK_Q)) {
+				transition_->PauseStart();
 				isGamePause_ = true;
 			}
 		}
@@ -320,10 +321,10 @@ void GamePlayScene::Update() {
 
 		//当たり判定処理
 		CollisionConclusion();
-	}
 
-	//Transition更新
-	transition_->Update();
+		//Transition更新
+		transition_->SceneChangeUpdate();
+	}
 
 	//
 	ImGui::Begin("PlayScene");
@@ -635,8 +636,11 @@ void GamePlayScene::GameProcessing() {
 }
 
 void GamePlayScene::GamePauseProcessing() {
+	transition_->ChangePauseUpdate();
+
 	//ゲームポーズを解除
 	if (input_->TriggerKey(DIK_Q)) {
+		transition_->PauseEnd();
 		isGamePause_ = false;
 	}
 

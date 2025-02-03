@@ -176,7 +176,7 @@ void GameTitleScene::Update() {
 	}
 
 	//
-	transition_->Update();
+	transition_->SceneChangeUpdate();
 
 	//Playerの更新
 	player_->UpdateView();

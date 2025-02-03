@@ -50,6 +50,7 @@ void Transition::Initialize() {
 	komaTransform_[3].translate = { -410.0f,16.0f,0.0f };
 	komaTransform_[4].translate = { -150.0f,202.0f,0.0f };
 	komaTransform_[5].translate = { -530.0f,300.0f,0.0f };
+	komaTransform_[6].translate = { 1064.0f,-100.0f,0.0f };
 
 	boxTransform_[0].scale = { 1.6f,0.39f,0.4f };
 	boxTransform_[1].scale = { 1.6f,0.39f,0.4f };
@@ -57,6 +58,7 @@ void Transition::Initialize() {
 	boxTransform_[3].scale = { 1.6f,0.39f,0.4f };
 	boxTransform_[4].scale = { 1.8f,0.39f,0.4f };
 	boxTransform_[5].scale = { 1.6f,0.39f,0.4f };
+	boxTransform_[6].scale = { 0.39f,1.6f,0.4f };
 
 	pairMaterial_[0] = { 1.0f,0.75f,0.75f,1.0f };
 	pairMaterial_[1] = { 0.5f,1.0f,0.5f,1.0f };
@@ -64,6 +66,7 @@ void Transition::Initialize() {
 	pairMaterial_[3] = { 1.0f,0.75f,0.75f,1.0f };
 	pairMaterial_[4] = { 0.5f,0.5f,1.0f,1.0f };
 	pairMaterial_[5] = { 0.75f,0.75f,1.0f,1.0f };
+	pairMaterial_[6] = { 0.75f,0.75f,1.0f,1.0f };
 
 	allSpriteTransform_ = {
 		{1.0f,1.0f,1.0f},
@@ -78,10 +81,13 @@ void Transition::Initialize() {
 	};
 }
 
-void Transition::Update() {
+void Transition::SceneChangeUpdate() {
+	for (int i = 0; i < transitionSpriteMaxNum_ - 1; i++) {
+		komaTransform_[i].translate += allSpriteTransform_.translate;
+	}
+
 	for (int i = 0; i < transitionSpriteMaxNum_; i++) {
 		komaTransform_[i].rotate.num[2] += 0.1f;
-		komaTransform_[i].translate += allSpriteTransform_.translate;
 		boxTransform_[i].translate = komaTransform_[i].translate;
 		boxTransform_[i].translate.num[0] += (boxTransform_[i].scale.num[0] - 0.4f) * 24.0f;
 
@@ -122,6 +128,36 @@ void Transition::Update() {
 	ImGui::End();
 }
 
+void Transition::ChangePauseUpdate() {
+	komaTransform_[6].rotate.num[2] += 0.1f;
+	boxTransform_[6].translate = komaTransform_[0].translate;
+	boxTransform_[6].translate.num[1] -= (boxTransform_[6].scale.num[1] - 0.4f) * 24.0f;
+
+	circleTransform_[6].translate.num[0] = boxSprite_[6]->GetLocalPosition(Vector2{ 0.0f,0.5f }, boxTransform_[0]).num[0];
+	circleTransform_[6].translate.num[1] = boxSprite_[6]->GetLocalPosition(Vector2{ 0.0f,0.5f }, boxTransform_[0]).num[1];
+
+	//ポーズ開始用トランジション
+	if (isPauseStart_ == true) {
+		komaTransform_[6].translate.num[1] += transitionSpeed_;
+		if (pauseStartTransitionEndPoint_ <= komaTransform_[6].translate.num[1]) {
+			isPauseStart_ = false;
+		}
+	}
+
+	//ポーズ終了用トランジション
+	if (isPauseEnd_ == true) {
+		komaTransform_[6].translate.num[1] -= transitionSpeed_;
+		if (pauseEndTransitionEndPoint_ >= komaTransform_[6].translate.num[1]) {
+			isPauseEnd_ = false;
+		}
+	}
+
+	//ImGui
+	ImGui::Begin("Transition");
+	ImGui::DragFloat3("Translate", komaTransform_[6].translate.num, 0.5f);
+	ImGui::End();
+}
+
 void Transition::Draw() {
 	for (int i = 0; i < transitionSpriteMaxNum_; i++) {
 		circleSprite_[i]->Draw(circleTransform_[i], spriteUVTransform_, pairMaterial_[i]);
@@ -139,7 +175,8 @@ void Transition::SceneStart() {
 	komaTransform_[2].translate = { 1150.0f,719.0f,0.0f };
 	komaTransform_[3].translate = { 1170.0f,16.0f,0.0f };
 	komaTransform_[4].translate = { 1430.0f,202.0f,0.0f };
-	komaTransform_[5].translate = { 1050.0f,300.0f,0.0f }; 
+	komaTransform_[5].translate = { 1050.0f,300.0f,0.0f };
+	komaTransform_[6].translate = { -530.0f,300.0f,0.0f };
 }
 
 void Transition::SceneEnd() {
@@ -152,4 +189,19 @@ void Transition::SceneEnd() {
 	komaTransform_[3].translate = { -410.0f,16.0f,0.0f };
 	komaTransform_[4].translate = { -150.0f,202.0f,0.0f };
 	komaTransform_[5].translate = { -530.0f,300.0f,0.0f };
+	komaTransform_[6].translate = { -530.0f,300.0f,0.0f };
+}
+
+void Transition::PauseStart() {
+	isPauseStart_ = true;
+	isPauseEnd_ = false;
+
+	komaTransform_[6].translate.num[0] = 1064.0f;
+}
+
+void Transition::PauseEnd() {
+	isPauseEnd_ = true;
+	isPauseStart_ = false;
+
+	komaTransform_[6].translate.num[0] = 1064.0f;
 }

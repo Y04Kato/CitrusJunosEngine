@@ -14,18 +14,26 @@ public:
 
 	void Initialize();
 
-	void Update();
+	void SceneChangeUpdate();
+
+	void ChangePauseUpdate();
 
 	void Draw();
 
 	//シーン明け用
 	void SceneStart();
-
 	//シーン終わり用
 	void SceneEnd();
 
+	void PauseStart();
+
+	void PauseEnd();
+
 	bool GetIsSceneStart_() { return isSceneStart_; }
 	bool GetIsSceneEnd_() { return isSceneEnd_; }
+
+	bool GetIsPauseStart_() { return isPauseStart_; }
+	bool GetIsPauseEnd_() { return isPauseEnd_; }
 
 	Transition(const Transition& obj) = delete;
 	Transition& operator=(const Transition& obj) = delete;
@@ -40,7 +48,7 @@ private:
 	uint32_t box_;
 	uint32_t circle_;
 
-	static const int transitionSpriteMaxNum_ = 6;//独楽と円の個数は同じである必要がある為これは両方に適用する
+	static const int transitionSpriteMaxNum_ = 7;//独楽と円の個数は同じである必要がある為これは両方に適用する
 
 	std::unique_ptr <CreateSprite> komaSprite_[transitionSpriteMaxNum_];
 	EulerTransform komaTransform_[transitionSpriteMaxNum_];
@@ -60,6 +68,9 @@ private:
 	bool isSceneStart_ = false;
 	bool isSceneEnd_ = false;
 
+	bool isPauseStart_ = false;
+	bool isPauseEnd_ = false;
+
 	//遷移スピード
 	const float transitionSpeed_ = 20.0f;
 
@@ -67,4 +78,6 @@ private:
 	const float startTransitionEndPoint_ = 3000.0f;
 	const float endTransitionEndPoint_ = 1430.0f;
 
+	const float pauseStartTransitionEndPoint_ = 550.0f;
+	const float pauseEndTransitionEndPoint_ = -100.0f;
 };
