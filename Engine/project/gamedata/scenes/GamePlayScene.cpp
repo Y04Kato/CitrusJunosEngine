@@ -261,7 +261,7 @@ void GamePlayScene::Update() {
 		GameCommonProcessing();
 	}
 
-	//
+	//ImGui
 	ImGui::Begin("PlayScene");
 	ImGui::Checkbox("isEditorMode", &isEditorMode_);
 	ImGui::DragFloat3("", player_->GetVelocity().num);
