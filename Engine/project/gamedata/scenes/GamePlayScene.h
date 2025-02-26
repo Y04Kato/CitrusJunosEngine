@@ -15,6 +15,16 @@
 #include "explosion/Explosion.h"
 #include "transition/Transition.h"
 
+//ゲームフェーズ管理
+enum class ScenePhase {
+	SceneStart,
+	EntryGame,
+	InGame,
+	PoseGame,
+	GameClear,
+	GameOver,
+};
+
 class GamePlayScene :public Iscene {
 public:
 	void Initialize() override;
@@ -41,6 +51,9 @@ public:
 
 	//ゲームオーバー時の処理
 	void GameOverProcessing();
+
+	//各ゲームフェーズで汎用的に使う処理
+	void GameCommonProcessing();
 
 	//ステージのリセット処理
 	void StageReset();
@@ -72,10 +85,12 @@ private:
 	//SceneNo
 	SceneNumber* sceneNumber_;
 
+	//Audio
 	Audio* audio_;
 	SoundData soundData1_;
 	SoundData soundData2_;
 
+	//Input
 	Input* input_;
 
 	//各種カメラ
@@ -87,6 +102,9 @@ private:
 	const float cameraMoveSpeed_ = 0.05f;//MoveCameraの移動速度
 	bool cameraChange_ = false;//カメラの切り替えが終わっているか否か
 	bool isBirdseyeMode_ = false;//俯瞰視点か否か
+
+	//ゲームフェーズ管理
+	ScenePhase scenePhase_ = ScenePhase::SceneStart;
 
 	//Player
 	std::unique_ptr<Player> player_;
@@ -163,14 +181,9 @@ private:
 	uint32_t pause_;
 
 	//Other
-	bool isGameStart_ = true;//ゲームスタート時のフラグ
-	bool isGameEntry_ = false;//ゲームスタート演出のフラグ
 	int entryCount_ = 0;//スタート演出のカウント
 	const float startCameraChangeTime_ = 120.0f;//スタート演出をいつまでやるか
-	bool isGameover_ = false;//ゲームオーバー時のフラグ
-	bool isGameclear_ = false;//ゲームクリア時のフラグ
 	bool isGameEnd_ = false;//ゲームリセット時のフラグ
-	bool isGamePause_ = false;//ゲームポーズフラグ
 
 	//押し戻しの倍率
 	float pushbackMultiplier_ = 2.0f;
@@ -190,7 +203,7 @@ private:
 	PostEffect* postEffect_;
 	uint32_t noiseTexture_;
 	MaskData maskData_;
-	const float maskThresholdSpeed_ = 0.02f;
+	const float maskThresholdSpeed_ = 0.01f;
 
 	//Explosion
 	Explosion* explosion_;
