@@ -49,7 +49,7 @@ void Player::Update() {
 	}
 
 	//ゲームオーバー判定
-	if (worldTransform_.translation_.num[1] < gameoverSite_) {
+	if (worldTransform_.translation_.num[1] < gameoverSite_ && gameOver != true) {
 		gameOver = true;
 		moveMode_ = 0;
 		worldTransformForCameraReference_.rotation_ = { 0.0f,0.0f,0.0f };

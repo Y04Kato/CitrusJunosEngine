@@ -230,8 +230,8 @@ void GamePlayScene::Initialize() {
 }
 
 void GamePlayScene::Update() {
-	switch (scenePhase_) {//ゲーム開始時の初期設定
-	case ScenePhase::SceneStart:
+	switch (scenePhase_) {
+	case ScenePhase::SceneStart://ゲーム開始時の初期設定
 		GameStartProcessing();
 		break;
 
@@ -328,7 +328,8 @@ void GamePlayScene::DrawUI() {
 #pragma region 前景スプライト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
-	if (scenePhase_ == ScenePhase::EntryGame && entryCount_ >= 1 || scenePhase_ != ScenePhase::EntryGame) {
+	//UI
+	if (scenePhase_ == ScenePhase::EntryGame && gameEntryPhase_ != GameEntryPhase::RotaryView || scenePhase_ != ScenePhase::EntryGame) {
 		if (scenePhase_ != ScenePhase::PoseGame) {
 			if (player_->GetMoveMode() == 0) {
 				uiSprite_[1]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
@@ -344,6 +345,7 @@ void GamePlayScene::DrawUI() {
 		}
 	}
 
+	//ポーズ中UI
 	if (scenePhase_ == ScenePhase::PoseGame) {
 		uiSprite_[5]->Draw(uiSpriteTransform_, uiSpriteuvTransform_, uiSpriteMaterial_);
 	}
@@ -429,23 +431,23 @@ void GamePlayScene::GameStartProcessing() {
 	uiSpriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f - 300.0f,0.0f} };
 	uiSpriteTransform4_ = { {0.0f,0.0f,0.0f},{0.0f,0.0f,-1.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
 
-	//開始演出カウント
-	entryCount_ = 0;
+	//開始演出の初期設定
+	gameEntryPhase_ = GameEntryPhase::RotaryView;
 
 	//ゲーム開始演出へ移行
 	scenePhase_ = ScenePhase::EntryGame;
 }
 
 void GamePlayScene::GameEntryProcessing() {
-	//Playerを行動不能に
-	player_->SetIsMove(false);
+	switch (gameEntryPhase_) {
+	case GameEntryPhase::RotaryView://ステージ全体を映して回る
+		//Playerを行動不能に
+		player_->SetIsMove(false);
 
-	//全体を見渡して回る
-	if (entryCount_ == 0) {
 		startCameraChangeTimer_++;
-		if (startCameraChangeTimer_ >= startCameraChangeTime_) {
+		if (startCameraChangeTimer_ >= startCameraChangeTime_) {//指定時間経過で
 			startCameraChangeTimer_ = 0;
-			entryCount_ = 1;
+			gameEntryPhase_ = GameEntryPhase::RulePresentation;//ルールの提示フェーズへ移行
 
 		}
 
@@ -454,9 +456,10 @@ void GamePlayScene::GameEntryProcessing() {
 		viewProjection_.matView = followCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 		viewProjection_.TransferMatrix();
-	}
-	//目標を提示しつつ回る
-	if (entryCount_ == 1) {
+
+		break;
+
+	case GameEntryPhase::RulePresentation://ステージ全体を映して回転しつつ、ステージ目標を提示
 		//Spriteを回しつつ拡大する
 		uiSpriteTransform4_.scale.num[0] += magnificationPower_;
 		uiSpriteTransform4_.scale.num[1] += magnificationPower_;
@@ -470,9 +473,9 @@ void GamePlayScene::GameEntryProcessing() {
 			uiSpriteTransform4_.rotate.num[2] = 0.0f;
 
 			startCameraChangeTimer_++;
-			if (startCameraChangeTimer_ >= startCameraChangeTime_ / 2.0f) {
+			if (startCameraChangeTimer_ >= startCameraChangeTime_ / 2.0f) {//指定時間経過で
 				startCameraChangeTimer_ = 0;
-				entryCount_ = 2;
+				gameEntryPhase_ = GameEntryPhase::ApproachingPlayer;//プレイヤーに近づくフェーズへ移行
 
 				followCamera_->SetTarget(&player_->GetWorldTransformCameraPlayer());
 				followCamera_->SetOffset({ 0.0f,3.5f,-20.0f });
@@ -491,14 +494,15 @@ void GamePlayScene::GameEntryProcessing() {
 		viewProjection_.matView = followCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 		viewProjection_.TransferMatrix();
-	}
-	//自機に近づく
-	if (entryCount_ == 2) {
+
+		break;
+
+	case GameEntryPhase::ApproachingPlayer://プレイヤーに近づいてインゲームへ
 		startCameraChangeTimer_++;
 		if (startCameraChangeTimer_ >= startCameraChangeTime_) {
 			startCameraChangeTimer_ = 0;
-			entryCount_ = 0;
-			scenePhase_ = ScenePhase::InGame;
+			gameEntryPhase_ = GameEntryPhase::RotaryView;//ステージ全体を見るフェーズに戻しておく
+			scenePhase_ = ScenePhase::InGame;//インゲームへ移行
 
 			//Playerを動けるように
 			player_->SetIsMove(true);
@@ -515,6 +519,8 @@ void GamePlayScene::GameEntryProcessing() {
 		viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
 		viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
 		viewProjection_.UpdateMatrix();
+
+		break;
 	}
 }
 
@@ -708,6 +714,12 @@ void GamePlayScene::GameCommonProcessing() {
 }
 
 void GamePlayScene::StageReset() {
+	//Player初期化
+	player_->SetTranslate(Vector3{ 0.0f,0.2f,-20.0f });
+	player_->SetVelocity(Vector3{ 0.0f,0.0f,0.0f });
+	player_->SetScale(Vector3{ 1.0f,1.0f,1.0f });
+	player_->Update();
+
 	//生き残っている敵を全て削除
 	enemys_.clear();
 

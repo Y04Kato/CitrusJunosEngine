@@ -17,12 +17,19 @@
 
 //ゲームフェーズ管理
 enum class ScenePhase {
-	SceneStart,
-	EntryGame,
-	InGame,
-	PoseGame,
-	GameClear,
-	GameOver,
+	SceneStart,//シーン開始処理
+	EntryGame,//開始演出
+	InGame,//インゲーム
+	PoseGame,//ポーズ
+	GameClear,//クリア処理
+	GameOver,//ゲームオーバー処理
+};
+
+//エントリーフェーズ管理
+enum class GameEntryPhase {
+	RotaryView,//ステージ全体を回転して映す
+	RulePresentation,//ステージ全体を回転しつつ、ゲーム目標の提示
+	ApproachingPlayer,//プレイヤーに近づく
 };
 
 class GamePlayScene :public Iscene {
@@ -106,6 +113,9 @@ private:
 	//ゲームフェーズ管理
 	ScenePhase scenePhase_ = ScenePhase::SceneStart;
 
+	//エントリーフェーズ管理
+	GameEntryPhase gameEntryPhase_ = GameEntryPhase::RotaryView;
+
 	//Player
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Model> playerModel_;
@@ -181,7 +191,6 @@ private:
 	uint32_t pause_;
 
 	//Other
-	int entryCount_ = 0;//スタート演出のカウント
 	const float startCameraChangeTime_ = 120.0f;//スタート演出をいつまでやるか
 	bool isGameEnd_ = false;//ゲームリセット時のフラグ
 
