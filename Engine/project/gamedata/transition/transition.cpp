@@ -50,7 +50,7 @@ void Transition::Initialize() {
 	komaTransform_[3].translate = { -410.0f,16.0f,0.0f };
 	komaTransform_[4].translate = { -150.0f,202.0f,0.0f };
 	komaTransform_[5].translate = { -530.0f,300.0f,0.0f };
-	komaTransform_[6].translate = { 1064.0f,-100.0f,0.0f };
+	komaTransform_[6].translate = { -530.0f,300.0f,0.0f };
 
 	boxTransform_[0].scale = { 1.6f,0.39f,0.4f };
 	boxTransform_[1].scale = { 1.6f,0.39f,0.4f };
@@ -86,7 +86,7 @@ void Transition::SceneChangeUpdate() {
 		komaTransform_[i].translate += allSpriteTransform_.translate;
 	}
 
-	for (int i = 0; i < transitionSpriteMaxNum_; i++) {
+	for (int i = 0; i < transitionSpriteMaxNum_ - 1; i++) {
 		komaTransform_[i].rotate.num[2] += 0.1f;
 		boxTransform_[i].translate = komaTransform_[i].translate;
 		boxTransform_[i].translate.num[0] += (boxTransform_[i].scale.num[0] - 0.4f) * 24.0f;

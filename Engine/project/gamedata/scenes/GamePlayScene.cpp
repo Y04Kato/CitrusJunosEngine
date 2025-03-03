@@ -598,7 +598,7 @@ void GamePlayScene::GamePauseProcessing() {
 	//Qを押した時
 	if (input_->TriggerKey(DIK_Q)) {
 		transition_->PauseEnd();//ポーズを解除
-		scenePhase_ = ScenePhase::PoseGame;//インゲームへ移行
+		scenePhase_ = ScenePhase::InGame;//インゲームへ移行
 	}
 
 	//Eを押した時
@@ -711,6 +711,7 @@ void GamePlayScene::GameCommonProcessing() {
 
 	//Transition更新
 	transition_->SceneChangeUpdate();
+	transition_->ChangePauseUpdate();
 }
 
 void GamePlayScene::StageReset() {

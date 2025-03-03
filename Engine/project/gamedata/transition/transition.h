@@ -79,5 +79,5 @@ private:
 	const float endTransitionEndPoint_ = 1430.0f;
 
 	const float pauseStartTransitionEndPoint_ = 550.0f;
-	const float pauseEndTransitionEndPoint_ = -100.0f;
+	const float pauseEndTransitionEndPoint_ = -150.0f;
 };
