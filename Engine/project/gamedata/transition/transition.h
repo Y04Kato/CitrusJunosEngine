@@ -70,6 +70,7 @@ private:
 
 	bool isPauseStart_ = false;
 	bool isPauseEnd_ = false;
+	bool isPause_ = false;
 
 	//遷移スピード
 	const float transitionSpeed_ = 20.0f;

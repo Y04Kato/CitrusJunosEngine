@@ -86,7 +86,7 @@ void Transition::SceneChangeUpdate() {
 		komaTransform_[i].translate += allSpriteTransform_.translate;
 	}
 
-	for (int i = 0; i < transitionSpriteMaxNum_ - 1; i++) {
+	for (int i = 0; i < transitionSpriteMaxNum_; i++) {
 		komaTransform_[i].rotate.num[2] += 0.1f;
 		boxTransform_[i].translate = komaTransform_[i].translate;
 		boxTransform_[i].translate.num[0] += (boxTransform_[i].scale.num[0] - 0.4f) * 24.0f;
@@ -149,6 +149,7 @@ void Transition::ChangePauseUpdate() {
 		komaTransform_[6].translate.num[1] -= transitionSpeed_;
 		if (pauseEndTransitionEndPoint_ >= komaTransform_[6].translate.num[1]) {
 			isPauseEnd_ = false;
+			isPause_ = false;
 		}
 	}
 
@@ -159,10 +160,16 @@ void Transition::ChangePauseUpdate() {
 }
 
 void Transition::Draw() {
-	for (int i = 0; i < transitionSpriteMaxNum_; i++) {
+	for (int i = 0; i < transitionSpriteMaxNum_ - 1; i++) {
 		circleSprite_[i]->Draw(circleTransform_[i], spriteUVTransform_, pairMaterial_[i]);
 		boxSprite_[i]->Draw(boxTransform_[i], spriteUVTransform_, pairMaterial_[i]);
 		komaSprite_[i]->Draw(komaTransform_[i], spriteUVTransform_, pairMaterial_[i]);
+	}
+
+	if (isPause_ == true) {
+		circleSprite_[6]->Draw(circleTransform_[6], spriteUVTransform_, pairMaterial_[6]);
+		boxSprite_[6]->Draw(boxTransform_[6], spriteUVTransform_, pairMaterial_[6]);
+		komaSprite_[6]->Draw(komaTransform_[6], spriteUVTransform_, pairMaterial_[6]);
 	}
 }
 
@@ -195,6 +202,7 @@ void Transition::SceneEnd() {
 void Transition::PauseStart() {
 	isPauseStart_ = true;
 	isPauseEnd_ = false;
+	isPause_ = true;
 
 	komaTransform_[6].translate.num[0] = 1064.0f;
 }

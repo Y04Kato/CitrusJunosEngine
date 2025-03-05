@@ -261,6 +261,10 @@ void GamePlayScene::Update() {
 		GameCommonProcessing();
 	}
 
+	//Transition更新
+	transition_->SceneChangeUpdate();
+	transition_->ChangePauseUpdate();
+
 	//ImGui
 	ImGui::Begin("PlayScene");
 	ImGui::Checkbox("isEditorMode", &isEditorMode_);
@@ -593,8 +597,6 @@ void GamePlayScene::GameProcessing() {
 }
 
 void GamePlayScene::GamePauseProcessing() {
-	transition_->ChangePauseUpdate();
-
 	//Qを押した時
 	if (input_->TriggerKey(DIK_Q)) {
 		transition_->PauseEnd();//ポーズを解除
@@ -604,6 +606,7 @@ void GamePlayScene::GamePauseProcessing() {
 	//Eを押した時
 	if (input_->TriggerKey(DIK_E) && isGameEnd_ == false) {
 		transition_->SceneEnd();
+		transition_->PauseEnd();
 		isGameEnd_ = true;
 	}
 
@@ -708,10 +711,6 @@ void GamePlayScene::GameCommonProcessing() {
 
 	//当たり判定処理
 	CollisionConclusion();
-
-	//Transition更新
-	transition_->SceneChangeUpdate();
-	transition_->ChangePauseUpdate();
 }
 
 void GamePlayScene::StageReset() {
