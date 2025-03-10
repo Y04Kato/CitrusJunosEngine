@@ -32,8 +32,14 @@ void WorldTransform::Map(){
 }
 
 void WorldTransform::TransferMatrix(){
+	Matrix4x4 rotationScaleMatrix = matWorld_;
+	rotationScaleMatrix.m[0][3] = 0.0f;
+	rotationScaleMatrix.m[1][3] = 0.0f;
+	rotationScaleMatrix.m[2][3] = 0.0f;
+	rotationScaleMatrix.m[3][3] = 1.0f;
+
 	constMap->matWorld = matWorld_;
-	constMap->inverseTranspose = Transpose(Inverse(matWorld_));
+	constMap->inverseTranspose = Transpose(Inverse(rotationScaleMatrix));
 }
 
 void WorldTransform::UpdateMatrix(){

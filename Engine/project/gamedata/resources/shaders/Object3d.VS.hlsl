@@ -4,11 +4,21 @@ ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 ConstantBuffer<ViewProjectionMatrix> gViewProjectionMatrix : register(b1);
 
 VertexShaderOutput main(VertexShaderInput input) {
-	VertexShaderOutput output;
-	float32_t4x4 WorldViewProjection = mul(gViewProjectionMatrix.view, gViewProjectionMatrix.projection);
-	output.position = mul(input.position, mul(gTransformationMatrix.matWorld, WorldViewProjection));
-	output.texcoord = input.texcoord;
-	output.normal = normalize(mul(input.normal, (float32_t3x3)gTransformationMatrix.WorldInverseTranspose));
-	output.worldPosition = mul(input.position,gTransformationMatrix.matWorld).xyz;
-	return output;
+    VertexShaderOutput output;
+
+    // ワールド座標に変換
+    float4 worldPos = mul(input.position, gTransformationMatrix.matWorld);
+    output.worldPosition = worldPos.xyz;
+
+    // ビュー・プロジェクション変換
+    float4 viewPos = mul(worldPos, gViewProjectionMatrix.view);
+    output.position = mul(viewPos, gViewProjectionMatrix.projection);
+
+    // 法線の変換
+    output.normal = normalize(mul(input.normal, (float3x3)gTransformationMatrix.WorldInverseTranspose));
+
+    // テクスチャ座標
+    output.texcoord = input.texcoord;
+
+    return output;
 }
