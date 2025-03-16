@@ -503,6 +503,8 @@
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
     <ClInclude Include="base\WinApp.h" />
+    <ClInclude Include="externals\zlib\include\zconf.h" />
+    <ClInclude Include="externals\zlib\include\zlib.h" />
     <ClInclude Include="project\gamedata\baseCharacter\BaseCharacter.h" />
     <ClInclude Include="project\gamedata\baseCharacter\boss\Boss.h" />
     <ClInclude Include="project\gamedata\baseCharacter\enemy\Enemy.h" />

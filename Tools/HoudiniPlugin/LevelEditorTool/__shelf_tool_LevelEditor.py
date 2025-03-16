@@ -1,3 +1,4 @@
+import zlib  # 追加: データ圧縮用ライブラリ
 from PySide2 import QtWidgets, QtCore
 from functools import partial
 import socket
@@ -168,9 +169,12 @@ def send_terminal_node_geometry():
         obj_data += "\n".join(f"vn {n[0]:.3f} {n[1]:.3f} {n[2]:.3f}" for n in normals) + "\n"
         obj_data += "\n".join("f " + " ".join(map(str, face)) for face in polygons)
 
+        # データを圧縮する
+        compressed_data = zlib.compress(obj_data.encode('utf-8'))
+
         try:
-            sock.sendto(obj_data.encode('utf-8'), serv_address)
-            print(f"送信しました:\n{obj_data}")
+            sock.sendto(compressed_data, serv_address)
+            print(f"送信しました（圧縮後）:\n{obj_data}")
         except Exception as e:
             print(f"送信エラー: {e}")
 
@@ -209,7 +213,7 @@ def start_periodic_sending():
     periodic_timer.start(interval)
     print(f"{interval / 1000} 秒ごとに送信を開始しました。")
 
-# 定期的送信の停止
+# 定期送信の停止
 def stop_periodic_sending():
     global is_periodic_sending
     if not is_periodic_sending:

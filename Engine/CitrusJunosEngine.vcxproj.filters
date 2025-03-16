@@ -928,6 +928,12 @@
     <ClInclude Include="base\components\3d\Receipt3D.h">
       <Filter>ヘッダー ファイル\base\components\3d</Filter>
     </ClInclude>
+    <ClInclude Include="externals\zlib\include\zlib.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\zlib\include\zconf.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

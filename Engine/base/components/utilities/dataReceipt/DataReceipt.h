@@ -6,6 +6,7 @@
 #include <condition_variable>
 #include <winsock.h>
 #include <iostream>
+#include <zlib/include/zlib.h>
 
 #include "Receipt3D.h"
 
