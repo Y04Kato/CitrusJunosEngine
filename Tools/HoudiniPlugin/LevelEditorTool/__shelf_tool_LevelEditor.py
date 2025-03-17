@@ -1,6 +1,6 @@
-import zlib  # 追加: データ圧縮用ライブラリ
 from PySide2 import QtWidgets, QtCore
 from functools import partial
+import zlib
 import socket
 import threading
 import hou
@@ -16,6 +16,9 @@ is_periodic_sending = False
 # スレッド同期のためのロック
 lock = threading.Lock()
 
+# チェックボックスの状態
+send_only_leoutput = False
+
 # テキストメッセージ送信関数
 def send_message(message):
     message = message.text()
@@ -27,6 +30,11 @@ def send_message(message):
             print(f"送信エラー: {e}")
     else:
         print("メッセージが空です。")
+
+# チェックボックスの変更を検知する関数
+def toggle_send_only_leoutput(state):
+    global send_only_leoutput
+    send_only_leoutput = state == QtCore.Qt.Checked
 
 # ノードが終端ノードかどうかを判定する関数
 def is_terminal_node(node):
@@ -120,6 +128,10 @@ def send_terminal_node_geometry():
         if not is_terminal_node(node):
             continue
 
+        # send_only_leoutput が True の場合、ノード名が "LEOutput" でないと送信しない
+        if send_only_leoutput and node.name() != "LEOutput":
+            continue
+
         try:
             geo = node.geometry()
         except hou.GeometryPermissionError:
@@ -174,9 +186,10 @@ def send_terminal_node_geometry():
 
         try:
             sock.sendto(compressed_data, serv_address)
-            print(f"送信しました（圧縮後）:\n{obj_data}")
+            print(f"送信しました: {full_name} / 頂点数: {len(vertices)} / 法線数: {len(normals)} / 面数: {len(polygons)}")
         except Exception as e:
             print(f"送信エラー: {e}")
+
 
 # 通信の開始と停止
 def start_sending():
@@ -240,6 +253,10 @@ text_editor = QtWidgets.QLineEdit()
 send_button = QtWidgets.QPushButton("テキストを送信")
 send_button.clicked.connect(partial(send_message, text_editor))
 
+# チェックボックスの追加
+leoutput_checkbox = QtWidgets.QCheckBox("LEOutputのみ送信")
+leoutput_checkbox.stateChanged.connect(toggle_send_only_leoutput)
+
 sendTerminalData_button = QtWidgets.QPushButton("終端ノードデータを送信")
 sendTerminalData_button.clicked.connect(send_terminal_node_geometry)
 
@@ -262,6 +279,7 @@ stop_periodic_button.clicked.connect(stop_periodic_sending)
 # レイアウトにウィジェットを追加
 v_layout.addWidget(text_editor)
 v_layout.addWidget(send_button)
+v_layout.addWidget(leoutput_checkbox)
 v_layout.addWidget(sendTerminalData_button)
 v_layout.addWidget(start_button)
 v_layout.addWidget(stop_button)

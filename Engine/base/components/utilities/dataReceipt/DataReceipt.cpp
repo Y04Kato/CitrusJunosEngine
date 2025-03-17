@@ -8,6 +8,8 @@
 
 std::mutex cout_mutex;
 
+#define BUFFER_SIZE 65536  // 受信バッファのサイズ（64KB）
+
 DataReceipt::DataReceipt() : port_(0), sock_(INVALID_SOCKET), is_running_(false) {
 }
 
@@ -86,7 +88,7 @@ void DataReceipt::receiveMessage() {
     // タイムアウト設定
     setsockopt(sock_, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeoutMaxTime_, sizeof(timeoutMaxTime_));
 
-    char buffer[4096];
+    char buffer[BUFFER_SIZE];
     sockaddr_in senderAddr;
     int senderAddrSize = sizeof(senderAddr);
 
@@ -109,7 +111,7 @@ void DataReceipt::receiveMessage() {
     buffer[recvLen] = '\0';  // 受信データをnull終端文字列にする
 
     // Zlibを使用してデータを解凍
-    uLongf decompressedLen = 4096 * 10;  // 解凍後の最大サイズを指定（必要に応じて調整）
+    uLongf decompressedLen = BUFFER_SIZE * 4;
 
     // std::vectorを使用して動的にメモリを確保
     std::vector<char> decompressedData(decompressedLen);
