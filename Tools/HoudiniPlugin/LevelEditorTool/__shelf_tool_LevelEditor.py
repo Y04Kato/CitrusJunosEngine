@@ -10,6 +10,9 @@ serv_address = ('127.0.0.1', 50001)
 # UDPソケット
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+# APIの最大データサイズ
+MAX_PACKET_SIZE = 32768
+
 # フラグで送信状態を管理
 is_running = False
 is_periodic_sending = False
@@ -117,18 +120,38 @@ def get_absolute_transform_recursive(node, parent_transform):
         return get_absolute_transform_recursive(parent, transform)
     else:
         return transform
+        
+def send_data_in_chunks(compressed_data):
+    """データが API の限界を超える場合、分割して送信"""
+    total_size = len(compressed_data)
+    offset = 0
+
+    while offset < total_size:
+        # 送信するデータのサイズを決定（MAX_PACKET_SIZE 以下）
+        chunk = compressed_data[offset:offset + MAX_PACKET_SIZE]
+
+        # 最後のデータには `/add` を追加しない
+        if offset + MAX_PACKET_SIZE < total_size:
+            chunk += b"/add"
+
+        try:
+            sock.sendto(chunk, serv_address)
+            print(f"送信: {len(chunk)} バイト")
+        except Exception as e:
+            print(f"送信エラー: {e}")
+
+        offset += MAX_PACKET_SIZE
 
 # 終端ノードのジオメトリデータを送信する関数
 def send_terminal_node_geometry():
+    """終端ノードのジオメトリデータを取得し、分割送信"""
     all_nodes = hou.node("/obj").allSubChildren()
+    
     for node in all_nodes:
         if not isinstance(node, hou.SopNode):
             continue
-
         if not is_terminal_node(node):
             continue
-
-        # send_only_leoutput が True の場合、ノード名が "LEOutput" でないと送信しない
         if send_only_leoutput and node.name() != "LEOutput":
             continue
 
@@ -147,15 +170,12 @@ def send_terminal_node_geometry():
             continue
 
         full_name = node.path()
-
-        # ノードのトランスフォームを取得
         transform_info = get_absolute_transform_recursive(node, {
             "Translate": (0, 0, 0),
             "Rotate": (0, 0, 0),
             "Scale": (1, 1, 1)
         })
 
-        # 頂点データをワールド座標系に変換
         transformed_vertices = [
             (
                 v[0] * transform_info["Scale"][0] + transform_info["Translate"][0],
@@ -181,14 +201,11 @@ def send_terminal_node_geometry():
         obj_data += "\n".join(f"vn {n[0]:.3f} {n[1]:.3f} {n[2]:.3f}" for n in normals) + "\n"
         obj_data += "\n".join("f " + " ".join(map(str, face)) for face in polygons)
 
-        # データを圧縮する
+        # データを圧縮
         compressed_data = zlib.compress(obj_data.encode('utf-8'))
 
-        try:
-            sock.sendto(compressed_data, serv_address)
-            print(f"送信しました: {full_name} / 頂点数: {len(vertices)} / 法線数: {len(normals)} / 面数: {len(polygons)}")
-        except Exception as e:
-            print(f"送信エラー: {e}")
+        # 分割送信
+        send_data_in_chunks(compressed_data)
 
 
 # 通信の開始と停止

@@ -1,3 +1,10 @@
+/**
+ * @file DataReceipt.h
+ * @brief Houdiniから受信したデータを解析、描画クラスへ送信するクラス
+ * @author KATO
+ * @date 2025/01/07
+ */
+
 #pragma once
 #include <string>
 #include <thread>
