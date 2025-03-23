@@ -15,7 +15,8 @@
 
 std::mutex cout_mutex;
 
-#define BUFFER_SIZE 65536
+#define BUFFER_SIZE 65536 // 受信バッファのサイズ（64KB）
+#define DECOMPRESSED_BUFFER_MULTIPLIER 10 // 解凍バッファの倍率
 
 DataReceipt::DataReceipt() : port_(0), sock_(INVALID_SOCKET), is_running_(false) {}
 
@@ -86,6 +87,10 @@ void DataReceipt::bindSocket() {
 }
 
 void DataReceipt::receiveMessage() {
+    // 受信バッファサイズを拡張（デフォルトより大きくする）
+    int recvBufSize = 1024 * 1024 * 10; // 10MB
+    setsockopt(sock_, SOL_SOCKET, SO_RCVBUF, (char*)&recvBufSize, sizeof(recvBufSize));
+
     // タイムアウト設定
     setsockopt(sock_, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeoutMaxTime_, sizeof(timeoutMaxTime_));
 
@@ -124,7 +129,7 @@ void DataReceipt::receiveMessage() {
     }
 
     // Zlibを使用してデータを解凍
-    uLongf decompressedLen = static_cast<uLongf>(receivedData.size() * 10);  // 解凍後の予想サイズ
+    uLongf decompressedLen = static_cast<uLongf>(receivedData.size() * DECOMPRESSED_BUFFER_MULTIPLIER);  // 解凍後の予想サイズ
     std::vector<char> decompressedData(decompressedLen);
 
     int ret = uncompress(reinterpret_cast<Bytef*>(decompressedData.data()), &decompressedLen,
@@ -132,7 +137,7 @@ void DataReceipt::receiveMessage() {
 
     if (ret == Z_BUF_ERROR) {
         // バッファが足りない場合、再度確保して解凍
-        decompressedLen = static_cast<uLongf>(receivedData.size() * 8);
+        decompressedLen = static_cast<uLongf>(receivedData.size() * DECOMPRESSED_BUFFER_MULTIPLIER);
         decompressedData.resize(decompressedLen);
         ret = uncompress(reinterpret_cast<Bytef*>(decompressedData.data()), &decompressedLen,
             reinterpret_cast<const Bytef*>(receivedData.data()), static_cast<uLong>(receivedData.size()));

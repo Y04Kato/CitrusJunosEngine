@@ -53,20 +53,20 @@ def get_geometry_info(node):
 
         for point in geo.points():
             position = point.position()
-            vertices.append((position.x(), position.y(), position.z()))
+            vertices.append((-position.x(), position.y(), position.z()))
 
         if geo.findVertexAttrib("N"):
             for vertex in geo.iterVertices():
                 normal = vertex.attribValue("N")
-                normals.append((normal[0], normal[1], normal[2]))
+                normals.append((-normal[0], normal[1], normal[2]))
         elif geo.findPointAttrib("N"):
             for point in geo.points():
                 normal = point.attribValue("N")
-                normals.append((normal[0], normal[1], normal[2]))
+                normals.append((-normal[0], normal[1], normal[2]))
         elif geo.findPrimAttrib("N"):
             for prim in geo.prims():
                 normal = prim.attribValue("N")
-                normals.append((normal[0], normal[1], normal[2]))
+                normals.append((-normal[0], normal[1], normal[2]))
         else:
             normals = [(0.0, 0.0, 0.0)] * len(vertices)
 
