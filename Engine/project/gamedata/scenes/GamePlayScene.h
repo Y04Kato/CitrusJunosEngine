@@ -66,6 +66,9 @@ public:
 	void StageReset();
 
 	//当たり判定まとめ
+	void HandleFragmentCollision(size_t index, StructSphere sphere, Vector3 velocity, OBB& fragmentOBB);
+	StructCylinder CreateCylinderFromBody(const Body& body);
+	void HandleSphereCylinderCollision(StructSphere& sphere, StructCylinder& cylinder, Vector3& correction);
 	void CollisionConclusion();
 
 	//接触時の音量計算
