@@ -47,4 +47,5 @@ private:
 
 	//キーでカメラを操作するか否かのフラグ
 	bool isKeyControlCamera_ = false;
+	float mouseSensitivity_ = 0.1f;//マウス感度
 };
