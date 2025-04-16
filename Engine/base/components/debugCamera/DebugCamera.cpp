@@ -37,12 +37,12 @@ void DebugCamera::Update() {
 		Matrix4x4 rotMat = MakeRotateMatrix(viewProjection_.rotation_);
 		Vector3 forward = rotMat * Vector3{ 0.0f, 0.0f, 1.0f };
 		Vector3 right = rotMat * Vector3{ 1.0f, 0.0f, 0.0f };
-		Vector3 up = Vector3{ 0.0f, 1.0f, 0.0f }; // 上方向は Y 軸固定
+		Vector3 up = Vector3{ 0.0f, 1.0f, 0.0f }; //上方向はY軸固定
 
 		// 移動入力
 		Vector3 move = { 0.0f, 0.0f, 0.0f };
 		if (input_->PressKey(DIK_W)) move += forward;
-		if (input_->PressKey(DIK_S)) move -= forward;  // ← 後退
+		if (input_->PressKey(DIK_S)) move -= forward;
 		if (input_->PressKey(DIK_D)) move += right;
 		if (input_->PressKey(DIK_A)) move -= right;
 		if (input_->PressKey(DIK_SPACE)) move += up;
