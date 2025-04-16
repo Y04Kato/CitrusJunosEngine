@@ -66,10 +66,11 @@ Vector3 operator*(float k, const Vector3& v);
 Vector3 operator*(const Vector3& v, float k);
 Vector3 operator*(const Vector3& v1, const Vector3& v2);
 Vector3 operator*(const Vector3& v, const Matrix4x4& matrix);
+Vector3 operator*(const Matrix4x4& matrix , const Vector3& v);
 Vector3 operator/(const Vector3& v, float k);
 Vector3 operator+=(Vector3&, Vector3&);
 Vector3 operator+=(Vector3&, const Vector3&);
-Vector3 operator-=(const Vector3&, const Vector3&);
+Vector3 operator-=(Vector3&, const Vector3&);
 
 //Vector3の計算
 Vector3 Add(const Vector3& v1, const Vector3& v2);

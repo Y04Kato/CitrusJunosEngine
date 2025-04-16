@@ -22,35 +22,55 @@ void DebugCamera::initialize() {
 
 void DebugCamera::Update() {
 #ifdef _DEBUG
+	// TABキーでキー操作ON/OFFをトグル
+	bool currentTabKey = input_->PressKey(DIK_TAB);
+	if (currentTabKey && !prevTabKeyState_) {
+		isKeyControlCamera_ = !isKeyControlCamera_;
+		input_->ToggleCursor();
+	}
+	prevTabKeyState_ = currentTabKey;
+
 	if (isKeyControlCamera_ == true) {
-		if (input_->PressKey(DIK_W)) {
+		SetCursorPos(750, 450);//カーソル固定
 
+		// 回転から向きを算出
+		Matrix4x4 rotMat = MakeRotateMatrix(viewProjection_.rotation_);
+		Vector3 forward = rotMat * Vector3{ 0.0f, 0.0f, 1.0f };
+		Vector3 right = rotMat * Vector3{ 1.0f, 0.0f, 0.0f };
+		Vector3 up = Vector3{ 0.0f, 1.0f, 0.0f }; // 上方向は Y 軸固定
+
+		// 移動入力
+		Vector3 move = { 0.0f, 0.0f, 0.0f };
+		if (input_->PressKey(DIK_W)) move += forward;
+		if (input_->PressKey(DIK_S)) move -= forward;  // ← 後退
+		if (input_->PressKey(DIK_D)) move += right;
+		if (input_->PressKey(DIK_A)) move -= right;
+		if (input_->PressKey(DIK_SPACE)) move += up;
+		if (input_->PressKey(DIK_LSHIFT)) move -= up;
+
+		// 正規化して移動（斜めでも速度一定に）
+		if (Length(move) > 0.0f) {
+			move = Normalize(move) * moveSpeed_;
+			viewProjection_.translation_ += move;
 		}
-		if (input_->PressKey(DIK_S)) {
 
-		}
-		if (input_->PressKey(DIK_D)) {
+		// マウス移動でカメラ回転（Y: 横回転, X: 縦回転）
+		Vector2 mouseMove = input_->GetMousePosition().Velocity;
+		viewProjection_.rotation_.num[1] += mouseMove.num[0] * mouseSensitivity_;
+		viewProjection_.rotation_.num[0] += mouseMove.num[1] * mouseSensitivity_;
 
-		}
-		if (input_->PressKey(DIK_A)) {
-
-		}
-
-		if (input_->PressKey(DIK_SPACE)) {
-
-		}
-		if (input_->PressKey(DIK_LSHIFT)) {
-
-		}
-
-		viewProjection_.translation_.num[2] = input_->GetMousePosition().Scroll / 40.0f;
+		// X軸の回転制限（上下見すぎ防止）
+		viewProjection_.rotation_.num[0] = std::clamp(viewProjection_.rotation_.num[0], -89.9f, 89.9f);
 	}
 #endif
 
+	// マウス感度や移動速度を ImGui で調整
 	ImGui::Begin("DebugCamera");
 	ImGui::Checkbox("KeyControlCamera", &isKeyControlCamera_);
 	ImGui::DragFloat3("rotation", viewProjection_.rotation_.num, 0.1f);
 	ImGui::DragFloat3("translation", viewProjection_.translation_.num, 0.1f);
+	ImGui::DragFloat("Mouse Sensitivity", &mouseSensitivity_, 0.01f, 0.01f, 2.0f);
+	ImGui::DragFloat("Move Speed", &moveSpeed_, 0.01f, 0.01f, 2.0f);
 	ImGui::End();
 
 	if (isMovingCamera == true) {

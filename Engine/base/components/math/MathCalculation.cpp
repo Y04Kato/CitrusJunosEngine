@@ -119,10 +119,11 @@ Vector3 operator*(float k, const Vector3& v) { return Multiply(k, v); }
 Vector3 operator*(const Vector3& v, float k) { return Multiply(k, v); }
 Vector3 operator*(const Vector3& v1, const Vector3& v2) { return Multiply(v1, v2); }
 Vector3 operator*(const Vector3& v, const Matrix4x4& matrix) { return TransformN(v, matrix); }
+Vector3 operator*(const Matrix4x4& matrix , const Vector3& v) { return TransformN(v, matrix); }
 Vector3 operator/(const Vector3& v, float k) { return Division(k, v); }
 Vector3 operator+=(Vector3& v1, Vector3& v2) { return v1 = Add(v1, v2); }
 Vector3 operator+=(Vector3& v1, const Vector3& v2) { return v1 = Add(v1, v2); }
-Vector3 operator-=(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }
+Vector3 operator-=(Vector3& v1, const Vector3& v2) { return v1 = Subtruct(v1, v2); }
 
 Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	Vector3 result;
