@@ -53,6 +53,7 @@ void SceneManager::Initialize() {
 	scene_[CLEAR_SCENE] = std::make_unique<GameClearScene>();
 	scene_[OVER_SCENE] = std::make_unique<GameOverScene>();
 	scene_[DEBUG_SCENE] = std::make_unique<DebugScene>();
+	scene_[TEST_SCENE] = std::make_unique<TestScene>();
 	for (int i = 0; i < SCENE_MAX; i++) {
 		scene_[i]->Initialize();
 	}

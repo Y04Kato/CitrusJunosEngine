@@ -23,6 +23,7 @@
 #include "GameClearScene.h"
 #include "GameOverScene.h"
 #include "DebugScene.h"
+#include "TestScene.h"
 
 class SceneManager {
 public:
