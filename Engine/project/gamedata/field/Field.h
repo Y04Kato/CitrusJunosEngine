@@ -29,8 +29,20 @@ private:
 	//座標を基にブロック位置を取得する
 	VectorInt2 GetBlockAt(float x, float z);
 
-	//指定ブロックを中心に周囲のの高さを変える
+	//指定ブロックを中心に周囲の高さを変える(減衰なし)
 	void RaiseBlocksAround(const VectorInt2& center, float radius, float deltaY);
+
+	//指定ブロックを中心に周囲の高さを変える(減衰あり)
+	void RaiseBlocksAroundWithAttenuation(const VectorInt2& center, float radius, float deltaY);
+
+	/// <summary>
+	/// 各ブロックの高さで色を変える
+	/// 第一引数:Yが高い時の色の最大値
+	/// 第二引数:Yが低い時の色の最大値
+	/// 第三引数:中心Y座標
+	/// 第四引数:+-範囲を色が最大となる値
+	/// </summary>
+	void ColorAdjustmentByHeight(const Vector4& highColor, const Vector4& lowColor , float centerY, float rangeY);
 
 private:
 	WorldTransform worldTransform_;
@@ -52,4 +64,6 @@ private:
 	float radius_ = 1.0f;
 	float deltaY_ = -0.5f;
 	Block block_;
+	Vector4 highColor_ = { 1.0f, 0.0f, 0.0f, 1.0f };
+	Vector4 lowColor_ = { 0.0f, 0.0f, 1.0f, 1.0f };
 };
