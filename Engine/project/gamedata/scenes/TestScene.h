@@ -8,6 +8,8 @@
 #pragma once
 #include "Iscene.h"
 
+#include "field/Field.h"
+
 class TestScene :public Iscene {
 public:
 	void Initialize() override;
@@ -49,4 +51,7 @@ private:
 	//Lights
 	DirectionalLights* directionalLights_;
 	DirectionalLight directionalLight_;
+
+	//Field
+	Field* field_;
 };

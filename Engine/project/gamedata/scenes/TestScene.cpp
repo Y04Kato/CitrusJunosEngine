@@ -35,6 +35,10 @@ void TestScene::Initialize() {
 
 	//Lights
 	directionalLights_ = DirectionalLights::GetInstance();
+
+	//Field
+	field_ = new Field();
+	field_->Initialize(model_.get());
 }
 
 void TestScene::Update() {
@@ -52,6 +56,9 @@ void TestScene::Update() {
 	//Light更新
 	directionalLights_->SetTarget(directionalLight_);
 
+	//Field
+	field_->Update();
+
 	//ビュープロジェクション更新
 	viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
 	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
@@ -59,7 +66,7 @@ void TestScene::Update() {
 
 	//カメラリセット
 	if (input_->TriggerKey(DIK_Q)) {
-		debugCamera_->MovingCamera(Vector3{ 0.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
+		debugCamera_->MovingCamera(Vector3{ 0.5f,23.0f,-19.0f }, Vector3{ 0.85f,0.0f,0.0f }, 0.05f);
 	}
 }
 
@@ -71,6 +78,8 @@ void TestScene::Draw() {
 
 #pragma region 3Dオブジェクト描画
 	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
+
+	field_->Draw(viewProjection_);
 
 #pragma endregion
 
@@ -97,7 +106,7 @@ void TestScene::DrawPostEffect() {
 }
 
 void TestScene::Finalize() {
-
+	field_->Finalize();
 }
 
 void TestScene::ResetProcessing() {

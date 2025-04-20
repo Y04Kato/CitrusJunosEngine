@@ -268,7 +268,7 @@ void GameTitleScene::Update() {
 		debugCamera_->SetCamera(Vector3{ 0.0f,0.0f,-20.0f }, Vector3{ 0.0f,0.0f,0.0f });
 		sceneNumber_->SetSceneNumber(DEBUG_SCENE);
 	}
-	if (ImGui::Button("SceneEnd")) {
+	if (ImGui::Button("TestScene")) {
 		debugCamera_->SetCamera(Vector3{ 0.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,0.0f });
 		sceneNumber_->SetSceneNumber(TEST_SCENE);
 	}

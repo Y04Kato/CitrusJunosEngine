@@ -66,7 +66,7 @@ void DebugCamera::Update() {
 
 	// マウス感度や移動速度を ImGui で調整
 	ImGui::Begin("DebugCamera");
-	ImGui::Checkbox("KeyControlCamera", &isKeyControlCamera_);
+	ImGui::Text("ChangeKeyControlCamera:TAB");
 	ImGui::DragFloat3("rotation", viewProjection_.rotation_.num, 0.1f);
 	ImGui::DragFloat3("translation", viewProjection_.translation_.num, 0.1f);
 	ImGui::DragFloat("Mouse Sensitivity", &mouseSensitivity_, 0.01f, 0.01f, 2.0f);
