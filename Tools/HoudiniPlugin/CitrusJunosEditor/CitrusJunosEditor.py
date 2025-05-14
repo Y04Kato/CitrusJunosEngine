@@ -19,21 +19,9 @@ is_periodic_sending = False
 # スレッド同期のためのロック
 lock = threading.Lock()
 
+################################
 # チェックボックスの状態
 send_only_leoutput = False
-
-# テキストメッセージ送信関数
-def send_message(message):
-    message = message.text()
-    if message:
-        try:
-            sock.sendto(message.encode('utf-8'), serv_address)
-            print(f"送信しました: {message}")
-        except Exception as e:
-            print(f"送信エラー: {e}")
-    else:
-        print("メッセージが空です。")
-
 # チェックボックスの変更を検知する関数
 def toggle_send_only_leoutput(state):
     global send_only_leoutput
@@ -77,6 +65,13 @@ def get_geometry_info(node):
     except AttributeError:
         return [], [], []
 
+# パラメータ値を取得する関数
+def get_parm_tuple(node, parm_name):
+    try:
+        return node.evalParmTuple(parm_name)
+    except hou.OperationFailed:
+        return None
+
 # Transform情報を計算する関数（親ノードの座標を合成）
 def calculate_absolute_transform(node, parent_transform):
     translate = get_parm_tuple(node, "t")
@@ -105,13 +100,6 @@ def calculate_absolute_transform(node, parent_transform):
         "Scale": absolute_scale
     }
 
-# パラメータ値を取得する関数
-def get_parm_tuple(node, parm_name):
-    try:
-        return node.evalParmTuple(parm_name)
-    except hou.OperationFailed:
-        return None
-
 # 親ノードを再帰的にたどり、最終的な絶対変換を計算する関数
 def get_absolute_transform_recursive(node, parent_transform):
     transform = calculate_absolute_transform(node, parent_transform)
@@ -120,7 +108,8 @@ def get_absolute_transform_recursive(node, parent_transform):
         return get_absolute_transform_recursive(parent, transform)
     else:
         return transform
-        
+
+# 送信データサイズが大きすぎるときに分割して送信する関数
 def send_data_in_chunks(compressed_data):
     """データが API の限界を超える場合、分割して送信"""
     total_size = len(compressed_data)
@@ -207,8 +196,7 @@ def send_terminal_node_geometry():
         # 分割送信
         send_data_in_chunks(compressed_data)
 
-
-# 通信の開始と停止
+# 通信の開始
 def start_sending():
     global is_running
     if is_running:
@@ -218,6 +206,7 @@ def start_sending():
         is_running = True
     print("通信スレッドを開始しました。")
 
+# 通信の停止
 def stop_sending():
     global is_running
     if not is_running:
@@ -254,61 +243,152 @@ def stop_periodic_sending():
     periodic_timer.stop()
     print("定期送信停止を要求しました。")
 
-# ダイアログの作成
+################################
+# テキストメッセージ送信関数
+def send_message(message):
+    message = message.text()
+    if message:
+        try:
+            sock.sendto(message.encode('utf-8'), serv_address)
+            print(f"送信しました: {message}")
+        except Exception as e:
+            print(f"送信エラー: {e}")
+    else:
+        print("メッセージが空です。")
+
+################################
+
+
+################################
+
+# --- ダイアログ設定 ---
 dialog = QtWidgets.QWidget()
-dialog.setWindowTitle("レベルエディタ(仮)")
-dialog.setGeometry(100, 100, 500, 300)
+dialog.setWindowTitle("CitrusJunosEditor")
+dialog.resize(500, 400)  # 少し余裕を持たせる
 dialog.setParent(hou.qt.mainWindow(), QtCore.Qt.Window)
 
-# レイアウト
-v_layout = QtWidgets.QVBoxLayout()
+# --- メインレイアウト ---
+main_layout = QtWidgets.QVBoxLayout()
+main_layout.setContentsMargins(12, 12, 12, 12)
+main_layout.setSpacing(10)
 
-# テキストエディタ
-text_editor = QtWidgets.QLineEdit()
+# --- タブウィジェット ---
+tab_widget = QtWidgets.QTabWidget()
 
-# ボタン作成
-send_button = QtWidgets.QPushButton("テキストを送信")
-send_button.clicked.connect(partial(send_message, text_editor))
+# ========== MeshSync タブ ==========
+meshsync_tab = QtWidgets.QWidget()
+meshsync_layout = QtWidgets.QVBoxLayout()
+meshsync_layout.setContentsMargins(10, 10, 10, 10)
+meshsync_layout.setSpacing(8)
+meshsync_tab.setLayout(meshsync_layout)
 
-# チェックボックスの追加
+# --- チェックボックス ---
 leoutput_checkbox = QtWidgets.QCheckBox("LEOutputのみ送信")
 leoutput_checkbox.stateChanged.connect(toggle_send_only_leoutput)
 
+# --- 通信ボタン（横並び） ---
+comm_button_layout = QtWidgets.QHBoxLayout()
+start_button = QtWidgets.QPushButton("通信開始")
+stop_button = QtWidgets.QPushButton("通信停止")
+start_button.clicked.connect(start_sending)
+stop_button.clicked.connect(stop_sending)
+comm_button_layout.addWidget(start_button)
+comm_button_layout.addWidget(stop_button)
+
+# --- 終端ノード送信 ---
 sendTerminalData_button = QtWidgets.QPushButton("終端ノードデータを送信")
 sendTerminalData_button.clicked.connect(send_terminal_node_geometry)
 
-start_button = QtWidgets.QPushButton("通信開始")
-start_button.clicked.connect(start_sending)
-
-stop_button = QtWidgets.QPushButton("通信停止")
-stop_button.clicked.connect(stop_sending)
-
-# 定期送信関連
+# --- 定期送信（横並び） ---
+periodic_layout = QtWidgets.QHBoxLayout()
 periodic_interval_input = QtWidgets.QLineEdit()
 periodic_interval_input.setPlaceholderText("送信間隔（秒）")
+periodic_interval_input.setFixedWidth(100)
 
 start_periodic_button = QtWidgets.QPushButton("定期送信開始")
 start_periodic_button.clicked.connect(start_periodic_sending)
-
 stop_periodic_button = QtWidgets.QPushButton("定期送信停止")
 stop_periodic_button.clicked.connect(stop_periodic_sending)
 
-# レイアウトにウィジェットを追加
-v_layout.addWidget(text_editor)
-v_layout.addWidget(send_button)
-v_layout.addWidget(leoutput_checkbox)
-v_layout.addWidget(sendTerminalData_button)
-v_layout.addWidget(start_button)
-v_layout.addWidget(stop_button)
+periodic_layout.addWidget(periodic_interval_input)
+periodic_layout.addWidget(start_periodic_button)
+periodic_layout.addWidget(stop_periodic_button)
 
-# 定期送信関連のウィジェット追加
-v_layout.addWidget(periodic_interval_input)
-v_layout.addWidget(start_periodic_button)
-v_layout.addWidget(stop_periodic_button)
+# --- MeshSyncレイアウトに追加 ---
+meshsync_layout.addWidget(leoutput_checkbox)
+meshsync_layout.addLayout(comm_button_layout)
+meshsync_layout.addWidget(sendTerminalData_button)
+meshsync_layout.addLayout(periodic_layout)
+meshsync_layout.addStretch()
 
-dialog.setLayout(v_layout)
+
+# ========== Test タブ ==========
+test_tab = QtWidgets.QWidget()
+test_layout = QtWidgets.QVBoxLayout()
+test_layout.setContentsMargins(10, 10, 10, 10)
+test_layout.setSpacing(10)
+test_tab.setLayout(test_layout)
+
+# --- テキスト入力と送信（横並び） ---
+text_input_layout = QtWidgets.QHBoxLayout()
+test_texteditor = QtWidgets.QLineEdit()
+test_sendbutton = QtWidgets.QPushButton("テキストを送信")
+test_sendbutton.clicked.connect(partial(send_message, test_texteditor))
+text_input_layout.addWidget(test_texteditor)
+text_input_layout.addWidget(test_sendbutton)
+
+# --- チェックボックス ---
+checkbox = QtWidgets.QCheckBox("同意します")
+
+# --- ラジオボタン ---
+radio_group_box = QtWidgets.QGroupBox("オプション選択")
+radio_layout = QtWidgets.QVBoxLayout()
+for text in ["オプション A", "オプション B", "オプション C"]:
+    btn = QtWidgets.QRadioButton(text)
+    radio_layout.addWidget(btn)
+radio_layout.itemAt(0).widget().setChecked(True)
+radio_group_box.setLayout(radio_layout)
+
+# --- スライダーとプログレスバー ---
+slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+slider.setRange(0, 100)
+progress = QtWidgets.QProgressBar()
+progress.setRange(0, 100)
+slider.valueChanged.connect(progress.setValue)
+
+# --- コンボボックス ---
+combo_row = QtWidgets.QHBoxLayout()
+combo_label = QtWidgets.QLabel("選択してください:")
+combo_box = QtWidgets.QComboBox()
+combo_box.addItems(["選択肢 1", "選択肢 2", "選択肢 3"])
+combo_row.addWidget(combo_label)
+combo_row.addWidget(combo_box)
+
+# --- Testタブに追加 ---
+test_layout.addLayout(text_input_layout)
+test_layout.addWidget(checkbox)
+test_layout.addWidget(radio_group_box)
+test_layout.addWidget(slider)
+test_layout.addWidget(progress)
+test_layout.addLayout(combo_row)
+test_layout.addStretch()
+
+
+# ========== None タブ ==========
+none_tab = QtWidgets.QWidget()
+none_layout = QtWidgets.QVBoxLayout()
+none_tab.setLayout(none_layout)
+
+
+# --- タブ追加 ---
+tab_widget.addTab(meshsync_tab, "MeshSync")
+tab_widget.addTab(test_tab, "Test")
+tab_widget.addTab(none_tab, "None")
+
+main_layout.addWidget(tab_widget)
+dialog.setLayout(main_layout)
 dialog.show()
 
-# 定期送信タイマー
+# --- 定期送信タイマー ---
 periodic_timer = QtCore.QTimer()
 periodic_timer.timeout.connect(send_terminal_node_geometry)
