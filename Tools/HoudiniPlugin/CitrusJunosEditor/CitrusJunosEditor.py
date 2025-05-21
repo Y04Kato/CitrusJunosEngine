@@ -3,6 +3,8 @@ from functools import partial
 import zlib
 import socket
 import threading
+import json
+import os
 import hou
 
 # 送信先のIPアドレスとポート番号
@@ -196,6 +198,76 @@ def send_terminal_node_geometry():
         # 分割送信
         send_data_in_chunks(compressed_data)
 
+# ジオメトリデータをJSONとして保存
+def save_terminal_node_geometry_to_json():
+    all_nodes = hou.node("/obj").allSubChildren()
+    data_list = []
+
+    for node in all_nodes:
+        if not isinstance(node, hou.SopNode):
+            continue
+        if not is_terminal_node(node):
+            continue
+        if send_only_leoutput and node.name() != "LEOutput":
+            continue
+
+        try:
+            geo = node.geometry()
+        except (hou.GeometryPermissionError, AttributeError):
+            continue
+
+        vertices, normals, polygons = get_geometry_info(node)
+        if not vertices:
+            continue
+
+        transform_info = get_absolute_transform_recursive(node, {
+            "Translate": (0, 0, 0),
+            "Rotate": (0, 0, 0),
+            "Scale": (1, 1, 1)
+        })
+
+        transformed_vertices = [
+            (
+                v[0] * transform_info["Scale"][0] + transform_info["Translate"][0],
+                v[1] * transform_info["Scale"][1] + transform_info["Translate"][1],
+                v[2] * transform_info["Scale"][2] + transform_info["Translate"][2],
+            )
+            for v in vertices
+        ]
+
+        data = {
+            "name": node.path(),
+            "transform": {
+                "translate": transform_info["Translate"],
+                "rotate": transform_info["Rotate"],
+                "scale": transform_info["Scale"]
+            },
+            "vertices": transformed_vertices,
+            "normals": normals,
+            "polygons": polygons
+        }
+
+        data_list.append(data)
+
+    if not data_list:
+        print("保存対象のジオメトリが見つかりませんでした。")
+        return
+
+    file_path = QtWidgets.QFileDialog.getSaveFileName(
+        dialog, "JSONファイルとして保存", "", "JSON Files (*.json)"
+    )[0]
+
+    if not file_path:
+        print("保存がキャンセルされました。")
+        return
+
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(data_list, f, ensure_ascii=False, indent=2)
+        print(f"ジオメトリデータを保存しました: {file_path}")
+    except Exception as e:
+        print(f"保存中にエラーが発生しました: {e}")
+
 # 通信の開始
 def start_sending():
     global is_running
@@ -264,7 +336,7 @@ def send_message(message):
 # --- ダイアログ設定 ---
 dialog = QtWidgets.QWidget()
 dialog.setWindowTitle("CitrusJunosEditor")
-dialog.resize(500, 400)  # 少し余裕を持たせる
+dialog.resize(500, 400)
 dialog.setParent(hou.qt.mainWindow(), QtCore.Qt.Window)
 
 # --- メインレイアウト ---
@@ -299,6 +371,9 @@ comm_button_layout.addWidget(stop_button)
 sendTerminalData_button = QtWidgets.QPushButton("終端ノードデータを送信")
 sendTerminalData_button.clicked.connect(send_terminal_node_geometry)
 
+save_json_button = QtWidgets.QPushButton("終端ノードデータをJSON保存")
+save_json_button.clicked.connect(save_terminal_node_geometry_to_json)
+
 # --- 定期送信（横並び） ---
 periodic_layout = QtWidgets.QHBoxLayout()
 periodic_interval_input = QtWidgets.QLineEdit()
@@ -318,6 +393,7 @@ periodic_layout.addWidget(stop_periodic_button)
 meshsync_layout.addWidget(leoutput_checkbox)
 meshsync_layout.addLayout(comm_button_layout)
 meshsync_layout.addWidget(sendTerminalData_button)
+meshsync_layout.addWidget(save_json_button)
 meshsync_layout.addLayout(periodic_layout)
 meshsync_layout.addStretch()
 
@@ -338,7 +414,7 @@ text_input_layout.addWidget(test_texteditor)
 text_input_layout.addWidget(test_sendbutton)
 
 # --- チェックボックス ---
-checkbox = QtWidgets.QCheckBox("同意します")
+checkbox = QtWidgets.QCheckBox("チェックボックス")
 
 # --- ラジオボタン ---
 radio_group_box = QtWidgets.QGroupBox("オプション選択")
