@@ -315,6 +315,105 @@ def stop_periodic_sending():
     periodic_timer.stop()
     print("定期送信停止を要求しました。")
 
+# 単一モデルとしてOBJ出力する
+def export_all_terminal_geometry_as_obj():
+    def is_terminal_node(node):
+        return not node.outputs()
+
+    def get_geometry_info(node):
+        geo = node.geometry()
+        vertices = [point.position() for point in geo.points()]
+        polygons = []
+
+        for prim in geo.prims():
+            if prim.type() == hou.primType.Polygon:
+                polygons.append([v.point().number() for v in prim.vertices()])
+
+        return vertices, polygons
+
+    def get_absolute_transform_recursive(node, acc=None):
+        if acc is None:
+            acc = {
+                "Translate": (0, 0, 0),
+                "Rotate": (0, 0, 0),
+                "Scale": (1, 1, 1)
+            }
+
+        if isinstance(node, hou.SopNode):
+            node = node.parent()
+
+        if node.path() == "/obj" or node.parent() is None:
+            return acc
+
+        t = node.parmTuple("t").eval() if node.parmTuple("t") else (0, 0, 0)
+        s = node.parmTuple("s").eval() if node.parmTuple("s") else (1, 1, 1)
+
+        acc["Translate"] = tuple(acc["Translate"][i] + t[i] for i in range(3))
+        acc["Scale"] = tuple(acc["Scale"][i] * s[i] for i in range(3))
+
+        return get_absolute_transform_recursive(node.parent(), acc)
+
+    send_only_leoutput = True
+
+    all_nodes = hou.node("/obj").allSubChildren()
+    all_vertices = []
+    all_faces = []
+    vertex_offset = 0
+
+    for node in all_nodes:
+        if not isinstance(node, hou.SopNode):
+            continue
+        if not is_terminal_node(node):
+            continue
+        if send_only_leoutput and node.name() != "LEOutput":
+            continue
+
+        try:
+            vertices, polygons = get_geometry_info(node)
+            if not vertices:
+                continue
+
+            transform = get_absolute_transform_recursive(node)
+
+            transformed_vertices = [
+                (
+                    v[0] * transform["Scale"][0] + transform["Translate"][0],
+                    v[1] * transform["Scale"][1] + transform["Translate"][1],
+                    v[2] * transform["Scale"][2] + transform["Translate"][2]
+                )
+                for v in vertices
+            ]
+
+            all_vertices.extend(transformed_vertices)
+
+            for face in polygons:
+                corrected_face = [idx + 1 + vertex_offset for idx in face]
+                all_faces.append(corrected_face)
+
+            vertex_offset += len(vertices)
+
+        except Exception as e:
+            print(f"[エラー] ノード {node.path()} の処理中にエラー発生: {e}")
+            import traceback
+            traceback.print_exc()
+
+    if not all_vertices:
+        print("エクスポート可能なジオメトリが見つかりませんでした。")
+        return
+
+    save_path, _ = QtWidgets.QFileDialog.getSaveFileName(None, "OBJとして保存", "", "Wavefront OBJ (*.obj)")
+    if not save_path:
+        return
+
+    with open(save_path, "w", encoding="utf-8") as f:
+        for v in all_vertices:
+            f.write(f"v {v[0]:.6f} {v[1]:.6f} {v[2]:.6f}\n")
+        for face in all_faces:
+            f.write("f " + " ".join(str(idx) for idx in face) + "\n")
+
+    print(f"エクスポート完了: {save_path}")
+
+
 ################################
 # テキストメッセージ送信関数
 def send_message(message):
@@ -371,8 +470,13 @@ comm_button_layout.addWidget(stop_button)
 sendTerminalData_button = QtWidgets.QPushButton("終端ノードデータを送信")
 sendTerminalData_button.clicked.connect(send_terminal_node_geometry)
 
+# --- JSON出力 ---
 save_json_button = QtWidgets.QPushButton("終端ノードデータをJSON保存")
 save_json_button.clicked.connect(save_terminal_node_geometry_to_json)
+
+# --- OBJエクスポート ---
+export_obj_button = QtWidgets.QPushButton(".objとしてエクスポート（単一モデル化）")
+export_obj_button.clicked.connect(export_all_terminal_geometry_as_obj)
 
 # --- 定期送信（横並び） ---
 periodic_layout = QtWidgets.QHBoxLayout()
@@ -394,6 +498,7 @@ meshsync_layout.addWidget(leoutput_checkbox)
 meshsync_layout.addLayout(comm_button_layout)
 meshsync_layout.addWidget(sendTerminalData_button)
 meshsync_layout.addWidget(save_json_button)
+meshsync_layout.addWidget(export_obj_button)
 meshsync_layout.addLayout(periodic_layout)
 meshsync_layout.addStretch()
 
