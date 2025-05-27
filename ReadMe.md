@@ -12,4 +12,4 @@
 * [コード(受信)](Engine/base/components/utilities/dataReceipt/DataReceipt.cpp)
 * [コード(解析&描画)](Engine/base/components/3d/Receipt3D.cpp)
 
-* [コード(Houdini側ツール)](Tools/HoudiniPlugin/LevelEditorTool/__shelf_tool_LevelEditor.py)
+* [コード(Houdini側ツール)](Tools/HoudiniPlugin/CitrusJunosEditor/CitrusJunosEditor.py)
