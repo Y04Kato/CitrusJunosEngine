@@ -169,7 +169,7 @@ void DirectXCommon::CreateSwapChain() {
 	assert(SUCCEEDED(hr_));
 
 	//RTV用ディスクリプタヒープの生成
-	rtvDescriptorHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 3, false);
+	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 3, false);
 
 	//SwapChainからResourceを引っ張ってくる
 	swapChainResources_[0] = { nullptr };
@@ -182,10 +182,10 @@ void DirectXCommon::CreateSwapChain() {
 	assert(SUCCEEDED(hr_));
 
 	//SRV用ディスクリプタヒープの生成
-	srvDescriptorHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 256, true);
+	srvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 256, true);
 }
 
-Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(Microsoft::WRL::ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
+Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
 	//ディスクリプタヒープの生成
 	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> descriptorHeap = nullptr;
 	D3D12_DESCRIPTOR_HEAP_DESC descriptionHeapDesc{};
@@ -375,7 +375,7 @@ Microsoft::WRL::ComPtr <ID3D12Resource> DirectXCommon::CreateDepthStenciltexture
 
 void DirectXCommon::CreateDepthStensil() {
 	depthStencilResource_ = CreateDepthStenciltextureResource(device_, WinApp::GetInstance()->GetClientWidth(), WinApp::GetInstance()->GetClientHeight());
-	dsvDescriptorHeap_ = CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvdesc{};
 	dsvdesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format、基本的にresourceに合わせる

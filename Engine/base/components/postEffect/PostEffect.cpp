@@ -201,7 +201,7 @@ void PostEffect::CreateDepth(){
 	//DSVDescriptorHeap
 	depthStencilResource = dxCommon_->CreateDepthStenciltextureResource(dxCommon_->GetDevice(), WinApp::GetInstance()->GetClientWidth(), WinApp::GetInstance()->GetClientHeight());
 	//DSV用のヒープでディスクリプタの数は1　DSVはShader内で触るものではないのでShaderVisibleはfalse
-	dsvDescriptorHeap = dxCommon_->CreateDescriptorHeap(dxCommon_->GetDevice(),D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+	dsvDescriptorHeap = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 	//DSVの設定
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format 基本的にはResourceに合わせる
