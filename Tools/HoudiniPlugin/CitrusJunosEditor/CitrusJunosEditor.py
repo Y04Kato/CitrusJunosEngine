@@ -413,6 +413,241 @@ def export_all_terminal_geometry_as_obj():
 
     print(f"エクスポート完了: {save_path}")
 
+################################
+
+# パラメータを抜粋して管理する
+class ParameterSyncTool(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super(ParameterSyncTool, self).__init__(parent)
+        self.synced_parms = {}  # {node_path: {parm_name: {...}}}
+        self.node_blocks = {}   # node_path -> block_widget
+
+        layout = QtWidgets.QVBoxLayout(self)
+
+        add_btn = QtWidgets.QPushButton("選択ノードを追加")
+        add_btn.clicked.connect(self.add_selected_node)
+        layout.addWidget(add_btn)
+
+        self.scroll = QtWidgets.QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        self.scroll_widget = QtWidgets.QWidget()
+        self.scroll_layout = QtWidgets.QVBoxLayout(self.scroll_widget)
+        self.scroll_layout.setSpacing(8)
+        self.scroll_layout.addStretch(1)
+        self.scroll.setWidget(self.scroll_widget)
+        layout.addWidget(self.scroll)
+
+    def add_selected_node(self):
+        for node in hou.selectedNodes():
+            if node.path() not in self.synced_parms:
+                self.add_node_block(node)
+
+    def add_node_block(self, node):
+        node_path = node.path()
+        self.synced_parms[node_path] = {}
+        self.node_blocks[node_path] = {}
+
+        outer_widget = QtWidgets.QWidget()
+        outer_layout = QtWidgets.QVBoxLayout(outer_widget)
+        outer_layout.setContentsMargins(4, 4, 4, 4)
+
+        header_layout = QtWidgets.QHBoxLayout()
+        toggle_btn = QtWidgets.QToolButton()
+        toggle_btn.setText("▼")
+        toggle_btn.setCheckable(True)
+        toggle_btn.setChecked(True)
+
+        label = QtWidgets.QLabel(f"{node.name()}  ({node_path})")
+        label.setStyleSheet("font-weight: bold;")
+        remove_btn = QtWidgets.QPushButton("同期解除")
+        remove_btn.setFixedWidth(90)
+        show_all_btn = QtWidgets.QPushButton("全パラメータ表示")
+        show_all_btn.setFixedWidth(120)
+
+        header_layout.addWidget(toggle_btn)
+        header_layout.addWidget(label)
+        header_layout.addStretch()
+        header_layout.addWidget(show_all_btn)
+        header_layout.addWidget(remove_btn)
+
+        outer_layout.addLayout(header_layout)
+
+        content_widget = QtWidgets.QWidget()
+        content_layout = QtWidgets.QVBoxLayout(content_widget)
+        content_layout.setContentsMargins(10, 4, 4, 4)
+        content_layout.setSpacing(6)
+        outer_layout.addWidget(content_widget)
+
+        toggle_btn.toggled.connect(lambda checked: content_widget.setVisible(checked))
+        toggle_btn.toggled.connect(lambda checked: toggle_btn.setText("▼" if checked else "▶"))
+
+        selected_label = QtWidgets.QLabel("追加済みパラメータ:")
+        selected_layout = QtWidgets.QVBoxLayout()
+        selected_layout.setSpacing(4)
+        selected_widget = QtWidgets.QWidget()
+        selected_widget.setLayout(selected_layout)
+        content_layout.addWidget(selected_label)
+        content_layout.addWidget(selected_widget)
+
+        def remove_node_block():
+            for data in self.synced_parms[node_path].values():
+                data['timer'].stop()
+                data['container'].deleteLater()
+            del self.synced_parms[node_path]
+            self.scroll_layout.removeWidget(outer_widget)
+            outer_widget.deleteLater()
+
+        def show_all_parms_window():
+            dialog = QtWidgets.QDialog(self)
+            dialog.setWindowTitle(f"{node.name()} の全パラメータ")
+            dialog.setMinimumWidth(400)
+            vbox = QtWidgets.QVBoxLayout(dialog)
+
+            filter_input = QtWidgets.QLineEdit()
+            filter_input.setPlaceholderText("パラメータ名やラベルでフィルタ")
+            vbox.addWidget(filter_input)
+
+            scroll = QtWidgets.QScrollArea()
+            scroll.setWidgetResizable(True)
+            inner_widget = QtWidgets.QWidget()
+            inner_layout = QtWidgets.QVBoxLayout(inner_widget)
+            scroll.setWidget(inner_widget)
+            vbox.addWidget(scroll)
+
+            def refresh():
+                for i in reversed(range(inner_layout.count())):
+                    w = inner_layout.itemAt(i).widget()
+                    if w: w.setParent(None)
+
+                keyword = filter_input.text().lower()
+                for parm in node.parms():
+                    name = parm.name()
+                    label = parm.parmTemplate().label()
+                    if keyword and keyword not in name.lower() and keyword not in label.lower():
+                        continue
+
+                    row = QtWidgets.QHBoxLayout()
+                    row.setSpacing(5)
+                    row.addWidget(QtWidgets.QLabel(name))
+                    add_btn = QtWidgets.QPushButton("追加")
+                    add_btn.setFixedWidth(60)
+                    add_btn.clicked.connect(partial(self.add_synced_parm, node, name, selected_layout))
+                    row.addWidget(add_btn)
+
+                    container = QtWidgets.QWidget()
+                    container.setLayout(row)
+                    inner_layout.addWidget(container)
+
+            filter_input.textChanged.connect(refresh)
+            refresh()
+
+            dialog.exec_()
+
+        remove_btn.clicked.connect(remove_node_block)
+        show_all_btn.clicked.connect(show_all_parms_window)
+
+        self.scroll_layout.insertWidget(self.scroll_layout.count() - 1, outer_widget)
+        self.node_blocks[node_path]['selected_layout'] = selected_layout
+
+    def add_synced_parm(self, node, parm_name, parent_layout):
+        node_path = node.path()
+        if parm_name in self.synced_parms[node_path]:
+            return
+
+        parm = node.parm(parm_name)
+        if not parm:
+            return
+
+        ptemplate = parm.parmTemplate()
+        ptype = ptemplate.type()
+
+        row = QtWidgets.QHBoxLayout()
+        row.setSpacing(5)
+        row.setContentsMargins(2, 2, 2, 2)
+        label = QtWidgets.QLabel(parm_name)
+        label.setFixedWidth(100)
+        remove_btn = QtWidgets.QPushButton("✕")
+        remove_btn.setFixedWidth(40)
+
+        row.addWidget(label)
+
+        widget = None
+        timer = QtCore.QTimer(self)
+
+        if ptype in [hou.parmTemplateType.Int, hou.parmTemplateType.Float]:
+            widget = QtWidgets.QLineEdit(str(parm.eval()))
+            def update_ui(): 
+                if not widget.hasFocus():
+                    widget.setText(str(parm.eval()))
+            def update_parm():
+                text = widget.text().strip()
+                if text != "":
+                    try: parm.set(float(text))
+                    except: pass
+            widget.editingFinished.connect(update_parm)
+            timer.timeout.connect(update_ui)
+
+        elif ptype == hou.parmTemplateType.Toggle:
+            widget = QtWidgets.QCheckBox()
+            widget.setChecked(bool(parm.eval()))
+            def update_ui(): widget.setChecked(bool(parm.eval()))
+            def update_parm(): parm.set(int(widget.isChecked()))
+            widget.stateChanged.connect(update_parm)
+            timer.timeout.connect(update_ui)
+
+        elif ptype == hou.parmTemplateType.Menu:
+            widget = QtWidgets.QComboBox()
+            items = ptemplate.menuItems()
+            labels = ptemplate.menuLabels()
+            widget.addItems(labels or items)
+            def update_ui():
+                val = parm.evalAsString()
+                if val in items:
+                    index = items.index(val)
+                    if widget.currentIndex() != index:
+                        widget.setCurrentIndex(index)
+            def update_parm(index): parm.set(items[index])
+            widget.currentIndexChanged.connect(update_parm)
+            timer.timeout.connect(update_ui)
+
+        elif ptype == hou.parmTemplateType.String:
+            widget = QtWidgets.QLineEdit(str(parm.evalAsString()))
+            def update_ui(): 
+                if not widget.hasFocus():
+                    widget.setText(str(parm.evalAsString()))
+            def update_parm(): parm.set(widget.text())
+            widget.editingFinished.connect(update_parm)
+            timer.timeout.connect(update_ui)
+
+        elif ptype == hou.parmTemplateType.Button:
+            widget = QtWidgets.QPushButton("実行")
+            widget.clicked.connect(lambda: parm.pressButton())
+
+        if widget:
+            widget.setFixedWidth(120)
+            row.addWidget(widget)
+            row.addWidget(remove_btn)
+            container = QtWidgets.QWidget()
+            container.setLayout(row)
+            parent_layout.addWidget(container)
+
+            def remove():
+                timer.stop()
+                parent_layout.removeWidget(container)
+                container.deleteLater()
+                del self.synced_parms[node_path][parm_name]
+
+            remove_btn.clicked.connect(remove)
+
+            if ptype != hou.parmTemplateType.Button:
+                timer.setInterval(500)
+                timer.start()
+
+            self.synced_parms[node_path][parm_name] = {
+                'widget': widget,
+                'timer': timer,
+                'container': container
+            }
 
 ################################
 # テキストメッセージ送信関数
@@ -435,7 +670,7 @@ def send_message(message):
 # --- ダイアログ設定 ---
 dialog = QtWidgets.QWidget()
 dialog.setWindowTitle("CitrusJunosEditor")
-dialog.resize(500, 400)
+dialog.resize(700, 400)
 dialog.setParent(hou.qt.mainWindow(), QtCore.Qt.Window)
 
 # --- メインレイアウト ---
@@ -502,11 +737,13 @@ meshsync_layout.addWidget(export_obj_button)
 meshsync_layout.addLayout(periodic_layout)
 meshsync_layout.addStretch()
 
+# ========== ParameterSync タブ ==========
+sync_tool_tab = ParameterSyncTool()
 
 # ========== Test タブ ==========
 test_tab = QtWidgets.QWidget()
 test_layout = QtWidgets.QVBoxLayout()
-test_layout.setContentsMargins(10, 10, 10, 10)
+test_layout.setContentsMargins(12, 12, 12, 12)
 test_layout.setSpacing(10)
 test_tab.setLayout(test_layout)
 
@@ -563,6 +800,7 @@ none_tab.setLayout(none_layout)
 
 # --- タブ追加 ---
 tab_widget.addTab(meshsync_tab, "MeshSync")
+tab_widget.addTab(sync_tool_tab, "SyncTool")
 tab_widget.addTab(test_tab, "Test")
 tab_widget.addTab(none_tab, "None")
 
