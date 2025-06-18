@@ -518,17 +518,30 @@ class ParameterSyncTool(QtWidgets.QWidget):
                 for i in reversed(range(inner_layout.count())):
                     w = inner_layout.itemAt(i).widget()
                     if w: w.setParent(None)
-
+                    
                 keyword = filter_input.text().lower()
+
+                already_seen = set()
+                
                 for parm in node.parms():
+                    ptuple = parm.tuple()
+                    if not ptuple:
+                        continue
+
+                    if parm != ptuple[0]:
+                        continue  # tupleの代表（txなど）以外はスキップ
+
                     name = parm.name()
                     label = parm.parmTemplate().label()
-                    if keyword and keyword not in name.lower() and keyword not in label.lower():
+                    
+                    if name in already_seen:
                         continue
+                    already_seen.add(name)
 
                     row = QtWidgets.QHBoxLayout()
                     row.setSpacing(5)
-                    row.addWidget(QtWidgets.QLabel(name))
+                    display_name = label or name
+                    row.addWidget(QtWidgets.QLabel(display_name))
                     add_btn = QtWidgets.QPushButton("追加")
                     add_btn.setFixedWidth(60)
                     add_btn.clicked.connect(partial(self.add_synced_parm, node, name, selected_layout))
@@ -560,95 +573,183 @@ class ParameterSyncTool(QtWidgets.QWidget):
 
         ptemplate = parm.parmTemplate()
         ptype = ptemplate.type()
+        widgets = []
+        timer = QtCore.QTimer(self)
 
         row = QtWidgets.QHBoxLayout()
         row.setSpacing(5)
         row.setContentsMargins(2, 2, 2, 2)
-        label = QtWidgets.QLabel(parm_name)
+
+        display_label = ptemplate.label() or parm_name
+        label = QtWidgets.QLabel(display_label)
         label.setFixedWidth(100)
         remove_btn = QtWidgets.QPushButton("✕")
         remove_btn.setFixedWidth(40)
 
         row.addWidget(label)
 
-        widget = None
-        timer = QtCore.QTimer(self)
+        def safe_eval(p):
+            try:
+                return p.eval()
+            except:
+                return None
 
-        if ptype in [hou.parmTemplateType.Int, hou.parmTemplateType.Float]:
-            widget = QtWidgets.QLineEdit(str(parm.eval()))
-            def update_ui(): 
-                if not widget.hasFocus():
-                    widget.setText(str(parm.eval()))
-            def update_parm():
-                text = widget.text().strip()
-                if text != "":
-                    try: parm.set(float(text))
-                    except: pass
-            widget.editingFinished.connect(update_parm)
-            timer.timeout.connect(update_ui)
+        def create_ui_widget():
+            if ptype == hou.parmTemplateType.Button:
+                btn = QtWidgets.QPushButton("実行")
+                btn.clicked.connect(lambda: parm.pressButton())
+                return [btn]
 
-        elif ptype == hou.parmTemplateType.Toggle:
-            widget = QtWidgets.QCheckBox()
-            widget.setChecked(bool(parm.eval()))
-            def update_ui(): widget.setChecked(bool(parm.eval()))
-            def update_parm(): parm.set(int(widget.isChecked()))
-            widget.stateChanged.connect(update_parm)
-            timer.timeout.connect(update_ui)
+            elif ptype == hou.parmTemplateType.Toggle:
+                cb = QtWidgets.QCheckBox()
+                cb.setChecked(bool(safe_eval(parm)))
+                def update_ui(): cb.setChecked(bool(safe_eval(parm)))
+                def update_parm(): parm.set(int(cb.isChecked()))
+                cb.stateChanged.connect(update_parm)
+                timer.timeout.connect(update_ui)
+                return [cb]
 
-        elif ptype == hou.parmTemplateType.Menu:
-            widget = QtWidgets.QComboBox()
-            items = ptemplate.menuItems()
-            labels = ptemplate.menuLabels()
-            widget.addItems(labels or items)
-            def update_ui():
-                val = parm.evalAsString()
-                if val in items:
-                    index = items.index(val)
-                    if widget.currentIndex() != index:
-                        widget.setCurrentIndex(index)
-            def update_parm(index): parm.set(items[index])
-            widget.currentIndexChanged.connect(update_parm)
-            timer.timeout.connect(update_ui)
+            elif ptype == hou.parmTemplateType.Menu:
+                combo = QtWidgets.QComboBox()
+                items = ptemplate.menuItems()
+                labels = ptemplate.menuLabels()
+                combo.addItems(labels or items)
+                def update_ui():
+                    val = parm.evalAsString()
+                    if val in items:
+                        index = items.index(val)
+                        if combo.currentIndex() != index:
+                            combo.setCurrentIndex(index)
+                def update_parm(index): parm.set(items[index])
+                combo.currentIndexChanged.connect(update_parm)
+                timer.timeout.connect(update_ui)
+                return [combo]
 
-        elif ptype == hou.parmTemplateType.String:
-            widget = QtWidgets.QLineEdit(str(parm.evalAsString()))
-            def update_ui(): 
-                if not widget.hasFocus():
-                    widget.setText(str(parm.evalAsString()))
-            def update_parm(): parm.set(widget.text())
-            widget.editingFinished.connect(update_parm)
-            timer.timeout.connect(update_ui)
+            elif ptype in [hou.parmTemplateType.Int, hou.parmTemplateType.Float]:
+                    try:
+                        parms = parm.tuple()
+                    except Exception:
+                        parms = [parm]
+                
+                    widget_list = []
+                    for p in parms:
+                        if p is None:
+                            continue
 
-        elif ptype == hou.parmTemplateType.Button:
-            widget = QtWidgets.QPushButton("実行")
-            widget.clicked.connect(lambda: parm.pressButton())
+                        pt = p.parmTemplate()
+                        has_slider = pt.minIsStrict() or pt.maxIsStrict()  # スライダーっぽさの推定
 
-        if widget:
-            widget.setFixedWidth(120)
-            row.addWidget(widget)
-            row.addWidget(remove_btn)
-            container = QtWidgets.QWidget()
-            container.setLayout(row)
-            parent_layout.addWidget(container)
+                        edit = QtWidgets.QLineEdit(str(safe_eval(p) or 0))
+                        edit.setFixedWidth(150)
 
-            def remove():
-                timer.stop()
-                parent_layout.removeWidget(container)
-                container.deleteLater()
-                del self.synced_parms[node_path][parm_name]
+                        slider = None
+                        if has_slider:
+                            slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+                            slider.setFixedWidth(150)
+                            min_val = pt.minValue()
+                            max_val = pt.maxValue()
 
-            remove_btn.clicked.connect(remove)
+                            # 安全確認：最小と最大が等しい場合は範囲に幅を持たせる
+                            if min_val == max_val:
+                                min_val -= 1
+                                max_val += 1
 
-            if ptype != hou.parmTemplateType.Button:
-                timer.setInterval(500)
-                timer.start()
+                            # スライダーは整数範囲なので適当な倍率を掛ける（例: 100倍）
+                            slider.setRange(int(min_val * 100), int(max_val * 100))
 
-            self.synced_parms[node_path][parm_name] = {
-                'widget': widget,
-                'timer': timer,
-                'container': container
-            }
+                        def update_ui(e=edit, par=p, s=slider):
+                            if not e.hasFocus():
+                                val = safe_eval(par)
+                                if val is not None:
+                                    e.setText(str(val))
+                                    if s:
+                                        s.setValue(int(val * 100))
 
+                        def update_parm(e=edit, par=p, s=slider):
+                            try:
+                                val = float(e.text())
+                                if pt == hou.parmTemplateType.Int:
+                                            par.set(int(round(val)))
+                                else:
+                                    par.set(val)
+                                if s:
+                                    s.setValue(int(val * 100))
+                            except:
+                                pass
+
+                        def update_slider(val, par=p, e=edit):
+                            pt = par.parmTemplate().type()
+                            if pt == hou.parmTemplateType.Int:
+                                int_val = int(round(val / 100.0))
+                                par.set(int_val)
+                            else:
+                                par.set(val / 100.0)
+                            e.setText(str(par.eval()))
+
+                        edit.editingFinished.connect(update_parm)
+                        if slider:
+                            slider.valueChanged.connect(update_slider)
+
+                        timer.timeout.connect(update_ui)
+
+                        if slider:
+                            widget_list.append((edit, slider))
+                        else:
+                            widget_list.append((edit,))
+
+                    # 横並びウィジェット作成
+                    container = QtWidgets.QWidget()
+                    h_layout = QtWidgets.QHBoxLayout(container)
+                    h_layout.setSpacing(5)
+                    h_layout.setContentsMargins(0,0,0,0)
+                    for widgets in widget_list:
+                        for w in widgets:
+                            h_layout.addWidget(w)
+                    return [container]
+
+            elif ptype == hou.parmTemplateType.String:
+                le = QtWidgets.QLineEdit(str(parm.evalAsString()))
+                def update_ui():
+                    if not le.hasFocus():
+                        le.setText(str(parm.evalAsString()))
+                def update_parm():
+                    parm.set(le.text())
+                le.editingFinished.connect(update_parm)
+                timer.timeout.connect(update_ui)
+                return [le]
+
+            else:
+                # 未対応タイプは表示のみ
+                label = QtWidgets.QLabel("(未対応)")
+                return [label]
+
+        widgets_ui = create_ui_widget()
+        for w in widgets_ui:
+            row.addWidget(w)
+
+        row.addWidget(remove_btn)
+        container = QtWidgets.QWidget()
+        container.setLayout(row)
+        parent_layout.addWidget(container)
+
+        def remove():
+            timer.stop()
+            parent_layout.removeWidget(container)
+            container.deleteLater()
+            del self.synced_parms[node_path][parm_name]
+
+        remove_btn.clicked.connect(remove)
+
+        if ptype != hou.parmTemplateType.Button:
+            timer.setInterval(500)
+            timer.start()
+
+        self.synced_parms[node_path][parm_name] = {
+            'widget': widgets_ui,
+            'timer': timer,
+            'container': container
+        }
+    
 ################################
 # テキストメッセージ送信関数
 def send_message(message):
