@@ -576,6 +576,9 @@
     <ClCompile Include="base\components\3d\Receipt3D.cpp">
       <Filter>ソース ファイル\base\components\3d</Filter>
     </ClCompile>
+    <ClCompile Include="base\components\manager\SceneManager\Iscene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="project\gamedata\resources\shaders\Object3d.PS.hlsl">

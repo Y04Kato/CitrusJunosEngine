@@ -45,11 +45,13 @@ private:
 	DirectionalLights* directionalLight_ = nullptr;
 	PointLights* pointLight_ = nullptr;
 
+	DebugCamera* debugCamera_ = nullptr;
+
 	ImGuiManager* imGuiManager_ = nullptr;
 
-	std::unique_ptr<Iscene>scene_[SCENE_MAX];
-
 	PostEffect* postEffect_ = nullptr;
+
+	std::unique_ptr<Iscene>scene_[SCENE_MAX];
 
 	SceneNumber* sceneNumber_ = nullptr;
 };

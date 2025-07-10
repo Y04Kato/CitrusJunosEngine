@@ -30,15 +30,19 @@ void SceneManager::Initialize() {
 	//Input
 	input_ = Input::GetInstance();
 
+	//TextureManager
+	textureManager_ = TextureManager::GetInstance();
+	textureManager_->Initialize();
+
 	//Light
 	directionalLight_ = DirectionalLights::GetInstance();
 	directionalLight_->Initialize();
 	pointLight_ = PointLights::GetInstance();
 	pointLight_->Initialize();
 
-	//TextureManager
-	textureManager_ = TextureManager::GetInstance();
-	textureManager_->Initialize();
+	//DebugCamera
+	debugCamera_ = DebugCamera::GetInstance();
+	debugCamera_->initialize();
 
 	//ImGui
 	imGuiManager_ = ImGuiManager::GetInstance();
@@ -46,6 +50,11 @@ void SceneManager::Initialize() {
 
 	//CSV
 	GlobalVariables::GetInstance()->LoadFiles();
+
+	//PostEffect
+	postEffect_ = PostEffect::GetInstance();
+	postEffect_->Initialize();
+	postEffect_->ALLCreate();
 
 	//Scene
 	scene_[TITLE_SCENE] = std::make_unique<GameTitleScene>();
@@ -60,10 +69,6 @@ void SceneManager::Initialize() {
 	//タイトルシーンから開始
 	sceneNumber_ = SceneNumber::GetInstance();
 	sceneNumber_->Initialize(DEBUG_SCENE);
-
-	postEffect_ = PostEffect::GetInstance();
-	postEffect_->Initialize();
-	postEffect_->ALLCreate();
 }
 
 

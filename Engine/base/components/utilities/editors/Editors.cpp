@@ -16,13 +16,12 @@ Editors* Editors::GetInstance() {
 void Editors::Initialize() {
 	//とりあえず初期設定
 	decisionGroupName_ = (char*)"None";
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	globalVariables->AddItem("None", "ObjCount", objCount_);
-	ApplyGlobalVariables();
+	AddGroupName(decisionGroupName_);
 
-	for (int i = 0; i < objCountMax_; i++) {
-		objNameHolder_[i] = "obj" + std::to_string(i);
-	}
+	model_.reset(Model::CreateModel("project/gamedata/resources/block", "block.obj"));
+	model_->SetDirectionalLightFlag(true, 3);
+
+	SetModels(model_->GetModelData(), model_->GetModelData().textureIndex);
 }
 
 void Editors::SetModels(ModelData ObjModelData, uint32_t ObjTexture) {

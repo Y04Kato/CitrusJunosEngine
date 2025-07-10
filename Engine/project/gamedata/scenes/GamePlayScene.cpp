@@ -30,7 +30,3 @@ void GamePlayScene::DrawPostEffect() {
 void GamePlayScene::Finalize() {
 
 }
-
-void GamePlayScene::GameStartProcessing() {
-	
-}

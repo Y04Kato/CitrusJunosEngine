@@ -75,6 +75,7 @@ private:
 	Editors& operator=(const Editors& obj) = default;
 
 	//ステージエディター擬き、名前をobj0~始め、それを記録する
+	std::unique_ptr<Model> model_;
 	std::list<Obj> objects_;
 	ModelData ObjModelData_;
 	uint32_t ObjTexture_;

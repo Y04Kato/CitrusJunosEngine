@@ -50,4 +50,28 @@ public:
 	virtual void Finalize() = 0;
 
 	virtual ~Iscene() {};
+
+protected:
+	//Engine
+	CitrusJunosEngine* CJEngine_;
+
+	Input* input_;
+	Audio* audio_;
+	TextureManager* textureManager_;
+
+	//Lights
+	DirectionalLights* directionalLights_;
+	DirectionalLight directionalLight_;
+	PointLights* pointLights_;
+	PointLight pointLight_;
+
+	DebugCamera* debugCamera_;
+
+	//SceneNo管理
+	SceneNumber* sceneNumber_;
+
+	ViewProjection viewProjection_;
+
+	//Editor
+	Editors* editors_;
 };

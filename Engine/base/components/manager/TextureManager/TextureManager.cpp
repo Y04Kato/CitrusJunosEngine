@@ -15,8 +15,8 @@ void TextureManager::Initialize(){
 	descriptorSizeRTV = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	descriptorSizeSRV = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	textureIndex_ = SRVManager_->GetSRVValue();
-	white = Load("project/gamedata/resources/White2x2.png");
-	ddsSample = Load("project/gamedata/resources/rostock_laage_airport_4k.dds");
+	white = Load("project/gamedata/resources/default/White2x2.png");
+	ddsSample = Load("project/gamedata/resources/default/vz_empty_space_cubemap_ue.dds");
 }
 
 TextureManager* TextureManager::GetInstance(){

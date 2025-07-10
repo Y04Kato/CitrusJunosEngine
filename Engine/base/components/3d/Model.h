@@ -41,7 +41,7 @@ public:
 
 	void Finalize();
 
-	ModelData modelData_;
+	ModelData GetModelData() { return modelData_; }
 
 	/// <summary>
 	/// ライティングを行うかどうか＆ライティングの種類
@@ -78,6 +78,8 @@ private:
 	CitrusJunosEngine* CJEngine_;
 	TextureManager* textureManager_;
 	SRVManager* srvManager_;
+
+	ModelData modelData_;
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource_;

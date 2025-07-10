@@ -20,7 +20,7 @@ void PostEffect::Initialize() {
 
 	//一応初期設定でデータ割り当て
 	//Mask
-	maskTexture_ = textureManager_->Load("project/gamedata/resources/noise0.png");
+	maskTexture_ = textureManager_->Load("project/gamedata/resources/default/noise0.png");
 	thresholdResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice(), sizeof(MaskData));
 	thresholdResource_->Map(0, NULL, reinterpret_cast<void**>(&maskData_));
 

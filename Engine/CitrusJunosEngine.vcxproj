@@ -172,6 +172,7 @@
     <ClCompile Include="base\components\manager\ImGuiManager\ImGuiManager.cpp" />
     <ClCompile Include="base\components\manager\PSOManager\PSOManager.cpp" />
     <ClCompile Include="base\components\manager\RTVManager\RTVManager.cpp" />
+    <ClCompile Include="base\components\manager\SceneManager\Iscene.cpp" />
     <ClCompile Include="base\components\manager\SceneManager\SceneNumber.cpp" />
     <ClCompile Include="base\components\manager\SRVManager\SRVManager.cpp" />
     <ClCompile Include="base\components\manager\TextureManager\TextureManager.cpp" />
