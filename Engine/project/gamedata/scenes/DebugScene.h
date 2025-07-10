@@ -25,4 +25,6 @@ private:
 	//DataReceipt
 	DataReceipt datareceipt_;
 	std::unique_ptr<Receipt3D> receipt3D_;
+
+	float testData_ = 0.0f;
 };

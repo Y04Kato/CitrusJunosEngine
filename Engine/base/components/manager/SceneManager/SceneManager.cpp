@@ -69,6 +69,11 @@ void SceneManager::Initialize() {
 	//タイトルシーンから開始
 	sceneNumber_ = SceneNumber::GetInstance();
 	sceneNumber_->Initialize(DEBUG_SCENE);
+
+	//
+	globalVariableManager_ = globalVariableManager_->GetInstance();
+	globalVariableManager_->LoadAllSaveData();
+	globalVariableManager_->SetLoadAllData();
 }
 
 
@@ -83,6 +88,7 @@ void SceneManager::Update() {
 		imGuiManager_->Begin();
 		CJEngine_->Update();
 		GlobalVariables::GetInstance()->Update();
+		globalVariableManager_->Update();
 		directionalLight_->Update();
 		pointLight_->Update();
 		scene_[sceneNumber_->GetSceneNumber()]->Update();

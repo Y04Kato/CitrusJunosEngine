@@ -14,7 +14,7 @@
 #include "PointLight.h"
 #include "ImGuiManager.h"
 #include "postEffect/PostEffect.h"
-
+#include "globalVariablesManager/GlobalVariablesManager.h"
 #include "SceneNumber.h"
 
 //sceneInclude
@@ -54,4 +54,6 @@ private:
 	std::unique_ptr<Iscene>scene_[SCENE_MAX];
 
 	SceneNumber* sceneNumber_ = nullptr;
+
+	GlobalVariablesManager* globalVariableManager_ = nullptr;
 };

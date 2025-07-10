@@ -7,11 +7,16 @@
 
 #include "DebugScene.h"
 
+#include "GlobalVariablesGroup.h"
+
 void DebugScene::Initialize() {
 	Iscene::Initialize();
 	//DataReceipt
 	datareceipt_.Initialize(50001);
 	datareceipt_.start();
+
+	std::unique_ptr<GVariGroup>gvg = std::make_unique<GVariGroup>("DebugScene");
+	gvg->SetValue("Test", &testData_);
 }
 
 void DebugScene::Update() {

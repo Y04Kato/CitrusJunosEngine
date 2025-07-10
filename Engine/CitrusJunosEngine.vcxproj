@@ -169,6 +169,7 @@
     <ClCompile Include="base\components\3d\ViewProjection.cpp" />
     <ClCompile Include="base\components\3d\WorldTransform.cpp" />
     <ClCompile Include="base\components\audio\Audio.cpp" />
+    <ClCompile Include="base\components\manager\globalVariablesManager\GlobalVariablesManager.cpp" />
     <ClCompile Include="base\components\manager\ImGuiManager\ImGuiManager.cpp" />
     <ClCompile Include="base\components\manager\PSOManager\PSOManager.cpp" />
     <ClCompile Include="base\components\manager\RTVManager\RTVManager.cpp" />
@@ -202,6 +203,8 @@
     <ClCompile Include="base\components\utilities\directionalLight\DirectionalLight.cpp" />
     <ClCompile Include="base\components\utilities\editors\Editors.cpp" />
     <ClCompile Include="base\components\utilities\followCamera\FollowCamera.cpp" />
+    <ClCompile Include="base\components\utilities\globalVariables\GlobalVariablesGroup.cpp" />
+    <ClCompile Include="base\components\utilities\globalVariables\GlobalVariablesTree.cpp" />
     <ClCompile Include="base\components\utilities\levelDataLoader\LevelDataLoader.cpp" />
     <ClCompile Include="base\components\utilities\pointLight\PointLight.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
@@ -434,6 +437,7 @@
     <ClInclude Include="base\components\3d\ViewProjection.h" />
     <ClInclude Include="base\components\3d\WorldTransform.h" />
     <ClInclude Include="base\components\audio\Audio.h" />
+    <ClInclude Include="base\components\manager\globalVariablesManager\GlobalVariablesManager.h" />
     <ClInclude Include="base\components\manager\ImGuiManager\ImGuiManager.h" />
     <ClInclude Include="base\components\manager\PSOManager\PSOManager.h" />
     <ClInclude Include="base\components\manager\RTVManager\RTVManager.h" />
@@ -469,6 +473,9 @@
     <ClInclude Include="base\components\utilities\directionalLight\DirectionalLight.h" />
     <ClInclude Include="base\components\utilities\editors\Editors.h" />
     <ClInclude Include="base\components\utilities\followCamera\FollowCamera.h" />
+    <ClInclude Include="base\components\utilities\globalVariables\GlobalVariablesData.h" />
+    <ClInclude Include="base\components\utilities\globalVariables\GlobalVariablesGroup.h" />
+    <ClInclude Include="base\components\utilities\globalVariables\GlobalVariablesTree.h" />
     <ClInclude Include="base\components\utilities\levelDataLoader\LevelData.h" />
     <ClInclude Include="base\components\utilities\levelDataLoader\LevelDataLoader.h" />
     <ClInclude Include="base\components\utilities\pointLight\PointLight.h" />
