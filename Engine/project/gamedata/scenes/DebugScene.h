@@ -12,7 +12,7 @@
 
 #include "Receipt3D.h"
 
-#include "shapes/SphereLine.h"
+#include "LineShapes.h"
 
 class DebugScene :public Iscene {
 public:
@@ -64,6 +64,21 @@ private:
 
 	float testData_ = 0.0f;
 
-	SphereLine sphereLine_;
+	LineShapes lineShapes_;
 	StructSphere sphere_ = { {0.0f, 0.0f, 0.0f}, 10.0f };
+	StructPlane plane_ = { {0.0f,1.0f,0.0f},0.0f };
+	AABB aabb_ = {
+	{ -0.5f, -0.5f, -0.5f }, // min
+	{  0.5f,  0.5f,  0.5f }  // max
+	};
+	OBB obb_ = {
+	{0.0f, 0.0f, 0.0f},           // center
+	{ {1,0,0}, {0,1,0}, {0,0,1} }, // orientation: XYZ軸に沿う
+	{0.5f, 0.5f, 0.5f}             // size: 半長
+	};
+	StructCylinder cylinder_ = {
+		{0.0f, 0.5f, 0.0f},  // topCenter
+		{0.0f, -0.5f, 0.0f}, // bottomCenter
+		2.0f                  // radius
+	};
 };

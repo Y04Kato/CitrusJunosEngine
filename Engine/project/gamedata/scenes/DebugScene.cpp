@@ -73,7 +73,7 @@ void DebugScene::Initialize() {
 	datareceipt_.Initialize(50001);
 	datareceipt_.start();
 
-	sphereLine_.Initialize(16, 0.1f);
+	lineShapes_.Initialize(16, 0.1f);
 
 	//GlobalVariablesGroup
 	std::unique_ptr<GVariGroup>gvg = std::make_unique<GVariGroup>("DebugScene");
@@ -129,10 +129,14 @@ void DebugScene::Draw() {
 	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
 
 	//3DModel(NoAnimation)
-	model_->Draw(modelWorldTransform_, viewProjection_, modelMaterial_);
+	//model_->Draw(modelWorldTransform_, viewProjection_, modelMaterial_);
 
 	//Line
-	sphereLine_.Draw(sphere_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
+	//lineShapes_.DrawSphere(sphere_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
+	//lineShapes_.DrawPlane(plane_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
+	//lineShapes_.DrawAABB(aabb_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
+	//lineShapes_.DrawOBB(obb_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
+	lineShapes_.DrawCylinder(cylinder_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
 
 	//Editors
 	editors_->Draw(viewProjection_);
@@ -146,7 +150,7 @@ void DebugScene::Draw() {
 	CJEngine_->renderer_->Draw(PipelineType::Skinning);
 
 	//3DModel(Animation)
-	animationModel_->SkinningDraw(animationModelWorldTransform_, viewProjection_, animationModelMaterial_);
+	//animationModel_->SkinningDraw(animationModelWorldTransform_, viewProjection_, animationModelMaterial_);
 
 #pragma endregion
 
@@ -154,7 +158,7 @@ void DebugScene::Draw() {
 	CJEngine_->renderer_->Draw(PipelineType::Particle);
 
 	//Particle
-	particle_->Draw(viewProjection_);
+	//particle_->Draw(viewProjection_);
 
 #pragma endregion
 
@@ -169,7 +173,7 @@ void DebugScene::DrawUI() {//ここで描画するとポストエフェクトの
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 	//2DSprite
-	sprite_->Draw(spriteTransform_, spriteUVTransform_, spriteMaterial_);
+	//sprite_->Draw(spriteTransform_, spriteUVTransform_, spriteMaterial_);
 
 #pragma endregion
 }

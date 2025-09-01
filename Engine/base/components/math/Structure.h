@@ -162,6 +162,11 @@ struct ModelData {
 	std::string filename;
 };
 
+struct StructPlane {
+	Vector3 normal;
+	float distance;
+};
+
 struct AABB {
 	Vector3 min;
 	Vector3 max;

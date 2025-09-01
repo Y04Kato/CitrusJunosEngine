@@ -320,10 +320,11 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 			aiVector3D scale, translate;
 			aiQuaternion rotate;
 			bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
+			Quaternion q{ rotate.x, -rotate.y, -rotate.z, rotate.w };
 			Matrix4x4 bindPoseMatrix = MakeQuatAffineMatrix(
-				{ scale.x,scale.y,scale.z },
-				MakeRotateMatrix({ rotate.x,-rotate.y,-rotate.z,rotate.w }),
-				{ -translate.x,translate.y,translate.z }
+				{ scale.x, scale.y, scale.z },
+				MakeRotateMatrix(q), // Quaternion 版を呼ぶ
+				{ -translate.x, translate.y, translate.z }
 			);
 			jointWeightData.inverseBindPoseMatrix = Inverse(bindPoseMatrix);
 

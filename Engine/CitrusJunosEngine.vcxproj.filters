@@ -588,7 +588,7 @@
     <ClCompile Include="base\components\utilities\globalVariables\GlobalVariablesGroup.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="base\components\3d\shapes\SphereLine.cpp">
+    <ClCompile Include="base\components\3d\LineShapes.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -919,7 +919,7 @@
     <ClInclude Include="base\components\utilities\globalVariables\GlobalVariablesGroup.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="base\components\3d\shapes\SphereLine.h">
+    <ClInclude Include="base\components\3d\LineShapes.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

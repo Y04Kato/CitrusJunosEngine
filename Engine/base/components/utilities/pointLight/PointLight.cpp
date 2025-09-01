@@ -19,8 +19,8 @@ void PointLights::Initialize() {
 
 void PointLights::Update() {
 	ImGui::Begin("PointLight");
-	ImGui::DragFloat3("LightColor", pointLight_.color.num, 1.0f);
-	ImGui::DragFloat3("lightPosition", pointLight_.position.num, 0.1f);
+	ImGui::DragFloat3("LightColor", pointLight_.color.ptr(), 1.0f);
+	ImGui::DragFloat3("lightPosition", pointLight_.position.ptr(), 0.1f);
 	ImGui::DragFloat("lightIntensity", &pointLight_.intensity, 0.1f, 0.0f, 1.0f);
 	ImGui::DragFloat("lightRadius", &pointLight_.radius, 0.1f, 0.0f, 10.0f);
 	ImGui::DragFloat("lightDecay", &pointLight_.decay, 0.1f, 0.0f, 10.0f);
