@@ -12,73 +12,61 @@
 #include "TextureManager.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
-#include<wrl.h>
+#include <wrl.h>
 
 class CitrusJunosEngine;
 
 class CreateLine {
 public:
-	void Initialize();
+    void Initialize();
+    void Draw(const Vector3& start, const Vector3& end, const ViewProjection& viewProjection, const Vector4& material);
+    void Finalize();
 
-	void Draw(const WorldTransform& worldTransform1, const WorldTransform& worldTransform2, const ViewProjection& viewProjection, const Vector4& material);
-
-	void Finalize();
-
-	/// <summary>
-	/// ライティングを行うかどうか＆ライティングの種類
-	/// 1:HalfLambert
-	/// 2:PhongReflection
-	/// 3:BlinnPhongReflection
-	/// 4:Enviroment+
-	/// </summary>
-	void SetDirectionalLightFlag(bool isDirectionalLight, int lightNum);
-
-	//ラインの太さ
-	void SetLineThickness(float thickness) { size_ = thickness; };
-
-	//環境マップ用テクスチャの設定
-	void SetEnvironmentTexture(const uint32_t& envTex) { environmentTexture_ = envTex; isSetEnviromentTexture_ = true; }
+    void SetDirectionalLightFlag(bool isDirectionalLight, int lightNum);
+    void SetLineThickness(float thickness) { size_ = thickness; };
+    void SetEnvironmentTexture(const uint32_t& envTex) { environmentTexture_ = envTex; isSetEnviromentTexture_ = true; }
 
 private:
-	void SettingVertex();
-	void SettingColor();
-	void SettingDictionalLight();
+    void SettingVertex();
+    void SettingColor();
+    void SettingLight();
 
 private:
-	DirectXCommon* dxCommon_;
-	CitrusJunosEngine* CJEngine_;
-	TextureManager* textureManager_;
+    DirectXCommon* dxCommon_;
+    CitrusJunosEngine* CJEngine_;
+    TextureManager* textureManager_;
+    DirectionalLights* directionalLights_;
+    PointLights* pointLights_;
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
-	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource_;
-	VertexData* vertexData_;
+    // バッファ
+    Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource_;
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
+    VertexData* vertexData_;
 
-	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource_;
-	Material* materialData_;
+    Microsoft::WRL::ComPtr <ID3D12Resource> indexResource_;
+    D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
+    uint32_t* indexData_;
 
-	DirectionalLights* directionalLights_;
-	DirectionalLight* directionalLight_;
-	bool isDirectionalLight_ = false;
-	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
+    Microsoft::WRL::ComPtr <ID3D12Resource> materialResource_;
+    Material* materialData_;
 
-	uint32_t vertexCount_ = 36;
+    Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource_;
+    DirectionalLight* directionalLight_;
 
-	PointLights* pointLights_;
-	PointLight* pointLight_;
-	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource_;
+    Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource_;
+    PointLight* pointLight_;
 
-	Microsoft::WRL::ComPtr <ID3D12Resource> indexResource_;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
-	uint32_t* indexData_;
+    Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
+    CameraForGPU* cameraData_;
 
-	int lightNum_;
+    WorldTransform worldTransform_;
 
-	WorldTransform worldModels_;
-	float size_ = 0.1f;
+    uint32_t vertexCount_ = 36; // 立方体
+    float size_ = 0.05f;        // 線の太さ
 
-	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource_;
-	CameraForGPU* cameraData_ = nullptr;
+    bool isDirectionalLight_ = false;
+    int lightNum_ = 0;
 
-	bool isSetEnviromentTexture_ = false;
-	uint32_t environmentTexture_;
+    bool isSetEnviromentTexture_ = false;
+    uint32_t environmentTexture_;
 };
