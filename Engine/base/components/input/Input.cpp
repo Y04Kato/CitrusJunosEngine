@@ -73,30 +73,49 @@ void Input::Update() {
 }
 
 bool Input::TriggerKey(BYTE keyNumber) const {
-	if (key_[keyNumber] != 0 && preKey_[keyNumber] == 0) {
-		return true;
+	bool original = (key_[keyNumber] != 0 && preKey_[keyNumber] == 0);
+
+	// 代用キーがある場合もチェック
+	auto it = aliasKeyMap_.find(keyNumber);
+	if (it != aliasKeyMap_.end()) {
+		BYTE alias = it->second;
+		original |= (key_[alias] != 0 && preKey_[alias] == 0);
 	}
-	else {
-		return false;
-	}
+
+	return original;
 }
 
-bool Input::PressKey(BYTE keyNumber)const {
-	if (key_[keyNumber]) {
-		return true;
+bool Input::PressKey(BYTE keyNumber) const {
+	bool original = (key_[keyNumber] != 0);
+
+	auto it = aliasKeyMap_.find(keyNumber);
+	if (it != aliasKeyMap_.end()) {
+		BYTE alias = it->second;
+		original |= (key_[alias] != 0);
 	}
-	else {
-		return false;
-	}
+
+	return original;
 }
 
-bool Input::ReleaseKey(BYTE keyNumber)const {
-	if (key_[keyNumber] == 0 && preKey_[keyNumber] != 0) {
-		return true;
+bool Input::ReleaseKey(BYTE keyNumber) const {
+	bool original = (key_[keyNumber] == 0 && preKey_[keyNumber] != 0);
+
+	auto it = aliasKeyMap_.find(keyNumber);
+	if (it != aliasKeyMap_.end()) {
+		BYTE alias = it->second;
+		original |= (key_[alias] == 0 && preKey_[alias] != 0);
 	}
-	else {
-		return false;
-	}
+
+	return original;
+}
+
+void Input::AddAliasKey(BYTE keyNumber, BYTE aliasKeyNumber) {
+	aliasKeyMap_[keyNumber] = aliasKeyNumber;
+}
+
+// keyNumber の代用キーを削除
+void Input::RemoveAliasKey(BYTE keyNumber) {
+	aliasKeyMap_.erase(keyNumber);
 }
 
 bool Input::TriggerMouse(uint32_t Mousebutton) {
@@ -191,6 +210,30 @@ bool Input::PushYButton(XINPUT_STATE& out) {
 	return false;
 }
 
+bool Input::PushDPadUp(XINPUT_STATE& out) {
+	return (out.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
+}
+
+bool Input::PushDPadDown(XINPUT_STATE& out) {
+	return (out.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
+}
+
+bool Input::PushDPadLeft(XINPUT_STATE& out) {
+	return (out.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT);
+}
+
+bool Input::PushDPadRight(XINPUT_STATE& out) {
+	return (out.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
+}
+
+bool Input::PushMenuButton(XINPUT_STATE& out) {
+	return (out.Gamepad.wButtons & XINPUT_GAMEPAD_START);
+}
+
+bool Input::PushBackButton(XINPUT_STATE& out) {
+	return (out.Gamepad.wButtons & XINPUT_GAMEPAD_BACK);
+}
+
 bool Input::TriggerAButton(XINPUT_STATE& out) {
 	// XInputGetState 関数を使用してコントローラの現在の状態を取得
 	DWORD dwResult = XInputGetState(0, &out);
@@ -259,6 +302,72 @@ bool Input::TriggerYButton(XINPUT_STATE& out) {
 		}
 		// 現在の状態を前の状態として保存
 		prevStateY = out;
+	}
+	return false;
+}
+
+bool Input::TriggerDPadUp(XINPUT_STATE& out) {
+	DWORD dwResult = XInputGetState(0, &out);
+	if (dwResult == ERROR_SUCCESS) {
+		bool trigger = (out.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) &&
+			!(prevStateDPadUp.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
+		prevStateDPadUp = out;
+		return trigger;
+	}
+	return false;
+}
+
+bool Input::TriggerDPadDown(XINPUT_STATE& out) {
+	DWORD dwResult = XInputGetState(0, &out);
+	if (dwResult == ERROR_SUCCESS) {
+		bool trigger = (out.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) &&
+			!(prevStateDPadDown.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
+		prevStateDPadDown = out;
+		return trigger;
+	}
+	return false;
+}
+
+bool Input::TriggerDPadLeft(XINPUT_STATE& out) {
+	DWORD dwResult = XInputGetState(0, &out);
+	if (dwResult == ERROR_SUCCESS) {
+		bool trigger = (out.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) &&
+			!(prevStateDPadLeft.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT);
+		prevStateDPadLeft = out;
+		return trigger;
+	}
+	return false;
+}
+
+bool Input::TriggerDPadRight(XINPUT_STATE& out) {
+	DWORD dwResult = XInputGetState(0, &out);
+	if (dwResult == ERROR_SUCCESS) {
+		bool trigger = (out.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) &&
+			!(prevStateDPadRight.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
+		prevStateDPadRight = out;
+		return trigger;
+	}
+	return false;
+}
+
+bool Input::TriggerMenuButton(XINPUT_STATE& out) {
+	DWORD dwResult = XInputGetState(0, &out);
+	if (dwResult == ERROR_SUCCESS) {
+		bool trigger = (out.Gamepad.wButtons & XINPUT_GAMEPAD_START) &&
+			!(prevStateMenu.Gamepad.wButtons & XINPUT_GAMEPAD_START);
+		prevStateMenu = out;
+		return trigger;
+	}
+	return false;
+}
+
+bool Input::TriggerBackButton(XINPUT_STATE& out) {
+	DWORD dwResult = XInputGetState(0, &out);
+	if (dwResult == ERROR_SUCCESS) {
+		bool trigger = (out.Gamepad.wButtons & XINPUT_GAMEPAD_BACK) &&
+			!(prevStateBack.Gamepad.wButtons & XINPUT_GAMEPAD_BACK);
+		prevStateBack = out;
+		return trigger;
 	}
 	return false;
 }

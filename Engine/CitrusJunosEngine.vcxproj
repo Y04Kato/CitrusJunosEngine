@@ -170,8 +170,10 @@
     <ClCompile Include="base\components\3d\ViewProjection.cpp" />
     <ClCompile Include="base\components\3d\WorldTransform.cpp" />
     <ClCompile Include="base\components\audio\Audio.cpp" />
+    <ClCompile Include="base\components\manager\AudioManager\AudioManager.cpp" />
     <ClCompile Include="base\components\manager\globalVariablesManager\GlobalVariablesManager.cpp" />
     <ClCompile Include="base\components\manager\ImGuiManager\ImGuiManager.cpp" />
+    <ClCompile Include="base\components\manager\ModelManager\ModelManager.cpp" />
     <ClCompile Include="base\components\manager\PSOManager\PSOManager.cpp" />
     <ClCompile Include="base\components\manager\RTVManager\RTVManager.cpp" />
     <ClCompile Include="base\components\manager\SceneManager\Iscene.cpp" />
@@ -439,8 +441,10 @@
     <ClInclude Include="base\components\3d\ViewProjection.h" />
     <ClInclude Include="base\components\3d\WorldTransform.h" />
     <ClInclude Include="base\components\audio\Audio.h" />
+    <ClInclude Include="base\components\manager\AudioManager\AudioManager.h" />
     <ClInclude Include="base\components\manager\globalVariablesManager\GlobalVariablesManager.h" />
     <ClInclude Include="base\components\manager\ImGuiManager\ImGuiManager.h" />
+    <ClInclude Include="base\components\manager\ModelManager\ModelManager.h" />
     <ClInclude Include="base\components\manager\PSOManager\PSOManager.h" />
     <ClInclude Include="base\components\manager\RTVManager\RTVManager.h" />
     <ClInclude Include="base\components\manager\SceneManager\SceneNumber.h" />

@@ -15,7 +15,7 @@ void Iscene::Initialize() {
 	input_ = Input::GetInstance();
 
 	//Audio
-	audio_ = Audio::GetInstance();
+	audio_ = AudioManager::GetInstance();
 
 	//TextureManager
 	textureManager_ = TextureManager::GetInstance();
@@ -45,6 +45,10 @@ void Iscene::Update() {
 	//Camera更新
 	debugCamera_->Update();
 
+	//AudioManagerデバッグ表示
+	audio_->DebugImGui();
+	ModelManager::GetInstance()->DebugImGui();
+
 	//ビュープロジェクション更新
 	viewProjection_.translation_ = debugCamera_->GetViewProjection()->translation_;
 	viewProjection_.rotation_ = debugCamera_->GetViewProjection()->rotation_;
@@ -57,4 +61,6 @@ void Iscene::DrawPostEffect() {
 
 void Iscene::Finalize() {
 	editors_->Finalize();
+	audio_->Finalize();
+	ModelManager::GetInstance()->Clear();
 }

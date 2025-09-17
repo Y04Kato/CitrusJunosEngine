@@ -15,7 +15,7 @@ void SceneManager::Run() {
 
 void SceneManager::Initialize() {
 	//WindowTitle
-	const char kWindowTitle[] = "Title";
+	const char kWindowTitle[] = "タイトル";
 	//COMの初期化
 	CoInitializeEx(0, COINIT_MULTITHREADED);
 	//Engine

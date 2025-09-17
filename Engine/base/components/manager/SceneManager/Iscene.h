@@ -6,7 +6,7 @@
  */
 
 #pragma once
-#include "components/audio/Audio.h"
+#include "AudioManager/AudioManager.h"
 #include "components/input/Input.h"
 #include "components/3d/WorldTransform.h"
 #include "components/3d/ViewProjection.h"
@@ -16,7 +16,8 @@
 #include "components/2d/CreateParticle.h"
 #include "components/3d/CreateSphere.h"
 #include "components/3d/CreateSkyBox.h"
-#include "components/3d/Model.h"
+#include "LineShapes.h"
+#include "ModelManager/ModelManager.h"
 #include "components/debugcamera/DebugCamera.h"
 #include "components/utilities/followCamera/FollowCamera.h"
 #include "components/utilities/collisionManager/CollisionManager.h"
@@ -56,7 +57,7 @@ protected:
 	CitrusJunosEngine* CJEngine_;
 
 	Input* input_;
-	Audio* audio_;
+	AudioManager* audio_;
 	TextureManager* textureManager_;
 
 	//Lights
@@ -71,6 +72,9 @@ protected:
 	SceneNumber* sceneNumber_;
 
 	ViewProjection viewProjection_;
+
+	//Model描画用
+	ModelRenderer renderer_;
 
 	//Editor
 	Editors* editors_;

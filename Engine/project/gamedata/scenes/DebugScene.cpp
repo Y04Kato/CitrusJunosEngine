@@ -18,32 +18,37 @@ void DebugScene::Initialize() {
 	particleTex_ = textureManager_->Load("project/gamedata/resources/default/circle.png");
 
 	//サウンドリソース
-	testSoundData_ = audio_->SoundLoad("project/gamedata/resources/default/click.mp3");
+	audio_->LoadSE("click", "project/gamedata/resources/default/click.mp3");
 
 	//2DSprite
-	spriteTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
-	spriteUVTransform_ = {
+	sprite_ = std::make_unique <Sprite2D>();
+
+	sprite_->transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{1280.0f / 2.0f,720.0f / 2.0f,0.0f} };
+	sprite_->uvTransform = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f},
 	};
-	spriteMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	sprite_->material = { 1.0f,1.0f,1.0f,1.0f };
 
-	sprite_ = std::make_unique <CreateSprite>();
-	sprite_->Initialize(Vector2{ 100.0f,100.0f }, testTex_);
-	sprite_->SetTextureInitialSize();//これがない場合、Initialize第一引数sizeで指定したサイズになる
-	sprite_->SetAnchor(Vector2{ 0.5f,0.5f });//アンカーは授業で作った通り
+	sprite_->sprite->Initialize(Vector2{ 100.0f,100.0f }, testTex_);
+	sprite_->sprite->SetTextureInitialSize();//これがない場合、Initialize第一引数sizeで指定したサイズになる
+	sprite_->sprite->SetAnchor(Vector2{ 0.5f,0.5f });//アンカーは授業で作った通り
 
 	//3DModel(NoAnimation)
-	model_.reset(Model::CreateModel("project/gamedata/resources/block", "block.obj"));
-	model_->SetDirectionalLightFlag(true, 3);
-	modelWorldTransform_.Initialize();
-	modelMaterial_ = { 1.0f,1.0f,1.0f,1.0f };
+	modelNAnimation_ = std::make_shared<ModelInstance>();
+	modelNAnimation_->model = ModelManager::GetInstance()->LoadModel("project/gamedata/resources/block", "block.obj");
+	modelNAnimation_->model->SetDirectionalLightFlag(true, 3);
+
+	renderer_.AddInstance(modelNAnimation_);
 
 	//3DModel(Animation)
-	animationModel_.reset(Model::CreateSkinningModel("project/gamedata/resources/flag", "flag.gltf"));
-	animationModel_->SetDirectionalLightFlag(true, 3);
-	animationModelWorldTransform_.Initialize();
+	modelAnimation_ = std::make_shared<ModelInstance>();
+	modelAnimation_->model = ModelManager::GetInstance()->LoadModel("project/gamedata/resources/flag", "flag.gltf", true);
+	modelAnimation_->model->SetDirectionalLightFlag(true, 3);
+	modelAnimation_->isSkinning = true;
+
+	renderer_.AddInstance(modelAnimation_);
 
 	//SkyBox
 	skyBox_ = std::make_unique <CreateSkyBox>();
@@ -73,7 +78,8 @@ void DebugScene::Initialize() {
 	datareceipt_.Initialize(50001);
 	datareceipt_.start();
 
-	lineShapes_.Initialize(16, 0.1f);
+	//LineShapes
+	lineShapes_.Initialize(16, 0.5f);
 
 	//GlobalVariablesGroup
 	std::unique_ptr<GVariGroup>gvg = std::make_unique<GVariGroup>("DebugScene");
@@ -83,20 +89,26 @@ void DebugScene::Initialize() {
 void DebugScene::Update() {
 	Iscene::Update();
 	ImGui::Begin("DebugOperate");
-	if (ImGui::Button("TitleScene")) {
-		sceneNumber_->SetSceneNumber(TITLE_SCENE);
+	if (ImGui::Button("GameScene")) {
+		sceneNumber_->SetSceneNumber(GAME_SCENE);
 	}
-	if (ImGui::Button("TestSound")) {
-		audio_->SoundPlayWave(testSoundData_, 1.0f, false);
+	ImGui::DragFloat3("test", modelNAnimation_->worldTransform.translation_.ptr());
+	ImGui::SliderFloat3("LineStartPoint", lineStartPoint_.ptr(), -100.0f, 100.0f);
+	ImGui::SliderFloat3("LineEndPoint", lineEndPoint_.ptr(), -100.0f, 100.0f);
+	if (ImGui::Button("SetLine")) {
+		lineShapes_.AddCustomLine(lineStartPoint_, lineEndPoint_, { 1.0f, 0.0f, 0.0f, 1.0f });
+	}
+	if (ImGui::Button("ResetLine")) {
+		lineShapes_.ClearCustomLines();
 	}
 	ImGui::Text("CameraReset:Q key");
 	ImGui::End();
 
 	//3DModel(NoAnimation)
-	modelWorldTransform_.UpdateMatrix();
+	modelNAnimation_->worldTransform.UpdateMatrix();
 
 	//3DModel(Animation)
-	animationModelWorldTransform_.UpdateMatrix();
+	modelAnimation_->worldTransform.UpdateMatrix();
 
 	//SkyBox
 	skyBoxWorldTransform_.UpdateMatrix();
@@ -108,7 +120,7 @@ void DebugScene::Update() {
 	particle_->Update();
 
 	//カメラリセット
-	if (input_->TriggerKey(DIK_Q)) {
+	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
 		debugCamera_->MovingCamera(Vector3{ 0.0f,0.0f,-20.0f }, Vector3{ 0.0f,0.0f,0.0f }, 0.05f);
 	}
 }
@@ -129,14 +141,15 @@ void DebugScene::Draw() {
 	CJEngine_->renderer_->Draw(PipelineType::Standard3D);
 
 	//3DModel(NoAnimation)
-	//model_->Draw(modelWorldTransform_, viewProjection_, modelMaterial_);
+	renderer_.DrawNoAnimationAll(viewProjection_);
 
 	//Line
 	//lineShapes_.DrawSphere(sphere_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
 	//lineShapes_.DrawPlane(plane_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
 	//lineShapes_.DrawAABB(aabb_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
 	//lineShapes_.DrawOBB(obb_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
-	lineShapes_.DrawCylinder(cylinder_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
+	//lineShapes_.DrawCylinder(cylinder_, viewProjection_, { 1.0f, 0.0f, 0.0f, 1.0f });
+	lineShapes_.DrawCustomLines(viewProjection_);
 
 	//Editors
 	editors_->Draw(viewProjection_);
@@ -150,7 +163,7 @@ void DebugScene::Draw() {
 	CJEngine_->renderer_->Draw(PipelineType::Skinning);
 
 	//3DModel(Animation)
-	//animationModel_->SkinningDraw(animationModelWorldTransform_, viewProjection_, animationModelMaterial_);
+	renderer_.DrawAnimationAll(viewProjection_);
 
 #pragma endregion
 
@@ -173,7 +186,7 @@ void DebugScene::DrawUI() {//ここで描画するとポストエフェクトの
 	CJEngine_->renderer_->Draw(PipelineType::Standard2D);
 
 	//2DSprite
-	//sprite_->Draw(spriteTransform_, spriteUVTransform_, spriteMaterial_);
+	//sprite_->sprite->Draw(spriteTransform_, spriteUVTransform_, spriteMaterial_);
 
 #pragma endregion
 }
@@ -186,5 +199,4 @@ void DebugScene::DrawPostEffect() {
 void DebugScene::Finalize() {
 	Iscene::Finalize();
 	datareceipt_.stop();
-	audio_->SoundUnload(&testSoundData_);
 }

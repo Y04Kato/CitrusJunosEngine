@@ -33,7 +33,7 @@ float Distance(const Vector3& v1, const Vector3& v2) {
 }
 
 float Lerp(float a, float b, float t) {
-	return a + b * t;
+	return a * (1.0f - t) + b * t;
 }
 
 float LerpShortAngle(float a, float b, float t) {

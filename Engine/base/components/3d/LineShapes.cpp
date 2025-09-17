@@ -14,8 +14,11 @@ void LineShapes::Initialize(uint32_t subdivision, float thickness) {
 	}
 }
 
-void LineShapes::ResetLineIndex() {
-	lineIndex_ = 0;
+void LineShapes::SetLineThickness(float thickness) {
+	thickness_ = thickness;
+	for (auto& line : lines_) {
+		line.SetLineThickness(thickness_);
+	}
 }
 
 void LineShapes::DrawLine(const Vector3& a, const Vector3& b, const ViewProjection& viewProjection, const Vector4& color) {
@@ -162,5 +165,25 @@ void LineShapes::DrawCylinder(const StructCylinder& cylinder, const ViewProjecti
 
 		// 縦の辺
 		DrawLine(top0, bot0, viewProjection, color);
+	}
+}
+
+void LineShapes::ResetLineIndex() {
+	lineIndex_ = 0;
+}
+
+// ================= CustomLine =================
+void LineShapes::AddCustomLine(const Vector3& a, const Vector3& b, const Vector4& color) {
+	customLines_.push_back({ a, b, color });
+}
+
+void LineShapes::ClearCustomLines() {
+	customLines_.clear();
+}
+
+void LineShapes::DrawCustomLines(const ViewProjection& viewProjection) {
+	ResetLineIndex();
+	for (auto& line : customLines_) {
+		DrawLine(line.a, line.b, viewProjection, line.color);
 	}
 }

@@ -84,3 +84,14 @@ private:
 	//テクスチャサイズをイメージに合わせる
 	void AdjustTextureSize();
 };
+
+struct Sprite2D {
+	std::unique_ptr <CreateSprite> sprite;
+	EulerTransform transform;
+	EulerTransform uvTransform;
+	Vector4 material;
+
+	Sprite2D() {
+		sprite = std::make_unique<CreateSprite>();
+	}
+};

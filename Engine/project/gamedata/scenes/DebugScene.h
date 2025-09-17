@@ -29,24 +29,14 @@ private:
 	uint32_t skyboxTex_;
 	uint32_t particleTex_;
 
-	//サウンドリソース
-	SoundData testSoundData_;
-
 	//2DSprite
-	std::unique_ptr <CreateSprite> sprite_;
-	EulerTransform spriteTransform_;
-	EulerTransform spriteUVTransform_;
-	Vector4 spriteMaterial_;
+	std::unique_ptr <Sprite2D> sprite_;
 
 	//3DModel(NoAnimation)
-	std::unique_ptr<Model> model_;
-	WorldTransform modelWorldTransform_;
-	Vector4 modelMaterial_;
+	std::shared_ptr<ModelInstance> modelNAnimation_;
 
 	//3DModel(Animation)
-	std::unique_ptr<Model> animationModel_;
-	WorldTransform animationModelWorldTransform_;
-	Vector4 animationModelMaterial_;
+	std::shared_ptr<ModelInstance> modelAnimation_;
 
 	//SkyBox
 	std::unique_ptr <CreateSkyBox> skyBox_;
@@ -64,6 +54,7 @@ private:
 
 	float testData_ = 0.0f;
 
+	//LineShapes
 	LineShapes lineShapes_;
 	StructSphere sphere_ = { {0.0f, 0.0f, 0.0f}, 10.0f };
 	StructPlane plane_ = { {0.0f,1.0f,0.0f},0.0f };
@@ -81,4 +72,5 @@ private:
 		{0.0f, -0.5f, 0.0f}, // bottomCenter
 		2.0f                  // radius
 	};
+	Vector3 lineStartPoint_, lineEndPoint_;
 };

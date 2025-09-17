@@ -25,6 +25,13 @@
 #define MOUSE_BOTTON6	6
 #define MOUSE_BOTTON7	7
 
+#define XINPUT_GAMEPAD_DPAD_UP        0x0001
+#define XINPUT_GAMEPAD_DPAD_DOWN      0x0002
+#define XINPUT_GAMEPAD_DPAD_LEFT      0x0004
+#define XINPUT_GAMEPAD_DPAD_RIGHT     0x0008
+#define XINPUT_GAMEPAD_START          0x0010  // Menuボタン相当
+#define XINPUT_GAMEPAD_BACK           0x0020
+
 struct MousePosition {
 	Vector2 Pos;
 	Vector2 Velocity;
@@ -42,6 +49,8 @@ public:
 	bool TriggerKey(BYTE keyNumber) const;//キーを押した瞬間
 	bool PressKey(BYTE keyNumber)const;//キー押している間
 	bool ReleaseKey(BYTE keyNumber)const;//キーを離した瞬間
+	void AddAliasKey(BYTE keyNumber, BYTE aliasKeyNumber);//代用キーの登録
+	void RemoveAliasKey(BYTE keyNumber);//代用キー登録の解除
 
 	bool TriggerMouse(uint32_t Mousebutton);//マウスボタンを押した瞬間
 
@@ -57,12 +66,24 @@ public:
 	bool PushBButton(XINPUT_STATE& out);
 	bool PushXButton(XINPUT_STATE& out);
 	bool PushYButton(XINPUT_STATE& out);
+	bool PushDPadUp(XINPUT_STATE& out);
+	bool PushDPadDown(XINPUT_STATE& out);
+	bool PushDPadLeft(XINPUT_STATE& out);
+	bool PushDPadRight(XINPUT_STATE& out);
+	bool PushMenuButton(XINPUT_STATE& out);
+	bool PushBackButton(XINPUT_STATE& out);
 
 	//各種コントローラーボタンを押した瞬間
 	bool TriggerAButton(XINPUT_STATE& out);
 	bool TriggerBButton(XINPUT_STATE& out);
 	bool TriggerXButton(XINPUT_STATE& out);
 	bool TriggerYButton(XINPUT_STATE& out);
+	bool TriggerDPadUp(XINPUT_STATE& out);
+	bool TriggerDPadDown(XINPUT_STATE& out);
+	bool TriggerDPadLeft(XINPUT_STATE& out);
+	bool TriggerDPadRight(XINPUT_STATE& out);
+	bool TriggerMenuButton(XINPUT_STATE& out);
+	bool TriggerBackButton(XINPUT_STATE& out);
 
 	//マウスカーソルの表示、非表示操作
 	void ViewCursor();
@@ -86,6 +107,8 @@ private:
 	std::array<BYTE, 256> key_;
 	std::array<BYTE, 256> preKey_;
 
+	std::unordered_map<BYTE, BYTE> aliasKeyMap_;
+
 	//マウス
 	DIMOUSESTATE2 mouse_;
 	DIMOUSESTATE2 preMouse_;
@@ -101,4 +124,10 @@ private:
 	XINPUT_STATE prevStateB;
 	XINPUT_STATE prevStateX;
 	XINPUT_STATE prevStateY;
+	XINPUT_STATE prevStateDPadUp;
+	XINPUT_STATE prevStateDPadDown;
+	XINPUT_STATE prevStateDPadLeft;
+	XINPUT_STATE prevStateDPadRight;
+	XINPUT_STATE prevStateMenu;
+	XINPUT_STATE prevStateBack;
 };
