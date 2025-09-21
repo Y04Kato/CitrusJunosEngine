@@ -59,17 +59,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\manager\SceneManager;$(ProjectDir)base\components\manager\TextureManager;$(ProjectDir)base\components\pipelineState;$(ProjectDir)base\components\math;$(ProjectDir)base\components\shaderCompiler;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes</IncludePath>
+    <IncludePath>$(ProjectDir)externals\freetype\include;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\manager\SceneManager;$(ProjectDir)base\components\manager\TextureManager;$(ProjectDir)base\components\pipelineState;$(ProjectDir)base\components\math;$(ProjectDir)base\components\shaderCompiler;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\manager\SceneManager;$(ProjectDir)base\components\manager\TextureManager;$(ProjectDir)base\components\pipelineState;$(ProjectDir)base\components\math;$(ProjectDir)base\components\shaderCompiler;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes</IncludePath>
+    <IncludePath>$(ProjectDir)externals\freetype\include;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\manager\SceneManager;$(ProjectDir)base\components\manager\TextureManager;$(ProjectDir)base\components\pipelineState;$(ProjectDir)base\components\math;$(ProjectDir)base\components\shaderCompiler;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">
-    <IncludePath>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\manager\SceneManager;$(ProjectDir)base\components\manager\TextureManager;$(ProjectDir)base\components\pipelineState;$(ProjectDir)base\components\math;$(ProjectDir)base\components\shaderCompiler;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes</IncludePath>
+    <IncludePath>$(ProjectDir)externals\freetype\include;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)base;$(ProjectDir)base\components;$(ProjectDir)base\components\2d;$(ProjectDir)base\components\3d;$(ProjectDir)base\components\audio;$(ProjectDir)base\components\debugCamera;$(ProjectDir)base\components\input;$(ProjectDir)base\components\manager;$(ProjectDir)base\components\manager\ImGuiManager;$(ProjectDir)base\components\manager\SceneManager;$(ProjectDir)base\components\manager\TextureManager;$(ProjectDir)base\components\pipelineState;$(ProjectDir)base\components\math;$(ProjectDir)base\components\shaderCompiler;$(ProjectDir)base\components\utilities;$(ProjectDir)base\components\utilities\collisionManager;$(ProjectDir)base\components\utilities\convertString;$(ProjectDir)base\components\utilities\followCamera;$(ProjectDir)base\components\utilities\globalVariables;$(ProjectDir)base\components\utilities\directionalLight;$(ProjectDir)base\components\utilities\pointLight;$(ProjectDir)project;$(ProjectDir)project\gamedata;$(ProjectDir)project\gamedata\scenes</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -94,9 +94,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib;assimp-vc143-mtd.lib;zlibd.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib;assimp-vc143-mtd.lib;zlibd.lib;freetype.lib</AdditionalDependencies>
       <AdditionalOptions>/ignore:4049 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalLibraryDirectories>$(ProjectDir)externals\zlib\build\lib\Debug;$(ProjectDir)externals\assimp\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\zlib\build\lib\Debug;$(ProjectDir)externals\assimp\build\lib\Debug;$(ProjectDir)externals\freetype\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
@@ -124,8 +124,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib;assimp-vc143-mt.lib;zlib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)externals\zlib\build\lib\Release;$(ProjectDir)externals\assimp\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib;assimp-vc143-mt.lib;zlib.lib;freetype.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\zlib\build\lib\Release;$(ProjectDir)externals\assimp\build\lib\Release;$(ProjectDir)externals\freetype\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
@@ -153,8 +153,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib;assimp-vc143-mtd.lib;zlibstaticd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\build\lib\Debug;%(AdditionalLibraryDirectories);$(ProjectDir)externals\zlib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);legacy_stdio_definitions.lib;assimp-vc143-mtd.lib;zlibstaticd.lib;freetype.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\build\lib\Debug;%(AdditionalLibraryDirectories);$(ProjectDir)externals\zlib;$(ProjectDir)externals\freetype\build\lib\Release</AdditionalLibraryDirectories>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
@@ -202,7 +202,10 @@
     <ClCompile Include="base\components\renderer\Renderer.cpp" />
     <ClCompile Include="base\components\shaderCompiler\ShaderCompiler.cpp" />
     <ClCompile Include="base\components\utilities\convertString\ConvertString.cpp" />
+    <ClCompile Include="base\components\utilities\createFontAtlas\FontAtlas.cpp" />
+    <ClCompile Include="base\components\utilities\createFontAtlas\TextRenderer.cpp" />
     <ClCompile Include="base\components\utilities\dataReceipt\DataReceipt.cpp" />
+    <ClCompile Include="base\components\utilities\deltaTimer\DeltaTimer.cpp" />
     <ClCompile Include="base\components\utilities\directionalLight\DirectionalLight.cpp" />
     <ClCompile Include="base\components\utilities\editors\Editors.cpp" />
     <ClCompile Include="base\components\utilities\followCamera\FollowCamera.cpp" />
@@ -475,7 +478,10 @@
     <ClInclude Include="base\components\renderer\Renderer.h" />
     <ClInclude Include="base\components\shaderCompiler\ShaderCompiler.h" />
     <ClInclude Include="base\components\utilities\convertString\ConvertString.h" />
+    <ClInclude Include="base\components\utilities\createFontAtlas\FontAtlas.h" />
+    <ClInclude Include="base\components\utilities\createFontAtlas\TextRenderer.h" />
     <ClInclude Include="base\components\utilities\dataReceipt\DataReceipt.h" />
+    <ClInclude Include="base\components\utilities\deltaTimer\DeltaTimer.h" />
     <ClInclude Include="base\components\utilities\directionalLight\DirectionalLight.h" />
     <ClInclude Include="base\components\utilities\editors\Editors.h" />
     <ClInclude Include="base\components\utilities\followCamera\FollowCamera.h" />
@@ -491,6 +497,61 @@
     <ClInclude Include="base\components\2d\CreateSprite.h" />
     <ClInclude Include="base\components\3d\Model.h" />
     <ClInclude Include="base\components\debugCamera\DebugCamera.h" />
+    <ClInclude Include="externals\freetype\include\freetype\config\ftconfig.h" />
+    <ClInclude Include="externals\freetype\include\freetype\config\ftheader.h" />
+    <ClInclude Include="externals\freetype\include\freetype\config\ftmodule.h" />
+    <ClInclude Include="externals\freetype\include\freetype\config\ftoption.h" />
+    <ClInclude Include="externals\freetype\include\freetype\config\ftstdlib.h" />
+    <ClInclude Include="externals\freetype\include\freetype\config\integer-types.h" />
+    <ClInclude Include="externals\freetype\include\freetype\config\mac-support.h" />
+    <ClInclude Include="externals\freetype\include\freetype\config\public-macros.h" />
+    <ClInclude Include="externals\freetype\include\freetype\freetype.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftadvanc.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftbbox.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftbdf.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftbitmap.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftbzip2.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftcache.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftchapters.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftcid.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftcolor.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftdriver.h" />
+    <ClInclude Include="externals\freetype\include\freetype\fterrdef.h" />
+    <ClInclude Include="externals\freetype\include\freetype\fterrors.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftfntfmt.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftgasp.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftglyph.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftgxval.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftgzip.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftimage.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftincrem.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftlcdfil.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftlist.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftlogging.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftlzw.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftmac.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftmm.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftmodapi.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftmoderr.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftotval.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftoutln.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftparams.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftpfr.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftrender.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftsizes.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftsnames.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftstroke.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftsynth.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftsystem.h" />
+    <ClInclude Include="externals\freetype\include\freetype\fttrigon.h" />
+    <ClInclude Include="externals\freetype\include\freetype\fttypes.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ftwinfnt.h" />
+    <ClInclude Include="externals\freetype\include\freetype\otsvg.h" />
+    <ClInclude Include="externals\freetype\include\freetype\t1tables.h" />
+    <ClInclude Include="externals\freetype\include\freetype\ttnameid.h" />
+    <ClInclude Include="externals\freetype\include\freetype\tttables.h" />
+    <ClInclude Include="externals\freetype\include\freetype\tttags.h" />
+    <ClInclude Include="externals\freetype\include\ft2build.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\ImGuizmo.h" />
@@ -510,6 +571,7 @@
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
     <ClInclude Include="base\WinApp.h" />
+    <ClInclude Include="externals\stb\stb_truetype.h" />
     <ClInclude Include="externals\zlib\include\zconf.h" />
     <ClInclude Include="externals\zlib\include\zlib.h" />
     <ClInclude Include="project\gamedata\scenes\DebugScene.h" />

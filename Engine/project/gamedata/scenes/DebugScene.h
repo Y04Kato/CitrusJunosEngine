@@ -14,6 +14,8 @@
 
 #include "LineShapes.h"
 
+#include "utilities/createFontAtlas/TextRenderer.h"
+
 class DebugScene :public Iscene {
 public:
 	void Initialize() override;
@@ -73,4 +75,8 @@ private:
 		2.0f                  // radius
 	};
 	Vector3 lineStartPoint_, lineEndPoint_;
+
+	//TestFonnt
+	FontAtlasGenerator atlasGen;
+	TextRenderer* textRenderer;
 };

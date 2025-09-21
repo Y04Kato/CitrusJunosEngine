@@ -23,6 +23,9 @@ public:
 	//テクスチャの読み込み、0番はwhiteがInitialize時に入っているので1番から割り当て開始
 	uint32_t Load(const std::string& filePath); 
 
+	//ScratchImage から直接ロードして SRV を作る
+	uint32_t LoadFromScratchImage(const DirectX::ScratchImage& scratchImage);
+
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_[maxtex];
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_[maxtex];
 

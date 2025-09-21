@@ -30,6 +30,46 @@ uint32_t TextureManager::Load(const std::string& filePath){
 	return textureIndex_;
 }
 
+uint32_t TextureManager::LoadFromScratchImage(const DirectX::ScratchImage& scratchImage) {
+	// get next index
+	textureIndex_ = SRVManager_->GetSRVValue();
+
+	// メタデータ
+	const DirectX::TexMetadata& metadata = scratchImage.GetMetadata();
+
+	// create texture resource
+	textureResource_[textureIndex_] = CreateTextureResource(dxCommon_->GetDevice(), metadata);
+
+	// upload data
+	intermediateResource_[textureIndex_] = UploadTextureData(textureResource_[textureIndex_], scratchImage, textureIndex_);
+
+	// SRV 設定（ほぼ LoadTexture と同じ）
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = metadata.format;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	if (metadata.IsCubemap()) {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.TextureCube.MostDetailedMip = 0;
+		srvDesc.TextureCube.MipLevels = UINT_MAX;
+		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
+	}
+	else {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+	}
+
+	textureSrvHandleGPU_[textureIndex_] = GetGPUDescriptorHandle(dxCommon_->GetSrvDescriptiorHeap(), descriptorSizeSRV, textureIndex_);
+	textureSrvHandleCPU_[textureIndex_] = GetCPUDescriptorHandle(dxCommon_->GetSrvDescriptiorHeap(), descriptorSizeSRV, textureIndex_);
+
+	// 既存コードと同じくオフセット（IMGUIが先頭使用している旨の処理）
+	textureSrvHandleGPU_[textureIndex_].ptr += dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	textureSrvHandleCPU_[textureIndex_].ptr += dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	dxCommon_->GetDevice()->CreateShaderResourceView(textureResource_[textureIndex_].Get(), &srvDesc, textureSrvHandleCPU_[textureIndex_]);
+
+	return textureIndex_;
+}
+
 const D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUHandle(uint32_t textureHandle){
 	D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle = textureSrvHandleGPU_[textureHandle];
 	return GPUHandle;

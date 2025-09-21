@@ -81,6 +81,27 @@ void DebugScene::Initialize() {
 	//LineShapes
 	lineShapes_.Initialize(16, 0.5f);
 
+	//TestFont
+	atlasGen.LoadFont("project/gamedata/resources/default/craftmincho.otf", 64);
+	//atlasGen.LoadFont("project/gamedata/resources/default/Meiryo with Source Han Sans (Regular).otf", 64);
+	std::u32string basicCharset = 
+		U"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+		U"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほ"
+		U"まみむめもやゆよらりるれろわをんー、。！？";
+	std::u32string kanji = U"日本語漢字";
+	std::u32string charset = atlasGen.BuildCharset(basicCharset + kanji);
+
+	bool ok = atlasGen.BuildAtlas(charset, 2048, 2048);
+	if (!ok) {
+		// Atlasサイズを大きくするか文字数を減らす処理
+		assert(false && "FontAtlas 作成失敗");
+	}
+
+	textRenderer = new TextRenderer(TextureManager::GetInstance(), &atlasGen);
+	if (!textRenderer->UploadAtlasToGPU()) {
+		assert(false && "TextRenderer GPU Upload 失敗");
+	}
+
 	//GlobalVariablesGroup
 	std::unique_ptr<GVariGroup>gvg = std::make_unique<GVariGroup>("DebugScene");
 	gvg->SetValue("Test", &testData_);
@@ -188,6 +209,7 @@ void DebugScene::DrawUI() {//ここで描画するとポストエフェクトの
 	//2DSprite
 	//sprite_->sprite->Draw(spriteTransform_, spriteUVTransform_, spriteMaterial_);
 
+	textRenderer->DrawTextUTF8("こんにちは、World 日本語", 100.0f, 200.0f, 1.0f, Vector4{ 1,1,1,1 });
 #pragma endregion
 }
 
@@ -199,4 +221,8 @@ void DebugScene::DrawPostEffect() {
 void DebugScene::Finalize() {
 	Iscene::Finalize();
 	datareceipt_.stop();
+	if (textRenderer) {
+		delete textRenderer;
+		textRenderer = nullptr;
+	}
 }
