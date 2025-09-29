@@ -18,7 +18,8 @@ void DebugScene::Initialize() {
 	particleTex_ = textureManager_->Load("project/gamedata/resources/default/circle.png");
 
 	//サウンドリソース
-	audio_->LoadSE("click", "project/gamedata/resources/default/click.mp3");
+	AudioManager::GetInstance()->LoadSE("Click", "project/gamedata/resources/default/click.mp3");
+	AudioManager::GetInstance()->LoadBGM("Conjurer", "project/gamedata/resources/default/PerituneMaterial_Conjurer_loop.mp3");
 
 	//2DSprite
 	sprite_ = std::make_unique <Sprite2D>();

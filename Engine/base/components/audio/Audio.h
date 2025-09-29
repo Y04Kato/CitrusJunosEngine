@@ -55,6 +55,9 @@ public:
 	//音声停止
 	void SoundStopWave(SoundData* soundData);
 
+	//音量変更
+	void SoundSetVolume(SoundData* soundData, float volume);
+
 	void Finalize();
 
 	Audio(const Audio& obj) = delete;

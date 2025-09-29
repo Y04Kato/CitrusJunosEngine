@@ -123,15 +123,35 @@ std::vector<std::string> AudioManager::GetLoadedBGMKeys() const {
 
 void AudioManager::DebugImGui() {
     if (ImGui::Begin("AudioManager")) {
+        // === SE ===
         ImGui::Text("=== Loaded SE ===");
+        if (ImGui::SliderFloat("SE Volume", &seVolume_, 0.0f, 2.0f, "%.2f")) {
+            // スライダーを動かしたら全SEの音量を更新
+            for (auto& kv : seMap_) {
+                Audio::GetInstance()->SoundSetVolume(&kv.second, seVolume_);
+            }
+        }
+
         for (auto& kv : seMap_) {
             if (ImGui::Button(kv.first.c_str())) {
-                PlaySE(kv.first);  // SE 再生
+                PlaySE(kv.first, seVolume_);
             }
         }
 
         ImGui::Separator();
+
+        // === BGM ===
         ImGui::Text("=== Loaded BGM ===");
+        if (ImGui::SliderFloat("BGM Volume", &bgmVolume_, 0.0f, 2.0f, "%.2f")) {
+            // 再生中の BGM があれば音量を更新
+            if (!currentBGMKey_.empty()) {
+                auto it = bgmMap_.find(currentBGMKey_);
+                if (it != bgmMap_.end()) {
+                    Audio::GetInstance()->SoundSetVolume(&it->second, bgmVolume_);
+                }
+            }
+        }
+
         for (auto& kv : bgmMap_) {
             if (kv.first == currentBGMKey_) {
                 if (ImGui::Button((kv.first + " (Stop)").c_str())) {
@@ -140,10 +160,11 @@ void AudioManager::DebugImGui() {
             }
             else {
                 if (ImGui::Button((kv.first + " (Play)").c_str())) {
-                    PlayBGM(kv.first, true);
+                    PlayBGM(kv.first, bgmVolume_, true);
                 }
             }
         }
     }
     ImGui::End();
 }
+

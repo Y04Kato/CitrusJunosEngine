@@ -46,4 +46,7 @@ private:
 
     // 再生中の BGM
     std::string currentBGMKey_;
+
+    float seVolume_ = 1.0f;
+    float bgmVolume_ = 1.0f;
 };

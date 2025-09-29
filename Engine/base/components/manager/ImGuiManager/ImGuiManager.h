@@ -21,6 +21,7 @@ public:
 	void End();//描画の受付を終了する
 	void Draw();
 	void Finalize();
+
 private:
 	DirectXCommon* dxCommon_;
 };

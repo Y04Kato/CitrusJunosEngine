@@ -146,6 +146,18 @@ void Audio::SoundStopWave(SoundData* soundData){
 	}
 }
 
+void Audio::SoundSetVolume(SoundData* soundData, float volume) {
+	// 再生中の音声リストから検索
+	auto it = std::find_if(
+		voices_.begin(), voices_.end(),
+		[&](PlaySoundData* voice) { return voice->soundData == soundData; });
+
+	if (it != voices_.end()) {
+		if ((*it)->sourceVoice) {
+			(*it)->sourceVoice->SetVolume(volume);
+		}
+	}
+}
 
 void Audio::Finalize() {
 	xAudio2_.Reset();
